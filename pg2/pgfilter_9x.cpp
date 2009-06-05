@@ -116,7 +116,9 @@ const pgfilter::range *pgfilter::inranges(const range *ranges, int count, unsign
 	const range *last = ranges + count;
 
 	while(0 < count) {
-		int count2 = count / 2;
+		//night_stalker_z: bit shifting
+		//int count2 = count / 2;
+		int count2 = count >> 1;
 		const range *mid = iter + count2;
 		
 		if(mid->start < ip) {

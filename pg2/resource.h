@@ -320,6 +320,7 @@
 #define IDC_HTTPTEXT                    1179
 #define IDC_HTTPBG                      1180
 #define IDC_PROGRESS1                   1181
+#define IDC_UPDATE_AT_STARTUP			1182
 #define ID_TRAY_PEERGUARDIAN            40001
 #define ID_TRAY_ENABLED                 40002
 #define ID_TRAY_DISABLED                40003

@@ -29,8 +29,8 @@ using namespace std;
 Configuration g_config;
 
 Configuration::Configuration() :
-Block(true),BlockHttp(true),AllowLocal(true),UpdatePeerGuardian(true),
-	UpdateLists(true),ShowSplash(true),WindowHidden(false),UpdateInterval(2),
+	Block(true),BlockHttp(true),AllowLocal(true),UpdatePeerGuardian(true),
+	UpdateLists(true), UpdateAtStartup(true), ShowSplash(true),WindowHidden(false),UpdateInterval(2),
 	LogSize(12),LastUpdate(0),CleanupInterval(0),LogAllowed(true),LogBlocked(true),
 	ShowAllowed(true),CacheCrc(0),UpdateCountdown(-1),UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()),ListManagerWindowPos(RECT()),StayHidden(false),
@@ -456,6 +456,7 @@ bool Configuration::Load() {
 
 		GetChild(updates, "UpdatePeerGuardian", this->UpdatePeerGuardian);
 		GetChild(updates, "UpdateLists", this->UpdateLists);
+		GetChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
 		GetChild(updates, "UpdateInterval", this->UpdateInterval);
 		GetChild(updates, "UpdateCountdown", this->UpdateCountdown);
 
@@ -481,6 +482,33 @@ bool Configuration::Load() {
 	if(const TiXmlElement *messages=root->FirstChildElement("Messages")) {
 		GetChild(messages, "FirstBlock", this->FirstBlock);
 		GetChild(messages, "FirstHide", this->FirstHide);
+	}
+
+	//night_stalker_z: read ports to allow/block
+	if (const TiXmlElement *ports = root->FirstChildElement("Ports")) {
+		string port;
+
+		if (const TiXmlElement *allowed = ports->FirstChildElement("Allowed")) {
+			for (const TiXmlElement *po = allowed->FirstChildElement("Port"); po != NULL; po = po->NextSiblingElement("Port")) {
+				GetChild(po, "Port", port);
+
+				if (port.length() > 0)
+				{
+					try {
+						int p = boost::lexical_cast<int>(port);
+						this->Ports.Allowed.push_back(p);
+					}
+					catch (...) {
+					}
+				}
+			}
+		}
+
+
+		/*
+		for (const TiXmlElement *blocked = ports->FirstChildElement("Blocked"); blocked != NULL; blocked = blocked->NextSiblingElement("Port")) {
+		}
+		*/
 	}
 
 	if(const TiXmlElement *lists=root->FirstChildElement("Lists")) {
@@ -665,6 +693,7 @@ void Configuration::Save() {
 
 		InsertChild(updates, "UpdatePeerGuardian", this->UpdatePeerGuardian);
 		InsertChild(updates, "UpdateLists", this->UpdateLists);
+		InsertChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
 		InsertChild(updates, "UpdateInterval", this->UpdateInterval);
 		InsertChild(updates, "UpdateCountdown", this->UpdateCountdown);
 		
@@ -686,6 +715,21 @@ void Configuration::Save() {
 
 		InsertChild(messages, "FirstBlock", this->FirstBlock);
 		InsertChild(messages, "FirstHide", this->FirstHide);
+	}
+
+	{
+		//night_stalker_z: write allowed/blocked ports
+		TiXmlElement *ports = InsertChild(root, "Ports");
+
+		TiXmlElement *allowed = InsertChild(ports, "Allowed");
+
+		//for (vector<PortList>::size_type i = 0; i < 10; i++) {//this->Ports.Allowed.size(); i++) {
+		//	InsertChild(allowed, "Port", i * 10);
+		//}
+
+		for (vector<int>::size_type i = 0; i < this->Ports.Allowed.size(); i++)  {
+			InsertChild(allowed, "Port", this->Ports.Allowed[i]);
+		}
 	}
 
 	{

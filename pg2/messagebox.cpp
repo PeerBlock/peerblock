@@ -23,8 +23,8 @@
 		$Revision: 1.10 $
 */
 
-#ifndef __MESSAGEBOX_H__
-#define __MESSAGEBOX_H__
+//#ifndef __MESSAGEBOX_H__
+//#define __MESSAGEBOX_H__
 
 #include "stdafx.h"
 #include "resource.h"

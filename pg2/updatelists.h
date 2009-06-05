@@ -29,4 +29,7 @@
 
 int UpdateLists(HWND parent);
 
+// Blocks without updating lists
+void BlockWithoutUpdate(HWND hwnd);
+
 extern const unsigned int g_build;

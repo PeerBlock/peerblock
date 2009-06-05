@@ -433,6 +433,9 @@ static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wPara
 						g_config.AlwaysOnTop=(IsDlgButtonChecked(hwnd, IDC_ONTOP)==BST_CHECKED);
 						SetWindowPos(g_main, g_config.AlwaysOnTop?HWND_TOPMOST:HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
 						break;
+					case IDC_UPDATE_AT_STARTUP:
+						g_config.UpdateAtStartup=(IsDlgButtonChecked(hwnd, IDC_UPDATE_AT_STARTUP) == BST_CHECKED);
+						break;
 				}
 				break;
 			case WM_INITDIALOG: {
@@ -453,6 +456,7 @@ static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wPara
 				if(g_config.StayHidden) CheckDlgButton(hwnd, IDC_HIDETRAY, BST_CHECKED);
 				if(g_config.HideOnClose) CheckDlgButton(hwnd, IDC_HIDEONCLOSE, BST_CHECKED);
 				if(g_config.AlwaysOnTop) CheckDlgButton(hwnd, IDC_ONTOP, BST_CHECKED);
+				if(g_config.UpdateAtStartup) CheckDlgButton(hwnd, IDC_UPDATE_AT_STARTUP, BST_CHECKED);
 
 				if(g_config.UpdateInterval>0) {
 					CheckDlgButton(hwnd, IDC_AUTOUPDATE, BST_CHECKED);

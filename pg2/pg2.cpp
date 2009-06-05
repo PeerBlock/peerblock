@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "updatelists.h"
 using namespace std;
 
 #if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0500
@@ -32,6 +33,9 @@ static const LPCTSTR g_mutex_name=_T("Global\\PeerGuardian2");
 #else
 static const LPCTSTR g_mutex_name=_T("PeerGuardian2");
 #endif
+
+// blocks ips without updating for vista
+//void BlockWithoutUpdating(HWND hwnd);
 
 static bool CheckOS() {
 	OSVERSIONINFO osv = {0};
@@ -103,3 +107,25 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) {
 
 	return 0;
 }
+
+
+//void BlockWithoutUpdating(HWND hwnd)
+//{
+	//pgfilter *f = g_filter.get();
+	//f->m_filter.load(L"pgfilter");
+	//f->setblock(g_config.Block);
+	//f->setblockhttp(g_config.BlockHttp);
+
+	//UINT msg=RegisterWindowMessage(_T("PeerGuardian2LoadLists"));
+	//SendMessage(HWND_BROADCAST, WM_PG2_LOADLISTS, 0, 0);
+
+	
+		
+
+		
+
+		
+	
+
+
+//}
