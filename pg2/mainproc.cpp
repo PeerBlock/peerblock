@@ -291,6 +291,16 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
 	#endif
 
+
+	//night_stalker_z: Update lists at startup so it blocks
+	// needs internet conenction
+	if (g_config.UpdateAtStartup)
+	{
+		UpdateLists(hwnd);
+		LoadLists(hwnd);
+	}
+	//BlockWithoutUpdate(hwnd);
+
 	return FALSE;
 }
 

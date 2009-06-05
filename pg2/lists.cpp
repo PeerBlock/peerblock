@@ -405,7 +405,9 @@ static bool GenCache(HWND hwnd, p2p::list &work) {
 void LoadLists(HWND parent) {
 	p2p::list block;
 
-	if(!GenCache(parent, block)) LoadList(_T("cache.p2b"), block);
+	//night_stalker_z: Load lists always
+	if(!GenCache(parent, block))
+		LoadList(_T("cache.p2b"), block);
 
 	if(block.size()>0) {
 		p2p::list allow;

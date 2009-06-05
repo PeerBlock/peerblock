@@ -13,7 +13,9 @@ const PGIPRANGE* inranges(const PGIPRANGE *ranges, int count, ULONG ip) {
 	const PGIPRANGE *last = ranges + count;
 
 	while(0 < count) {
-		int count2 = count / 2;
+		//night_stalker_z: bit shifting
+		//int count2 = count / 2;
+		int count2 = count >> 1;
 		const PGIPRANGE *mid = iter + count2;
 		
 		if(mid->start < ip) {

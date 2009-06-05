@@ -65,6 +65,12 @@ struct DynamicList : List {
 	path Path() const { return File(); }
 };
 
+// contains allowed/blocked ports
+struct PortList {
+	std::vector<int> Allowed;
+	std::vector<int> Blocked;
+};
+
 struct Color { COLORREF Text, Background; };
 
 enum NotifyType { Never, OnBlock, OnHttpBlock };
@@ -79,12 +85,13 @@ struct Configuration {
 	int UpdateColumns[3];
 	std::vector<StaticList> StaticLists;
 	std::vector<DynamicList> DynamicLists;
+	PortList Ports;
 	bool ColorCode;
 	Color BlockedColor, AllowedColor, HttpColor;
 	time_t LastUpdate;
 	unsigned int CacheCrc;
 	bool Block, BlockHttp, AllowLocal;
-	bool UpdatePeerGuardian, UpdateLists;
+	bool UpdatePeerGuardian, UpdateLists, UpdateAtStartup;
 	bool StartMinimized, ShowSplash, HideOnClose, StayHidden;
 	bool LogAllowed, LogBlocked, ShowAllowed;
 	bool FirstBlock, FirstHide;

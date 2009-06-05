@@ -64,13 +64,13 @@ public:
 	unsigned int blockcount() const { return m_blockcount; }
 	unsigned int allowcount() const { return m_allowcount; }
 
+	driver m_filter;
 protected:
 	pgfilter_base();
 
 	void start_thread();
 	void stop_thread();
 	
-	driver m_filter;
 
 private:
 	void thread_func();
