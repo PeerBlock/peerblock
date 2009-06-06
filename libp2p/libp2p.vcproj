@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Boost&quot;;include"
+				AdditionalIncludeDirectories="..\boost;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -115,7 +115,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Boost&quot;;include"
+				AdditionalIncludeDirectories="..\boost;include"
 				PreprocessorDefinitions="WIN32;NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="false"

@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Boost&quot;;..\sqlite3"
+				AdditionalIncludeDirectories="..\boost;..\sqlite3"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -116,7 +116,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Boost&quot;;..\sqlite3"
+				AdditionalIncludeDirectories="..\boost;..\sqlite3"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="false"
