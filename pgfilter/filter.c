@@ -28,10 +28,10 @@
 
 #pragma warning(push)
 #pragma warning(disable:4103)
-#include <wdm.h>
 #pragma warning(pop)
 
 #include <ntddk.h>
+#include <wdm.h>
 #include <ntstrsafe.h>
 #include <ntddndis.h>
 #include <pfhook.h>
