@@ -76,7 +76,7 @@
 				AdditionalDependencies="ntoskrnl.lib hal.lib fwpkclnt.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).sys"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\crt\i386;D:\Programming\WinDDK\6001.18002\lib\wlh\i386;$(NOINHERIT)"
+				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\crt\i386;D:\Programming\WinDDK\6001.18002\lib\w2k\i386;$(NOINHERIT)"
 				GenerateManifest="false"
 				EnableUAC="false"
 				IgnoreAllDefaultLibraries="true"
@@ -237,7 +237,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="D:\Programming\WinDDK\6001.18002\inc\api;D:\Programming\WinDDK\6001.18002\inc\crt;D:\Programming\WinDDK\6001.18002\inc\ddk"
-				PreprocessorDefinitions="WIN32;NDEBUG;_X86_;_CRT_SECURE_NO_DEPRECATE;_WIN2K_COMPAT_SLIST_USAGE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_X86_;_WIN2K_COMPAT_SLIST_USAGE"
 				IgnoreStandardIncludePath="true"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@
 				AdditionalDependencies="ntoskrnl.lib hal.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).sys"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\WinDDK\6000\lib\w2k\i386;$(NOINHERIT)"
+				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\w2k\i386;$(NOINHERIT)"
 				GenerateManifest="false"
 				EnableUAC="false"
 				IgnoreAllDefaultLibraries="true"
@@ -800,13 +800,6 @@
 				RelativePath=".\filter.c"
 				>
 				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release (Vista)|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -869,13 +862,6 @@
 				<FileConfiguration
 					Name="Debug (Vista)|Win32"
 					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug (Vista)|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
