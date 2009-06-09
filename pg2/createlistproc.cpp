@@ -52,7 +52,7 @@ static void CreateList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotif
 			OPENFILENAME ofn={0};
 			ofn.lStructSize=sizeof(ofn);
 			ofn.hwndOwner=hwnd;
-			ofn.lpstrFilter=_T("PeerGuardian Lists (*.p2p)\0*.p2p\0");
+			ofn.lpstrFilter=_T("PeerBlock Lists (*.p2p)\0*.p2p\0");
 			ofn.lpstrFile=file;
 			ofn.nMaxFile=MAX_PATH;
 			ofn.Flags=OFN_HIDEREADONLY|OFN_PATHMUSTEXIST;

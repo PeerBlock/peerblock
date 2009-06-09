@@ -54,43 +54,43 @@ pgfilter::~pgfilter() {
 
 void pgfilter::install_callout() {
 	FWPM_SESSION0 ses = {0};
-	ses.displayData.name = L"PeerGuardian 2 Dynamic Session";
-	ses.displayData.description = L"PeerGuardian 2 firewall callout.";
+	ses.displayData.name = L"PeerBlock Dynamic Session";
+	ses.displayData.description = L"PeerBlock firewall callout.";
 	ses.flags = FWPM_SESSION_FLAG_DYNAMIC;
 
 	FWPM_CALLOUT0 ocallout4 = {0};
 	ocallout4.calloutKey = PGWFP_CONNECT_CALLOUT_V4;
 	ocallout4.applicableLayer = FWPM_LAYER_ALE_AUTH_CONNECT_V4;
-	ocallout4.displayData.name = L"PeerGuardian 2 IPv4 Flow Outbound Callout";
-	ocallout4.displayData.description = L"PeerGuardian 2 IPv4 Flow Outbound Callout";
+	ocallout4.displayData.name = L"PeerBlock IPv4 Flow Outbound Callout";
+	ocallout4.displayData.description = L"PeerBlock IPv4 Flow Outbound Callout";
 
 	FWPM_CALLOUT0 icallout4 = {0};
 	icallout4.calloutKey = PGWFP_ACCEPT_CALLOUT_V4;
 	icallout4.applicableLayer = FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4;
-	icallout4.displayData.name = L"PeerGuardian 2 IPv4 Flow Inbound Callout";
-	icallout4.displayData.description = L"PeerGuardian 2 IPv4 Flow Inbound Callout";
+	icallout4.displayData.name = L"PeerBlock IPv4 Flow Inbound Callout";
+	icallout4.displayData.description = L"PeerBlock IPv4 Flow Inbound Callout";
 
 	FWPM_CALLOUT0 ocallout6 = {0};
 	ocallout6.calloutKey = PGWFP_CONNECT_CALLOUT_V6;
 	ocallout6.applicableLayer = FWPM_LAYER_ALE_AUTH_CONNECT_V6;
-	ocallout6.displayData.name = L"PeerGuardian 2 IPv6 Flow Outbound Callout";
-	ocallout6.displayData.description = L"PeerGuardian 2 IPv6 Flow Outbound Callout";
+	ocallout6.displayData.name = L"PeerBlock IPv6 Flow Outbound Callout";
+	ocallout6.displayData.description = L"PeerBlock IPv6 Flow Outbound Callout";
 
 	FWPM_CALLOUT0 icallout6 = {0};
 	icallout6.calloutKey = PGWFP_ACCEPT_CALLOUT_V6;
 	icallout6.applicableLayer = FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6;
-	icallout6.displayData.name = L"PeerGuardian 2 IPv6 Flow Inbound Callout";
-	icallout6.displayData.description = L"PeerGuardian 2 IPv6 Flow Inbound Callout";
+	icallout6.displayData.name = L"PeerBlock IPv6 Flow Inbound Callout";
+	icallout6.displayData.description = L"PeerBlock IPv6 Flow Inbound Callout";
 
 	FWPM_SUBLAYER0 monitor = {0};
 	monitor.subLayerKey = PG2_MONITOR_SUBLAYER;
-	monitor.displayData.name = L"PeerGuardian 2 Sub layer";
-	monitor.displayData.description = L"PeerGuardian 2 Sub layer";
+	monitor.displayData.name = L"PeerBlock Sub layer";
+	monitor.displayData.description = L"PeerBlock Sub layer";
 
 	FWPM_FILTER0 ofilter4 = {0};
 	ofilter4.filterKey = PGWFP_CONNECT_FILTER_V4;
 	ofilter4.layerKey = FWPM_LAYER_ALE_AUTH_CONNECT_V4;
-	ofilter4.displayData.name = L"PearGuardian 2 Flow Outbound Filter for IPv4.";
+	ofilter4.displayData.name = L"PeerBlock Flow Outbound Filter for IPv4.";
 	ofilter4.displayData.description = L"Sets up flow outbound filter for all IPv4 traffic, so we can filter the blocked ip-addresses out.";
 	ofilter4.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ofilter4.action.calloutKey = PGWFP_CONNECT_CALLOUT_V4;
@@ -100,7 +100,7 @@ void pgfilter::install_callout() {
 	FWPM_FILTER0 ifilter4 = {0};
 	ifilter4.filterKey = PGWFP_ACCEPT_FILTER_V4;
 	ifilter4.layerKey = FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4;
-	ifilter4.displayData.name = L"PearGuardian 2 Flow Inbound Filter for IPv4.";
+	ifilter4.displayData.name = L"PeerBlock Flow Inbound Filter for IPv4.";
 	ifilter4.displayData.description = L"Sets up flow inbound filter for all IPv4 traffic, so we can filter the blocked ip-addresses out.";
 	ifilter4.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ifilter4.action.calloutKey = PGWFP_ACCEPT_CALLOUT_V4;
@@ -110,7 +110,7 @@ void pgfilter::install_callout() {
 	FWPM_FILTER0 ofilter6 = {0};
 	ofilter6.filterKey = PGWFP_CONNECT_FILTER_V6;
 	ofilter6.layerKey = FWPM_LAYER_ALE_AUTH_CONNECT_V6;
-	ofilter6.displayData.name = L"PearGuardian 2 Flow Outbound Filter for IPv6.";
+	ofilter6.displayData.name = L"PeerBlock Flow Outbound Filter for IPv6.";
 	ofilter6.displayData.description = L"Sets up flow outbound filter for all IPv6 traffic, so we can filter the blocked ip-addresses out.";
 	ofilter6.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ofilter6.action.calloutKey = PGWFP_CONNECT_CALLOUT_V6;
@@ -120,7 +120,7 @@ void pgfilter::install_callout() {
 	FWPM_FILTER0 ifilter6 = {0};
 	ifilter6.filterKey = PGWFP_ACCEPT_FILTER_V6;
 	ifilter6.layerKey = FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6;
-	ifilter6.displayData.name = L"PearGuardian 2 Flow Inbound Filter for IPv6.";
+	ifilter6.displayData.name = L"PeerBlock Flow Inbound Filter for IPv6.";
 	ifilter6.displayData.description = L"Sets up flow inbound filter for all IPv6 traffic, so we can filter the blocked ip-addresses out.";
 	ifilter6.action.type = FWP_ACTION_CALLOUT_UNKNOWN; // The callout may return block or permit.
 	ifilter6.action.calloutKey = PGWFP_ACCEPT_CALLOUT_V6;

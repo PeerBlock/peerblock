@@ -244,7 +244,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				ofn.lStructSize=sizeof(ofn);
 				ofn.hwndOwner=hwnd;
 				ofn.lpstrFile=file;
-				ofn.lpstrFilter=_T("PeerGuardian Text Lists (*.p2p)\0*.p2p\0PeerGuardian Binary Lists (*.p2b)\0*.p2b\0");
+				ofn.lpstrFilter=_T("PeerBlock Text Lists (*.p2p)\0*.p2p\0PeerBlock Binary Lists (*.p2b)\0*.p2b\0");
 				ofn.lpstrDefExt=_T("p2p");
 				ofn.nMaxFile=MAX_PATH;
 				ofn.Flags=OFN_HIDEREADONLY|OFN_PATHMUSTEXIST;
@@ -282,7 +282,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				ofn.hwndOwner=hwnd;
 				ofn.lpstrFile=file;
 
-				ofn.lpstrFilter=_T("PeerGuardian Text Lists (*.p2p)\0*.p2p\0PeerGuardian Binary Lists (*.p2b)\0*.p2b\0");
+				ofn.lpstrFilter=_T("PeerBlock Text Lists (*.p2p)\0*.p2p\0PeerBlock Binary Lists (*.p2b)\0*.p2b\0");
 				ofn.lpstrDefExt=_T("p2p");
 
 				ofn.nMaxFile=MAX_PATH;

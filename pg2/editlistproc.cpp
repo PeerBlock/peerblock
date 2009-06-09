@@ -67,7 +67,7 @@ static void EditList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			OPENFILENAME ofn={0};
 			ofn.lStructSize=sizeof(ofn);
 			ofn.hwndOwner=hwnd;
-			ofn.lpstrFilter=_T("PeerGuardian Lists (*.p2p; *.p2b; *.txt)\0*.p2p;*.p2p;*.p2b;*.txt\0")_T("All Files (*.*)\0*.*\0");
+			ofn.lpstrFilter=_T("PeerBlock Lists (*.p2p; *.p2b; *.txt)\0*.p2p;*.p2p;*.p2b;*.txt\0")_T("All Files (*.*)\0*.*\0");
 			ofn.lpstrFile=file;
 			ofn.nMaxFile=MAX_PATH;
 			ofn.Flags=OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST;
