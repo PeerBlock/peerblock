@@ -45,8 +45,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug (Vista)|Win32.ActiveCfg = Debug (Vista)|Win32
 		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug (Vista)|Win32.Build.0 = Debug (Vista)|Win32
-		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug (Vista)|x64.ActiveCfg = Debug|x64
-		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug (Vista)|x64.Build.0 = Debug|x64
+		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug (Vista)|x64.ActiveCfg = Debug (Vista)|x64
+		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug (Vista)|x64.Build.0 = Debug (Vista)|x64
 		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug|Win32.Build.0 = Debug|Win32
 		{841A21AD-7FB8-402A-86FD-8766AC32D28C}.Debug|x64.ActiveCfg = Debug|x64
@@ -189,8 +189,8 @@ Global
 		{E0597D8E-B4DC-4B46-A4BA-D9C11473FA1B}.Release|x64.Build.0 = Release|x64
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug (Vista)|Win32.ActiveCfg = Debug|Win32
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug (Vista)|Win32.Build.0 = Debug|Win32
-		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug (Vista)|x64.ActiveCfg = Debug|x64
-		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug (Vista)|x64.Build.0 = Debug|x64
+		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug (Vista)|x64.ActiveCfg = Debug (Vista)|x64
+		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug (Vista)|x64.Build.0 = Debug (Vista)|x64
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug|Win32.ActiveCfg = Debug|Win32
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug|Win32.Build.0 = Debug|Win32
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Debug|x64.ActiveCfg = Debug|x64

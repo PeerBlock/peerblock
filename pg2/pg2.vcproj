@@ -649,7 +649,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\boost;..\zlib;..\sqlite3;&quot;..\sqlite3-plus&quot;;..\miniunzip;..\libp2p\include;..\libcurl\include;..\lib7z;..\tinyxml;..\pgfilter"
-				PreprocessorDefinitions="_DEBUG;_WIN32_WINNT=0x0400;WINVER=0x0600;WIN64"
+				PreprocessorDefinitions="_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;WIN64"
 				StringPooling="true"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -872,13 +872,6 @@
 				RelativePath=".\pgfilter_nt.cpp"
 				>
 				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release (Vista)|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -896,6 +889,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug (Vista)|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug (Vista)|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -940,7 +941,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug (Vista)|x64"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
