@@ -113,6 +113,98 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			ManagedExtensions="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="D:\Programming\WinDDK\6001.18002\inc\api;D:\Programming\WinDDK\6001.18002\inc\crt;D:\Programming\WinDDK\6001.18002\inc\ddk"
+				PreprocessorDefinitions="_DEBUG;_AMD64_;WIN64"
+				StringPooling="true"
+				MinimalRebuild="false"
+				ExceptionHandling="0"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="3"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
+				WarningLevel="3"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+				CallingConvention="1"
+				CompileAs="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="ntoskrnl.lib $(NOINHERIT)"
+				OutputFile="$(OutDir)\$(ProjectName).sys"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\crt\amd64;D:\Programming\WinDDK\6001.18002\lib\wnet\amd64;$(NOINHERIT)"
+				GenerateManifest="false"
+				IgnoreAllDefaultLibraries="true"
+				GenerateDebugInformation="true"
+				AssemblyDebug="1"
+				SubSystem="3"
+				Driver="1"
+				OptimizeForWindows98="1"
+				EntryPointSymbol="DriverEntry"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -188,6 +280,104 @@
 				RandomizedBaseAddress="0"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			ManagedExtensions="0"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="D:\Programming\WinDDK\6001.18002\inc\api;D:\Programming\WinDDK\6001.18002\inc\crt;D:\Programming\WinDDK\6001.18002\inc\ddk"
+				PreprocessorDefinitions="NDEBUG;_AMD64_;WIN64"
+				StringPooling="true"
+				MinimalRebuild="false"
+				ExceptionHandling="0"
+				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
+				WarningLevel="3"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="0"
+				CallingConvention="1"
+				CompileAs="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="ntoskrnl.lib hal.lib $(NOINHERIT)"
+				OutputFile="$(OutDir)\$(ProjectName).sys"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\crt\amd64;D:\Programming\WinDDK\6001.18002\lib\wnet\amd64;$(NOINHERIT)"
+				GenerateManifest="false"
+				IgnoreAllDefaultLibraries="true"
+				GenerateDebugInformation="false"
+				SubSystem="3"
+				Driver="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
+				EntryPointSymbol="DriverEntry"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -311,198 +501,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			ManagedExtensions="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TargetEnvironment="3"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="C:\WinDDK\6000\inc\api;C:\WinDDK\6000\inc\ddk;$(NOINHERIT)"
-				PreprocessorDefinitions="_DEBUG;_AMD64_;_CRT_SECURE_NO_DEPRECATE;WIN64"
-				StringPooling="true"
-				MinimalRebuild="false"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="3"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="true"
-				WarningLevel="3"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-				CallingConvention="1"
-				CompileAs="1"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ntoskrnl.lib $(NOINHERIT)"
-				OutputFile="$(OutDir)\$(ProjectName).sys"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\WinDDK\6000\lib\wnet\amd64;$(NOINHERIT)"
-				GenerateManifest="false"
-				IgnoreAllDefaultLibraries="true"
-				GenerateDebugInformation="true"
-				AssemblyDebug="1"
-				SubSystem="3"
-				Driver="1"
-				OptimizeForWindows98="1"
-				EntryPointSymbol="DriverEntry"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			ManagedExtensions="0"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TargetEnvironment="3"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="true"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="C:\WinDDK\6000\inc\api;C:\WinDDK\6000\inc\ddk;$(NOINHERIT)"
-				PreprocessorDefinitions="NDEBUG;_AMD64_;_CRT_SECURE_NO_DEPRECATE;WIN64"
-				StringPooling="true"
-				MinimalRebuild="false"
-				ExceptionHandling="0"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="true"
-				WarningLevel="3"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
-				CallingConvention="1"
-				CompileAs="1"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ntoskrnl.lib hal.lib $(NOINHERIT)"
-				OutputFile="$(OutDir)\$(ProjectName).sys"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\WinDDK\6000\lib\wnet\amd64;$(NOINHERIT)"
-				GenerateManifest="false"
-				IgnoreAllDefaultLibraries="true"
-				GenerateDebugInformation="false"
-				SubSystem="3"
-				Driver="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				OptimizeForWindows98="1"
-				EntryPointSymbol="DriverEntry"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release (Vista)|x64"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -535,8 +533,8 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="C:\WinDDK\6000\inc\api;C:\WinDDK\6000\inc\ddk;$(NOINHERIT)"
-				PreprocessorDefinitions="NDEBUG;_AMD64_;_CRT_SECURE_NO_DEPRECATE;WIN64"
+				AdditionalIncludeDirectories="D:\Programming\WinDDK\6001.18002\inc\api;D:\Programming\WinDDK\6001.18002\inc\crt;D:\Programming\WinDDK\6001.18002\inc\ddk"
+				PreprocessorDefinitions="NDEBUG;_AMD64_;WIN64"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
@@ -564,7 +562,7 @@
 				AdditionalDependencies="ntoskrnl.lib hal.lib fwpkclnt.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).sys"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\WinDDK\6000\lib\wlh\amd64;$(NOINHERIT)"
+				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\crt\amd64;D:\Programming\WinDDK\6001.18002\lib\wnet\amd64;$(NOINHERIT)"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
 				GenerateDebugInformation="false"
@@ -574,6 +572,8 @@
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
 				EntryPointSymbol="DriverEntry"
+				RandomizedBaseAddress="0"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -593,9 +593,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -646,7 +643,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -654,7 +651,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|x64"
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
