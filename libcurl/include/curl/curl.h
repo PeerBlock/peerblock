@@ -204,10 +204,6 @@ struct curl_httppost {
                                        is a file part) */
 };
 
-typedef void (*curl_preconnect_callback)(void *clientp,
-                                         struct sockaddr *addr,
-                                         int addrlen);
-
 typedef int (*curl_progress_callback)(void *clientp,
                                       double dltotal,
                                       double dlnow,
@@ -1074,10 +1070,6 @@ typedef enum {
      data to the appliction even when it is encoded/compressed */
   CINIT(HTTP_TRANSFER_DECODING, LONG, 157),
   CINIT(HTTP_CONTENT_DECODING, LONG, 158),
-
-  /* Called before any connect() happens. */
-  CINIT(PRECONNECT, FUNCTIONPOINT, 159),
-  CINIT(PRECONNECTDATA, OBJECTPOINT, 160),
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
