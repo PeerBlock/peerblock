@@ -2,14 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=PeerGuardian
-AppVerName=PeerGuardian 2.0
-AppPublisher=Methlabs Productions
-AppPublisherURL=http://peerguardian.sf.net
-AppSupportURL=http://peerguardian.sf.net
-AppUpdatesURL=http://peerguardian.sf.net
-DefaultDirName={pf}\PeerGuardian2
-DefaultGroupName=PeerGuardian 2
+AppName=PeerBlock
+AppVerName=PeerBlock 1.0
+AppPublisher=PeerBlock Project
+AppPublisherURL=http://sites.google.com/site/peerblock/
+AppSupportURL=http://sites.google.com/site/peerblock/
+AppUpdatesURL=http://sites.google.com/site/peerblock/
+DefaultDirName={pf}\PeerBlock
+DefaultGroupName=PeerBlock
 SourceDir=../
 LicenseFile=setup/license.txt
 InfoBeforeFile=setup/readme.rtf
@@ -20,7 +20,7 @@ SolidCompression=yes
 MinVersion=4.1,5.0
 AppVersion=2.1.0.2
 VersionInfoVersion=2.1.0.2
-AppMutex=Global\PeerGuardian2
+AppMutex=Global\PeerBlock
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
 
@@ -30,8 +30,6 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quickicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Win9x files
-Source: "win32\release (win9x)\pg2.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: Is9x
 ; Win2k files
 Source: "win32\release\pg2.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: Is2k
 Source: "win32\release\pgfilter.sys"; DestDir: "{app}"; Flags: ignoreversion; Check: Is2k
@@ -50,22 +48,22 @@ Source: "readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [INI]
-Filename: "{app}\pg2.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://peerguardian.sourceforge.net"
+Filename: "{app}\peerblock.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://sites.google.com/site/peerblock/"
 
 [Icons]
-Name: "{group}\PeerGuardian"; Filename: "{app}\pg2.exe"
-Name: "{group}\{cm:ProgramOnTheWeb,PeerGuardian}"; Filename: "{app}\pg2.url"
-Name: "{userdesktop}\PeerGuardian"; Filename: "{app}\pg2.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerGuardian"; Filename: "{app}\pg2.exe"; Tasks: quickicon
+Name: "{group}\PeerBlock"; Filename: "{app}\pg2.exe"
+Name: "{group}\{cm:ProgramOnTheWeb,PeerBlock}"; Filename: "{app}\peerblock.url"
+Name: "{userdesktop}\PeerBlock"; Filename: "{app}\pg2.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"; Filename: "{app}\pg2.exe"; Tasks: quickicon
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "PeerGuardian"; ValueData: "{app}\pg2.exe"; Flags: uninsdeletevalue; Tasks: startupicon
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "PeerBlock"; ValueData: "{app}\pg2.exe"; Flags: uninsdeletevalue; Tasks: startupicon
 
 [Run]
-Filename: "{app}\pg2.exe"; Description: "{cm:LaunchProgram,PeerGuardian}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\pg2.exe"; Description: "{cm:LaunchProgram,PeerBlock}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: files; Name: "{app}\pg2.url"
+Type: files; Name: "{app}\peerblock.url"
 
 [Code]
 function Is9x: Boolean;
