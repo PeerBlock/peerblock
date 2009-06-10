@@ -6,1515 +6,906 @@
 
                                   Changelog
 
-Version 7.16.2 (11 April 2007)
+Version 7.19.5 (18 May 2009)
 
-Yang Tse (10 April 2007)
-- Ravi Pratap provided some fixes for HTTP pipelining
+Daniel Stenberg (17 May 2009)
+- James Bursa posted a patch to the mailing list that fixed a problem with
+  no_proxy which made it not skip the proxy if the URL entered contained a
+  user name. I added test case 1101 to verify.
 
-- configure script will ignore --enable-sspi option for non-native Windows.
+Daniel Stenberg (11 May 2009)
+- Balint Szilakszi reported a memory leak when libcurl did gzip decompression
+  of streams that had some parts (legitimately) missing. We now provide and use
+  a proper cleanup function for the content encoding submodule.
+  http://curl.haxx.se/mail/lib-2009-05/0092.html
 
-Daniel S (9 April 2007)
-- Nick Zitzmann did ssh.c cleanups
+- Kamil Dudka provided a fix for libcurl-NSS reported by Michael Cronenworth
+  at https://bugzilla.redhat.com/show_bug.cgi?id=453612#c12
 
-Daniel S (3 April 2007)
-- Rob Jones fixed better #ifdef'ing for a bunch of #include lines.
+  If an incorrect password is given while loading a private key, libcurl ends
+  up in an infinite loop consuming memory. The bug is critical.
 
-Daniel S (2 April 2007)
-- Nick Zitzmann made the CURLOPT_POSTQUOTE option work for SFTP as well. The
-  accepted commands are as follows:
+- I fixed the problem with doing NTLM, POST and then following a 302 redirect,
+  as reported by Ebenezer Ikonne (on curl-users) and Laurent Rabret (on
+  curl-library). The transfer was mistakenly marked to get more data to send
+  but since it didn't actually have that, it just hung there...
 
-  chgrp (gid) (path)
-    Changes the group ID of the file or directory at (path) to (gid). (gid)
-    must be a number.
+Daniel Stenberg (10 May 2009)
+- Andre Guibert de Bruet correctly pointed out an over-alloc with one wasted
+  byte in the digest code.
 
-  chmod (perms) (path)
-    Changes the permissions of the file or directory at (path) to
-    (perms). (perms) must be a number in the format used by the chmod Unix
-    command.
+Yang Tse (9 May 2009)
+- Removed DOS and TPF package's subdirectory Makefile.am, it was only used
+  to include some files in the distribution tarball serving no other purpose.
+  Files from the DOS and TPF subdirectories are now included in the EXTRA_DIST
+  of the Makefile in the parent subdirectory.
 
-  chown (uid) (path)
-    Changes the user ID of the file or directory at (path) to (uid). (uid)
-    must be a number.
+Yang Tse (8 May 2009)
+- Changed host name literal in several tests to one under the haxx.se domain.
 
-  ln (source) (dest)
-    Creates a symbolic link at (dest) that points to the file located at
-    (source).
+- Renamed vc6 workspace and project files to avoid filename clash when used
+  for conversion to later VS versions.
 
-  mkdir (path)
-    Creates a new directory at (path).
+Daniel Stenberg (8 May 2009)
+- Constantine Sapuntzakis fixed bug report #2784055
+  (http://curl.haxx.se/bug/view.cgi?id=2784055) identifying a problem to
+  connect to SOCKS proxies when using the multi interface. It turned out to
+  almost not work at all previously. We need to wait for the TCP connect to
+  be properly verified before doing the SOCKS magic.
 
-  rename (source) (dest)
-    Moves the file or directory at (source) to (dest).
+  There's still a flaw in the FTP code for this.
 
-  rm (path)
-    Deletes the file located at (path).
+Daniel Stenberg (7 May 2009)
+- Made the SO_SNDBUF setting for the data connection socket for ftp uploads as
+  well. See change 28 Apr 2009.
 
-  rmdir (path)
-    Deletes the directory located at (path). This command will raise an error
-    if the directory is not empty.
+Yang Tse (7 May 2009)
+- Fixed an issue affecting FTP transfers, introduced with the transfer.c
+  patch committed May 4.
 
-  symlink (source) (dest)
-    Same as ln.
+Daniel Stenberg (7 May 2009)
+- Man page *roff problems fixed thanks to input from Colin Watson. Problems
+  reported in the Debian package.
 
-Daniel S (1 April 2007)
-- Robert Iakobashvili made curl_multi_remove_handle() a lot faster when many
-  easy handles are added to a multi handle, by avoiding the looping over all
-  the handles to find which one to remove.
+- Vijay G filed bug report #2723236
+  (http://curl.haxx.se/bug/view.cgi?id=2723236) identifying a problem with
+  libcurl's TFTP code and its lack of dealing with the OACK packet.
 
-- Matt Kraai provided a patch that makes curl build on QNX 6 fine again.
+Yang Tse (5 May 2009)
+- Fixed the --ftp-port address of test #251 to the CLIENTIP address, and
+  reverted the change affecting test suite harness committed 4 May.
 
-Daniel S (31 March 2007)
-- Fixed several minor issues detected by the coverity.com scanner.
+Daniel Stenberg (5 May 2009)
+- Inspired by Michael Smith's session id fix for OpenSSL, I did the
+  corresponding fix in the GnuTLS code: make sure to store the new session id
+  in case the previous re-used one is rejected.
 
-- "Pixel" fixed a problem that appeared when you used -f with user+password
-  embedded in the URL.
+Daniel Stenberg (4 May 2009)
+- Michael Smith posted bug report #2786255
+  (http://curl.haxx.se/bug/view.cgi?id=2786255) with a patch, identifying how
+  libcurl did not deal with SSL session ids properly if the server rejected a
+  re-use of one. Starting now, it will forget the rejected one and remember
+  the new. This change was for OpenSSL only, it is likely that other SSL lib
+  code needs similar fixes.
 
-Dan F (29 March 2007)
-- Don't tear down the ftp connection if the maximum filesize was exceeded
-  and added tests 290 and 291 to check.
+Yang Tse (4 May 2009)
+- Applied David McCreedy's "transfer.c fixes for CURL_DO_LINEEND_CONV and
+  non-ASCII platform HTTP requests" patch addressing two HTTP PUT problems:
+  1) On non-ASCII platforms not all of the protocol portions of the PUT are
+  being translated to ASCII.  2) On all platforms the line endings of part of
+  the protocol portions are mangled from CRLF to CRCRLF if data->set.crlf or
+  data->set.prefer_ascii are set (depending on CURL_DO_LINEEND_CONV).
 
-- Added ftps upload and SSL required tests 401 and 402.
+- Applied David McCreedy's patch to fix test suite harness to allow test FTP
+  server and client on different machines, providing FTP client address when
+  running the FTP test server.
 
-- Send an EOF message before closing an SCP channel, as recommended by
-  RFC4254. Enable libssh2 tracing when ssh debugging is turned on.
+Daniel Fandrich (3 May 2009)
+- Added and disabled test case 563 which shows KNOWN_BUGS #59.  The bug
+  report failed to mention that a proxy must be used to reproduce it.
 
-Yang Tse (27 March 2007)
-- Internal function Curl_select() renamed to Curl_socket_ready()
+Yang Tse (2 May 2009)
+- Use a build-time configured curl_socklen_t data type instead of socklen_t.
 
-  New Internal wrapper function Curl_select() around select (2), it
-  uses poll() when a fine poll() is available, so now libcurl can be
-  built without select() support at all if a fine poll() is available.
+Yang Tse (1 May 2009)
+- Applied David McCreedy's patches "TPF-platform specific changes to various
+  files" and "http.c fix to Curl_proxyCONNECT for non-ASCII platforms", the
+  former with minor edits.
 
-Daniel S (25 March 2007)
-- Daniel Johnson fixed multi code to traverse the easy handle list properly.
-  A left-over bug from the February 21 fix.
+Daniel Stenberg (30 Apr 2009)
+- I was going to fix issue #59 in KNOWN_BUGS
 
-Dan F (23 March 2007)
-- Added --pubkey option to curl and made --key also work for SCP/SFTP,
-  plus made --pass work on an SSH private key as well.
+  If the CURLOPT_PORT option is used on an FTP URL like
+  "ftp://example.com/file;type=A" the ";type=A" is stripped off.
 
-- Changed the test harness to attempt to gracefully shut down servers
-  before resorting to the kill -9 hammer.
+  I added test case 562 to verify, only to find out that I couldn't repeat
+  this bug so I hereby consider it not a bug anymore!
 
-- Added test harness infrastructure to support scp/sftp tests, using
-  OpenSSH as the server.
+Daniel Stenberg (29 Apr 2009)
+- Based on bug report #2723219 (http://curl.haxx.se/bug/view.cgi?id=2723219)
+  I've now made TFTP "connections" not being kept for re-use within libcurl.
+  TFTP is UDP-based so the benefit was really low (if even existing) to begin
+  with so instead of tracking down to fix this problem we instead removed the
+  re-use. I also enabled test case 1099 that I wrote a few days ago to verify
+  that this change fixes the reported problem.
 
-- Fixed a memory leak when specifying a proxy with a file: URL.
+Daniel Stenberg (28 Apr 2009)
+- Constantine Sapuntzakis filed bug report #2783090
+  (http://curl.haxx.se/bug/view.cgi?id=2783090) pointing out that on windows
+  we need to grow the SO_SNDBUF buffer somewhat to get really good upload
+  speeds. http://support.microsoft.com/kb/823764 has the details. Friends
+  confirmed that simply adding 32 to CURL_MAX_WRITE_SIZE is enough.
 
-Yang Tse (20 March 2007)
-- Fixed: When a signal was caught awaiting for an event using Curl_select()
-  or Curl_poll() with a non-zero timeout both functions would restart the
-  specified timeout. This could even lead to the extreme case that if a
-  signal arrived with a frecuency lower to the specified timeout neither
-  function would ever exit.
+- Bug report #2709004 (http://curl.haxx.se/bug/view.cgi?id=2709004) by Tim
+  Chen pointed out how curl couldn't upload with resume when reading from a
+  pipe.
 
-  Added experimental symbol definition check CURL_ACKNOWLEDGE_EINTR in
-  Curl_select() and Curl_poll(). When compiled with CURL_ACKNOWLEDGE_EINTR
-  defined both functions will return as soon as a signal is caught. Use it
-  at your own risk, all calls to these functions in the library should be
-  revisited and checked before fully supporting this feature.
+  This ended up with the introduction of a new return code for the
+  CURLOPT_SEEKFUNCTION callback that basically says that the seek failed but
+  that libcurl may try to resolve the situation anyway. In our case this means
+  libcurl will attempt to instead read that much data from the stream instead
+  of seeking and that way curl can now upload with resume when data is read
+  from a stream!
 
-Yang Tse (19 March 2007)
-- Bryan Henderson fixed the progress function so that it can get called more
-  frequently allowing same calling frecuency for the client progress callback.
-  
-Dan F (15 March 2007)
-- Various memory leaks plugged and NULL pointer fixes made in the ssh code.
+Daniel Stenberg (26 Apr 2009)
+- Bug report #2779733 (http://curl.haxx.se/bug/view.cgi?id=2779733) by Sven
+  Wegener pointed out that CURLINFO_APPCONNECT_TIME didn't work with the multi
+  interface and provided a patch that fixed the problem!
 
-Daniel (15 March 2007)
-- Nick made the curl tool accept globbing ranges that only is one number, i.e
-  you can now use [1-1] without curl complaining.
+Daniel Stenberg (24 Apr 2009)
+- Kamil Dudka fixed another NSS-related leak when client certs were used.
 
-Daniel (10 March 2007)
-- Eygene Ryabinkin:
+- Bug report #2779245 (http://curl.haxx.se/bug/view.cgi?id=2779245) by Rainer
+  Koenig pointed out that the man page didn't tell that the *_proxy
+  environment variables can be specified lower case or UPPER CASE and the
+  lower case takes precedence,
 
-  The problem is the following: when we're calling Curl_done and it decides to
-  keep the connection opened ('left intact'), then the caller is not notified
-  that the connection was done via the NULLifying of the pointer, so some easy
-  handle is keeping the pointer to this connection.
+Daniel Fandrich (21 Apr 2009)
+- Added new libcurl source files to Amiga, RiscOS and VC6 build files.
 
-  Later ConnectionExists can select such connection for reuse even if we're
-  not pipelining: pipeLen is zero, so the (pipeLen > 0 && !canPipeline) is
-  false and we can reuse this connection for another easy handle. But thus the
-  connection will be shared between two easy handles if the handle that wants
-  to take the ownership is not the same as was not notified of the connection
-  was done in Curl_done. And when some of these easy handles will get their
-  connection really freed the another one will still keep the pointer.
+Yang Tse (21 Apr 2009)
+- Moved potential inclusion of system's malloc.h and memory.h header files to
+  setup_once.h.  Inclusion of each header file is based on the definition of
+  NEED_MALLOC_H and NEED_MEMORY_H respectively.
 
-  My fix was rather trivial: I just added the NULLification to the 'else'
-  branch in the Curl_done. My tests with Git and ElectricFence showed no
-  problems both for HTTP pulling and cloning. Repository size is about 250 Mb,
-  so it was a considerable amount of Curl's work.
+  Renamed libcurl's memory.h to curl_memory.h
 
-Dan F (9 March 2007)
-- Updated the test harness to add a new "crypto" feature check and updated the
-  appropriate test case to use it.  For now, this is treated the same as the
-  "SSL" feature because curl doesn't list it separately.
+Daniel Stenberg (20 Apr 2009)
+- Leanic Lefever reported a crash and did some detailed research on why and
+  how it occurs (http://curl.haxx.se/mail/lib-2009-04/0289.html). The
+  conclusion was that if an error is detected and Curl_done() is called for
+  the connection, ftp_done() could at times return another error code that
+  then would take precedence and that new code confused existing logic that
+  works for the first error code (CURLE_SEND_ERROR) only.
 
-Daniel (9 March 2007)
-- Robert Iakobashvili fixed CURLOPT_INTERFACE for IPv6.
+- Gisle Vanem noticed that --libtool would produce bogus strings at times for
+  OBJECTPOINT options. Now we've introduced a new function - my_setopt_str -
+  within the app for setting plain string options to avoid the risk of this
+  mistake happening.
 
-- Robert A. Monat improved the maketgz and VC6/8 generating to set the correct
-  machine type too.
+Daniel Stenberg (17 Apr 2009)
+- Pramod Sharma reported and tracked down a bug when doing FTP over a HTTP
+  proxy. libcurl would then wrongly close the connection after each
+  request. In his case it had the weird side-effect that it killed NTLM auth
+  for the proxy causing an inifinite loop!
 
-- Justin Fletcher fixed a file descriptor leak in the curl tool when trying to
-  upload a file it couldn't open. Bug #1676581
-  (http://curl.haxx.se/bug/view.cgi?id=1676581)
+  I added test case 1098 to verify this fix. The test case does however not
+  properly verify that the transfers are done persistently - as I couldn't
+  think of a clever way to achieve it right now - but you need to read the
+  stderr output after a test run to see that it truly did the right thing.
 
-Dan F (9 March 2007)
-- Updated the test harness to check for protocol support before running each
-  test, fixing KNOWN_BUGS #11.
+Daniel Stenberg (13 Apr 2009)
+- bug report #2727981 (http://curl.haxx.se/bug/view.cgi?id=2727981) by Martin
+  Storsjö pointed out how setting CURLOPT_NOBODY to 0 could be downright
+  confusing as it set the method to either GET or HEAD. The example he showed
+  looked like:
 
-Dan F (7 March 2007)
-- Reintroduced (after a 3 year hiatus) an FTPS test case (400) into the test
-  harness.  It is very limited as it supports only ftps:// URLs with
-  --ftp-ssl-control specified, which implicitly encrypts the control
-  channel but not the data channels.  That allows stunnel to be used with
-  an unmodified ftp server in exactly the same way that the test https
-  server is set up.
+   curl_easy_setopt(curl, CURLOPT_PUT, 1);
+   curl_easy_setopt(curl, CURLOPT_NOBODY, 0);
 
-Dan F (7 March 2007)
-- Honour --ftp-ssl-control on ftps:// URLs to allow encrypted control and
-  unencrypted data connections.
+  The new way doesn't alter the method until the request is about to start. If
+  CURLOPT_NOBODY is then 1 the HTTP request will be HEAD. If CURLOPT_NOBODY is
+  0 and the request happens to have been set to HEAD, it will then instead be
+  set to GET. I believe this will be less surprising to users, and hopefully
+  not hit any existing users badly.
 
-Dan F (6 March 2007)
-- Fixed a couple of improper pointer uses detected by valgrind in test
-  cases 181 & 216.
+- Toshio Kuratomi reported a memory leak problem with libcurl+NSS that turned
+  out to be leaking cacerts. Kamil Dudka helped me complete the fix. The issue
+  is found in Redhat's bug tracker:
+  https://bugzilla.redhat.com/show_bug.cgi?id=453612
 
-Daniel (2 March 2007)
-- Robert A. Monat and Shmulik Regev helped out to fix the new */Makefile.vc8
-  makefiles that are included in the source release archives, generated from
-  the Makefile.vc6 files by the maketgz script. I also modified the root
-  Makefile to have a VC variable that defaults to vc6 but can be overridden to
-  allow it to be used for vc8 as well. Like this:
+  There are still memory leaks present, but they seem to have other reasons.
 
-    nmake VC=vc8 vc
+Daniel Fandrich (11 Apr 2009)
+- Added new libcurl source files to Symbian OS build files.
+- Improved Symbian support for SSL.
 
-Daniel (27 February 2007)
-- Hang Kin Lau found and fixed: When I use libcurl to connect to an https
-  server through a proxy and have the remote https server port set using the
-  CURLOPT_PORT option, protocol gets reset to http from https after the first
-  request.
+Yang Tse (10 Apr 2009)
+- Daniel Johnson improved the MacOSX-Framework shell script to now perform all
+  the steps required to build a Mac OS X four way fat ppc/i386/ppc64/x86_64
+  libcurl.framework.  Four way fat framework requires OS X 10.5 SDK or later.
+
+Yang Tse (8 Apr 2009)
+- Removed Sun compilers preprocessor block from curlbuild.h.dist, this also
+  removes it from the curlbuild.h file originally distributed by the cURL
+  project as this file is intended for systems not capable of running the
+  configure script.  For those who have been building curl out of the source
+  code curl distribution tarball provided by curl.haxx.se the change implies
+  nothing.  Previous change in this area committed 2 Apr becomes irrelevant.
+
+Daniel Stenberg (6 Apr 2009)
+- I clarified in the docs that CURLOPT_SEEKFUNCTION should return 0 on success
+  and 1 on fatal errors. Previously it only mentioned non-zero on fatal
+  errors. This is a slight change in meaning, but it follows what we've done
+  elsewhere before and it opens up for LOTS of more useful return codes
+  whenever we can think of them...
+
+Yang Tse (2 Apr 2009)
+- Fix curl_off_t definition for builds done using Sun compilers and a
+  non-configured libcurl. In this case curl_off_t data type was gated
+  to the off_t data type which depends on the _FILE_OFFSET_BITS. This
+  configuration is exactly the unwanted configuration for our curl_off_t
+  data type which must not depend on such setting. This breaks ABI for
+  libcurl libraries built with Sun compilers which were built without
+  having run the configure script with _FILE_OFFSET_BITS different than
+  64 and using the ILP32 data model.
+
+Daniel Stenberg (1 Apr 2009)
+- Andre Guibert de Bruet fixed a NULL pointer use in an infof() call if a
+  strdup() call failed. 
+
+Daniel Fandrich (31 Mar 2009)
+- Properly return an error code in curl_easy_recv (reported by Jim Freeman).
+
+Daniel Stenberg (18 Mar 2009)
+- Kamil Dudka brought a patch that enables 6 additional crypto algorithms when
+  NSS is used. These ciphers were added in NSS 3.4 and require to be enabled
+  explicitly.
  
-  User defined URL was modified internally by libcurl and subsequent reuse of
-  the easy handle may lead to connection using a different protocol (if not
-  originally http).
- 
-  I found that libcurl hardcoded the protocol to "http" when it tries to
-  regenerate the URL if CURLOPT_PORT is set. I tried to fix the problem as
-  follows and it's working fine so far
+Daniel Stenberg (13 Mar 2009)
+- Use libssh2_version() to present the libssh2 version in case the libssh2
+  library is found to support it.
 
-Daniel (25 February 2007)
-- Adam D. Moss made the HTTP CONNECT procedure less blocking when used from
-  the multi interface. Note that it still does a part of the connection in a
-  blocking manner.
+Yang Tse (12 Mar 2009)
+- Added missing Curl_read() return code checking in TELNET transfers.
 
-Daniel (23 February 2007)
-- Added warning outputs if the command line uses more than one of the options
-  -v, --trace and --trace-ascii, since it could really confuse the user.
-  Clarified this fact in the man page.
+- Pierre Brico found and fixed TELNET transfers not being aborted upon
+  a write callback failure.
 
-Daniel (21 February 2007)
-- Ravi Pratap provided work on libcurl making pipelining more robust and
-  fixing some bugs:
-  o Don't mix GET and POST requests in a pipeline
-  o Fix the order in which requests are dispatched from the pipeline
-  o Fixed several curl bugs with pipelining when the server is returning
-    chunked encoding:
-    * Added states to chunked parsing for final CRLF
-    * Rewind buffer after parsing chunk with data remaining
-    * Moved chunked header initializing to a spot just before receiving
-      headers
+Daniel Stenberg (11 Mar 2009)
+- Kamil Dudka made the curl tool properly call curl_global_init() before any
+  other libcurl function.
 
-Daniel (20 February 2007)
-- Linus Nielsen Feltzing changed the CURLOPT_FTP_SSL_CCC option to handle
-  active and passive CCC shutdown and added the --ftp-ssl-ccc-mode command
-  line option.
+Yang Tse (11 Mar 2009)
+- Added missing TELNET timeout support for Windows builds. This issue was
+  reported by Pierre Brico.
 
-Daniel (19 February 2007)
-- Ian Turner fixed the libcurl.m4 macro's support for --with-libcurl.
-
-- Shmulik Regev found a memory leak in re-used HTTPS connections, at least
-  when the multi interface was used.
-
-- Robson Braga Araujo made passive FTP transfers work with SOCKS (both 4 and
-  5).
-
-Daniel (18 February 2007)
-- Jeff Pohlmeyer identified two problems: first a rather obscure problem with
-  the multi interface and connection re-use that could make a
-  curl_multi_remove_handle() ruin a pointer in another handle.
-
-  The second problem was less of an actual problem but more of minor quirk:
-  the re-using of connections wasn't properly checking if the connection was
-  marked for closure.
-
-Daniel (16 February 2007)
-- Duncan Mac-Vicar Prett and Michal Marek reported problems with resetting
-  CURLOPT_RANGE back to no range on an easy handle when using FTP.
-
-Dan F (14 February 2007)
-- Fixed curl-config --libs so it doesn't list unnecessary libraries (and
-  therefore introduce unnecessary dependencies) when it's not needed.
-  Also, don't bother adding a library path of /usr/lib
-
-Daniel (13 February 2007)
-- The default password for anonymous FTP connections is now changed to be
-  "ftp@example.com".
-
-- Robert A. Monat made libcurl build fine with VC2005 - it doesn't have
-  gmtime_r() like the older VC versions. He also made use of some machine-
-  specific defines to differentiate the "OS" define.
-
-Daniel (12 February 2007)
-- Rob Crittenden added support for NSS (Network Security Service) for the
-  SSL/TLS layer. http://www.mozilla.org/projects/security/pki/nss/
-
-  This is the fourth supported library for TLS/SSL that libcurl supports!
-
-- Shmulik Regev fixed so that the final CRLF of HTTP response headers are sent
-  to the debug callback.
-
-- Shmulik Regev added CURLOPT_HTTP_CONTENT_DECODING and
-  CURLOPT_HTTP_TRANSFER_DECODING that if set to zero will disable libcurl's
-  internal decoding of content or transfer encoded content. This may be
-  preferable in cases where you use libcurl for proxy purposes or similar. The
-  command line tool got a --raw option to disable both at once.
-
-- release tarballs made with maketgz will from now on have a LIBCURL_TIMESTAMP
-  define set to hold the exact date and time of when the tarball was built, as
-  a human readable string using the UTC time zone.
+Daniel Stenberg (9 Mar 2009)
+- Frank Hempel found out a bug and provided the fix: 
   
-- Jeff Pohlmeyer fixed a flaw in curl_multi_add_handle() when adding a handle
-  that has an easy handle present in the "closure" list pending closure.
-
-Daniel (6 February 2007)
-- Regular file downloads wiht SFTP and SCP are now done using the non-blocking
-  API of libssh2, if the libssh2 headers seem to support them. This will make
-  SCP and SFTP much more responsive and better libcurl citizens when used with
-  the multi interface etc.
-
-Daniel (5 February 2007)
-- Michael Wallner added support for CURLOPT_TIMEOUT_MS and
-  CURLOPT_CONNECTTIMEOUT_MS that, as their names suggest, do the timeouts with
-  millisecond resolution. The only restriction to that is the alarm()
-  (sometimes) used to abort name resolves as that uses full seconds. I fixed
-  the FTP response timeout part of the patch.
-
-  Internally we now count and keep the timeouts in milliseconds but it also
-  means we multiply set timeouts with 1000. The effect of this is that no
-  timeout can be set to more than 2^31 milliseconds (on 32 bit systems), which
-  equals 24.86 days.  We probably couldn't before either since the code did
-  *1000 on the timeout values on several places already.
-
-Daniel (3 February 2007)
-- Yang Tse fixed the cookie expiry date in several test cases that started to
-  fail since they used "1 feb 2007"...
-
-- Manfred Schwarb reported that socks5 support was broken and help us pinpoint
-  the problem. The code now tries harder to use httproxy and proxy where
-  apppropriate, as not all proxies are HTTP...
-
-Version 7.16.1 (29 January 2007)
-
-Daniel (29 January 2007)
-- Michael Wallner reported that when doing a CONNECT with a custom User-Agent
-  header, you got _two_ User-Agent headers in the CONNECT request...! Added
-  test case 287 to verify the fix.
-
-Daniel (28 January 2007)
-- curl_easy_reset() now resets the CA bundle path correctly.
-
-- David McCreedy fixed the Curl command line tool for HTTP on non-ASCII
-  platforms.
-
-Daniel (25 January 2007)
-- Added the --libcurl [file] option to curl. Append this option to any
-  ordinary curl command line, and you will get a libcurl-using source code
-  written to the file that does the equivalent operation of what your command
-  line operation does!
-
-Dan F (24 January 2007)
-- Fixed a dangling pointer problem that prevented the http_proxy environment
-  variable from being properly used in many cases (and caused test case 63
-  to fail).
-
-Daniel (23 January 2007)
-- David McCreedy did NTLM changes mainly for non-ASCII platforms:
-
-  #1
-  There's a compilation error in http_ntlm.c if USE_NTLM2SESSION is NOT
-  defined.  I noticed this while testing various configurations.  Line 867 of
-  the current http_ntlm.c is a closing bracket for an if/else pair that only
-  gets compiled in if USE_NTLM2SESSION is defined.  But this closing bracket
-  wasn't in an #ifdef so the code fails to compile unless USE_NTLM2SESSION was
-  defined.  Lines 198 and 140 of my patch wraps that closing bracket in an
-  #ifdef USE_NTLM2SESSION.
-
-  #2
-  I noticed several picky compiler warnings when DEBUG_ME is defined.  I've
-  fixed them with casting.  By the way, DEBUG_ME was a huge help in
-  understanding this code.
-
-  #3
-  Hopefully the last non-ASCII conversion patch for libcurl in a while.  I
-  changed the "NTLMSSP" literal to hex since this signature must always be in
-  ASCII.
-
-  Conversion code was strategically added where necessary.  And the
-  Curl_base64_encode calls were changed so the binary "blobs" http_ntlm.c
-  creates are NOT translated on non-ASCII platforms.
-
-Dan F (22 January 2007)
-- Converted (most of) the test data files into genuine XML.  A handful still
-  are not, due mainly to the lack of support for XML character entities
-  (e.g. & => &amp; ).  This will make it easier to validate test files using
-  tools like xmllint, as well as to edit and view them using XML tools.
-
-Daniel (16 January 2007)
-- Armel Asselin improved libcurl to behave a lot better when an easy handle
-  doing an FTP transfer is removed from a multi handle before completion. The
-  fix also fixed the "alive counter" to be correct on "premature removal" for
-  all protocols.
-
-Dan F (16 January 2007)
-- Fixed a small memory leak in tftp uploads discovered by curl's memory leak
-  detector.  Also changed tftp downloads to URL-unescape the downloaded
-  file name.
-
-Daniel (14 January 2007)
-- David McCreedy provided libcurl changes for doing HTTP communication on
-  non-ASCII platforms. It does add some complexity, most notably with more
-  #ifdefs, but I want to see this supported added and I can't see how we can
-  add it without the extra stuff added.
-
-- Setting CURLOPT_COOKIELIST to "ALL" when no cookies at all was present,
-  libcurl would crash when trying to read a NULL pointer.
-
-Daniel (12 January 2007)
-- Toby Peterson found a nasty bug that prevented (lib)curl from properly
-  downloading (most) things that were larger than 4GB on 32 bit systems.  Matt
-  Witherspoon helped as narrow down the problem.
-
-Daniel (5 January 2007)
-- Linus Nielsen Feltzing introduced the --ftp-ssl-ccc command line option to
-  curl that uses the new CURLOPT_FTP_SSL_CCC option in libcurl. If enabled, it
-  will make libcurl shutdown SSL/TLS after the authentication is done on a
-  FTP-SSL operation.
-
-Daniel (4 January 2007)
-- David McCreedy made changes to allow base64 encoding/decoding to work on
-  non-ASCII platforms.
-
-Daniel (3 January 2007)
-- Matt Witherspoon fixed the flaw which made libcurl 7.16.0 always store
-  downloaded data in two buffers, just to be able to deal with a special HTTP
-  pipelining case. That is now only activated for pipelined transfers. In
-  Matt's case, it showed as a considerable performance difference,
-
-Daniel (2 January 2007)
-- Victor Snezhko helped us fix bug report #1603712
-  (http://curl.haxx.se/bug/view.cgi?id=1603712) (known bug #36) --limit-rate
-  (CURLOPT_MAX_SEND_SPEED_LARGE and CURLOPT_MAX_RECV_SPEED_LARGE) are broken
-  on Windows (since 7.16.0, but that's when they were introduced as previous
-  to that the limiting logic was made in the application only and not in the
-  library). It was actually also broken on select()-based systems (as apposed
-  to poll()) but we haven't had any such reports. We now use select(), Sleep()
-  or delay() properly to sleep a while without waiting for anything input or
-  output when the rate limiting is activated with the easy interface.
-
-- Modified libcurl.pc.in to use Libs.private for the libs libcurl itself needs
-  to get built static. It has been mentioned before and was again brought to
-  our attention by Nathanael Nerode who filed debian bug report #405226
-  (http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=405226).
-
-Daniel (29 December 2006)
-- Make curl_easy_duphandle() set the magic number in the new handle.
-
-Daniel (22 December 2006)
-- Robert Foreman provided a prime example snippet showing how libcurl would
-  get confused and not acknowledge the 'no_proxy' variable properly once it
-  had used the proxy and you re-used the same easy handle. I made sure the
-  proxy name is properly stored in the connect struct rather than the
-  sessionhandle/easy struct.
-
-- David McCreedy fixed a bad call to getsockname() that wrongly used a size_t
-  variable to point to when it should be a socklen_t.
-
-- When setting a proxy with environment variables and (for example) running
-  'curl [URL]' with a URL without a protocol prefix, curl would not send a
-  correct request as it failed to add the protocol prefix.
-
-Daniel (21 December 2006)
-- Robson Braga Araujo reported bug #1618359
-  (http://curl.haxx.se/bug/view.cgi?id=1618359) and subsequently provided a
-  patch for it: when downloading 2 zero byte files in a row, curl 7.16.0
-  enters an infinite loop, while curl 7.16.1-20061218 does one additional
-  unnecessary request.
-
-  Fix: During the "Major overhaul introducing http pipelining support and
-  shared connection cache within the multi handle." change, headerbytecount
-  was moved to live in the Curl_transfer_keeper structure. But that structure
-  is reset in the Transfer method, losing the information that we had about
-  the header size. This patch moves it back to the connectdata struct.
-
-Daniel (16 December 2006)
-- Brendan Jurd provided a fix that now prevents libcurl from getting a SIGPIPE
-  during certain conditions when GnuTLS is used.
-
-Daniel (11 December 2006)
-- Alexey Simak found out that when doing FTP with the multi interface and
-  something went wrong like it got a bad response code back from the server,
-  libcurl would leak memory. Added test case 538 to verify the fix.
-
-  I also noted that the connection would get cached in that case, which
-  doesn't make sense since it cannot be re-use when the authentication has
-  failed. I fixed that issue too at the same time, and also that the path
-  would be "remembered" in vain for cases where the connection was about to
-  get closed.
-
-Daniel (6 December 2006)
-- Sebastien Willemijns reported bug #1603712
-  (http://curl.haxx.se/bug/view.cgi?id=1603712) which is about connections
-  getting cut off prematurely when --limit-rate is used. While I found no such
-  problems in my tests nor in my reading of the code, I found that the
-  --limit-rate code was severly flawed (since it was moved into the lib, since
-  7.15.5) when used with the easy interface and it didn't work as documented
-  so I reworked it somewhat and now it works for my tests.
-
-Daniel (5 December 2006)
-- Stefan Krause pointed out a compiler warning with a picky MSCV compiler when
-  passing a curl_off_t argument to the Curl_read_rewind() function which takes
-  an size_t argument. Curl_read_rewind() also had debug code left in it and it
-  was put in a different source file with no good reason when only used from
-  one single spot.
-
-- Sh Diao reported that CURLOPT_CLOSEPOLICY doesn't work, and indeed, there is
-  no code present in the library that receives the option. Since it was not
-  possible to use, we know that no current users exist and thus we simply
-  removed it from the docs and made the code always use the default path of
-  the code.
-
-- Jared Lundell filed bug report #1604956
-  (http://curl.haxx.se/bug/view.cgi?id=1604956) which identified setting
-  CURLOPT_MAXCONNECTS to zero caused libcurl to SIGSEGV. Starting now, libcurl
-  will always internally use no less than 1 entry in the connection cache.
-
-- Sh Diao reported that CURLOPT_FORBID_REUSE no works, and indeed it broke in
-  the 7.16.0 release.
-
-- Martin Skinner brought back bug report #1230118 to haunt us once again.
-  (http://curl.haxx.se/bug/view.cgi?id=1230118) curl_getdate() did not work
-  properly for all input dates on Windows. It was mostly seen on some TZ time
-  zones using DST. Luckily, Martin also provided a fix.
-
-- Alexey Simak filed bug report #1600447
-  (http://curl.haxx.se/bug/view.cgi?id=1600447) in which he noted that active
-  FTP connections don't work with the multi interface. The problem is here
-  that the multi interface state machine has a state during which it can wait
-  for the data connection to connect, but the active connection is not done in
-  the same step in the sequence as the passive one is so it doesn't quite work
-  for active. The active FTP code still use a blocking function to allow the
-  remote server to connect.
-
-  The fix (work-around is a better word) for this problem is to set the
-  boolean prematurely that the data connection is completed, so that the "wait
-  for connect" phase ends at once.
-
-  The proper fix, left for the future, is of course to make the active FTP
-  case to act in a non-blocking way too.
-
-- Matt Witherspoon fixed a problem case when the CPU load went to 100% when a
-  HTTP upload was disconnected:
-
-  "What appears to be happening is that my system (Linux 2.6.17 and 2.6.13) is
-  setting *only* POLLHUP on poll() when the conditions in my previous mail
-  occur. As you can see, select.c:Curl_select() does not check for POLLHUP. So
-  basically what was happening, is poll() was returning immediately (with
-  POLLHUP set), but when Curl_select() looked at the bits, neither POLLERR or
-  POLLOUT was set. This still caused Curl_readwrite() to be called, which
-  quickly returned. Then the transfer() loop kept continuing at full speed
-  forever."
-
-Daniel (1 December 2006)
-- Toon Verwaest reported that there are servers that send the Content-Range:
-  header in a third, not suppported by libcurl, format and we agreed that we
-  could make the parser more forgiving to accept all the three found
-  variations.
-
-Daniel (25 November 2006)
-- Venkat Akella found out that libcurl did not like HTTP responses that simply
-  responded with a single status line and no headers nor body. Starting now, a
-  HTTP response on a persistent connection (i.e not set to be closed after the
-  response has been taken care of) must have Content-Length or chunked
-  encoding set, or libcurl will simply assume that there is no body.
-
-  To my horror I learned that we had no less than 57(!) test cases that did bad
-  HTTP responses like this, and even the test http server (sws) responded badly
-  when queried by the test system if it is the test system. So although the
-  actual fix for the problem was tiny, going through all the newly failing test
-  cases got really painful and boring.
-
-Daniel (24 November 2006)
-- James Housley did lots of work and introduced SFTP downloads.
-
-Daniel (13 November 2006)
-- Ron in bug #1595348 (http://curl.haxx.se/bug/view.cgi?id=1595348) pointed
-  out a stack overwrite (and the corresponding fix) on 64bit Windows when
-  dealing with HTTP chunked encoding.
-
-Daniel (9 November 2006)
-- Nir Soffer updated libcurl.framework.make:
-  o fix symlinks, should link to Versions, not to ./Versions
-  o indentation improvments
-
-- Dmitriy Sergeyev found a SIGSEGV with his test04.c example posted on 7 Nov
-  2006. It turned out we wrongly assumed that the connection cache was present
-  when tearing down a connection.
-
-- Ciprian Badescu found a SIGSEGV when doing multiple TFTP transfers using the
-  multi interface, but I could also repeat it doing multiple sequential ones
-  with the easy interface. Using Ciprian's test case, I could fix it.
-
-Daniel (8 November 2006)
-- Bradford Bruce reported that when setting CURLOPT_DEBUGFUNCTION without
-  CURLOPT_VERBOSE set to non-zero, you still got a few debug messages from the
-  SSL handshake. This is now stopped.
-
-Daniel (7 November 2006)
-- Olaf fixed a leftover problem with the CONNECT fix of his that would leave a
-  wrong error message in the error message buffer.
-
-Daniel (3 November 2006)
-- Olaf Stueben provided a patch that I edited slightly. It fixes the notorious
-  KNOWN_BUGS #25, which happens when a proxy closes the connection when
-  libcurl has sent CONNECT, as part of an authentication negotiation. Starting
-  now, libcurl will re-connect accordingly and continue the authentication as
-  it should.
-
-Daniel (2 November 2006)
-- James Housley brought support for SCP transfers, based on the libssh2 library
-  for the actual network protocol stuff.
-
-  Added these new curl_easy_setopt() options:
-
-    CURLOPT_SSH_AUTH_TYPES
-    CURLOPT_SSH_PUBLIC_KEYFILE
-    CURLOPT_SSH_PRIVATE_KEYFILE
-
-Version 7.16.0 (30 October 2006)
-
-Daniel (25 October 2006)
-- Fixed CURLOPT_FAILONERROR to return CURLE_HTTP_RETURNED_ERROR even for the
-  case when 401 or 407 are returned, *IF* no auth credentials have been given.
-  The CURLOPT_FAILONERROR option is not possible to make fool-proof for 401
-  and 407 cases when auth credentials is given, but we've now covered this
-  somewhat more.
-
-  You might get some amounts of headers transferred before this situation is
-  detected, like for when a "100-continue" is received as a response to a
-  POST/PUT and a 401 or 407 is received immediately afterwards.
-
-  Added test 281 to verify this change.
-
-Daniel (23 October 2006)
-- Ravi Pratap provided a major update with pipelining fixes. We also no longer
-  re-use connections (for pipelining) before the name resolving is done.
-
-Daniel (21 October 2006)
-- Nir Soffer made the tests/libtest/Makefile.am use a proper variable for all
-  the single test applications' link and dependences, so that you easier can
-  override those from the command line when using make.
-
-- Armel Asselin separated CA cert verification problems from problems with
-  reading the (local) CA cert file to let users easier pinpoint the actual
-  problem. CURLE_SSL_CACERT_BADFILE (77) is the new libcurl error code.
-
-Daniel (18 October 2006)
-- Removed the "protocol-guessing" for URLs with host names starting with FTPS
-  or TELNET since they are practically non-existant. This leaves us with only
-  three different prefixes that would assume the protocol is anything but
-  HTTP, and they are host names starting with "ftp.", "dict." or "ldap.".
-
-Daniel (17 October 2006)
-- Bug report #1579171 pointed out code flaws detected with "prefast", and they
-  were 1 - a too small memory clear with memset() in the threaded resolver and
-  2 - a range of potentially bad uses of the ctype family of is*() functions
-  such as isdigit(), isalnum(), isprint() and more. The latter made me switch
-  to using our own set of these functions/macros using uppercase letters, and
-  with some extra set of crazy typecasts to avoid mistakingly passing in
-  negative numbers to the underlying is*() functions.
-
-- With Jeff Pohlmeyer's help, I fixed the expire timer when using
-  curl_multi_socket() during name resolves with c-ares and the LOW_SPEED
-  options now work fine with curl_multi_socket() as well.
-
-Daniel (16 October 2006)
-- Added a check in configure that simply tries to run a program (not when
-  cross-compiling) in order to detect problems with run-time libraries that
-  otherwise would occur when the sizeof tests for curl_off_t would run and
-  thus be much more confusing to users. The check of course should run after
-  all lib-checks are done and before any other test is used that would run an
-  executable built for testing-purposes.
-
-Dan F (13 October 2006)
-- The tagging of application/x-www-form-urlencoded POST body data sent
-  to the CURLOPT_DEBUGFUNCTION callback has been fixed (it was erroneously
-  included as part of the header).  A message was also added to the
-  command line tool to show when data is being sent, enabled when
-  --verbose is used.
-
-Daniel (12 October 2006)
-- Starting now, adding an easy handle to a multi stack that was already added
-  to a multi stack will cause CURLM_BAD_EASY_HANDLE to get returned.
-
-- Jeff Pohlmeyer has been working with the hiperfifo.c example source code,
-  and while doing so it became apparent that the current timeout system for
-  the socket API really was a bit awkward since it become quite some work to
-  be sure we have the correct timeout set.
-
-  Jeff then provided the new CURLMOPT_TIMERFUNCTION that is yet another
-  callback the app can set to get to know when the general timeout time
-  changes and thus for an application like hiperfifo.c it makes everything a
-  lot easier and nicer. There's a CURLMOPT_TIMERDATA option too of course in
-  good old libcurl tradition.
-
-  Jeff has also updated the hiperfifo.c example code to use this news.
-
-Daniel (9 October 2006)
-- Bogdan Nicula's second test case (posted Sun, 08 Oct 2006) converted to test
-  case 535 and it now runs fine. Again a problem with the pipelining code not
-  taking all possible (error) conditions into account.
-
-Daniel (6 October 2006)
-- Bogdan Nicula's hanging test case (posted Wed, 04 Oct 2006) was converted to
-  test case 533 and the test now runs fine.
-
-Daniel (4 October 2006)
-- Dmitriy Sergeyev provided an example source code that crashed CVS libcurl
-  but that worked nicely in 7.15.5. I converted it into test case 532 and
-  fixed the problem.
-
-Daniel (29 September 2006)
-- Removed a few other no-longer present options from the header file.
-
-- Support for FTP third party transfers was removed. Here's why:
-
-  o The recent multi interface changes broke it and the design of the 3rd party
-    transfers made it very hard to fix the problems
-  o It was still blocking and thus nasty for the multi interface
-  o It was a lot of extra code for a very rarely used feature
-  o It didn't use the same code as for "plain" FTP transfers, so it didn't work
-    fine for IPv6 and it didn't properly re-use connections and more
-  o There's nobody around who's willing to work on and improve the existing
-    code
-
-  This does not mean that third party transfers are banned forever, only that
-  they need to be done better if they are to be re-added in the future.
-
-  The CURLOPT_SOURCE_* options are removed from the lib and so are the --3p*
-  options from the command line tool. For this reason, I also bumped the
-  version info for the lib.
-
-Daniel (28 September 2006)
-- Reported in #1561470 (http://curl.haxx.se/bug/view.cgi?id=1561470), libcurl
-  would crash if a bad function sequence was used when shutting down after
-  using the multi interface (i.e using easy_cleanup after multi_cleanup) so
-  precautions have been added to make sure it doesn't any more - test case 529
-  was added to verify.
-
-Daniel (27 September 2006)
-- The URL in the cookie jar file is now changed since it was giving a 404.
-  Reported by Timothy Stone. The new URL will take the visitor to a curl web
-  site mirror with the document.
-
-Daniel (24 September 2006)
-- Bernard Leak fixed configure --with-gssapi-libs.
-
-- Cory Nelson made libcurl use the WSAPoll() function if built for Windows
-  Vista (_WIN32_WINNT >= 0x0600)
-
-Daniel (23 September 2006)
-- Mike Protts added --ftp-ssl-control to make curl use FTP-SSL, but only
-  encrypt the control connection and use the data connection "plain".
-
-- Dmitriy Sergeyev provided a patch that made the SOCKS[45] code work better
-  as it now will read the full data sent from servers. The SOCKS-related code
-  was also moved to the new lib/socks.c source file.
-
-Daniel (21 September 2006)
-- Added test case 531 in an attempt to repeat bug report #1561470
-  (http://curl.haxx.se/bug/view.cgi?id=1561470) that is said to crash when an
-  FTP upload fails with the multi interface. It did not, but I made a failed
-  upload still assume the control connection to be fine.
-
-Daniel (20 September 2006)
-- Armel Asselin fixed problems when you gave a proxy URL with user name and
-  empty password or no password at all. Test case 278 and 279 were added to
-  verify.
-
-Daniel (12 September 2006)
-- Added docs/examples/10-at-a-time.c by Michael Wallner
-
-- Added docs/examples/hiperfifo.c by Jeff Pohlmeyer
-
-Daniel (11 September 2006)
-- Fixed my breakage from earlier today so that doing curl_easy_cleanup() on a
-  handle that is part of a multi handle first removes the handle from the
-  stack.
-
-- Added CURLOPT_SSL_SESSIONID_CACHE and --no-sessionid to disable SSL
-  session-ID re-use on demand since there obviously are broken servers out
-  there that misbehave with session-IDs used.
-
-- Jeff Pohlmeyer presented a *multi_socket()-using program that exposed a
-  problem with it (SIGSEGV-style). It clearly showed that the existing
-  socket-state and state-difference function wasn't good enough so I rewrote
-  it and could then re-run Jeff's program without any crash. The previous
-  version clearly could miss to tell the application when a handle changed
-  from using one socket to using another.
-
-  While I was at it (as I could use this as a means to track this problem
-  down), I've now added a 'magic' number to the easy handle struct that is
-  inited at curl_easy_init() time and cleared at curl_easy_cleanup() time that
-  we can use internally to detect that an easy handle seems to be fine, or at
-  least not closed or freed (freeing in debug builds fill the area with 0x13
-  bytes but in normal builds we can of course not assume any particular data
-  in the freed areas).
-
-Daniel (9 September 2006)
-- Michele Bini fixed how the hostname is put in NTLM packages. As servers
-  don't expect fully qualified names we need to cut them off at the first dot.
-
-- Peter Sylvester cleaned up and fixed the getsockname() uses in ftp.c. Some
-  of them can be completetly removed though...
-
-Daniel (6 September 2006)
-- Ravi Pratap and I have implemented HTTP Pipelining support. Enable it for a
-  multi handle using CURLMOPT_PIPELINING and all HTTP connections done on that
-  handle will be attempted to get pipelined instead of done in parallell as
-  they are performed otherwise.
-
-  As a side-effect from this work, connections are now shared between all easy
-  handles within a multi handle, so if you use N easy handles for transfers,
-  each of them can pick up and re-use a connection that was previously used by
-  any of the handles, be it the same or one of the others.
-
-  This separation of the tight relationship between connections and easy
-  handles is most noticable when you close easy handles that have been used in
-  a multi handle and check amount of used memory or watch the debug output, as
-  there are times when libcurl will keep the easy handle around for a while
-  longer to be able to close it properly. Like for sending QUIT to close down
-  an FTP connection.
-
-  This is a major change.
+  curl_easy_duphandle did not necessarily duplicate the CURLOPT_COOKIEFILE
+  option. It only enabled the cookie engine in the destination handle if
+  data->cookies is not NULL (where data is the source handle). In case of a
+  newly initialized handle which just had the cookie support enabled by a
+  curl_easy_setopt(handle, CURL_COOKIEFILE, "")-call, handle->cookies was
+  still NULL because the setopt-call only appends the value to
+  data->change.cookielist, hence duplicating this handle would not have the
+  cookie engine switched on.
+
+  We also concluded that the slist-functionality would be suitable for being
+  put in its own module rather than simply hanging out in lib/sendf.c so I
+  created lib/slist.[ch] for them.
+
+- Andreas Farber made the 'buildconf' script check for the presence of m4
+  scripts to make it detect a bad checkout earlier. People with older
+  checkouts who don't do cvs update with the -d option won't get the new dirs
+  and then will get funny outputs that can be a bit hard to understand and
+  fix.
   
-Daniel (4 September 2006)
-- Dmitry Rechkin (http://curl.haxx.se/bug/view.cgi?id=1551412) provided a
-  patch that while not fixing things very nicely, it does make the SOCKS5
-  proxy connection slightly better as it now acknowledges the timeout for
-  connection and it no longer segfaults in the case when SOCKS requires
-  authentication and you did not specify username:password.
-
-Daniel (31 August 2006)
-- Dmitriy Sergeyev found and fixed a multi interface flaw when using asynch
-  name resolves. It could get stuck in the wrong state.
-
-Gisle (29 August 2006)
-- Added support for other MS-DOS compilers (desides djgpp). All MS-DOS
-  compiler now uses the same config.dos file (renamed to config.h by
-  make). libcurl now builds fine using Watcom and Metaware's High-C
-  using the Watt-32 tcp/ip-stack.
-
-Daniel (29 August 2006)
-- David McCreedy added CURLOPT_SOCKOPTFUNCTION and CURLOPT_SOCKOPTDATA to
-  allow applications to set their own socket options.
-
-Daniel (25 August 2006)
-- Armel Asselin reported that the 'running_handles' counter wasn't updated
-  properly if you removed a "live" handle from a multi handle with
-  curl_multi_remove_handle().
-
-Daniel (22 August 2006)
-- David McCreedy fixed a remaining mistake from the August 19 TYPE change.
-
-- Peter Sylvester pointed out a flaw in the AllowServerConnect() in the FTP
-  code when doing pure ipv6 EPRT connections.
-
-Daniel (19 August 2006)
-- Based on a patch by Armel Asselin, the FTP code no longer re-issues the TYPE
-  command on subsequent requests on a re-used connection unless it has to.
-
-- Armel Asselin fixed a crash in the FTP code when using SINGLECWD mode and
-  files in the root directory.
-
-- Andrew Biggs pointed out a "Expect: 100-continue" flaw where libcurl didn't
-  send the whole request at once, even though the Expect: header was disabled
-  by the application. An effect of this change is also that small (< 1024
-  bytes) POSTs are now always sent without Expect: header since we deem it
-  more costly to bother about that than the risk that we send the data in
-  vain.
-
-Daniel (9 August 2006)
-- Armel Asselin made the CURLOPT_PREQUOTE option work fine even when
-  CURLOPT_NOBODY is set true. PREQUOTE is then run roughly at the same place
-  in the command sequence as it would have run if there would've been a
-  transfer.
-
-Daniel (8 August 2006)
-- Fixed a flaw in the "Expect: 100-continue" treatment. If you did two POSTs
-  on a persistent connection and allowed the first to use that header, you
-  could not disable it for the second request.
-
-Daniel (7 August 2006)
-- Domenico Andreolfound a quick build error which happened because
-  src/config.h.in was not a proper duplcate of lib/config.h.in which it
-  should've been and this was due to the maketgz script not doing the cp
-  properly.
-
-Version 7.15.5 (7 August 2006)
-
-Daniel (2 August 2006)
-- Mark Lentczner fixed how libcurl was not properly doing chunked encoding
-  if the header "Transfer-Encoding: chunked" was set by the application.
-  http://curl.haxx.se/bug/view.cgi?id=1531838
-
-Daniel (1 August 2006)
-- Maciej Karpiuk fixed a crash that would occur if we passed Curl_strerror()
-  an unknown error number on glibc systems.
-  http://curl.haxx.se/bug/view.cgi?id=1532289
-
-Daniel (31 July 2006)
-- *ALERT* curl_multi_socket() and curl_multi_socket_all() got modified
-  prototypes: they both now provide the number of running handles back to the
-  calling function. It makes the functions resemble the good old
-  curl_multi_perform() more and provides a nice way to know when the multi
-  handle goes empty.
-
-  ALERT2: don't use the curl_multi_socket*() functionality in anything
-  production-like until I say it's somewhat settled, as I suspect there might
-  be some further API changes before I'm done...
-
-Daniel (28 July 2006)
-- Yves Lejeune fixed so that replacing Content-Type: when doing multipart
-  formposts work exactly the way you want it (and the way you'd assume it
-  works).
-
-Daniel (27 July 2006)
-- David McCreedy added --ftp-ssl-reqd which makes curl *require* SSL for both
-  control and data connection, as the existing --ftp-ssl option only requests
-  it.
-
-- [Hiper-related work] Added a function called curl_multi_assign() that will
-  set a private pointer added to the internal libcurl hash table for the
-  particular socket passed in to this function:
-
-  CURLMcode curl_multi_assign(CURLM *multi_handle,
-                              curl_socket_t sockfd,
-                              void *sockp);
-
-  'sockp' being a custom pointer set by the application to be associated with
-  this socket. The socket has to be already existing and in-use by libcurl,
-  like having already called the callback telling about its existance.
-
-  The set hashp pointer will then be passed on to the callback in upcoming
-  calls when this same socket is used (in the brand new 'socketp' argument).
-
-Daniel (26 July 2006)
-- Dan Nelson added the CURLOPT_FTP_ALTERNATIVE_TO_USER libcurl option and curl
-  tool option named --ftp-alternative-to-user. It provides a mean to send a
-  particular command if the normal USER/PASS approach fails.
-
-- Michael Jerris added magic that builds lib/curllib.vcproj automatically for
-  newer MSVC.
-
-Daniel (25 July 2006)
-- Georg Horn made the transfer timeout error message include more details.
-
-Daniel (20 July 2006)
-- David McCreedy fixed a build error when building libcurl with HTTP disabled,
-  problem added with the curl_formget() patch.
-
-Daniel (17 July 2006)
-- Jari Sundell did some excellent research and bug tracking, figured out that
-  we did wrong and patched it: When nodes were removed from the splay tree,
-  and we didn't properly remove it from the splay tree when an easy handle was
-  removed from a multi stack and thus we could wrongly leave a node in the
-  splay tree pointing to (bad) memory.
-
-Daniel (14 July 2006)
-- David McCreedy fixed a flaw where the CRLF counter wasn't properly cleared
-  for FTP ASCII transfers.
-
-Daniel (8 July 2006)
-- Ates Goral pointed out that libcurl's cookie parser did case insensitive
-  string comparisons on the path which is incorrect and provided a patch that
-  fixes this. I edited test case 8 to include details that test for this.
-
-- Ingmar Runge provided a source snippet that caused a crash. The reason for
-  the crash was that libcurl internally was a bit confused about who owned the
-  DNS cache at all times so if you created an easy handle that uses a shared
-  DNS cache and added that to a multi handle it would crash. Now we keep more
-  careful internal track of exactly what kind of DNS cache each easy handle
-  uses: None, Private (allocated for and used only by this single handle),
-  Shared (points to a cache held by a shared object), Global (points to the
-  global cache) or Multi (points to the cache within the multi handle that is
-  automatically shared between all easy handles that are added with private
-  caches).
-
-Daniel (4 July 2006)
-- Toshiyuki Maezawa fixed a problem where you couldn't override the
-  Proxy-Connection: header when using a proxy and not doing CONNECT.
-
-Daniel (24 June 2006)
-- Michael Wallner added curl_formget(), which allows an application to extract
-  (serialise) a previously built formpost (as with curl_formadd()).
-
-Daniel (23 June 2006)
-- Arve Knudsen found a flaw in curl_multi_fdset() for systems where
-  curl_socket_t is unsigned (like Windows) that could cause it to wrongly
-  return a max fd of -1.
-
-Daniel (20 June 2006)
-- Peter Silva introduced CURLOPT_MAX_SEND_SPEED_LARGE and
-  CURLOPT_MAX_RECV_SPEED_LARGE that limit tha maximum rate libcurl is allowed
-  to send or receive data. This kind of adds the the command line tool's
-  option --limit-rate to the library.
-
-  The rate limiting logic in the curl app is now removed and is instead
-  provided by libcurl itself. Transfer rate limiting will now also work for -d
-  and -F, which it didn't before.
-
-Daniel (19 June 2006)
-- Made -K on a file that couldn't be read cause a warning to be displayed.
-
-Daniel (13 June 2006)
-- Dan Fandrich implemented --enable-hidden-symbols configure option to enable
-  -fvisibility=hidden on gcc >= 4.0.  This reduces the size of the libcurl
-  binary and speeds up dynamic linking by hiding all the internal symbols from
-  the symbol table.
-
-Version 7.15.4 (12 June 2006)
-
-Daniel (8 June 2006)
-- Brian Dessent fixed the code for cygwin in three distinct ways:
-
-  The first modifies {lib,src}/setup.h to not include the winsock headers
-  under Cygwin.  This fixes the reported build problem.  Cygwin attempts as
-  much as possible to emulate a posix environment under Windows.  This means
-  that WIN32 is *not* #defined and (to the extent possible) everything is done
-  as it would be on a *ix type system.  Thus <sys/socket.h> is the proper
-  include, and even though winsock2.h is present, including it just introduces
-  a whole bunch of incompatible socket API stuff.
-
-  The second is a patch I've included in the Cygwin binary packages for a
-  while.  It skips two unnecessary library checks (-lwinmm and -lgdi32).  The
-  checks are innocuous and they do succeed, but they pollute LIBS with
-  unnecessary stuff which gets recorded as such in the libcurl.la file, which
-  brings them into the build of any libcurl-downstream.  As far as I know
-  these libs are really only necessary for mingw, so alternatively they could
-  be designed to only run if $host matches *-*-mingw* but I took the safer
-  route of skipping them for *-*-cygwin*.
-
-  The third patch replaces all uses of the ancient and obsolete __CYGWIN32__
-  with __CYGWIN__. Ref: <http://cygwin.com/ml/cygwin/2003-09/msg01520.html>.
-
-Daniel (7 June 2006)
-- Mikael Sennerholm provided a patch that added NTLM2 session response support
-  to libcurl. The 21 NTLM test cases were again modified to comply...
-
-Daniel (27 May 2006)
-- Óscar Morales Vivó updated the libcurl.framework.make file.
-
-Daniel (26 May 2006)
-- Olaf Stüben fixed a bug that caused Digest authentication with md5-sess to
-  fail. When using the md5-sess, the result was not Md5 encoded and Base64
-  transformed.
-
-Daniel (25 May 2006)
-- Michael Wallner provided a patch that allows "SESS" to be set with
-  CURLOPT_COOKIELIST, which then makes all session cookies get cleared.
-
-Daniel (24 May 2006)
-- Tor Arntsen made test 271 run fine again since the TFTP path fix.
-
-Daniel (23 May 2006)
-- Martin Michlmayr filed debian bug report #367954, but the same error also
-  showed up in the autobuilds. It seems a rather long-since introduced shell
-  script flaw in the configure script suddenly was detected by the bash
-  version in Debian Unstable. It had previously passed undetected by all
-  shells used so far...
-
-- David McCreedy updated lib/config-tpf.h
-
-Daniel (11 May 2006)
-- Fixed the configure's check for old-style SSLeay headers since I fell over a
-  case with a duplicate file name (a krb4 implementation with an err.h
-  file). I converted the check to manually make sure three of the headers are
-  present before considering them fine.
-
-- David McCreedy provided a fix for CURLINFO_LASTSOCKET that does extended
-  checks on the to-be-returned socket to make sure it truly seems to be alive
-  and well. For SSL connection it (only) uses OpenSSL functions.
-
-Daniel (10 May 2006)
-- Fixed DICT in two aspects:
-
-  1 - allow properly URL-escaped words, like using %20 for spaces
-
-  2 - properly escape certain letters within a word to comply to the RFC2229
-
-Daniel (9 May 2006)
-- Andreas Ntaflos reported a bug in libcurl.m4: When configuring my GNU
-  autotools project, which optionally (default=yes) uses libcurl on a system
-  without a (usable) libcurl installation, but not specifying
-  `--without-libcurl', configure determines correctly that no libcurl is
-  available, however, the LIBCURL variable gets expanded to `LIBCURL = -lcurl'
-  in the resulting Makefiles.
-
-  David Shaw fixed the flaw.
-
-- Robson Braga Araujo fixed two problems in the recently added non-blocking SSL
-  connects. The state machine was not reset properly so that subsequent
-  connects using the same handle would fail, and there were two memory leaks.
-
-- Robson Braga Araujo fixed a memory leak when you added an easy handle to a
-  multi stack and that easy handle had already been used to do one or more
-  easy interface transfers, as then the code threw away the previously used
-  DNS cache without properly freeing it.
-
-Daniel (8 May 2006)
-- Dan Fandrich went over the TFTP code and he pointed out and fixed numerous
-  problems:
-
-  * The received file is corrupted when a packet is lost and retransmitted
-    (this is a serious problem!)
-
-  * Transmitting a file aborts if a block is lost and retransmitted
-
-  * Data is stored in the wrong location in the buffer for uploads, so uploads
-    always fail (I don't see how it could have ever worked, but it did on x86
-    at least)
-
-  * A number of calls are made to strerror instead of Curl_strerror, making
-    the code not thread safe
-
-  * There are references to errno instead of Curl_sockerrno(), causing
-    incorrect error messages on Windows
-
-  * The file name includes a leading / which violates RFC3617. Doing something
-    similar to ftp, where two slashes after the host name means an absolute
-    reference seems a reasonable extension to fix this.
-
-  * Failures in EBCDIC conversion are not propagated up to the caller but are
-    silently ignored
-
-- Fixed known bug #28. The TFTP code no longer assumes a packed struct and
-  thus works reliably on more platforms.
-
-Daniel (5 May 2006)
-- Roland Blom filed bug report #1481217
-  (http://curl.haxx.se/bug/view.cgi?id=1481217), with follow-ups by Michele
-  Bini and David Byron. libcurl previously wrongly used GetLastError() on
-  windows to get error details after socket-related function calls, when it
-  really should use WSAGetLastError() instead.
-
-  When changing to this, the former function Curl_ourerrno() is now instead
-  called Curl_sockerrno() as it is necessary to only use it to get errno from
-  socket-related functions as otherwise it won't work as intended on Windows.
-
-Daniel (4 May 2006)
-- Mark Eichin submitted bug report #1480821
-  (http://curl.haxx.se/bug/view.cgi?id=1480821) He found and identified a
-  problem with how libcurl dealt with GnuTLS and a case where gnutls returned
-  GNUTLS_E_AGAIN indicating it would block. It would then return an unexpected
-  return code, making Curl_ssl_send() confuse the upper layer - causing random
-  28 bytes trash data to get inserted in the transfered stream.
-
-  The proper fix was to make the Curl_gtls_send() function return the proper
-  return codes that the callers would expect. The Curl_ossl_send() function
-  already did this.
-
-Daniel (2 May 2006)
-- Added a --checkfor option to curl-config to allow users to easier
-  write for example shell scripts that test for the presence of a
-  new-enough libcurl version. If --checkfor is given a version string
-  newer than what is currently installed, curl-config will return a
-  non-zero exit code and output a string about the unfulfilled
-  requirement.
-
-Daniel (26 April 2006)
-- David McCreedy brought initial line end conversions when doing FTP ASCII
-  transfers. They are done on non-windows systems and translate CRLF to LF.
-
-  I modified the 15 LIST-using test cases accordingly. The downside is that now
-  we'll have even more trouble to get the tests to run on Windows since they
-  should get CRLF newlines left intact which the *nix versions don't. I figure
-  the only sane thing to do is to add some kind of [newline] macro for the test
-  case files and have them expanded to the proper native line ending when the
-  test cases are run. This is however left to implement.
-
-Daniel (25 April 2006)
-- Paul Querna fixed libcurl to better deal with deflate content encoding
-  when the stream (wrongly) lacks a proper zlib header. This seems to be the
-  case on too many actual server implementations.
-
-Daniel (21 April 2006)
-- Ale Vesely fixed CURLOPT_INTERFACE when using a hostname.
-
-Daniel (19 April 2006)
-- Based on previous info from Tor Arntsen, I made configure detect the Intel
-  ICC compiler to add a compiler option for it, in order for configure to
-  properly be able to detect function prototypes.
-
-- Robson Braga Araujo provided a patch that makes libcurl less eager to close
-  the control connection when using FTP, for example when you remove an easy
-  handle from a multi stack.
-
-- Applied a patch by Ates Goral and Katie Wang that corrected my bad fix
-  attempt from April 10.
-
-Daniel (11 April 2006)
-- #1468330 (http://curl.haxx.se/bug/view.cgi?id=1468330) pointed out a bad
-  typecast in the curl tool leading to a crash with (64bit?) VS2005 (at least)
-  since the struct timeval field tv_sec is an int while time_t is 64bit.
-
-Daniel (10 April 2006)
-- Ates Goral found out that if you specified both CURLOPT_CONNECTTIMEOUT and
-  CURLOPT_TIMEOUT, the _longer_ time would wrongly be used for the SSL
-  connection time-out!
-
-- I merged my hiper patch (http://curl.haxx.se/libcurl/hiper/) into the main
-  sources. See the lib/README.multi_socket for implementation story with
-  details. Don't expect it to work fully yet. I don't intend to blow any
-  whistles or ring any bells about it until I'm more convinced it works at
-  least somewhat reliably.
-
-Daniel (7 April 2006)
-- David McCreedy's EBCDIC and TPF changes. Three new curl_easy_setopt()
-  options (callbacks) were added:
-
-  CONV_FROM_NETWORK_FUNCTION
-  CONV_TO_NETWORK_FUNCTION
-  CONV_FROM_UTF8_FUNCTION
-
-Daniel (5 April 2006)
-- Michele Bini modified the NTLM code to work for his "weird IIS case"
-  (http://curl.haxx.se/mail/lib-2006-02/0154.html) by adding the NTLM hash
-  function in addition to the LM one and making some other adjustments in the
-  order the different parts of the data block are sent in the Type-2 reply.
-  Inspiration for this work was taken from the Firefox NTLM implementation.
-
-  I edited the existing 21(!) NTLM test cases to run fine with these news. Due
-  to the fact that we now properly include the host name in the Type-2 message
-  the test cases now only compare parts of that chunk.
-
-Daniel (28 March 2006)
-- #1451929 (http://curl.haxx.se/bug/view.cgi?id=1451929) detailed a bug that
-  occurred when asking libcurl to follow HTTP redirects and the original URL
-  had more than one question mark (?). Added test case 276 to verify.
-
-Daniel (27 March 2006)
-- David Byron found a problem multiple -d options when libcurl was built with
-  --enable-debug, as then curl used free() on memory allocated both with
-  normal malloc() and with libcurl-provided functions, when the latter MUST be
-  freed with curl_free() in debug builds.
-
-Daniel (26 March 2006)
-- Tor Arntsen figured out that TFTP was broken on a lot of systems since we
-  called bind() with a too big argument in the 3rd parameter and at least
-  Tru64, AIX and IRIX seem to be very picky about it.
-
-Daniel (21 March 2006)
-- David McCreedy added CURLINFO_FTP_ENTRY_PATH.
-
-- Xavier Bouchoux made the SSL connection non-blocking for the multi interface
-  (when using OpenSSL).
-
-- Tor Arntsen fixed the AIX Toolbox RPM spec
-
-Daniel (20 March 2006)
-- David McCreedy fixed libcurl to no longer ignore AUTH failures and now it
-  reacts properly according to the CURLOPT_FTP_SSL setting.
-
-- Dan Fandrich fixed two TFTP problems: Fixed a bug whereby a received file
-  whose length was a multiple of 512 bytes could have random garbage
-  appended. Also, stop processing TFTP packets which are too short to be
-  legal.
-
-- Ilja van Sprundel reported a possible crash in the curl tool when using
-  "curl hostwithoutslash -d data -G"
-
-Version 7.15.3 (20 March 2006)
-
-Daniel (20 March 2006)
-- VULNERABILITY reported to us by Ulf Harnhammar.
-
-  libcurl uses the given file part of a TFTP URL in a manner that allows a
-  malicious user to overflow a heap-based memory buffer due to the lack of
-  boundary check.
-
-  This overflow happens if you pass in a URL with a TFTP protocol prefix
-  ("tftp://"), using a valid host and a path part that is longer than 512
-  bytes.
-
-  The affected flaw can be triggered by a redirect, if curl/libcurl is told to
-  follow redirects and an HTTP server points the client to a tftp URL with the
-  characteristics described above.
-
-  The Common Vulnerabilities and Exposures (CVE) project has assigned the name
-  CVE-2006-1061 to this issue.
-
-Daniel (16 March 2006)
-- Tor Arntsen provided a RPM spec file for AIX Toolbox, that now is included
-  in the release archive.
-
-Daniel (14 March 2006)
-- David McCreedy fixed:
-
-  a bad SSL error message when OpenSSL certificates are verified fine.
-
-  a missing return code assignment in the FTP code
-
-Daniel (7 March 2006)
-- Markus Koetter filed debian bug report #355715 which identified a problem
-  with the multi interface and multi-part formposts. The fix from February
-  22nd could make the Curl_done() function get called twice on the same
-  connection and it was not designed for that and thus tried to call free() on
-  an already freed memory area!
-
-- Peter Heuchert made sure the CURLFTPSSL_CONTROL setting for CURLOPT_FTP_SSL
-  is used properly.
-
-Daniel (6 March 2006)
-- Lots of users on Windows have reported getting the "SSL: couldn't set
-  callback" error message so I've now made the setting of that callback not be
-  as critical as before. The function is only used for additional loggging/
-  trace anyway so a failure just means slightly less data. It should still be
-  able to proceed and connect fine to the server.
-
-Daniel (4 March 2006)
-- Thomas Klausner provided a patch written by Todd Vierling in bug report
-  #1442471 that fixes a build problem on Interix.
-
-Daniel (2 March 2006)
-- FTP upload without a file name part in the URL now causes
-  curl_easy_perform() to return CURLE_URL_MALFORMAT. Previously it allowed the
-  upload but named the file "(nil)" (without the quotes). Test case 524
-  verifies.
-
-- Added a check for getprotobyname in configure so that it'll be used, thanks
-  to Gisle Vanem's change the other day.
-
-Daniel (28 February 2006)
-- Dan Fandrich prevented curl from getting stuck in an endless loop in case we
-  are out of file handles very early in curl's code where it makes sure that
-  0, 1 and 2 aren't gonna be used by the lib for transfers.
-
-Daniel (27 February 2006)
-- Marty Kuhrt pointed out that there were two VMS-specific files missing in
-  the release archive.
-
-Version 7.15.2 (27 February 2006)
-
-Daniel (22 February 2006)
-- Lots of work and analysis by "xbx___" in bug #1431750
-  (http://curl.haxx.se/bug/view.cgi?id=1431750) helped me identify and fix two
-  different but related bugs:
-
-  1) Removing an easy handle from a multi handle before the transfer is done
-     could leave a connection in the connection cache for that handle that is
-     in a state that isn't suitable for re-use. A subsequent re-use could then
-     read from a NULL pointer and segfault.
-
-  2) When an easy handle was removed from the multi handle, there could be an
-     outstanding c-ares DNS name resolve request. When the response arrived,
-     it caused havoc since the connection struct it "belonged" to could've
-     been freed already.
-
-  Now Curl_done() is called when an easy handle is removed from a multi handle
-  pre-maturely (that is, before the transfer was complteted). Curl_done() also
-  makes sure to cancel all (if any) outstanding c-ares requests.
-
-Daniel (21 February 2006)
-- Peter Su added support for SOCKS4 proxies. Enable this by setting the proxy
-  type to the already provided type CURLPROXY_SOCKS4.
-
-  I added a --socks4 option that works like the current --socks5 option but
-  instead use the socks4 protocol.
-
-Daniel (20 February 2006)
-- Shmulik Regev fixed an issue with multi-pass authentication and compressed
-  content when libcurl didn't honor the internal ignorebody flag.
-
-Daniel (18 February 2006)
-- Ulf Härnhammar fixed a format string (printf style) problem in the Negotiate
-  code. It should however not be the cause of any troubles. He also fixed a
-  few similar problems in the HTTP test server code.
-
-Daniel (17 February 2006)
-- Shmulik Regev provided a fix for the DNS cache when using short life times,
-  as previously it could be holding on to old cached entries longer than
-  requested.
-
-Daniel (11 February 2006)
-- Karl Moerder added the CURLOPT_CONNECT_ONLY and CURLINFO_LASTSOCKET options
-  that an app can use to let libcurl only connect to a remote host and then
-  extract the socket from libcurl. libcurl will then not attempt to do any
-  transfer at all after the connect is done.
-
-- Kent Boortz improved the configure check for GnuTLS to properly set LIBS
-  instead of LDFLAGS.
-
-Daniel (8 February 2006)
-- Philippe Vaucher provided a brilliant piece of test code that show a problem
-  with re-used FTP connections. If the second request on the same connection
-  was set not to fetch a "body", libcurl could get confused and consider it an
-  attempt to use a dead connection and would go acting mighty strange.
-
-Daniel (2 February 2006)
-- Make --limit-rate [num] mean bytes. It used to be that but it broke in my
-  change done in November 2005.
-
-Daniel (30 January 2006)
-- Added CURLOPT_LOCALPORT and CURLOPT_LOCALPORTRANGE to libcurl. Set with the
-  curl tool with --local-port. Plain and simply set the range of ports to bind
-  the local end of connections to. Implemented on to popular demand.
-
-- Based on an error report by Philippe Vaucher, we no longer count a retried
-  connection setup as a follow-redirect. It turns out 1) this fails when a FTP
-  connection is re-setup and 2) it does make the max-redirs counter behave
-  wrong.
-
-Daniel (24 January 2006)
-- Michal Marek provided a patch for FTP that makes libcurl continue to try
-  PASV even after EPSV returned a positive response code, if libcurl failed to
-  connect to the port number the EPSV response said. Obviously some people are
-  going through protocol-sensitive firewalls (or similar) that don't
-  understand EPSV and then they don't allow the second connection unless PASV
-  was used. This also called for a minor fix of test case 238.
-
-Daniel (20 January 2006)
-- Duane Cathey was one of our friends who reported that curl -P [IP]
-  (CURLOPT_FTPPORT) didn't work for ipv6-enabed curls if the IP wasn't a
-  "native" IP while it works fine for ipv6-disabled builds!
-
-  In the process of fixing this, I removed the support for LPRT since I can't
-  think of many reasons to keep doing it and asking on the mailing list didn't
-  reveal anyone else that could either. The code that sends EPRT and PORT is
-  now also a lot simpler than before (IMHO).
-
-Daniel (19 January 2006)
-- Jon Turner pointed out that doing -P [hostname] (CURLOPT_FTPPORT) with curl
-  (built ipv4-only) didn't work.
-
-Daniel (18 January 2006)
-- As reported in bug #1408742 (http://curl.haxx.se/bug/view.cgi?id=1408742),
-  the configure script complained about a missing "missing" script if you ran
-  configure within a path whose name included one or more spaces. This is due
-  to a flaw in automake (1.9.6 and earlier). I've now worked around it by
-  including an "overloaded" version of the AM_MISSING_HAS_RUN script that'll
-  be used instead of the one automake ships with. This kludge needs to be
-  removed once we get an automake version with this problem corrected.
-  Possibly we'll then need to convert this into a kludge depending on what
-  automake version that is used and that is gonna be painful and I don't even
-  want to think about that now...!
-
-Daniel (17 January 2006)
-- David Shaw: Here is the latest libcurl.m4 autoconf tests. It is updated with
-  the latest features and protocols that libcurl supports and has a minor fix
-  to better deal with the obscure case where someone has more than one libcurl
-  installed at the same time.
-
-Daniel (16 January 2006)
-- David Shaw finally removed all traces of Gopher and we are now officially
-  not supporting it. It hasn't been functioning for years anyway, so this is
-  just finally stating what already was true. And a cleanup at the same time.
-
-- Bryan Henderson turned the 'initialized' variable for curl_global_init()
-  into a counter, and thus you can now do multiple curl_global_init() and you
-  are then supposed to do the same amount of calls to curl_global_cleanup().
-  Bryan has also updated the docs accordingly.
-
-Daniel (13 January 2006)
-- Andrew Benham fixed a race condition in the test suite that could cause the
-  test script to kill all processes in the current process group!
-
-Daniel (12 January 2006)
-- Michael Jahn:
-
-  Fixed FTP_SKIP_PASV_IP and FTP_USE_EPSV to "do right" when used on FTP thru
-  HTTP proxy.
-
-  Fixed PROXYTUNNEL to work fine when you do ftp through a proxy.  It would
-  previously overwrite internal memory and cause unpredicted behaviour!
-
-Daniel (11 January 2006)
-- I decided to document the "secret option" here now, as I've received *NO*
-  feedback at all on my mailing list requests from November 2005:
-
-  I'm looking for feedback and comments. I added some experimental code the
-  other day, that allows a libcurl user to select what method libcurl should
-  use to reach a file on a FTP(S) server.
-
-  This functionality is available in CVS code and in recent daily snapshots.
-
-  Let me explain...
-
-  The current name for the option is CURLOPT_FTP_FILEMETHOD (--ftp-method for
-  the command line tool) and you set it to a long (there are currenly no
-  defines for the argument values, just plain numericals). You can set three
-  different "methods" that do this:
-
-  1 multicwd - like today, curl will do a single CWD operation for each path
-           part in the given URL. For deep hierarchies this means very many
-           commands. This is how RFC1738 says it should be done. This is the
-           default.
-
-  2 nocwd - no CWD at all is done, curl will do SIZE, RETR, STOR etc and give
-           a full path to the server.
-
-  3 singlecwd - make one CWD with the full target directory and then operate
-            on the file "normally".
-
-  (With the command line tool you do --ftp-method [METHOD], where [METHOD] is
-  one of "multicwd", "nocwd" or "singlecwd".)
-
-  What feedback I'm interested in:
-
-  1 - Do they work at all? Do you find servers where one of these don't work?
-
-  2 - What would proper names for the option and its arguments be, if we
-      consider this feature good enough to get included and documented in
-      upcoming releases?
-
-  3 - Should we make libcurl able to "walk through" these options in case of
-      (path related) failures, or should it fail and let the user redo any
-      possible retries?
-
-  (This option is not documented in any man page just yet since I'm not sure
-  these names will be used or if the functionality will end up exactly like
-  this.  And for the same reasons we have no test cases for these yet.)
-
-Daniel (10 January 2006)
-- When using a bad path over FTP, as in when libcurl couldn't CWD into all
-  given subdirs, libcurl would still "remember" the full path as if it is the
-  current directory libcurl is in so that the next curl_easy_perform() would
-  get really confused if it tried the same path again - as it would not issue
-  any CWD commands at all, assuming it is already in the "proper" dir.
-
-  Starting now, a failed CWD command sets a flag that prevents the path to be
-  "remembered" after returning.
-
-Daniel (7 January 2006)
-- Michael Jahn fixed so that the second CONNECT when doing FTP over a HTTP
-  proxy actually used a new connection and not sent the second request on the
-  first socket!
-
-Daniel (6 January 2006)
-- Alexander Lazic made the buildconf run the buildconf in the ares dir if that
-  is present instead of trying to mimic that script in curl's buildconf
-  script.
-
-Daniel (3 January 2006)
-- Andres Garcia made the TFTP test server build with mingw.
+Daniel Stenberg (8 Mar 2009)
+- Andre Guibert de Bruet found and fixed a code segment in ssluse.c where the
+  allocation of the memory BIO was not being properly checked.
+
+- Andre Guibert de Bruet fixed the gnutls-using code: There are a few places
+  in the gnutls code where we were checking for negative values for errors,
+  when the man pages state that GNUTLS_E_SUCCESS is returned on success and
+  other values indicate error conditions.
+
+- Bill Egert pointed out (http://curl.haxx.se/bug/view.cgi?id=2671602) that
+  curl didn't use sprintf() in a way that is documented to work in POSIX but
+  since we use our own printf() code (from libcurl) that shouldn't be a
+  problem. Nonetheless I modified the code to not rely on such particular
+  features and to not cause further raised eyebrowse with no good reason.
+
+Daniel Fandrich (5 Mar 2009)
+- Expanded the security section of the libcurl-tutorial man page to cover
+  more issues for authors to consider when writing robust libcurl-using
+  applications.
+
+Yang Tse (5 Mar 2009)
+- Fixed NTLM authentication memory leak on SSPI enabled Windows builds. This
+  issue was noticed by Chris Deidun.
+
+Daniel Fandrich (4 Mar 2009)
+- Fixed a problem with m4 quoting in the OpenSSL configure check reported
+  by Daniel Johnson.
+
+Daniel Stenberg (3 Mar 2009)
+- David James brought a patch that make libcurl close (all) dead connections
+  whenever you attempt to open a new connection.
+
+  1. After cleaning up a dead connection, "continue" instead of
+     returning FALSE. This ensures that we clean up all dead connections,
+     rather than just cleaning up the first dead connection.
+  2. Move up the cleanup for dead connections so that it occurs for
+     all connections, rather than just the connections which have the same
+     preferences as our current new connection.
+
+Version 7.19.4 (3 March 2009)
+
+Daniel Stenberg (3 Mar 2009)
+- David Kierznowski notified us about a security flaw
+  (http://curl.haxx.se/docs/adv_20090303.html also known as CVE-2009-0037) in
+  which previous libcurl versions (by design) can be tricked to access an
+  arbitrary local/different file instead of a remote one when
+  CURLOPT_FOLLOWLOCATION is enabled. This flaw is now fixed in this release
+  together this the addition of two new setopt options for controlling this
+  new behavior:
+
+  o CURLOPT_REDIR_PROTOCOLS controls what protocols libcurl is allowed to
+  follow to when CURLOPT_FOLLOWLOCATION is enabled. By default, this option
+  excludes the FILE and SCP protocols and thus you nee to explicitly allow
+  them in your app if you really want that behavior.
+
+  o CURLOPT_PROTOCOLS controls what protocol(s) libcurl is allowed to fetch
+  using the primary URL option. This is useful if you want to allow a user or
+  other outsiders control what URL to pass to libcurl and yet not allow all
+  protocols libcurl may have been built to support.
+
+Daniel Stenberg (27 Feb 2009)
+- Senthil Raja Velu reported a problem when CURLOPT_INTERFACE and
+  CURLOPT_LOCALPORT were used together (the local port bind failed), and
+  Markus Koetter provided the fix!
+
+Daniel Stenberg (25 Feb 2009)
+- As Daniel Fandrich figured out, we must do the GnuTLS initing in the
+  curl_global_init() function to properly maintain the performing functions
+  thread-safe. We've previously (28 April 2007) moved the init to a later time
+  just to avoid it to fail very early when libgcrypt dislikes the situation,
+  but that move was bad and the fix should rather be in libgcrypt or
+  elsewhere.
+  
+Daniel Stenberg (24 Feb 2009)
+- Brian J. Murrell found out that Negotiate proxy authentication didn't work.
+  It happened because the code used the struct for server-based auth all the
+  time for both proxy and server auth which of course was wrong.
+
+Daniel Stenberg (23 Feb 2009)
+- After a bug reported by James Cheng I've made curl_easy_getinfo() for
+  CURLINFO_CONTENT_LENGTH_DOWNLOAD and CURLINFO_CONTENT_LENGTH_UPLOAD return
+  -1 if the sizes aren't know. Previously these returned 0, make it impossible
+  to detect the difference between actually zero and unknown.
+
+Yang Tse (23 Feb 2009)
+- Daniel Johnson provided a shell script that will perform all the steps needed
+  to build a Mac OS X fat ppc/i386 or ppc64/x86_64 libcurl.framework
+
+Daniel Stenberg (23 Feb 2009)
+- I renamed everything in the windows builds files that used the name 'curllib'
+  to the proper 'libcurl' as clearly this caused confusion.
+
+Yang Tse (20 Feb 2009)
+- Do not halt compilation when using VS2008 to build a Windows 2000 target.
+
+Daniel Stenberg (20 Feb 2009)
+- Linus Nielsen Feltzing reported and helped me repeat and fix a problem with
+  FTP with the multi interface: when a transfer fails, like when aborted by a
+  write callback, the control connection was wrongly closed and thus not
+  re-used properly.
+
+  This change is also an attempt to cleanup the code somewhat in this area, as
+  now the FTP code attempts to keep (better) track on pending responses
+  necessary to get read in ftp_done().
+
+Daniel Stenberg (19 Feb 2009)
+- Patrik Thunstrom reported a problem and helped me repeat it. It turned out 
+  libcurl did a superfluous 1000ms wait when doing SFTP downloads!
+
+  We read data with libssh2 while doing the "DO" operation for SFTP and then
+  when we were about to start getting data for the actual file part, the
+  "TRANSFER" part, we waited for socket action (in 1000ms) before doing a
+  libssh2-read. But in this case libssh2 had already read and buffered the
+  data so we ended up always just waiting 1000ms before we get working on the
+  data!
+
+Patrick Monnerat (18 Feb 2009)
+- FTP downloads (i.e.: RETR) ending with code 550 now return error
+  CURLE_REMOTE_FILE_NOT_FOUND instead of CURLE_FTP_COULDNT_RETR_FILE.
+
+Daniel Stenberg (17 Feb 2009)
+- Kamil Dudka made NSS-powered builds compile and run again!
+
+- A second follow-up change by Andre Guibert de Bruet to fix a related memory
+  leak like that fixed on the 14th. When zlib returns failure, we need to
+  cleanup properly before returning error.
+
+- CURLOPT_FTP_CREATE_MISSING_DIRS can now be set to 2 in addition to 1 for
+  plain FTP connections, and it will then allow MKD to fail once and retry the
+  CWD afterwards. This is especially useful if you're doing many simultanoes
+  connections against the same server and they all have this option enabled,
+  as then CWD may first fail but then another connection does MKD before this
+  connection and thus MKD fails but trying CWD works! The numbers can
+  (should?) now be set with the convenience enums now called
+  CURLFTP_CREATE_DIR and CURLFTP_CREATE_DIR_RETRY.
+
+  Tests has proven that if you're making an application that uploads a set of
+  files to an ftp server, you will get a noticable gain in speed if you're
+  using multiple connections and this option will be then be very useful.
+
+Daniel Stenberg (14 Feb 2009)
+- Andre Guibert de Bruet found and fixed a memory leak in the content encoding
+  code, which could happen on libz errors.
+
+Daniel Fandrich (12 Feb 2009)
+- Added support for Digest and NTLM authentication using GnuTLS.
+
+Daniel Stenberg (11 Feb 2009)
+- CURLINFO_CONDITION_UNMET was added to allow an application to get to know if
+  the condition in the previous request was unmet. This is typically a time
+  condition set with CURLOPT_TIMECONDITION and was previously not possible to
+  reliably figure out. From bug report #2565128
+  (http://curl.haxx.se/bug/view.cgi?id=2565128) filed by Jocelyn Jaubert.
+
+Daniel Fandrich (4 Feb 2009)
+- Don't add the standard /usr/lib or /usr/include paths to LDFLAGS and CPPFLAGS
+  (respectively) when --with-ssl=/usr is used (patch based on FreeBSD).
+
+- Added an explicit buffer limit check in msdosify() (patch based on FreeBSD).
+  This couldn't ever overflow in curl, but might if the code were used
+  elsewhere or under different conditions.
+
+Daniel Stenberg (3 Feb 2009)
+- Hidemoto Nakada provided a small fix that makes it possible to get the
+  CURLINFO_CONTENT_LENGTH_DOWNLOAD size from file:// "transfers" with
+  CURLOPT_NOBODY set true.
+
+Daniel Stenberg (2 Feb 2009)
+- Patrick Scott found a rather large memory leak when using the multi
+  interface and setting CURLMOPT_MAXCONNECTS to something less than the number
+  of handles you add to the multi handle. All the connections that didn't fit
+  in the cache would not be properly disconnected nor freed!
+
+- Craig A West brought us: libcurl now defaults to do CONNECT with HTTP
+  version 1.1 instead of 1.0 like before. This change also introduces the new
+  proxy type for libcurl called 'CURLPROXY_HTTP_1_0' that then allows apps to
+  switch (back) to CONNECT 1.0 requests. The curl tool also got a --proxy1.0
+  option that works exactly like --proxy but sets CURLPROXY_HTTP_1_0.
+
+  I updated all test cases cases that use CONNECT and I tried to do some using
+  --proxy1.0 and some updated to do CONNECT 1.1 to get both versions run.
+
+Daniel Stenberg (31 Jan 2009)
+- When building with c-ares 1.6.1 (not yet released) or later and IPv6 support
+  enabled, we can now take advantage of its brand new AF_UNSPEC support in
+  ares_gethostbyname(). This makes test case 241 finally run fine for me with
+  this setup since it now parses the "::1 ip6-localhost" line fine in my
+  /etc/hosts file!
+
+Daniel Stenberg (30 Jan 2009)
+- Scott Cantor filed bug report #2550061
+  (http://curl.haxx.se/bug/view.cgi?id=2550061) mentioning that I failed to
+  properly make sure that the VC9 makefiles got included in the latest
+  release. I've now fixed the release script and verified it so next release
+  will hopefully include them properly!
+
+Daniel Fandrich (30 Jan 2009)
+- Fixed --disable-proxy for FTP and SOCKS. Thanks to Daniel Egger for
+  reporting.
+
+Yang Tse (29 Jan 2009)
+- Introduced curl_sspi.c and curl_sspi.h for the implementation of functions
+  Curl_sspi_global_init() and Curl_sspi_global_cleanup() which previously were
+  named Curl_ntlm_global_init() and Curl_ntlm_global_cleanup() in http_ntlm.c
+  Also adjusted socks_sspi.c to remove the link-time dependency on the Windows
+  SSPI library using it now in the same way as it was done in http_ntlm.c.
+
+Daniel Stenberg (28 Jan 2009)
+- Markus Moeller introduced two new options to libcurl:
+  CURLOPT_SOCKS5_GSSAPI_SERVICE and CURLOPT_SOCKS5_GSSAPI_NEC to allow libcurl
+  to do GSS-style authentication with SOCKS5 proxies. The curl tool got the
+  options called --socks5-gssapi-service and --socks5-gssapi-nec to enable
+  these.
+
+Daniel Stenberg (26 Jan 2009)
+- Chad Monroe provided the new CURLOPT_TFTP_BLKSIZE option that allows an app
+  to set desired block size to use for TFTP transfers instead of the default
+  512 bytes.
+
+- The "-no_ticket" option was introduced in Openssl0.9.8j. It's a flag to
+  disable "rfc4507bis session ticket support".  rfc4507bis was later turned
+  into the proper RFC5077 it seems: http://tools.ietf.org/html/rfc5077
+
+  The enabled extension concerns the session management. I wonder how often
+  libcurl stops a connection and then resumes a TLS session. also, sending the
+  session data is some overhead. .I suggest that you just use your proposed
+  patch (which explicitly disables TICKET).
+
+  If someone writes an application with libcurl and openssl who wants to
+  enable the feature, one can do this in the SSL callback.
+
+  Sharad Gupta brought this to my attention. Peter Sylvester helped me decide
+  on the proper action.
+
+- Alexey Borzov filed bug report #2535504
+  (http://curl.haxx.se/bug/view.cgi?id=2535504) pointing out that realms with
+  quoted quotation marks in HTTP Digest headers didn't work. I've now added 
+  test case 1095 that verifies my fix.
+
+- Craig A West brought CURLOPT_NOPROXY and the corresponding --noproxy option.
+  They basically offer the same thing the NO_PROXY environment variable only
+  offered previously: list a set of host names that shall not use the proxy
+  even if one is specified.
+
+Daniel Fandrich (20 Jan 2009)
+- Call setlocale() for libtest tests to test the effects of locale-induced
+  libc changes on libcurl.
+
+- Fixed a couple more locale-dependent toupper conversions, mainly for
+  clarity.  This does fix one problem that causes ;type=i FTP URLs
+  to fail in the Turkish locale when CURLOPT_PROXY_TRANSFER_MODE is
+  used (test case 561)
+
+- Added tests 561 and 1091 through 1094 to test various combinations
+  of ;type= and ;mode= URLs that could potentially fail in the Turkish
+  locale.
+
+Daniel Stenberg (20 Jan 2009)
+- Lisa Xu pointed out that the ssh.obj file was missing from the
+  lib/Makefile.vc6 file (and thus from the vc8 and vc9 ones too).
+
+Version 7.19.3 (19 January 2009)
+
+Daniel Stenberg (16 Jan 2009)
+- Andrew de los Reyes fixed curlbuild.h for "generic" gcc builds on PPC, both
+  32 bit and 64 bit.
+
+Daniel Stenberg (15 Jan 2009)
+- Tim Ansell fixed a compiler warning in lib/cookie.c
+
+Daniel Stenberg (14 Jan 2009)
+- Grant Erickson fixed timeouts for TFTP such that specifying a
+  connect-timeout, a max-time or both options work correctly and as expected
+  by passing the correct boolean value to Curl_timeleft via the
+  'duringconnect' parameter.
+
+  With this small change, curl TFTP now behaves as expected (and likely as
+  originally-designed):
+
+  1) For non-existent or unreachable dotted IP addresses:
+
+   a) With no options, follows the default curl 300s timeout...
+   b) With --connect-timeout only, follows that value...
+   c) With --max-time only, follows that value...
+   d) With both --connect-timeout and --max-time, follows the smaller value...
+
+   and times out with a "curl: (7) Couldn't connect to server" error.
+
+  2) For transfers to/from a valid host:
+
+   a) With no options, follows default curl 300s timeout for the
+      first XRQ/DATA/ACK transaction and the default TFTP 3600s
+      timeout for the remainder of the transfer...
+
+   b) With --connect-time only, follows that value for the
+      first XRQ/DATA/ACK transaction and the default TFTP 3600s
+      timeout for the remainder of the transfer...
+
+   c) With --max-time only, follows that value for the first
+      XRQ/DATA/ACK transaction and for the remainder of the
+      transfer...
+
+   d) With both --connect-timeout and --max-time, follows the former
+      for the first XRQ/DATA/ACK transaction and the latter for the
+      remainder of the transfer...
+
+   and times out with a "curl: (28) Timeout was reached" error as
+   appropriate.
+
+Daniel Stenberg (13 Jan 2009)
+- Michael Wallner fixed a NULL pointer deref when calling
+  curl_easy_setup(curl, CURLOPT_COOKIELIST, "SESS") on a CURL handle with no
+  cookies data.
+
+- Stefan Teleman brought a patch to fix the default curlbuild.h file for the
+  SunPro compilers.
+
+Daniel Stenberg (12 Jan 2009)
+- Based on bug report #2498665 (http://curl.haxx.se/bug/view.cgi?id=2498665)
+  by Daniel Black, I've now added magic to the configure script that makes it
+  use pkg-config to detect gnutls details as well if the existing method
+  (using libgnutls-config) fails. While doing this, I cleaned up and unified
+  the pkg-config usage when detecting openssl and nss as well.
+
+Daniel Stenberg (11 Jan 2009)
+- Karl Moerder brought the patch that creates vc9 Makefiles, and I made
+  'maketgz' now use the actual makefile targets to do the VC8 and VC9
+  makefiles.
+
+Daniel Stenberg (10 Jan 2009)
+- Emil Romanus fixed:
+
+  When using the multi interface over HTTP and the server returns a Location
+  header, the running easy handle will get stuck in the CURLM_STATE_PERFORM
+  state, leaving the external event loop stuck waiting for data from the
+  ingoing socket (when using the curl_multi_socket_action stuff). While this
+  bug was pretty hard to find, it seems to require only a one-line fix. The
+  break statement on line 1374 in multi.c caused the function to skip the call
+  to multistate().
+
+  How to reproduce this bug? Well, that's another question.  evhiperfifo.c in
+  the examples directory chokes on this bug only _sometimes_, probably
+  depending on how fast the URLs are added. One way of testing the bug out is
+  writing to hiper.fifo from more than one source at the same time.
+
+Daniel Fandrich (7 Jan 2009)
+- Unified much of the SessionHandle initialization done in Curl_open() and
+  curl_easy_reset() by creating Curl_init_userdefined(). This had the side
+  effect of fixing curl_easy_reset() so it now also resets
+  CURLOPT_FTP_FILEMETHOD and CURLOPT_SSL_SESSIONID_CACHE
+
+Daniel Stenberg (7 Jan 2009)
+- Rob Crittenden did once again provide an NSS update:
+
+  I have to jump through a few hoops now with the NSS library initialization
+  since another part of an application may have already initialized NSS by the
+  time Curl gets invoked. This patch is more careful to only shutdown the NSS
+  library if Curl did the initialization.
+
+  It also adds in a bit of code to set the default ciphers if the app that
+  call NSS_Init* did not call NSS_SetDomesticPolicy() or set specific
+  ciphers. One might argue that this lets other application developers get
+  lazy and/or they aren't using the NSS API correctly, and you'd be right.
+  But still, this will avoid terribly difficult-to-trace crashes and is
+  generally helpful.
+
+Daniel Stenberg (1 Jan 2009)
+- 'reconf' is removed since we rather have users use 'buildconf'
+
+Daniel Stenberg (31 Dec 2008)
+- Bas Mevissen reported http://curl.haxx.se/bug/view.cgi?id=2479030 pointing
+  out that 'reconf' didn't properly point out the m4 subdirectory when running
+  aclocal.
+
+Daniel Stenberg (29 Dec 2008)
+ - Phil Lisiecki filed bug report #2413067
+  (http://curl.haxx.se/bug/view.cgi?id=2413067) that identified a problem that
+  would cause libcurl to mark a DNS cache entry "in use" eternally if the
+  subsequence TCP connect failed. It would thus never get pruned and refreshed
+  as it should've been.
+
+  Phil provided his own patch to this problem that while it seemed to work
+  wasn't complete and thus I wrote my own fix to the problem.
+
+Daniel Stenberg (28 Dec 2008)
+- Peter Korsgaard fixed building libcurl with "configure --with-ssl
+  --disable-verbose".
+  
+- Anthony Bryan fixed more language and spelling flaws in man pages.
+
+Daniel Stenberg (22 Dec 2008)
+- Given a recent enough libssh2, libcurl can now seek/resume with SFTP even
+  on file indexes beyond 2 or 4GB.
+
+- Anthony Bryan provided a set of patches that cleaned up manual language,
+  corrected spellings and more.
+
+Daniel Stenberg (20 Dec 2008)
+- Igor Novoseltsev fixed a bad situation for the multi_socket() API when doing
+  pipelining, as libcurl could then easily get confused and A) work on the
+  handle that was not "first in queue" on a pipeline, or even B) tell the app
+  to REMOVE a socket while it was in use by a second handle in a pipeline. Both
+  errors caused hanging or stalling applications.
+
+Daniel Stenberg (19 Dec 2008)
+- curl_multi_timeout() could return a timeout value of 0 even though nothing
+  was actually ready to get done, as the internal time resolution is higher
+  than the returned millisecond timer. Therefore it could cause applications
+  running on fast processors to do short bursts of busy-loops.
+  curl_multi_timeout() will now only return 0 if the timeout is actually
+  alreay triggered.
+
+- Using the libssh2 0.19 function libssh2_session_block_directions(), libcurl
+  now has an improved ability to do right when the multi interface (both
+  "regular" and multi_socket) is used for SCP and SFTP transfers. This should
+  result in (much) less busy-loop situations and thus less CPU usage with no
+  speed loss.
+
+Daniel Stenberg (17 Dec 2008)
+- SCP and SFTP with the multi interface had the same flaw: the 'DONE'
+  operation didn't complete properly if the EAGAIN equivalent was returned but
+  libcurl would simply continue with a half-completed close operation
+  performed. This ruined persistent connection re-use and cause some
+  SSH-protocol errors in general. The correction is unfortunately adding a
+  blocking function - doing it entirely non-blocking should be considered for
+  a better fix.
+
+Gisle Vanem (16 Dec 2008)
+- Added the possibility to use the Watt-32 tcp/ip stack under Windows.
+  The change simply involved adding a USE_WATT32 section in the
+  config-win32.h files (under ./lib and ./src). This section disables
+  the use of any Winsock headers.
+
+Daniel Stenberg (16 Dec 2008)
+- libssh2_sftp_last_error() was wrongly used at some places in libcurl which
+  made libcurl sometimes not properly abort problematic SFTP transfers.
+
+Daniel Stenberg (12 Dec 2008)
+- More work with Igor Novoseltsev to first fix the remaining stuff for
+  removing easy handles from multi handles when the easy handle is/was within
+  a HTTP pipeline. His bug report #2351653
+  (http://curl.haxx.se/bug/view.cgi?id=2351653) was also related and was
+  eventually fixed by a patch by Igor himself.
+
+Yang Tse (12 Dec 2008)
+- Patrick Monnerat fixed a build regression, introduced in 7.19.2, affecting
+  OS/400 compilations with IPv6 enabled.
+
+Daniel Stenberg (12 Dec 2008)
+- Mark Karpeles filed bug report #2416182 titled "crash in ConnectionExists
+  when using duphandle+curl_mutli"
+  (http://curl.haxx.se/bug/view.cgi?id=2416182) which showed that
+  curl_easy_duphandle() wrongly also copied the pointer to the connection
+  cache, which was plain wrong and caused a segfault if the handle would be
+  used in a different multi handle than the handle it was duplicated from.
+
+Daniel Stenberg (11 Dec 2008)
+- Keshav Krity found out that libcurl failed to deal with dotted IPv6
+  addresses if they were very long (>39 letters) due to a too strict address
+  validity parser. It now accepts addresses up to 45 bytes long.
+
+Daniel Stenberg (11 Dec 2008)
+- Internet Explorer had a broken HTTP digest authentication before v7 and
+  there are servers "out there" that relies on the client doing this broken
+  Digest authentication. Apache even comes with an option to work with such
+  broken clients.
+
+  The difference is only for URLs that contain a query-part (a '?'-letter and
+  text to the right of it).
+
+  libcurl now supports this quirk, and you enable it by setting the
+  CURLAUTH_DIGEST_IE bit in the bitmask you pass to the CURLOPT_HTTPAUTH or
+  CURLOPT_PROXYAUTH options. They are thus individually controlled to server
+  and proxy.
+
+  (note that there's no way to activate this with the curl tool yet)
+
+Daniel Fandrich (9 Dec 2008)
+- Added test cases 1089 and 1090 to test --write-out after a redirect to
+  test a report that the size didn't work, but these test cases pass.
+
+- Documented CURLOPT_CONNECT_ONLY as being useful only on HTTP URLs.
+
+Daniel Stenberg (9 Dec 2008)
+- Ken Hirsch simplified how libcurl does FTPS: now it doesn't assume any
+  particular state for the control connection like it did before for implicit
+  FTPS (libcurl assumed such control connections to be encrypted while some
+  FTPS servers such as FileZilla assumes such connections to be clear
+  mode). Use the CURLOPT_USE_SSL option to set your desired level.
+
+Daniel Stenberg (8 Dec 2008)
+- Fred Machado posted about a weird FTP problem on the curl-users list and when
+  researching it, it turned out he got a 550 response back from a SIZE command
+  and then I fell over the text in RFC3659 that says:
+
+   The presence of the 550 error response to a SIZE command MUST NOT be taken
+   by the client as an indication that the file cannot be transferred in the
+   current MODE and TYPE.
+
+  In other words: the change I did on September 30th 2008 and that has been
+  included in the last two releases were a regression and a bad idea. We MUST
+  NOT take a 550 response from SIZE as a hint that the file doesn't exist.
+
+- Christian Krause filed bug #2221237
+  (http://curl.haxx.se/bug/view.cgi?id=2221237) that identified an infinite
+  loop during GSS authentication given some specific conditions. With his
+  patience and great feedback I managed to narrow down the problem and
+  eventually fix it although I can't test any of this myself!
+
+Daniel Fandrich (3 Dec 2008)
+- Fixed the getifaddrs version of Curl_if2ip to work on systems without IPv6
+  support (e.g. Minix)
+
+Daniel Stenberg (3 Dec 2008)
+- Igor Novoseltsev filed bug #2351645
+  (http://curl.haxx.se/bug/view.cgi?id=2351645) that identified a problem with
+  the multi interface that occured if you removed an easy handle while in
+  progress and the handle was used in a HTTP pipeline.
+
+- Pawel Kierski pointed out a mistake in the cookie code that could lead to a
+  bad fclose() after a fatal error had occured.
+  (http://curl.haxx.se/bug/view.cgi?id=2382219)
+
+Daniel Fandrich (25 Nov 2008)
+- If a HTTP request is Basic and num is already >=1000, the HTTP test
+  server adds 1 to num to get the data section to return. This allows
+  testing authentication negotiations using the Basic authentication
+  method.
+
+- Added tests 1087 and 1088 to test Basic authentication on a redirect
+  with and without --location-trusted
+
+Daniel Stenberg (24 Nov 2008)
+- Based on a patch by Vlad Grachov, libcurl now uses a new libssh2 0.19
+  function when built to support SCP and SFTP that helps the library to know
+  in which direction a particular libssh2 operation would return EAGAIN so
+  that libcurl knows what socket conditions to wait for before trying the
+  function call again. Previously (and still when using libssh2 0.18 or
+  earlier), libcurl will busy-loop in this situation when the easy interface
+  is used!
+
+Daniel Fandrich (20 Nov 2008)
+- Automatically detect OpenBSD's CA cert bundle.
+
+Daniel Stenberg (19 Nov 2008)
+- I removed the default use of "Pragma: no-cache" from libcurl when a proxy is
+  used. It has been used since forever but it was never a good idea to use
+  unless explicitly asked for.
+
+- Josef Wolf's extension that allows a $TESTDIR/gdbinit$testnum file that when
+  you use runtests.pl -g, will be sourced by gdb to allow additional fancy or
+  whatever you see fit
+
+- Christian Krause reported and fixed a memory leak that would occur with HTTP
+  GSS/kerberos authentication (http://curl.haxx.se/bug/view.cgi?id=2284386)
+
+- Andreas Wurf and Markus Koetter helped me analyze a problem that Andreas got
+  when uploading files to a single FTP server using multiple easy handle
+  handles with the multi interface. Occasionally a handle would stall in
+  mysterious ways.
+
+  The problem turned out to be a side-effect of the ConnectionExists()
+  function's eagerness to re-use a handle for HTTP pipelining so it would
+  select it even if already being in use, due to an inadequate check for its
+  chances of being used for pipelnining.
+
+Daniel Fandrich (17 Nov 2008)
+- Added more compiler warning options for gcc 4.3
+
+Yang Tse (17 Nov 2008)
+- Fix a remaining problem in the inet_pton() runtime configure check. And
+  fix internal Curl_inet_pton() failures to reject certain malformed literals.
+
+- Make configure script check if ioctl with the SIOCGIFADDR command can be
+  used, and define HAVE_IOCTL_SIOCGIFADDR if appropriate.
+
+Daniel Stenberg (16 Nov 2008)
+- Christian Krause fixed a build failure when building with gss support
+  enabled and FTP disabled.
+
+- Added check for NULL returns from strdup() in src/main.c and lib/formdata.c
+  - reported by Jim Meyering also prevent buffer overflow on MSDOS when you do
+  for example -O on a url with a file name part longer than PATH_MAX letters
+
+- lib/nss.c fixes based on the report by Jim Meyering: I went over and added
+  checks for return codes for all calls to malloc and strdup that were
+  missing. I also changed a few malloc(13) to use arrays on the stack and a
+  few malloc(PATH_MAX) to instead use aprintf() to lower memory use.
+
+- I fixed a memory leak in Curl_nss_connect() when CURLOPT_ISSUERCERT is
+  in use.
+
+Daniel Fandrich (14 Nov 2008)
+- Added .xml as one of the few common file extensions known by the multipart
+  form generator.
+
+- Added some #ifdefs around header files and change the EAGAIN test to
+  fix compilation on Cell (reported by Jeff Curley).
+
+Yang Tse (14 Nov 2008)
+- Fixed several configure script issues affecting checks for inet_ntoa_r(),
+  inet_ntop(), inet_pton(), getifaddrs(), fcntl() and getaddrinfo().
+
+Yang Tse (13 Nov 2008)
+- Refactored configure script detection of functions used to set sockets into
+  non-blocking mode, and decouple function detection from function capability.
+

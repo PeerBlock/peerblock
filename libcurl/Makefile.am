@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,13 +18,22 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.56 2005-11-16 07:20:58 bagder Exp $
+# $Id: Makefile.am,v 1.76 2009-04-27 12:26:41 bagder Exp $
 ###########################################################################
 
 AUTOMAKE_OPTIONS = foreign
 
-EXTRA_DIST = CHANGES COPYING maketgz reconf Makefile.dist curl-config.in \
- curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat libcurl.pc.in
+ACLOCAL_AMFLAGS = -I m4
+
+CMAKE_DIST = CMakeLists.txt CMake/CheckTypeSize.c.in CMake/CheckTypeSize.cmake \
+CMake/CMakeConfigurableFile.in CMake/CurlCheckCSourceCompiles.cmake	       \
+CMake/CurlCheckCSourceRuns.cmake CMake/CurlTests.c CMake/FindOpenSSL.cmake     \
+CMake/FindZLIB.cmake CMake/OtherTests.cmake CMake/Platforms/WindowsCache.cmake \
+CMake/Utilities.cmake include/curl/curlbuild.h.cmake
+
+EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in	\
+ curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat	\
+ libcurl.pc.in vc6curl.dsw MacOSX-Framework $(CMAKE_DIST)
 
 bin_SCRIPTS = curl-config
 
@@ -49,7 +58,7 @@ html:
 pdf:
 	cd docs; make pdf
 
-check: test
+check: test examples
 
 if CROSSCOMPILING
 test-full: test
@@ -70,6 +79,13 @@ test-torture:
 	@(cd tests; $(MAKE) all torture-test)
 
 endif
+
+examples:
+	@(cd docs/examples; $(MAKE) check)
+
+clean-local:
+	@(cd tests; $(MAKE) clean)
+	@(cd docs; $(MAKE) clean)
 
 #
 # Build source and binary rpms. For rpm-3.0 and above, the ~/.rpmmacros
@@ -99,7 +115,7 @@ rpm:
 	mv $$RPM_TOPDIR/SRPMS/$(RPMDIST)-*.src.rpm .
 
 #
-# Build a Solaris pkkgadd format file
+# Build a Solaris pkgadd format file
 # run 'make pkgadd' once you've done './configure' and 'make' to make a Solaris pkgadd format
 # file (which ends up back in this directory).
 # The pkgadd file is in 'pkgtrans' format, so to install on Solaris, do
@@ -128,3 +144,11 @@ install-data-hook:
 uninstall-hook:
 	cd include && $(MAKE) uninstall
 	cd docs && $(MAKE) uninstall
+
+ca-bundle: lib/mk-ca-bundle.pl
+	@echo "generate a fresh ca-bundle.crt"
+	@perl $< -b -l -u lib/ca-bundle.crt
+
+ca-firefox: lib/firefox-db2pem.sh
+	@echo "generate a fresh ca-bundle.crt"
+	./lib/firefox-db2pem.sh lib/ca-bundle.crt

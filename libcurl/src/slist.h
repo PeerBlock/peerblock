@@ -1,5 +1,5 @@
-#ifndef __INET_NTOA_R_H
-#define __INET_NTOA_R_H
+#ifndef __SLIST_H
+#define __SLIST_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,25 +20,14 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: inet_ntoa_r.h,v 1.3 2005/05/26 20:56:25 bagder Exp $
+ * $Id: slist.h,v 1.1 2009-03-09 12:21:47 bagder Exp $
  ***************************************************************************/
 
-#include "setup.h"
-
-#ifdef HAVE_INET_NTOA_R_2_ARGS
 /*
- * uClibc 0.9.26 (at least) doesn't define this prototype. The buffer
- * must be at least 16 characters long.
+ * Curl_slist_duplicate() duplicates a linked list. It always returns the
+ * address of the first record of the cloned list or NULL in case of an
+ * error (or if the input list was NULL).
  */
-char *inet_ntoa_r(const struct in_addr in, char buffer[]);
+struct curl_slist *Curl_slist_duplicate(struct curl_slist *inlist);
 
-#else
-/*
- * My solaris 5.6 system running gcc 2.8.1 does *not* have this prototype
- * in any system include file! Isn't that weird?
- */
-char *inet_ntoa_r(const struct in_addr in, char *buffer, int buflen);
-
-#endif
-
-#endif
+#endif /* __SLIST_H */

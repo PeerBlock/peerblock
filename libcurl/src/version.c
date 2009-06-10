@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: version.c,v 1.52 2006-11-24 22:14:40 bagder Exp $
+ * $Id: version.c,v 1.60 2009-03-13 09:58:15 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -49,6 +49,13 @@
 #include <libssh2.h>
 #endif
 
+#ifdef HAVE_LIBSSH2_VERSION
+/* get it run-time if possible */
+#define CURL_LIBSSH2_VERSION libssh2_version(0)
+#else
+/* use build-time if run-time not possible */
+#define CURL_LIBSSH2_VERSION LIBSSH2_VERSION
+#endif
 
 char *curl_version(void)
 {
@@ -57,12 +64,19 @@ char *curl_version(void)
   size_t len;
   size_t left = sizeof(version);
   strcpy(ptr, LIBCURL_NAME "/" LIBCURL_VERSION );
-  ptr=strchr(ptr, '\0');
-  left -= strlen(ptr);
-
-  len = Curl_ssl_version(ptr, left);
+  len = strlen(ptr);
   left -= len;
   ptr += len;
+
+  if(left > 1) {
+    len = Curl_ssl_version(ptr + 1, left - 1);
+
+    if(len > 0) {
+      *ptr = ' ';
+      left -= ++len;
+      ptr += len;
+    }
+  }
 
 #ifdef HAVE_LIBZ
   len = snprintf(ptr, left, " zlib/%s", zlibVersion());
@@ -94,7 +108,7 @@ char *curl_version(void)
   ptr += len;
 #endif
 #ifdef USE_LIBSSH2
-  len = snprintf(ptr, left, " libssh2/%s", LIBSSH2_VERSION);
+  len = snprintf(ptr, left, " libssh2/%s", CURL_LIBSSH2_VERSION);
   left -= len;
   ptr += len;
 #endif
@@ -119,6 +133,9 @@ static const char * const protocols[] = {
 #endif
 #ifndef CURL_DISABLE_LDAP
   "ldap",
+#ifdef HAVE_LDAP_SSL
+  "ldaps",
+#endif
 #endif
 #ifndef CURL_DISABLE_HTTP
   "http",
@@ -180,7 +197,8 @@ static curl_version_info_data version_info = {
 #ifdef HAVE_SPNEGO
   | CURL_VERSION_SPNEGO
 #endif
-#if defined(ENABLE_64BIT) && (SIZEOF_CURL_OFF_T > 4)
+#if (CURL_SIZEOF_CURL_OFF_T > 4) && \
+    ( (SIZEOF_OFF_T > 4) || defined(USE_WIN32_LARGE_FILES) )
   | CURL_VERSION_LARGEFILE
 #endif
 #if defined(CURL_DOES_CONVERSIONS)

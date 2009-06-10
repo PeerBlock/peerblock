@@ -1,5 +1,5 @@
-#ifndef _CURL_MEMORY_H
-#define _CURL_MEMORY_H
+#ifndef __RAWSTR_H
+#define __RAWSTR_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2004, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,31 +20,26 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: memory.h,v 1.2 2004/10/06 07:50:18 bagder Exp $
+ * $Id: rawstr.h,v 1.3 2009-02-07 22:53:37 bagder Exp $
  ***************************************************************************/
 
-#include <curl/curl.h> /* for the typedefs */
+#include <curl/curl.h>
 
-extern curl_malloc_callback Curl_cmalloc;
-extern curl_free_callback Curl_cfree;
-extern curl_realloc_callback Curl_crealloc;
-extern curl_strdup_callback Curl_cstrdup;
-extern curl_calloc_callback Curl_ccalloc;
+/*
+ * Curl_raw_equal() is for doing "raw" case insensitive strings. This is meant
+ * to be locale independent and only compare strings we know are safe for
+ * this.
+ *
+ * The function is capable of comparing a-z case insensitively even for non-ascii.
+ */
+int Curl_raw_equal(const char *first, const char *second);
+int Curl_raw_nequal(const char *first, const char *second, size_t max);
 
-#ifndef CURLDEBUG
-/* Only do this define-mania if we're not using the memdebug system, as that
-   has preference on this magic. */
-#undef strdup
-#define strdup(ptr) Curl_cstrdup(ptr)
-#undef malloc
-#define malloc(size) Curl_cmalloc(size)
-#undef calloc
-#define calloc(nbelem,size) Curl_ccalloc(nbelem, size)
-#undef realloc
-#define realloc(ptr,size) Curl_crealloc(ptr, size)
-#undef free
-#define free(ptr) Curl_cfree(ptr)
+char Curl_raw_toupper(char in);
+
+/* checkprefix() is a shorter version of the above, used when the first
+   argument is zero-byte terminated */
+#define checkprefix(a,b)    Curl_raw_nequal(a,b,strlen(a))
 
 #endif
-
-#endif /* _CURL_MEMORY_H */
+void Curl_strntoupper(char *dest, const char *src, size_t n);
