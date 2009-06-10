@@ -679,6 +679,10 @@ singleipconnect(struct connectdata *conn,
   Curl_printable_address(ai, addr_buf, sizeof(addr_buf));
   infof(data, "  Trying %s... ", addr_buf);
 
+  if(data->set.preconnect) {
+    data->set.preconnect(data->set.preconnect_client, ai->ai_addr, ai->ai_addrlen);
+  }
+
   if(data->set.tcp_nodelay)
     tcpnodelay(conn, sockfd);
 
