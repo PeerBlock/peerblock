@@ -7,7 +7,7 @@
  *
  * See http://www.boost.org for most recent version including documentation.
  *
- * $Id: subtract_with_carry.hpp 29116 2005-05-21 15:57:01Z dgregor $
+ * $Id: subtract_with_carry.hpp 52492 2009-04-19 14:55:57Z steven_watanabe $
  *
  * Revision history
  *  2002-03-02  created
@@ -16,16 +16,17 @@
 #ifndef BOOST_RANDOM_SUBTRACT_WITH_CARRY_HPP
 #define BOOST_RANDOM_SUBTRACT_WITH_CARRY_HPP
 
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 #include <iostream>
 #include <algorithm>     // std::equal
 #include <stdexcept>
-#include <cmath>         // std::pow
+#include <boost/config/no_tr1/cmath.hpp>         // std::pow
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/detail/workaround.hpp>
+#include <boost/random/detail/config.hpp>
 #include <boost/random/linear_congruential.hpp>
 
 
@@ -153,7 +154,7 @@ public:
   
 #ifndef BOOST_NO_OPERATORS_IN_NAMESPACE
 
-#ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#ifndef BOOST_RANDOM_NO_STREAM_OPERATORS
   template<class CharT, class Traits>
   friend std::basic_ostream<CharT,Traits>&
   operator<<(std::basic_ostream<CharT,Traits>& os,
@@ -345,7 +346,7 @@ public:
   
 #ifndef BOOST_NO_OPERATORS_IN_NAMESPACE
 
-#ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#ifndef BOOST_RANDOM_NO_STREAM_OPERATORS
   template<class CharT, class Traits>
   friend std::basic_ostream<CharT,Traits>&
   operator<<(std::basic_ostream<CharT,Traits>& os,

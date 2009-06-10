@@ -10,9 +10,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source$
-// $Date: 2007-11-25 13:07:19 -0500 (Sun, 25 Nov 2007) $
-// $Revision: 41369 $
+// $Id: begin_end_impl.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #include <boost/mpl/begin_end_fwd.hpp>
 #include <boost/mpl/sequence_tag_fwd.hpp>
@@ -93,8 +93,8 @@ AUX778076_IMPL_SPEC(end, na, void_)
 #   undef AUX778076_IMPL_SPEC
 
 
-BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(1,begin_impl)
-BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC(1,end_impl)
+BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC_IMPL(1,begin_impl)
+BOOST_MPL_ALGORITM_TRAITS_LAMBDA_SPEC_IMPL(1,end_impl)
 
 }}
 
