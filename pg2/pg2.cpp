@@ -1,5 +1,6 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
+	Modifications copyright (C) 2009 Mark Bulas
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -34,9 +35,25 @@ static const LPCTSTR g_mutex_name=_T("Global\\PeerGuardian2");
 static const LPCTSTR g_mutex_name=_T("PeerGuardian2");
 #endif
 
+// MARKMOD:
+#include "TraceLog.h"
+TraceLog g_tlog;
+
 // blocks ips without updating for vista
 //void BlockWithoutUpdating(HWND hwnd);
 
+
+
+//================================================================================================
+//
+//  CheckOS()
+//
+//    - Called by _tWinMain at app start
+//
+/// <summary>
+///   Simply gets the OS Version, doesn't actually do anything with it.
+/// </summary>
+//
 static bool CheckOS() {
 	OSVERSIONINFO osv = {0};
 	osv.dwOSVersionInfoSize = sizeof(osv);
@@ -46,20 +63,44 @@ static bool CheckOS() {
 	//TODO: check version.
 
 	return true;
-}
 
+} // End of CheckOS()
+
+
+
+//================================================================================================
+//
+//  _tWinMain()
+//
+//    - Called by Windows when the app is first started
+//
+/// <summary>
+///   Initial starting point of the app.  Performs some quick sanity-checking and then starts up
+///	  a different thread (serviced by the Main_DlgProc() routine in mainproc.cpp) to handle all 
+///	  the "real" work.
+/// </summary>
+//
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) {
+
+	g_tlog.SetLogfile();
+
+	// MARKMOD: test tracelog functionality
+	g_tlog.LogMessage(_T("PeerBlock Starting"), TRACELOG_LEVEL_CRITICAL);
+	g_tlog.ProcessMessages();
+
 	if(!CheckOS()) {
 		return -1;
 	}
 
 #ifdef _WIN32_WINNT
+	// PG2 requires Admin Mode in order to load the pgfilter.sys driver
 	if(!IsUserAnAdmin()) {
 		MessageBox(NULL, IDS_NEEDADMINTEXT, IDS_NEEDADMIN, MB_ICONERROR|MB_OK);
 		return -1;
 	}
 #endif
 
+	// If PeerGuardian2 is already running, bring it to the forefront and exit this new instance.
 	HANDLE mutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_mutex_name);
 	if(mutex) {
 		UINT msg=RegisterWindowMessage(_T("PeerGuardian2SetVisible"));
@@ -86,6 +127,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) {
 	}
 
 	try {
+		// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program
 		HWND hwnd=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_MAIN), NULL, Main_DlgProc);
 
 		MSG msg;
@@ -106,9 +148,22 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) {
 	WSACleanup();
 
 	return 0;
-}
+
+} // End of _tWinMain()
 
 
+
+//================================================================================================
+//
+//  BlockWithoutUpdating()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Commented-out routine, looks like it might have once been a starting point at a workaround
+///	  for some of the PG2 load problems on Vista?
+/// </summary>
+//
 //void BlockWithoutUpdating(HWND hwnd)
 //{
 	//pgfilter *f = g_filter.get();
@@ -119,13 +174,4 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) {
 	//UINT msg=RegisterWindowMessage(_T("PeerGuardian2LoadLists"));
 	//SendMessage(HWND_BROADCAST, WM_PG2_LOADLISTS, 0, 0);
 
-	
-		
-
-		
-
-		
-	
-
-
-//}
+//} // End of BlockWithoutUpdating()

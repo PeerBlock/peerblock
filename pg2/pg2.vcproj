@@ -947,13 +947,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug (Vista)|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\preseturls.cpp"
@@ -1038,6 +1031,10 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\tracelog.cpp"
+				>
 			</File>
 			<File
 				RelativePath=".\updatelists.cpp"
@@ -1187,6 +1184,10 @@
 			</File>
 			<File
 				RelativePath=".\threadx.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tracelog.h"
 				>
 			</File>
 			<File

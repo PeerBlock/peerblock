@@ -27,6 +27,17 @@
 using namespace std;
 
 namespace p2p {
+
+	//============================================================================================
+	//
+	//  _load_p2b()
+	//
+	//    - Called by list::load()
+	//
+	/// <summary>
+	///   Reads our list in from a binary "p2b" file.
+	/// </summary>
+	//
 	void list::_load_p2b(istream &stream) {
 		char buf[7];
 		unsigned char version;
@@ -103,8 +114,21 @@ namespace p2p {
 			}
 		}
 		else throw p2p_error("unknown p2b version");
-	}
 
+	} // End of _load_p2b()
+
+
+
+	//============================================================================================
+	//
+	//  _save_p2b()
+	//
+	//    - Called by list::save()
+	//
+	/// <summary>
+	///   Writes our list out to binary "p2b" file.
+	/// </summary>
+	//
 	void list::_save_p2b(ostream &stream) const {
 		stream.write("\xFF\xFF\xFF\xFFP2B\x03", 8);
 
@@ -114,6 +138,7 @@ namespace p2p {
 		{
 			vector<wstring> namevec;
 
+			// PERF:  this loop takes AWHILE to run (~20 sec in debug-mode)
 			for(list::const_iterator iter=this->begin(); iter!=this->end(); iter++)
 				if(names.find(iter->name)==names.end()) {
 					names[iter->name]=i++;
@@ -123,6 +148,7 @@ namespace p2p {
 			i=htonl(i);
 			stream.write((const char*)&i, sizeof(i));
 
+			// PERF:  this loop takes a few seconds to run (~5 in debug-mode)
 			for(vector<wstring>::size_type j=0; j<namevec.size(); j++) {
 				string name;
 				wchar_utf8(namevec[j], name);
@@ -133,6 +159,7 @@ namespace p2p {
 		i=htonl((unsigned int)this->size());
 		stream.write((const char*)&i, sizeof(i));
 
+		// PERF:  this loop doesn't take much time (one or two seconds in debug-mode)
 		for(list::const_iterator iter=this->begin(); iter!=this->end(); iter++) {
 			unsigned int name=htonl(names[iter->name]);
 			unsigned int start=htonl(iter->start.ipl);
@@ -142,5 +169,7 @@ namespace p2p {
 			stream.write((const char*)&start, sizeof(start));
 			stream.write((const char*)&end, sizeof(end));
 		}
-	}
-}
+
+	} // End of _save_p2b()
+
+} // End of namespace p2p

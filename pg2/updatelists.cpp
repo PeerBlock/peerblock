@@ -27,6 +27,9 @@
 #include "resource.h"
 using namespace std;
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
 #define DO_STRINGIFY(x) #x
 #define STRINGIFY(x) DO_STRINGIFY(x)
 
@@ -87,7 +90,22 @@ private:
 	HWND hwnd, list, progress;
 	bool autoupdate;
 
+
+
+	//============================================================================================
+	//
+	//  preconnect_func()
+	//
+	//    - Called by list::save()
+	//
+	/// <summary>
+	///   Writes our list out to binary "p2b" file.
+	/// </summary>
+	//
 	static void preconnect_func(void *clientp, sockaddr *addr, int addrlen) {
+
+		TRACEI("[UpdateThread] [preconnect_func]  > Entering routine.");
+
 		if(addrlen >= sizeof(sockaddr_in) && addr->sa_family == AF_INET) {
 			unsigned int ip = htonl(((sockaddr_in*)addr)->sin_addr.s_addr);
 
@@ -112,7 +130,12 @@ private:
 				}
 			}
 		}
-	}
+
+		TRACEI("[UpdateThread] [preconnect_func]  < Leaving routine.");
+
+	} // End of preconnect_func()
+
+
 
 	static size_t append_func(void *data, size_t size, size_t count, void *arg) {
 		size_t ret=size*count;

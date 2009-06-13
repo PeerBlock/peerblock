@@ -26,6 +26,9 @@
 #include "stdafx.h"
 using namespace std;
 
+//#include "../pg2/tracelog.h"
+//extern TraceLog g_tlog;
+
 namespace p2p {
 
 void list::insert(const range &r) {
@@ -193,18 +196,38 @@ void list::load(const path_type &file, file_type type) {
 	this->load(fs, type);
 }
 
+
+
+//================================================================================================
+//
+//  save()
+//
+//    - Called by GenCacheFuncs Process()
+//
+/// <summary>
+///   Saves our list out to-file..
+/// </summary>
+//
 void list::save(ostream_type &stream, file_type type) const {
+//	TRACEI("[list] [save]  > Entering routine.");
 	switch(type) {
 		case file_p2p:
+//			TRACEI("[list] [save]    saving p2p file.");
 			this->_save_p2p(stream);
 			break;
 		case file_p2b:
+//			TRACEI("[list] [save]    saving p2b file.");
 			this->_save_p2b(stream);
 			break;
 		default:
+//			TRACEE("[list] [save]    ERROR: invalid type of file.");
 			throw invalid_argument("invalid type");
 	}
-}
+//	TRACEI("[list] [save]  < Leaving routine.");
+
+} // End of save()
+
+
 
 void list::save(const path_type &file, file_type type) const {
 	ofstream fs(file.c_str(), ofstream::binary);

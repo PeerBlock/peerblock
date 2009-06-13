@@ -27,6 +27,9 @@
 #include "resource.h"
 using namespace std;
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
 static boost::shared_ptr<thread> g_thread;
 
 class LoadingThread {
@@ -40,6 +43,7 @@ public:
 		: hwnd(hwnd), progress(progress), data(data),aborted(false) {}
 
 	void operator()() {
+		TRACEI("[LoadingThread] [operator()]  > Entering routine.");
 		SendMessage(progress, PBM_SETRANGE32, 0, 1000);
 
 		INT_PTR ret=0;
@@ -52,6 +56,7 @@ public:
 					ret=1;
 					break;
 				}
+				TRACEI("[LoadingThread] [operator()]    updating progress");
 				SendMessage(progress, PBM_SETPOS, (WPARAM)(int)(i/total*1000.0), 0);
 			}
 		}
@@ -69,10 +74,12 @@ public:
 #ifdef _WIN32_WINNT
 		AnimateWindow(hwnd, 200, AW_BLEND|AW_HIDE);
 #endif
+		TRACEI("[LoadingThread] [operator()]  < Leaving routine.");
 		EndDialog(hwnd, ret);
 	}
 
 	bool Abort() {
+		TRACEW("[LoadingThread] [Abort]  Processing Abort!");
 		if(!aborted) aborted=(data.AbortFunc && data.AbortFunc());
 		return aborted;
 	}
@@ -90,17 +97,38 @@ static void Loading_OnDestroy(HWND hwnd) {
 }
 
 static BOOL Loading_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+
+	TRACEI("[Loading_OnInitDialog]  > Entering routine.");
+
 	LoadingData &data=*(LoadingData*)lParam;
 
 	if(data.Title) SetWindowText(hwnd, data.Title);
 
+	TRACEI("[Loading_OnInitDialog]    spawning thread to handle loading");
 	g_funcs=boost::shared_ptr<LoadingThread>(new LoadingThread(hwnd, GetDlgItem(hwnd, IDC_PROGRESS), data));
 	g_thread=boost::shared_ptr<thread>(new thread(boost::ref(*g_funcs)));
 
+	TRACEI("[Loading_OnInitDialog]  < Leaving routine.");
 	return TRUE;
 }
 
 INT_PTR CALLBACK Loading_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+//	TRACEI("[Loading_DlgProc]  Entering routine.");
+
+	if (msg == WM_CLOSE)
+	{
+		TRACEI("[Loading_DlgProc]    msg: WM_CLOSE.");
+	}
+	else if (msg == WM_DESTROY)
+	{
+		TRACEI("[Loading_DlgProc]    msg: WM_DESTROY.");
+	}
+	else if (msg == WM_INITDIALOG)
+	{
+		TRACEI("[Loading_DlgProc]    msg: WM_INITDIALOG.");
+	}
+
 	try {
 		switch(msg) {
 			HANDLE_MSG(hwnd, WM_CLOSE, Loading_OnClose);

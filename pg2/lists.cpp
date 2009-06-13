@@ -27,6 +27,9 @@
 #include "resource.h"
 using namespace std;
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
 p2p::list g_tempallow, g_tempblock;
 
 enum FileType { File_Unknown, File_Zip, File_Gzip, File_7zip };
@@ -254,7 +257,14 @@ public:
 		: hwnd(hwnd),block(work),stat(false),dyn(false),opt(true),save(true),needupdate(false),i(0) {}
 
 	int Init() {
+		TRACEI("[GenCacheFuncs] [Init]  > Entering routine.");
 		int len=2;
+
+		TCHAR chBuf[128];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[GenCacheFuncs] [Init]    num static lists: [%d]"), g_config.StaticLists.size());
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[GenCacheFuncs] [Init]    num dynamic lists: [%d]"), g_config.DynamicLists.size());
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
 
 		if(g_config.StaticLists.size()>0) {
 			stat=true;
@@ -268,38 +278,71 @@ public:
 				if(g_config.DynamicLists[i].Enabled) len++;
 		}
 
+		TRACEI("[GenCacheFuncs] [Init]  < Leaving routine.");
 		return len;
 	}
 
+
+
+	//============================================================================================
+	//
+	//  Process()
+	//
+	//    - Called by ???
+	//
+	/// <summary>
+	///   Handles the (re)generation of the cache.
+	/// </summary>
+	//
 	bool Process() {
+
+		TRACEI("[GenCacheFuncs] [Process]  > Entering routine.");
 		if(stat) {
+			TRACEI("[GenCacheFuncs] [Process]    static list");
 			if(g_config.StaticLists[i].Enabled) {
+				TRACEI("[GenCacheFuncs] [Process]    list is enabled");
 				p2p::list &l=(g_config.StaticLists[i].Type==List::Allow)?allow:block;
 
 				try {
+					TRACEI("[GenCacheFuncs] [Process]    loading list");
 					if(!LoadList(g_config.StaticLists[i].File, l)) {
+						TRACEE("[GenCacheFuncs] [Process]  ERROR loading list!");
 						tstring str=boost::str(tformat(LoadString(IDS_FILENOTFOUNDTEXT))%g_config.StaticLists[i].File.file_str());
 						MessageBox(hwnd, str, IDS_FILENOTFOUND, MB_ICONWARNING|MB_OK);
 					}
+					TRACEI("[GenCacheFuncs] [Process]    list loaded");
 				}
 				catch(exception &ex) {
+					TRACEE("[GenCacheFuncs] [Process]    EXCEPTION caught while loading list!");
 					ListProblem(hwnd, g_config.StaticLists[i].File, ex);
 
 					if(!(stat=(++i < g_config.StaticLists.size()))) i=0;
 					return true;
 				}
 			}
-			if(!(stat=(++i < g_config.StaticLists.size()))) i=0;
+			if(!(stat=(++i < g_config.StaticLists.size()))) 
+			{
+				TRACEI("[GenCacheFuncs] [Process]    stat funkiness");
+				i=0;
+			}
 		}
 		else if(dyn) {
+			TRACEI("[GenCacheFuncs] [Process]    dynamic list");
 			if(g_config.DynamicLists[i].Enabled) {
+				TRACEI("[GenCacheFuncs] [Process]    list is enabled");
 				p2p::list &l=(g_config.DynamicLists[i].Type==List::Allow)?allow:block;
 
 				try {
+					TRACEI("[GenCacheFuncs] [Process]    loading list");
 					if(!LoadList(g_config.DynamicLists[i].File(), l))
+					{
+						TRACEI("[GenCacheFuncs] [Process]    failure to load list; needs update");
 						needupdate=true;
+					}
+					TRACEI("[GenCacheFuncs] [Process]    list loaded");
 				}
 				catch(exception &ex) {
+					TRACEE("[GenCacheFuncs] [Process]    EXCEPTION caught while loading list!");
 					ListProblem(hwnd, g_config.DynamicLists[i].Url, ex);
 
 					if(!(dyn=(++i < g_config.DynamicLists.size()))) i=0;
@@ -309,6 +352,7 @@ public:
 			if(!(dyn=(++i < g_config.DynamicLists.size()))) i=0;
 		}
 		else if(opt) {
+			TRACEI("[GenCacheFuncs] [Process]    opt");
 			if(block.size()>0) {
 				if(allow.size()>0) block.erase(allow);
 				if(block.size()>0) block.optimize();
@@ -316,15 +360,22 @@ public:
 			opt=false;
 		}
 		else if(save) {
+			TRACEI("[GenCacheFuncs] [Process]    save");
 			block.save(TSTRING_MBS((path::base_dir()/_T("cache.p2b")).c_str()), p2p::list::file_p2b);
 			save=false;
 		}
 		else {	
+			TRACEI("[GenCacheFuncs] [Process]    default");
 			if(needupdate && hwnd)
+			{
+				TRACEI("[GenCacheFuncs] [Process]    displaying needs-update window");
 				MessageBox(hwnd, IDS_NEEDUPDATETEXT, IDS_NEEDUPDATE, MB_ICONWARNING|MB_OK);
+			}
+			TRACEI("[GenCacheFuncs] [Process]  < Leaving routine.");
 			return false;
 		}
 
+		TRACEI("[GenCacheFuncs] [Process]  < Leaving routine.");
 		return true;
 	}
 };
@@ -379,12 +430,22 @@ static bool IsCacheValid() {
 }
 
 static bool GenCache(HWND hwnd, p2p::list &work) {
+
+	TRACEI("[GenCache]  > Entering routine.");
+
 	if(!IsCacheValid()) {
+
+		TRACEI("[GenCache]    cache not valid");
+
 		GenCacheFuncs funcs(hwnd, work);
 
 		if(hwnd) {
+
+			TRACEI("[GenCache]    no window, creating dialog box");
+
 			tstring title=LoadString(IDS_GENCACHE);
 
+			// setting up data to be used by Loading Thread
 			LoadingData data;
 			data.Title=title.c_str();
 			data.InitFunc=boost::bind(&GenCacheFuncs::Init, &funcs);
@@ -393,22 +454,36 @@ static bool GenCache(HWND hwnd, p2p::list &work) {
 			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LOADING), hwnd, Loading_DlgProc, (LPARAM)&data);
 		}
 		else {
+			TRACEI("[GenCache]    window found, spawning thread");
 			funcs.Init();
 			while(funcs.Process());
 		}
 
+		TRACEI("[GenCache]  < Leaving routine (true).");
 		return true;
 	}
-	else return false;
+	else 
+	{
+		TRACEI("[GenCache]  < Leaving routine (false).");
+		return false;
+	}
 }
 
 void LoadLists(HWND parent) {
+
+	TRACEI("[LoadLists]  > Entering routine.");
+
 	p2p::list block;
 
+	TRACEI("[LoadLists]    generating cache");
 	//night_stalker_z: Load lists always
 	if(!GenCache(parent, block))
+	{
+		TRACEI("[LoadLists]    loading lists");
 		LoadList(_T("cache.p2b"), block);
+	}
 
+	TRACEI("[LoadLists]    performing random setup");
 	if(block.size()>0) {
 		p2p::list allow;
 
@@ -426,9 +501,13 @@ void LoadLists(HWND parent) {
 		if(block.size()>0) block.optimize();
 	}
 
+	TRACEI("[LoadLists]    setting up filter-driver ranges");
 	g_filter->setranges(block, true);
+	TRACEI("[LoadLists]    driver ranges set");
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_RANGES, 0, (UINT)g_filter->blockcount());
+
+	TRACEI("[LoadLists]  < Exiting routine.");
 }
 
 path DynamicList::File() const {

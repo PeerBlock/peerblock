@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "tracelog.h"
 using namespace std;
 using namespace sqlite3x;
 
@@ -40,6 +41,8 @@ bool g_trayactive;
 NOTIFYICONDATA g_nid={0};
 static bool g_trayblink=false;
 DWORD g_blinkstart=0;
+
+extern TraceLog g_tlog;
 
 HWND g_main;
 boost::shared_ptr<pgfilter> g_filter;
@@ -179,22 +182,33 @@ static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_main=hwnd;
 
+	TRACEI("[Main_OnInitDialog]  > Entering routine.");
+
+	TRACEI("[Main_OnInitDialog]    loading config");
 	bool firsttime=false;
 	try {
 		if(!g_config.Load()) {
+			TRACEI("[Main_OnInitDialog]    displaying first-time wizard");
 			DisplayStartupWizard(hwnd);
 			g_config.Save();
 			firsttime=true;
 		}
+		else
+		{
+			TRACES("[Main_OnInitDialog]    Config loaded.");
+		}
 	}
 	catch(exception &ex) {
+		TRACEC("[Main_OnInitDialog]    Exception trying to load config!");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		DestroyWindow(hwnd);
 		return FALSE;
 	}
 
+	TRACEI("[Main_OnInitDialog]    resetting g_filter");
 	try {
 		g_filter.reset(new pgfilter());
+		TRACES("[Main_OnInitDialog]    g_filter reset.");
 	}
 	catch(win32_error &ex) {
 		const tstring text=boost::str(tformat(LoadString(IDS_DRIVERERRWIN32TEXT)) % ex.func() % ex.error() % ex.what());
@@ -211,6 +225,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		return FALSE;
 	}
 
+	TRACEI("[Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
 	for(size_t i=0; i<g_tabcount; i++) {
@@ -226,16 +241,24 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	}
 
 	if(firsttime) {
+		TRACEI("[Main_OnInitDialog]    updating lists for firsttime");
 		UpdateLists(g_tabs[0].Tab);
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
 
+	TRACEI("[Main_OnInitDialog]    setting block");
 	g_filter->setblock(g_config.Block);
+
+	TRACEI("[Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
+
+	TRACEI("[Main_OnInitDialog]    loading lists");
 	LoadLists(hwnd);
+	TRACES("[Main_OnInitDialog]    Lists loaded.");
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, g_config.Block?TRUE:FALSE);
 
+	TRACEI("[Main_OnInitDialog]    doing other stuff");
 	g_nid.cbSize=sizeof(NOTIFYICONDATA);
 	g_nid.hWnd=hwnd;
 	g_nid.uID=TRAY_ID;
@@ -516,7 +539,16 @@ static void Main_OnVisible(HWND hwnd, BOOL visible) {
 }
 
 INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+	TCHAR chBuf[128];
+	if (msg != 289)
+	{
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Main_DlgProc]  Received MSG: [%d]"), msg);
+		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
+	}
+
 	try {
+
 		switch(msg) {
 			HANDLE_MSG(hwnd, WM_CLOSE, Main_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, Main_OnCommand);
