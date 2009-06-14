@@ -104,7 +104,7 @@ private:
 	//
 	static void preconnect_func(void *clientp, sockaddr *addr, int addrlen) {
 
-		TRACEI("[UpdateThread] [preconnect_func]  > Entering routine.");
+		TRACEV("[UpdateThread] [preconnect_func]  > Entering routine.");
 
 		if(addrlen >= sizeof(sockaddr_in) && addr->sa_family == AF_INET) {
 			unsigned int ip = htonl(((sockaddr_in*)addr)->sin_addr.s_addr);
@@ -131,7 +131,7 @@ private:
 			}
 		}
 
-		TRACEI("[UpdateThread] [preconnect_func]  < Leaving routine.");
+		TRACEV("[UpdateThread] [preconnect_func]  < Leaving routine.");
 
 	} // End of preconnect_func()
 
@@ -146,6 +146,9 @@ private:
 	}
 
 	static int progress_func(void *arg, double total, double pos, double, double) {
+
+		TRACED("[UpdateThread] [progress_func]  > Entering routine.");
+
 		HandleData *data=(HandleData*)arg;
 
 		if(total>0.0) {
@@ -170,21 +173,34 @@ private:
 			ListView_SetItem(data->ut->list, &lvi);
 		}
 
+		TRACED("[UpdateThread] [progress_func]  < Leaving routine.");
+
 		return 0;
 	}
 
 	void UpdateProgress() {
+
+		TRACED("[UpdateThread] [UpdateProgress]  > Entering routine.");
+
 		double total=this->progressmod;
 
 		for(vector<HandleData*>::size_type i=0; i<hdata.size(); i++)
 			total+=hdata[i]->progress;
 		
 		total=min(total, maxprogress);
-
 		SendMessage(progress, PBM_SETPOS, (WPARAM)(int)total, 0);
+
+		TRACED("[UpdateThread] [UpdateProgress]  < Leaving routine.");
 	}
 
 	static DWORD GetFileSize(LPCTSTR file) {
+
+		TRACEV("[UpdateThread] [GetFileSize]  > Entering routine.");
+
+		TCHAR chBuf[128];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [GetFileSize]    file: [%s]"), file);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
+
 		HANDLE fp=CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 		if(fp==INVALID_HANDLE_VALUE) throw win32_error("CreateFile");
 
@@ -193,6 +209,7 @@ private:
 
 		CloseHandle(fp);
 
+		TRACEV("[UpdateThread] [GetFileSize]  < Leaving routine.");
 		return ret;
 	}
 
@@ -210,13 +227,18 @@ public:
 		}
 	}
 
-	int _Process() {
+
+
+	int _Process() 
+	{
+		TRACEV("[UpdateThread] [_Process]  > Entering routine.");
 		unsigned short total=0;
 		bool updatepg=false;
 		bool updatelists=false;
 
 		if(g_config.UpdatePeerGuardian) total+=1;
-		if(g_config.UpdateLists) {
+		if(g_config.UpdateLists) 
+		{
 			for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) {
 				if(g_config.DynamicLists[i].Enabled) {
 					total++;
@@ -225,7 +247,8 @@ public:
 			}
 		}
 
-		if(total>0) {
+		if(total>0) 
+		{
 			const string proxy=TSTRING_UTF8(g_config.UpdateProxy);
 
 			string build;
@@ -234,7 +257,8 @@ public:
 			LVITEM lvi={0};
 			lvi.mask=LVIF_TEXT;
 
-			if(progress) {
+			if(progress) 
+			{
 				SendMessage(progress, PBM_SETPOS, 0, 0);
 				SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, total*100));
 				maxprogress=total*100.0;
@@ -247,11 +271,15 @@ public:
 			///////////////////////////////////////////////
 			/// Update PeerGuardian
 
-			if(g_config.UpdatePeerGuardian) {
+			if(g_config.UpdatePeerGuardian) 
+			{
+				TRACEI("[UpdateThread] [_Process]    updating peerguardian");
 				HandleData *data=new HandleData(this);
 
 				CURL *site=curl_easy_init();
-				if(site) {
+				if(site) 
+				{
+					TRACEV("[UpdateThread] [_Process]    curl returned site, now setting options");
 					curl_easy_setopt(site, CURLOPT_PRECONNECT, preconnect_func);
 					curl_easy_setopt(site, CURLOPT_PRECONNECTDATA, &allowed);
 					curl_easy_setopt(site, CURLOPT_FOLLOWLOCATION, 1);
@@ -265,7 +293,8 @@ public:
 					curl_easy_setopt(site, CURLOPT_FAILONERROR, 1);
 					curl_easy_setopt(site, CURLOPT_PRIVATE, data);
 					curl_easy_setopt(site, CURLOPT_ERRORBUFFER, data->errbuf);
-					if(proxy.length()>0) {
+					if(proxy.length()>0) 
+					{
 						curl_easy_setopt(site, CURLOPT_PROXY, proxy.c_str());
 						curl_easy_setopt(site, CURLOPT_PROXYTYPE, g_config.UpdateProxyType);
 					}
@@ -273,13 +302,18 @@ public:
 					hdata.push_back(data);
 					handles.push_back(site);
 					curl_multi_add_handle(multi, site);
+					TRACEV("[UpdateThread] [_Process]    added site-handle to curl handle-list");
 				}
-				else {
+				else 
+				{
+					TRACEV("[UpdateThread] [_Process]    curl did not return site");
 					delete data;
 					data=NULL;
 				}
 
-				if(list) {
+				if(list) 
+				{
+					TRACEV("[UpdateThread] [_Process]    list found");
 					tstring text=LoadString(IDS_UPDATEPG);
 
 					lvi.pszText=(LPTSTR)text.c_str();
@@ -299,18 +333,31 @@ public:
 					lvi.iItem++;
 				}
 			}
+			else
+			{
+				TRACEI("[UpdateThread] [_Process]    not updating peerguardian, as per config");
+			}
 
 			///////////////////////////////////////////////
 			/// Update dynamic lists
 
-			if(g_config.UpdateLists && updatelists) {
+			if(g_config.UpdateLists && updatelists) 
+			{
+				TRACEI("[UpdateThread] [_Process]    updating dynamic lists");
 				time_t curtime=time(NULL);
 
-				for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) {
+				for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) 
+				{
 					if(!g_config.DynamicLists[i].Enabled) continue;
 
 					const path file=g_config.DynamicLists[i].File();
-					if(curtime-g_config.DynamicLists[i].LastUpdate >= 43200 || !path::exists(file) || GetFileSize(file.c_str())==0) {
+
+					TCHAR chBuf[256];
+					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    updating file: [%s]"), file);
+					g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
+
+					if(curtime-g_config.DynamicLists[i].LastUpdate >= 43200 || !path::exists(file) || GetFileSize(file.c_str())==0) 
+					{
 						HandleData *data=new HandleData(this);
 
 						data->list=&g_config.DynamicLists[i];
@@ -321,9 +368,11 @@ public:
 
 						data->fp=_tfopen(data->tempfile.c_str(), _T("wbT"));
 
-						if(data->fp) {
+						if(data->fp) 
+						{
 							CURL *site=curl_easy_init();
-							if(site) {
+							if(site) 
+							{
 								curl_easy_setopt(site, CURLOPT_PRECONNECT, preconnect_func);
 								curl_easy_setopt(site, CURLOPT_PRECONNECTDATA, &allowed);
 								curl_easy_setopt(site, CURLOPT_FOLLOWLOCATION, 1);
@@ -336,12 +385,14 @@ public:
 								curl_easy_setopt(site, CURLOPT_WRITEDATA, data->fp);
 								curl_easy_setopt(site, CURLOPT_PRIVATE, data);
 								curl_easy_setopt(site, CURLOPT_ERRORBUFFER, data->errbuf);
-								if(proxy.length()>0) {
+								if(proxy.length()>0) 
+								{
 									curl_easy_setopt(site, CURLOPT_PROXY, proxy.c_str());
 									curl_easy_setopt(site, CURLOPT_PROXYTYPE, g_config.UpdateProxyType);
 								}
 
-								if(g_config.DynamicLists[i].LastUpdate && path::exists(g_config.DynamicLists[i].File())) {
+								if(g_config.DynamicLists[i].LastUpdate && path::exists(g_config.DynamicLists[i].File())) 
+								{
 									curl_easy_setopt(site, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
 									curl_easy_setopt(site, CURLOPT_TIMEVALUE, g_config.DynamicLists[i].LastUpdate);
 								}
@@ -350,14 +401,19 @@ public:
 								hdata.push_back(data);
 								handles.push_back(site);
 								curl_multi_add_handle(multi, site);
+								TRACEV("[UpdateThread] [_Process]    added dynamic-list site to curl handle-list");
 							}
-							else {
+							else 
+							{
+								TRACEW("[UpdateThread] [_Process]    *  Dynamic-list site not found by curl!");
 								fclose(data->fp);
 								{
-									try {
+									try 
+									{
 										path::remove(data->tempfile);
 									}
-									catch(exception &ex) {
+									catch(exception &ex) 
+									{
 										ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 									}
 								}
@@ -367,14 +423,19 @@ public:
 								g_config.DynamicLists[i].FailedUpdate=true;
 							}
 						}
-						else {
+						else 
+						{
+							TRACEW("[UpdateThread] [_Process]    *  Couldn't open data->fp!");
 							delete data;
 							data=NULL;
 
 							g_config.DynamicLists[i].FailedUpdate=true;
 						}
 
-						if(list) {
+						if(list) 
+						{
+							TRACEI("[UpdateThread] [_Process]    found list, adding stuff to list-view");
+
 							lvi.iSubItem=0;
 							lvi.pszText=(LPTSTR)g_config.DynamicLists[i].Description.c_str();
 							ListView_InsertItem(list, &lvi);
@@ -394,10 +455,15 @@ public:
 							lvi.iItem++;
 						}
 					}
-					else {
+					else 
+					{
+						TRACEI("[UpdateThread] [_Process]    not updating list; setting progress-bar to 100");
 						this->progressmod+=100.0;
 
-						if(list) {
+						if(list) 
+						{
+							TRACEV("[UpdateThread] [_Process]    setting list-items, \"no update needed\"");
+
 							lvi.iSubItem=0;
 							lvi.pszText=(LPTSTR)g_config.DynamicLists[i].Description.c_str();
 							ListView_InsertItem(list, &lvi);
@@ -414,14 +480,20 @@ public:
 							lvi.iItem++;
 						}
 
+						TRACEV("[UpdateThread] [_Process]    finished updating list");
 						g_config.DynamicLists[i].FailedUpdate=false;
 					}
 				}
 			}
+			else
+			{
+				TRACEI("[UpdateThread] [_Process]    not updating dynamic list(s)");
+			}
 
 			if(progress) this->UpdateProgress();
 
-			if(handles.size()>0) {
+			if(handles.size()>0) 
+			{
 				///////////////////////////////////////////////
 				/// Perform Updates
 
@@ -429,20 +501,29 @@ public:
 				fd_set read, write, error;
 
 				int running;
+				TRACEI("[UpdateThread] [_Process]    performing updates");
 				while(curl_multi_perform(multi, &running)==CURLM_CALL_MULTI_PERFORM);
 
-				while(!aborted && running) {
+				TRACEV("[UpdateThread] [_Process]    called initial curl_multi_perform");
+				while(!aborted && running) 
+				{
 					FD_ZERO(&read); FD_ZERO(&write); FD_ZERO(&error);
 					curl_multi_fdset(multi, &read, &write, &error, &max);
 
 					timeval tv={2,0};
 
-					if(select(FD_SETSIZE, &read, &write, &error, &tv)!=-1) {
+					if(select(FD_SETSIZE, &read, &write, &error, &tv)!=-1) 
+					{
 						while(curl_multi_perform(multi, &running)==CURLM_CALL_MULTI_PERFORM);
+						TRACED("[UpdateThread] [_Process]    called curl_multi_perform");
 
 						int msgs;
-						while(CURLMsg *msg=curl_multi_info_read(multi, &msgs)) {
-							if(msg->msg==CURLMSG_DONE) {
+						while(CURLMsg *msg=curl_multi_info_read(multi, &msgs)) 
+						{
+							TRACEV("[UpdateThread] [_Process]    called curl_multi_info_read");
+							if(msg->msg==CURLMSG_DONE) 
+							{
+								TRACEV("[UpdateThread] [_Process]    CURLMSG_DONE");
 								HandleData *data;
 								curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &data);
 
@@ -450,21 +531,34 @@ public:
 								data->progress=100.0;
 								if(this->progress) this->UpdateProgress();
 
-								if(data->fp) {
+								if(data->fp) 
+								{
 									fclose(data->fp);
 									data->fp=NULL;
 								}
 
-								if(msg->data.result==CURLE_OK) {
+								if(msg->data.result==CURLE_OK) 
+								{
+									TRACEV("[UpdateThread] [_Process]    CURLE_OK");
 									long code;
+									TCHAR chBuf[256];
 									curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &code);
+									_stprintf_s(chBuf, sizeof(chBuf)/2, 
+										_T("[UpdateThread] [_Process]    response code: [%ld]"), code);
+									g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
 
-									if(code==200) {
-										if(data->list) {
-											try {
+									if(code==200) 
+									{
+										TRACEV("[UpdateThread] [_Process]    code==200");
+										if(data->list) 
+										{
+											try 
+											{
+												TRACEV("[UpdateThread] [_Process]    moving tempfile to real file location");
 												path::move(data->tempfile, data->list->File(), true);
 											}
-											catch(exception &ex) {
+											catch(exception &ex) 
+											{
 												ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 												data->list->FailedUpdate=true;
 											}
@@ -474,7 +568,9 @@ public:
 											time(&data->list->LastUpdate);
 											changes++;
 
-											if(list) {
+											if(list) 
+											{
+												TRACEV("[UpdateThread] [_Process]    updating list entry to IDS_FINISHED");
 												const tstring str=LoadString(IDS_FINISHED);
 
 												lvi.iItem=data->index;
@@ -483,11 +579,16 @@ public:
 												ListView_SetItem(list, &lvi);
 											}
 										}
-										else {
-											try {
+										else 
+										{
+											TRACEV("[UpdateThread] [_Process]    list not found");
+											try 
+											{
 												unsigned int b=boost::lexical_cast<unsigned int>(build);
 
-												if(list) {
+												if(list) 
+												{
+													TRACEV("[UpdateThread] [_Process]    now found list? update available?");
 													const tstring str=LoadString((b>g_build)?IDS_UPDATEAVAILABLE:IDS_NONEAVAILABLE);
 
 													lvi.iItem=data->index;
@@ -495,20 +596,32 @@ public:
 													lvi.pszText=(LPTSTR)str.c_str();
 													ListView_SetItem(list, &lvi);
 												}
-												else updatepg=(b>g_build);
+												else 
+												{
+													TRACEV("[UpdateThread] [_Process]    still no list");
+													updatepg=(b>g_build);
+												}
 											}
-											catch(...) {
+											catch(...) 
+											{
+												TRACEW("[UpdateThread] [_Process]    *  caught exception; ignoring");
 												// keep going...
 											}
 										}
 									}
-									else if(code==304) {
-										if(data->list) {
+									else if(code==304) 
+									{
+										TRACEV("[UpdateThread] [_Process]    code==304");
+										if(data->list) 
+										{
+											TRACEV("[UpdateThread] [_Process]    found data->list");
 											time(&data->list->LastUpdate);
 											data->list->FailedUpdate=false;
 										}
 
-										if(list) {
+										if(list) 
+										{
+											TRACEV("[UpdateThread] [_Process]    found data->list; NOUPDATEAVAIL");
 											const tstring str=LoadString(IDS_NOUPDATEAVAIL);
 
 											lvi.iItem=data->index;
@@ -517,10 +630,14 @@ public:
 											ListView_SetItem(list, &lvi);
 										}
 									}
-									else if(code>=300) {
+									else if(code>=300) 
+									{
+										TRACEV("[UpdateThread] [_Process]    code==300");
 										if(data->list) data->list->FailedUpdate=true;
 
-										if(list) {
+										if(list) 
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; ERRORCONTACTING");
 											const tstring str=LoadString(IDS_ERRORCONTACTING);
 
 											lvi.iItem=data->index;
@@ -530,15 +647,24 @@ public:
 										}
 									}
 								}
-								else if(data->list) {
+								else if(data->list) 
+								{
+									TRACEW("[UpdateThread] [_Process]    *  failed update");
 									data->list->FailedUpdate=true;
 
 									if(list) {
 										tstring str;
 										
 										if(data->errbuf[0])
+										{
+											TRACEI("[UpdateThread] [_Process]    ERROR CONTACTING WHY");
 											str=boost::str(tformat(LoadString(IDS_ERRORCONTACTINGWHY))%data->errbuf);
-										else str=LoadString(IDS_ERRORCONTACTING);
+										}
+										else 
+										{
+											TRACEI("[UpdateThread] [_Process]    ERROR CONTACTING");
+											str=LoadString(IDS_ERRORCONTACTING);
+										}
 
 										lvi.iItem=data->index;
 										lvi.iSubItem=2;
@@ -547,11 +673,15 @@ public:
 									}
 								}
 
-								if(data->list) {
-									try {
+								if(data->list) 
+								{
+									TRACEI("[UpdateThread] [_Process]    removing tempfile");
+									try 
+									{
 										if(path::exists(data->tempfile)) path::remove(data->tempfile);
 									}
-									catch(exception &ex) {
+									catch(exception &ex) 
+									{
 										ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 									}
 								}
@@ -563,6 +693,7 @@ public:
 				///////////////////////////////////////////////
 				/// Cleanup
 
+				TRACEI("[UpdateThread] [_Process]    performing cleanup");
 				for(vector<CURL*>::size_type i=0; i<handles.size(); i++) {
 					curl_multi_remove_handle(multi, handles[i]);
 
@@ -570,6 +701,7 @@ public:
 					curl_easy_getinfo(handles[i], CURLINFO_PRIVATE, &data);
 
 					if(list && aborted && !data->finished) {
+						TRACEW("[UpdateThread] [_Process]    processing aborted before finished");
 						const tstring str=LoadString(IDS_ABORTED);
 						lvi.iItem=data->index;
 						lvi.iSubItem=2;
@@ -592,6 +724,8 @@ public:
 
 					curl_easy_cleanup(handles[i]);
 				}
+
+				TRACES("[UpdateThread] [_Process]    Done updating.");
 			}
 
 			if(progress) SendMessage(progress, PBM_SETPOS, (int)(total*100), 0);
@@ -600,7 +734,10 @@ public:
 			curl_global_cleanup();
 
 			if(!aborted && updatepg && MessageBox(hwnd, IDS_PGUPDATETEXT, IDS_PGUPDATE, MB_ICONQUESTION|MB_YESNO)==IDYES)
+			{
+				TRACEI("[UpdateThread] [_Process]    showing homepage");
 				ShellExecute(NULL, NULL, g_homepage, NULL, NULL, SW_SHOWNORMAL);
+			}
 		}
 
 		HWND abort=GetDlgItem(hwnd, IDC_ABORT);
@@ -612,12 +749,16 @@ public:
 		EnableWindow(abort, FALSE);
 		EnableWindow(close, TRUE);
 
-		if(IsWindowVisible(hwnd)) {
+		if(IsWindowVisible(hwnd)) 
+		{
+			TRACEV("[UpdateThread] [_Process]    window visible");
 			if(g_config.UpdateCountdown==0) {
+				TRACEV("[UpdateThread] [_Process]    UpdateCountdown == 0");
 				if(g_updater==(HWND)-1) EndDialog(hwnd, changes);
 				else DestroyWindow(hwnd);
 			}
 			if(g_config.UpdateCountdown>0) {
+				TRACEV("[UpdateThread] [_Process]    UpdateCountdown > 0, setting timer");
 				g_countdown=(unsigned short)g_config.UpdateCountdown;
 				tstring s=boost::str(tformat(LoadString(IDS_CLOSEX))%g_countdown);
 				SetDlgItemText(hwnd, IDC_CLOSE, s.c_str());
@@ -628,8 +769,12 @@ public:
 		else if(g_updater==(HWND)-1) EndDialog(hwnd, changes);
 		else DestroyWindow(hwnd);
 
+		TRACEV("[UpdateThread] [GetFileSize]  < Leaving routine.");
 		return changes;
-	}
+
+	} // End of _Process()
+
+
 
 	int Process() {
 		try {
