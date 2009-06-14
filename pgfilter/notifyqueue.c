@@ -26,8 +26,8 @@
 
 #pragma warning(push)
 #pragma warning(disable:4103)
-//#include <wdm.h>
-#include <ntddk.h>
+#include <wdm.h>
+//#include <ntddk.h>
 #pragma warning(pop)
 
 #include "internal.h"

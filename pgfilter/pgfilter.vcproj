@@ -435,7 +435,7 @@
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="D:\Programming\WinDDK\6001.18002\inc\api;D:\Programming\WinDDK\6001.18002\inc\crt;D:\Programming\WinDDK\6001.18002\inc\ddk"
 				PreprocessorDefinitions="WIN32;NDEBUG;_X86_"
-				IgnoreStandardIncludePath="true"
+				IgnoreStandardIncludePath="false"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
@@ -463,9 +463,9 @@
 				AdditionalDependencies="ntoskrnl.lib hal.lib fwpkclnt.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).sys"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\wlh\i386;$(NOINHERIT)"
+				AdditionalLibraryDirectories="D:\Programming\WinDDK\6001.18002\lib\crt\i386;D:\Programming\WinDDK\6001.18002\lib\wlh\i386;$(NOINHERIT)"
 				GenerateManifest="false"
-				EnableUAC="false"
+				EnableUAC="true"
 				IgnoreAllDefaultLibraries="true"
 				GenerateDebugInformation="false"
 				SubSystem="3"
@@ -800,6 +800,14 @@
 				RelativePath=".\filter.c"
 				>
 				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release (Vista)|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -829,7 +837,6 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
