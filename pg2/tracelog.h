@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <boost\circular_buffer.hpp>
 #include <boost\lockfree\fifo.hpp>
 #include <string>
 
