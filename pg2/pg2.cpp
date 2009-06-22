@@ -55,12 +55,63 @@ TraceLog g_tlog;
 /// </summary>
 //
 static bool CheckOS() {
-	OSVERSIONINFO osv = {0};
+	OSVERSIONINFOEX osv = {0};
 	osv.dwOSVersionInfoSize = sizeof(osv);
+	if(!GetVersionEx((OSVERSIONINFO *)&osv)) return false;
 
-	if(!GetVersionEx(&osv)) return false;
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+
 
 	//TODO: check version.
+
+	tstring strOsName;
+	bool bKnownOs = true;
+
+	if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 1 && osv.wProductType == VER_NT_WORKSTATION )
+		strOsName = _T("Windows 7");
+	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 1 && osv.wProductType != VER_NT_WORKSTATION )
+		strOsName = _T("Windows Server 2008 R2");
+	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 0 && osv.wProductType == VER_NT_WORKSTATION )
+		strOsName = _T("Windows Vista");
+	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 0 && osv.wProductType != VER_NT_WORKSTATION )
+		strOsName = _T("Windows Server 2008");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && GetSystemMetrics(SM_SERVERR2) != 0 )
+		strOsName = _T("Windows Server 2003 R2");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && osv.wSuiteMask == VER_SUITE_WH_SERVER )
+		strOsName = _T("Windows Home Server");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && GetSystemMetrics(SM_SERVERR2) == 0 )
+		strOsName = _T("Windows Server 2003");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && ((osv.wProductType == VER_NT_WORKSTATION) 
+				&& (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)) == 0 )
+		strOsName = _T("Windows XP Professional 64-bit Edition");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 1 )
+		strOsName = _T("Windows XP");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 0 )
+		strOsName = _T("Windows 2000");
+	else
+		strOsName = boost::str(tformat(_T("UNKNOWN OS %1%.%2%")) % osv.dwMajorVersion % osv.dwMinorVersion );
+
+	// TODO: Check for Media Center / Starter / Tablet PC (as per OSVERSIONINFOEX docs)
+
+	tstring strOsBitness;
+
+	if ( si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
+		strOsBitness = _T("64-bit");
+	else if (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_INTEL )
+		strOsBitness = _T("32-bit");
+	else
+		strOsBitness = _T("??-bit");
+
+
+	tstring strOsString = boost::str(tformat(_T("%1% %5% - Build:[%2%], SP:[%3%.%4%]")) 
+		% strOsName % osv.dwBuildNumber % osv.wServicePackMajor % osv.wServicePackMinor % strOsBitness.c_str());
+
+	TCHAR chBuf[256];
+	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("Running on OS: %s"), strOsString.c_str());
+	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
+
+//	const tstring text=boost::str(tformat("OS Version - ")%p.c_str()%typeid(ex).name()%ex.what());
 
 	return true;
 
