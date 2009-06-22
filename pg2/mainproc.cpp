@@ -211,8 +211,17 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		TRACES("[Main_OnInitDialog]    g_filter reset.");
 	}
 	catch(win32_error &ex) {
-		const tstring text=boost::str(tformat(LoadString(IDS_DRIVERERRWIN32TEXT)) % ex.func() % ex.error() % ex.what());
-		MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
+		DWORD code = ex.error();
+		if (code == 577)
+		{
+			const tstring text=boost::str(tformat(LoadString(IDS_UNSIGNEDDRIVERTEXT)) % ex.func() % ex.error() % ex.what());
+			MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
+		}
+		else
+		{
+			const tstring text=boost::str(tformat(LoadString(IDS_DRIVERERRWIN32TEXT)) % ex.func() % ex.error() % ex.what());
+			MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
+		}
 
 		DestroyWindow(hwnd);
 		return FALSE;

@@ -190,6 +190,7 @@
 #define IDS_LOGNONE                     239
 #define IDS_UNCAUGHTWIN32TEXT           240
 #define IDS_DRIVERERRWIN32TEXT          241
+#define IDS_UNSIGNEDDRIVERTEXT          242
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003
