@@ -35,7 +35,6 @@ static const LPCTSTR g_mutex_name=_T("Global\\PeerGuardian2");
 static const LPCTSTR g_mutex_name=_T("PeerGuardian2");
 #endif
 
-// MARKMOD:
 #include "TraceLog.h"
 TraceLog g_tlog;
 
@@ -51,7 +50,7 @@ TraceLog g_tlog;
 //    - Called by _tWinMain at app start
 //
 /// <summary>
-///   Simply gets the OS Version, doesn't actually do anything with it.
+///   Simply gets/logs the OS Version, doesn't actually do anything permanent with it.
 /// </summary>
 //
 static bool CheckOS() {
@@ -63,7 +62,7 @@ static bool CheckOS() {
 	GetSystemInfo(&si);
 
 
-	//TODO: check version.
+	//TODO: save version info
 
 	tstring strOsName;
 	bool bKnownOs = true;
@@ -110,8 +109,6 @@ static bool CheckOS() {
 	TCHAR chBuf[256];
 	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("Running on OS: %s"), strOsString.c_str());
 	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
-
-//	const tstring text=boost::str(tformat("OS Version - ")%p.c_str()%typeid(ex).name()%ex.what());
 
 	return true;
 

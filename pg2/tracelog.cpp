@@ -69,7 +69,9 @@ void TraceLog::ProcessMessages()
 		{
 			// write it out to file
 //		    WriteFile (hFile, tlEnt->Message.c_str(), (int) tlEnt->Message.length(), &bytesWritten, NULL);
-			LogFile << tlEnt->Message.c_str() << _T("\n");
+			tstring strLine = boost::str(tformat(_T("[%1%] %2%\n")) % tlEnt->Tid % tlEnt->Message );
+//			LogFile << boost::str(tlEnt->Tid) << tlEnt->Message.c_str() << _T("\n");
+			LogFile << strLine;
 		}
 
 		// reset the tracelog-entry and stick it onto the free-list
@@ -119,6 +121,7 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 
 	tlEnt->Level = _lvl;
 	tlEnt->Message = _msg;
+	tlEnt->Tid = GetCurrentThreadId();
 	MsgQueue.enqueue(tlEnt);
 
 	// signal Logging Thread that it has something to do

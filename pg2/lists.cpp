@@ -116,12 +116,23 @@ SZ_RESULT SzFileSeekImp(void *object, CFileSize pos) {
 	return (!res)?SZ_OK:SZE_FAIL;
 }
 
-bool LoadList(path file, p2p::list &list) {
-	if(!file.has_root()) file=path::base_dir()/file;
-	if(!path::exists(file)) return false;
 
-	switch(GetType(file)) {
-		case File_Zip: {
+bool LoadList(path file, p2p::list &list) 
+{
+	TRACEV("[LoadList]  > Entering routine.");
+	if(!file.has_root()) file=path::base_dir()/file;
+	if(!path::exists(file)) 
+	{
+		TRACEE("[LoadList]    ERROR: specified path doesn't exist!!");
+		TRACEV("[LoadList]  < Leaving routine.");
+		return false;
+	}
+
+	switch(GetType(file)) 
+	{
+		case File_Zip: 
+		{
+			TRACEV("[LoadList]    found zip file");
 			ZipFile zip(file);
 
 			if(zip.GoToFirstFile()) {
@@ -135,13 +146,21 @@ bool LoadList(path file, p2p::list &list) {
 					list.load(istrstream((const char*)buf.first.get(), (streamsize)buf.second));
 				} while(zip.GoToNextFile());
 			}
+			TRACEV("[LoadList]    done with zip file");
 		} break;
-		case File_Gzip: {
+
+		case File_Gzip: 
+		{
+			TRACEV("[LoadList]    found gzip file");
 			pair<boost::shared_array<char>,size_t> buf=UngzipFile(file);
 
 			list.load(istrstream((const char*)buf.first.get(), (streamsize)buf.second));
+			TRACEV("[LoadList]    done with gzip file");
 		} break;
-		case File_7zip: {
+
+		case File_7zip: 
+		{
+			TRACEV("[LoadList]    found 7z file");
 			CFileInStream is;
 
 			is.File=_tfopen(file.c_str(), _T("rb"));
@@ -194,8 +213,12 @@ bool LoadList(path file, p2p::list &list) {
 
 			SzArDbExFree(&db, ai.Free);
 			fclose(is.File);
+			TRACEV("[LoadList]    done with 7z file");
 		} break;
-		case File_Unknown: {
+
+		case File_Unknown: 
+		{
+			TRACEW("[LoadList]    WARNING: unknown file type");
 			HANDLE h=CreateFile(file.file_str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 			if(h==INVALID_HANDLE_VALUE) throw win32_error("CreateFile");
 
@@ -232,12 +255,16 @@ bool LoadList(path file, p2p::list &list) {
 				CloseHandle(m);
 			}
 			CloseHandle(h);
+			TRACEV("[LoadList]    done with unknown file type");
 		} break;
 		default: __assume(0);
 	}
 
+	TRACEV("[LoadList]  < Leaving routine.");
 	return true;
 }
+
+
 
 class GenCacheFuncs {
 private:

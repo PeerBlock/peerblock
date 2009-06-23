@@ -63,7 +63,7 @@ private:
 	bool usedb;
 	
 	static tstring format_ipport(const sockaddr &addr) {
-		TRACEI("[LogFilterAction] [format_ipport]  > Entering routine.");
+		TRACEV("[LogFilterAction] [format_ipport]  > Entering routine.");
 		TCHAR buf[256];
 		DWORD buflen = 256;
 
@@ -73,7 +73,7 @@ private:
 	}
 
 	static tstring current_time() {
-		TRACEI("[LogFilterAction] [current_time]  > Entering routine.");
+		TRACEV("[LogFilterAction] [current_time]  > Entering routine.");
 		time_t t=time(NULL);
 		TCHAR buf[9];
 
@@ -83,7 +83,7 @@ private:
 	}
 
 	static tstring current_datetime() {
-		TRACEI("[LogFilterAction] [current_datetime]  > Entering routine.");
+		TRACEV("[LogFilterAction] [current_datetime]  > Entering routine.");
 		time_t t=time(NULL);
 		TCHAR buf[21];
 
@@ -97,50 +97,77 @@ private:
 public:
 	LogFilterAction(HWND hwnd, HWND l, bool db=true) : hwnd(hwnd),log(l),usedb(db) 
 	{
-		TRACEI("[LogFilterAction] [LogFilterAction]  > Entering routine.");
+		TRACEV("[LogFilterAction] [LogFilterAction]  > Entering routine.");
+
+		TCHAR chBuf[256];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [LogFilterAction]    hwnd:[%x] log:[%x] usedb:[%d]"), hwnd, log, usedb);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
+
 		allowed=LoadString(IDS_ALLOWED);
 		blocked=LoadString(IDS_BLOCKED);
-		TRACEI("[LogFilterAction] [LogFilterAction]  < Leaving routine.");
+
+		TRACEV("[LogFilterAction] [LogFilterAction]  < Leaving routine.");
 	}
 	
 	~LogFilterAction() 
 	{ 
-		TRACEI("[LogFilterAction] [~LogFilterAction]  > Entering routine.");
+		TRACEV("[LogFilterAction] [~LogFilterAction]  > Entering routine.");
 		this->Commit(true); 
-		TRACEI("[LogFilterAction] [~LogFilterAction]  < Leaving routine.");
+		TRACEV("[LogFilterAction] [~LogFilterAction]  < Leaving routine.");
 	}
+
+
 
 	void operator()(const pgfilter::action &action) 
 	{
-		TRACEI("[LogFilterAction] [operator()]  > Entering routine.");
+		TRACEV("[LogFilterAction] [operator()]  > Entering routine.");
 		unsigned int sourceip, destip;
 		unsigned int destport;
 		
 		if(action.src.addr.sa_family == AF_INET) {
+			TRACEV("[LogFilterAction] [operator()]    src AF_INET");
 			sourceip = htonl(action.src.addr4.sin_addr.s_addr);
 		}
 		else {
+			TRACEV("[LogFilterAction] [operator()]    src NOT AF_INET");
 			sourceip = 0;
 		}
 
 		if(action.dest.addr.sa_family == AF_INET) {
+			TRACEV("[LogFilterAction] [operator()]    dest AF_INET");
 			destip = htonl(action.dest.addr4.sin_addr.s_addr);
 			destport = htons(action.dest.addr4.sin_port);
 		}
 		else {
+			TRACEV("[LogFilterAction] [operator()]    dest NOT AF_INET");
 			destip = 0;
 			destport = htons(action.dest.addr6.sin6_port);
 		}
 
-		if((action.type == pgfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK)) {
+		if((action.type == pgfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK)) 
+		{
+			TRACEV("[LogFilterAction] [operator()]    allowed, not loopbacks");
 			if(action.type == pgfilter::action::blocked && g_config.BlinkOnBlock!=Never && (g_config.BlinkOnBlock==OnBlock || destport==80 || destport==443))
+			{
+				TRACEV("[LogFilterAction] [operator()]    start blinking");
 				g_blinkstart=GetTickCount();
+			}
 
-			if(g_config.ShowAllowed || action.type == pgfilter::action::blocked) {
+			if(g_config.ShowAllowed || action.type == pgfilter::action::blocked) 
+			{
+				TCHAR chBuf[256];
+				_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [operator()]    updating list for window log:[%x]"), log);
+				g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
+
 				int count=ListView_GetItemCount(log);
+
+				_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [operator()]    log:[%x], cnt:[%d], lsz:[%d]"), log, count, g_config.LogSize);
+				g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
+
 				while(count-- >= (int)g_config.LogSize) ListView_DeleteItem(log, g_config.LogSize-1);
 
 				if(g_config.LogSize>0) {
+					TRACEV("[LogFilterAction] [operator()]    logsize > 0");
 					const tstring name=(action.label!=_T("n/a"))?action.label:_T("");
 					const tstring source=format_ipport(action.src.addr);
 					const tstring dest=format_ipport(action.dest.addr);
@@ -154,11 +181,16 @@ public:
 					lvi.pszText=(LPTSTR)time.c_str();
 
 					if(action.type == pgfilter::action::blocked) {
+						TRACEV("[LogFilterAction] [operator()]    blocked action");
 						if(action.protocol==IPPROTO_TCP && (destport==80 || destport==443))
 							lvi.lParam=(LPARAM)2;
 						else lvi.lParam=(LPARAM)1;
 					}
-					else lvi.lParam=(LPARAM)0;
+					else 
+					{
+						TRACEV("[LogFilterAction] [operator()]    not blocked action");
+						lvi.lParam=(LPARAM)0;
+					}
 
 					ListView_InsertItem(log, &lvi);
 
@@ -195,8 +227,12 @@ public:
 				}
 			}
 
-			if(usedb && action.src.addr.sa_family == AF_INET && action.dest.addr.sa_family == AF_INET) {
-				if((action.type != pgfilter::action::blocked && g_config.LogAllowed) || (action.type == pgfilter::action::blocked && g_config.LogBlocked)) {
+			if(usedb && action.src.addr.sa_family == AF_INET && action.dest.addr.sa_family == AF_INET) 
+			{
+				TRACEV("[LogFilterAction] [operator()]    using db, src and dest not af_inet");
+				if((action.type != pgfilter::action::blocked && g_config.LogAllowed) || (action.type == pgfilter::action::blocked && g_config.LogBlocked)) 
+				{
+					TRACEV("[LogFilterAction] [operator()]    logging to dbqueue");
 					LogFilterAction::Action a;
 					::time(&a.Time);
 					a.Name=TSTRING_UTF8(action.label);
@@ -212,6 +248,7 @@ public:
 				}
 			}
 		}
+		TRACEV("[LogFilterAction] [operator()]  < Leaving routine.");
 
 	} // End of operator()
 
@@ -309,11 +346,11 @@ static void UpdateStatus(HWND hwnd)
 		unsigned int failed=0;
 		unsigned int disabled=0;
 
-		TRACEI("[LogProc] [UpdateStatus]    counting num disabled static lists");
+		TRACEV("[LogProc] [UpdateStatus]    counting num disabled static lists");
 		for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++)
 			if(!g_config.StaticLists[i].Enabled) disabled++;
 
-		TRACEI("[LogProc] [UpdateStatus]    counting dynamic lists");
+		TRACEV("[LogProc] [UpdateStatus]    counting dynamic lists");
 		for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) {
 			bool exists=path::exists(g_config.DynamicLists[i].File());
 
@@ -324,17 +361,17 @@ static void UpdateStatus(HWND hwnd)
 		}
 
 		update=boost::str(tformat(LoadString(IDS_UPDATESTATUS)) % lists % uptodate % failed % disabled);
-		TRACEI("[LogProc] [UpdateStatus]    done generating list metrics");
+		TRACEV("[LogProc] [UpdateStatus]    done generating list metrics");
 	}
 
 	if(g_config.LastUpdate) 
 	{
-		TRACEI("[LogProc] [UpdateStatus]    g_config.LastUpdate: [true]");
+		TRACEV("[LogProc] [UpdateStatus]    g_config.LastUpdate: [true]");
 		time_t dur=time(NULL)-g_config.LastUpdate;
 
 		if(dur<604800) 
 		{
-			TRACEI("[LogProc] [UpdateStatus]    dur < 604800");
+			TRACEV("[LogProc] [UpdateStatus]    dur < 604800");
 			TCHAR buf[64];
 			_tcsftime(buf, 64, _T("%#x"), localtime(&g_config.LastUpdate));
 
@@ -352,7 +389,7 @@ static void UpdateStatus(HWND hwnd)
 			lastupdate=boost::str(tformat(LoadString(IDS_LISTSUPTODATE))%buf);
 		}
 		else {
-			TRACEI("[LogProc] [UpdateStatus]    didn't update lists");
+			TRACEV("[LogProc] [UpdateStatus]    didn't update lists");
 			lastupdate=boost::str(tformat(LoadString(IDS_LISTSNOTUPTODATE))%(dur/604800));
 		}
 	}
@@ -368,15 +405,19 @@ static void UpdateStatus(HWND hwnd)
 	SetWindowText(GetDlgItem(hwnd, IDC_UPDATE_STATUS), update.c_str());
 	SetWindowText(GetDlgItem(hwnd, IDC_LAST_UPDATE), lastupdate.c_str());
 
-	TRACEI("[LogProc] [UpdateStatus]  < Leaving routine.");
+	TRACEV("[LogProc] [UpdateStatus]  < Leaving routine.");
 
 } // End of UpdateStatus()
 
 
 
-static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
+static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+{
 	switch(id) {
-		case IDC_LISTS: {
+
+		case IDC_LISTS: 
+		{
+			TRACEV("[LogProc] [Log_OnCommand]  IDC_LISTS");
 			INT_PTR ret=DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LISTS), hwnd, Lists_DlgProc);
 			if(ret&LISTS_NEEDUPDATE) {
 				UpdateLists(hwnd);
@@ -386,7 +427,10 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 			}
 			if(g_filter.get() && ret&LISTS_NEEDRELOAD) LoadLists(hwnd);
 		} break;
-		case IDC_UPDATE: {
+
+		case IDC_UPDATE: 
+		{
+			TRACEV("[LogProc] [Log_OnCommand]  IDC_UPDATE");
 			int ret=UpdateLists(hwnd);
 
 			g_config.Save();
@@ -396,16 +440,24 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				UpdateStatus(hwnd);
 			}
 		} break;
+
 		case IDC_HISTORY:
+			TRACEV("[LogProc] [Log_OnCommand]  IDC_HISTORY");
 			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_HISTORY), hwnd, History_DlgProc);
 			break;
+
 		case IDC_CLEAR:
+			TRACEV("[LogProc] [Log_OnCommand]  IDC_CLEAR");
 			ListView_DeleteAllItems(GetDlgItem(hwnd, IDC_LIST));
 			break;
+
 		case IDC_ENABLE:
+			TRACEV("[LogProc] [Log_OnCommand]  IDC_ENABLE");
 			SetBlock(!g_config.Block);
 			break;
+
 		case IDC_HTTP:
+			TRACEV("[LogProc] [Log_OnCommand]  IDC_HTTP");
 			SetBlockHttp(!g_config.BlockHttp);
 			break;
 	}
@@ -415,16 +467,17 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 
 static void Log_OnDestroy(HWND hwnd) 
 {
-	TRACEI("[LogProc] [Log_OnDestroy]  > Entering routine.");
+	TRACEV("[LogProc] [Log_OnDestroy]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 
 	SaveListColumns(list, g_config.LogColumns);
 
-	TRACEI("[LogProc] [Log_OnDestroy]    setting filter action-function to nothing");
+	TRACEV("[LogProc] [Log_OnDestroy]    setting filter action-function to nothing");
 	g_filter->setactionfunc();
+	TRACEV("[LogProc] [Log_OnInitDialog]    setting g_log to empty LogFilterAction");
 	g_log=boost::shared_ptr<LogFilterAction>();
 
-	TRACEI("[LogProc] [Log_OnDestroy]  < Leaving routine.");
+	TRACEV("[LogProc] [Log_OnDestroy]  < Leaving routine.");
 
 } // End of Log_OnDestroy()
 
@@ -448,7 +501,7 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 
 static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
 {
-	TRACEI("[LogProc] [Log_OnInitDialog]  > Entering routine.");
+	TRACEV("[LogProc] [Log_OnInitDialog]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
 
@@ -466,9 +519,9 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 			g_con.executenonquery("pragma page_size=4096;");
 
 			{
-				TRACEI("[LogProc] [Log_OnInitDialog]    acquiring sqlite3 lock");
+				TRACEV("[LogProc] [Log_OnInitDialog]    acquiring sqlite3 lock");
 				sqlite3_lock lock(g_con, true);
-				TRACEI("[LogProc] [Log_OnInitDialog]    acquired sqlite3 lock");
+				TRACEV("[LogProc] [Log_OnInitDialog]    acquired sqlite3 lock");
 			
 				if(g_con.executeint("select count(*) from sqlite_master where name='t_names';")==0)
 					g_con.executenonquery("create table t_names(id integer primary key, name text unique);");
@@ -482,10 +535,11 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 				if(g_con.executeint("select count(*) from sqlite_master where name='i_actiontime';")==0)
 					g_con.executenonquery("create index i_actiontime on t_history(action,time);");
 
-				TRACEI("[LogProc] [Log_OnInitDialog]    committing sqlite3 lock");
+				TRACEV("[LogProc] [Log_OnInitDialog]    committing sqlite3 lock");
 				lock.commit();
-				TRACEI("[LogProc] [Log_OnInitDialog]    committed sqlite3 lock");
+				TRACEV("[LogProc] [Log_OnInitDialog]    committed sqlite3 lock");
 			}
+			TRACEV("[LogProc] [Log_OnInitDialog]    setting g_log to new LogFilterAction");
 			g_log=boost::shared_ptr<LogFilterAction>(new LogFilterAction(hwnd, list));
 			SetTimer(hwnd, TIMER_COMMITLOG, 15000, NULL);
 		}
@@ -505,7 +559,7 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	SetTimer(hwnd, TIMER_UPDATE, 30000, NULL);
 	SetTimer(hwnd, TIMER_TEMPALLOW, 30000, NULL);
 
-	TRACEI("[LogProc] [Log_OnInitDialog]  < Leaving routine.");
+	TRACEV("[LogProc] [Log_OnInitDialog]  < Leaving routine.");
 	return TRUE;
 
 } // End of Log_OnInitDialog()
@@ -532,8 +586,14 @@ static unsigned int ParseIp(LPCTSTR str) {
 	return 0;
 }
 
-static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
-	if(nmh->code==NM_CUSTOMDRAW && nmh->idFrom==IDC_LIST && g_config.ColorCode) {
+
+
+static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) 
+{
+	TRACED("[LogProc] [Log_OnNotify]  > Entering routine.");
+	if(nmh->code==NM_CUSTOMDRAW && nmh->idFrom==IDC_LIST && g_config.ColorCode) 
+	{
+		TRACED("[LogProc] [Log_OnNotify]    custom draw list colorcode");
 		NMLVCUSTOMDRAW *cd=(NMLVCUSTOMDRAW*)nmh;
 		switch(cd->nmcd.dwDrawStage) {
 			case CDDS_PREPAINT:
@@ -562,9 +622,12 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 			default:
 				SetWindowLongPtr(hwnd, DWLP_MSGRESULT, CDRF_DODEFAULT);
 		}
+		TRACED("[LogProc] [Log_OnNotify]  < Leaving routine (TRUE).");
 		return TRUE;
 	}
-	else if(nmh->code==NM_RCLICK && nmh->idFrom==IDC_LIST) {
+	else if(nmh->code==NM_RCLICK && nmh->idFrom==IDC_LIST) 
+	{
+		TRACED("[LogProc] [Log_OnNotify]    right-click on list");
 		NMITEMACTIVATE *nmia=(NMITEMACTIVATE*)nmh;
 
 		if(nmia->iItem!=-1) {
@@ -749,11 +812,20 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 			}
 		}
 	}
+	else
+	{
+		TRACED("[LogProc] [Log_OnNotify]    doing nothing");
+	}
 
+	TRACED("[LogProc] [Log_OnNotify]  < Leaving routine (0).");
 	return 0;
 }
 
-static void Log_OnSize(HWND hwnd, UINT state, int cx, int cy) {
+
+
+static void Log_OnSize(HWND hwnd, UINT state, int cx, int cy) 
+{
+	TRACEV("[LogProc] [Log_OnSize]    Entering routine.");
 	HWND enable=GetDlgItem(hwnd, IDC_ENABLE);
 	HWND lists=GetDlgItem(hwnd, IDC_LISTS);
 	HWND update=GetDlgItem(hwnd, IDC_UPDATE);
@@ -815,25 +887,38 @@ public:
 	}
 };
 
-static void Log_OnTimer(HWND hwnd, UINT id) {
+static void Log_OnTimer(HWND hwnd, UINT id) 
+{
+	TRACEV("[LogProc] [Log_OnTimer]  > Entering routine.");
 	switch(id) {
 		case TIMER_UPDATE:
+			TRACEV("[LogProc] [Log_OnTimer]    TIMER_UPDATE");
 			if(g_config.UpdateInterval>0 && (time(NULL)-g_config.LastUpdate >= ((time_t)g_config.UpdateInterval)*86400))
+			{
+				TRACEV("[LogProc] [Log_OnTimer]    updating lists");
 				UpdateLists(NULL);
+			}
 			UpdateStatus(hwnd);
 			break;
 		case TIMER_TEMPALLOW:
+			TRACEV("[LogProc] [Log_OnTimer]    TIMER_TEMPALLOW");
 			g_allowlist.remove_if(TempAllowRemovePred(g_tempallow));
 			g_blocklist.remove_if(TempAllowRemovePred(g_tempblock));
 			break;
 		case TIMER_COMMITLOG:
+			TRACEV("[LogProc] [Log_OnTimer]    TIMER_COMMITLOG");
 			g_log->Commit();
 			break;
 	}
+	TRACEV("[LogProc] [Log_OnTimer]  < Leaving routine.");
 }
 
 INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
+		TCHAR chBuf[256];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogProc] [Log_DlgProc]    processing hwnd:[%d] msg:[%d]"), hwnd, msg);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_DEBUG);
+
 		switch(msg) {
 			HANDLE_MSG(hwnd, WM_COMMAND, Log_OnCommand);
 			HANDLE_MSG(hwnd, WM_DESTROY, Log_OnDestroy);
@@ -843,6 +928,7 @@ INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 			HANDLE_MSG(hwnd, WM_TIMER, Log_OnTimer);
 			case WM_LOG_HOOK:
 			case WM_LOG_RANGES:
+				TRACEV("[LogProc] [Log_DlgProc]    WM_LOG_HOOK or WM_LOG_RANGES");
 				UpdateStatus(hwnd);
 				return 1;
 			default: return 0;

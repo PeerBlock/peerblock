@@ -308,7 +308,7 @@ void driver::stop()
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if(!manager) 
 	{
-		TRACEI("[driver] [stop]    ERROR:  Can't OpenSCManager");
+		TRACEE("[driver] [stop]    ERROR:  Can't OpenSCManager");
 		throw win32_error("OpenSCManager");
 	}
 
@@ -317,7 +317,7 @@ void driver::stop()
 		DWORD err = GetLastError();
 
 		CloseServiceHandle(manager);
-		TRACEI("[driver] [stop]    ERROR:  Can't OpenService");
+		TRACEE("[driver] [stop]    ERROR:  Can't OpenService");
 		throw win32_error("OpenService", err);
 	}
 
@@ -337,7 +337,7 @@ void driver::stop()
 		CloseServiceHandle(service);
 		CloseServiceHandle(manager);
 
-		TRACEI("[driver] [stop]    ERROR:  Can't ControlService");
+		TRACEE("[driver] [stop]    ERROR:  Can't ControlService");
 		throw win32_error("ControlService", err);
 	}
 
@@ -353,22 +353,31 @@ void driver::stop()
 
 DWORD driver::rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD outsize, OVERLAPPED *ovl) 
 {
-	TRACEI("[driver] [rawio]  > Entering routine.");
+	TRACEV("[driver] [rawio]  > Entering routine.");
 	DWORD bytes;
 
 	BOOL ret = DeviceIoControl(m_dev, ioctl, inbuf, insize, outbuf, outsize, &bytes, ovl);
 	if(ret) 
 	{
-		TRACEI("[driver] [rawio]    Successfully sent IOCTL to driver");
-		TRACEI("[driver] [rawio]  < Leaving routine.");
+		TRACEV("[driver] [rawio]    Successfully sent IOCTL to driver");
+		TRACEV("[driver] [rawio]  < Leaving routine.");
 		return ERROR_SUCCESS;
 	}
 	else 
 	{
-		TRACEE("[driver] [rawio]    ERROR sending IOCTL to driver");
-		TRACEI("[driver] [rawio]  < Leaving routine.");
 		DWORD err = GetLastError();
-		return (err == ERROR_IO_PENDING) ? ERROR_SUCCESS : err;
+		if (err == ERROR_IO_PENDING)
+		{
+			TRACEV("[driver] [rawio]    IO_PENDING while sending IOCTL to driver");
+			err = ERROR_SUCCESS;
+		}
+		else
+		{
+			TRACEE("[driver] [rawio]    ERROR sending IOCTL to driver");
+		}
+
+		TRACEV("[driver] [rawio]  < Leaving routine.");
+		return err;
 	}
 
 } // End of rawio()

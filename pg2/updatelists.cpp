@@ -197,7 +197,7 @@ private:
 
 		TRACEV("[UpdateThread] [GetFileSize]  > Entering routine.");
 
-		TCHAR chBuf[128];
+		TCHAR chBuf[512];
 		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [GetFileSize]    file: [%s]"), file);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
 
@@ -233,7 +233,7 @@ public:
 		if(allowed.size() > 0 && g_filter) {
 			g_filter->setranges(p2p::list(), false);
 		}
-		TRACEI("[UpdateThread] [UpdateThread]    destroyed thread");
+//		TRACEI("[UpdateThread] [UpdateThread]    destroyed thread");
 	}
 
 
