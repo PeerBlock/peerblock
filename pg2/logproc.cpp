@@ -28,6 +28,10 @@
 using namespace std;
 using namespace sqlite3x;
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
+
 static const UINT TIMER_TEMPALLOW=2;
 static const UINT TIMER_COMMITLOG=3;
 static const UINT ID_LIST_ALLOWFOR15MIN=201;
@@ -59,6 +63,7 @@ private:
 	bool usedb;
 	
 	static tstring format_ipport(const sockaddr &addr) {
+		TRACEI("[LogFilterAction] [format_ipport]  > Entering routine.");
 		TCHAR buf[256];
 		DWORD buflen = 256;
 
@@ -68,6 +73,7 @@ private:
 	}
 
 	static tstring current_time() {
+		TRACEI("[LogFilterAction] [current_time]  > Entering routine.");
 		time_t t=time(NULL);
 		TCHAR buf[9];
 
@@ -77,6 +83,7 @@ private:
 	}
 
 	static tstring current_datetime() {
+		TRACEI("[LogFilterAction] [current_datetime]  > Entering routine.");
 		time_t t=time(NULL);
 		TCHAR buf[21];
 
@@ -88,13 +95,24 @@ private:
 	std::queue<Action> dbqueue;
 
 public:
-	LogFilterAction(HWND hwnd, HWND l, bool db=true) : hwnd(hwnd),log(l),usedb(db) {
+	LogFilterAction(HWND hwnd, HWND l, bool db=true) : hwnd(hwnd),log(l),usedb(db) 
+	{
+		TRACEI("[LogFilterAction] [LogFilterAction]  > Entering routine.");
 		allowed=LoadString(IDS_ALLOWED);
 		blocked=LoadString(IDS_BLOCKED);
+		TRACEI("[LogFilterAction] [LogFilterAction]  < Leaving routine.");
 	}
-	~LogFilterAction() { this->Commit(true); }
+	
+	~LogFilterAction() 
+	{ 
+		TRACEI("[LogFilterAction] [~LogFilterAction]  > Entering routine.");
+		this->Commit(true); 
+		TRACEI("[LogFilterAction] [~LogFilterAction]  < Leaving routine.");
+	}
 
-	void operator()(const pgfilter::action &action) {
+	void operator()(const pgfilter::action &action) 
+	{
+		TRACEI("[LogFilterAction] [operator()]  > Entering routine.");
 		unsigned int sourceip, destip;
 		unsigned int destport;
 		
@@ -194,7 +212,9 @@ public:
 				}
 			}
 		}
-	}
+
+	} // End of operator()
+
 
 private:
 	void _Commit(bool force) {
@@ -268,7 +288,11 @@ public:
 
 static boost::shared_ptr<LogFilterAction> g_log;
 
-static void UpdateStatus(HWND hwnd) {
+
+
+static void UpdateStatus(HWND hwnd) 
+{
+	TRACEI("[LogProc] [UpdateStatus]  > Entering routine.");
 	tstring enable, http, blocking, httpstatus, update, lastupdate;
 
 	enable=LoadString(g_config.Block?IDS_DISABLE:IDS_ENABLE);
@@ -285,9 +309,11 @@ static void UpdateStatus(HWND hwnd) {
 		unsigned int failed=0;
 		unsigned int disabled=0;
 
+		TRACEI("[LogProc] [UpdateStatus]    counting num disabled static lists");
 		for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++)
 			if(!g_config.StaticLists[i].Enabled) disabled++;
 
+		TRACEI("[LogProc] [UpdateStatus]    counting dynamic lists");
 		for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) {
 			bool exists=path::exists(g_config.DynamicLists[i].File());
 
@@ -298,19 +324,27 @@ static void UpdateStatus(HWND hwnd) {
 		}
 
 		update=boost::str(tformat(LoadString(IDS_UPDATESTATUS)) % lists % uptodate % failed % disabled);
+		TRACEI("[LogProc] [UpdateStatus]    done generating list metrics");
 	}
 
-	if(g_config.LastUpdate) {
+	if(g_config.LastUpdate) 
+	{
+		TRACEI("[LogProc] [UpdateStatus]    g_config.LastUpdate: [true]");
 		time_t dur=time(NULL)-g_config.LastUpdate;
 
-		if(dur<604800) {
+		if(dur<604800) 
+		{
+			TRACEI("[LogProc] [UpdateStatus]    dur < 604800");
 			TCHAR buf[64];
 			_tcsftime(buf, 64, _T("%#x"), localtime(&g_config.LastUpdate));
 
 			lastupdate=boost::str(tformat(LoadString(IDS_LISTSUPTODATE))%buf);
 		}
-		else if(dur>=g_config.UpdateInterval*86400 && (g_config.UpdatePeerGuardian || g_config.UpdateLists)) {
+		else if(dur>=g_config.UpdateInterval*86400 && (g_config.UpdatePeerGuardian || g_config.UpdateLists)) 
+		{
+			TRACEI("[LogProc] [UpdateStatus]    need to update lists");
 			UpdateLists(hwnd);
+			TRACEI("[LogProc] [UpdateStatus]    lists updated");
 
 			TCHAR buf[64];
 			_tcsftime(buf, 64, _T("%#x"), localtime(&g_config.LastUpdate));
@@ -318,10 +352,12 @@ static void UpdateStatus(HWND hwnd) {
 			lastupdate=boost::str(tformat(LoadString(IDS_LISTSUPTODATE))%buf);
 		}
 		else {
+			TRACEI("[LogProc] [UpdateStatus]    didn't update lists");
 			lastupdate=boost::str(tformat(LoadString(IDS_LISTSNOTUPTODATE))%(dur/604800));
 		}
 	}
 	else {
+		TRACEI("[LogProc] [UpdateStatus]    g_config.LastUpdate: [false]");
 		lastupdate=LoadString(IDS_LISTSNOTUPDATED);
 	}
 
@@ -331,7 +367,12 @@ static void UpdateStatus(HWND hwnd) {
 	SetWindowText(GetDlgItem(hwnd, IDC_HTTP_STATUS), httpstatus.c_str());
 	SetWindowText(GetDlgItem(hwnd, IDC_UPDATE_STATUS), update.c_str());
 	SetWindowText(GetDlgItem(hwnd, IDC_LAST_UPDATE), lastupdate.c_str());
-}
+
+	TRACEI("[LogProc] [UpdateStatus]  < Leaving routine.");
+
+} // End of UpdateStatus()
+
+
 
 static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	switch(id) {
@@ -370,14 +411,24 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	}
 }
 
-static void Log_OnDestroy(HWND hwnd) {
+
+
+static void Log_OnDestroy(HWND hwnd) 
+{
+	TRACEI("[LogProc] [Log_OnDestroy]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 
 	SaveListColumns(list, g_config.LogColumns);
 
+	TRACEI("[LogProc] [Log_OnDestroy]    setting filter action-function to nothing");
 	g_filter->setactionfunc();
 	g_log=boost::shared_ptr<LogFilterAction>();
-}
+
+	TRACEI("[LogProc] [Log_OnDestroy]  < Leaving routine.");
+
+} // End of Log_OnDestroy()
+
+
 
 static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	LVCOLUMN lvc={0};
@@ -393,7 +444,11 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	ListView_InsertColumn(hList, iSubItem, &lvc);
 }
 
-static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+
+
+static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+{
+	TRACEI("[LogProc] [Log_OnInitDialog]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
 
@@ -411,7 +466,9 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 			g_con.executenonquery("pragma page_size=4096;");
 
 			{
+				TRACEI("[LogProc] [Log_OnInitDialog]    acquiring sqlite3 lock");
 				sqlite3_lock lock(g_con, true);
+				TRACEI("[LogProc] [Log_OnInitDialog]    acquired sqlite3 lock");
 			
 				if(g_con.executeint("select count(*) from sqlite_master where name='t_names';")==0)
 					g_con.executenonquery("create table t_names(id integer primary key, name text unique);");
@@ -425,12 +482,15 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 				if(g_con.executeint("select count(*) from sqlite_master where name='i_actiontime';")==0)
 					g_con.executenonquery("create index i_actiontime on t_history(action,time);");
 
+				TRACEI("[LogProc] [Log_OnInitDialog]    committing sqlite3 lock");
 				lock.commit();
+				TRACEI("[LogProc] [Log_OnInitDialog]    committed sqlite3 lock");
 			}
 			g_log=boost::shared_ptr<LogFilterAction>(new LogFilterAction(hwnd, list));
 			SetTimer(hwnd, TIMER_COMMITLOG, 15000, NULL);
 		}
 		catch(database_error&) {
+			TRACEE("[LogProc] [Log_OnInitDialog]    ERROR:  Caught database_error");
 			MessageBox(hwnd, IDS_HISTORYOPEN, IDS_HISTORYERR, MB_ICONERROR|MB_OK);
 			EnableWindow(GetDlgItem(hwnd, IDC_HISTORY), FALSE);
 			g_log=boost::shared_ptr<LogFilterAction>(new LogFilterAction(hwnd, list, false));
@@ -439,13 +499,18 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	g_filter->setactionfunc(boost::ref(*g_log.get()));
 
+	TRACEI("[LogProc] [Log_OnInitDialog]    updating status");
 	UpdateStatus(hwnd);
 
 	SetTimer(hwnd, TIMER_UPDATE, 30000, NULL);
 	SetTimer(hwnd, TIMER_TEMPALLOW, 30000, NULL);
 
+	TRACEI("[LogProc] [Log_OnInitDialog]  < Leaving routine.");
 	return TRUE;
-}
+
+} // End of Log_OnInitDialog()
+
+
 
 static unsigned int ParseIp(LPCTSTR str) {
 	unsigned int ipa, ipb, ipc, ipd;

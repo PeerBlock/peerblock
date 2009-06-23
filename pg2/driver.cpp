@@ -28,6 +28,10 @@
 #include "win32_error.h"
 #include "driver.h"
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
+
 driver::driver() : m_dev(INVALID_HANDLE_VALUE),m_loaded(false),m_started(false),removable(false)
 {
 }
@@ -49,7 +53,9 @@ void driver::load(const std::wstring &name, const std::wstring &file) {
 	load(name, file, L"\\\\.\\" + name);
 }
 
-void driver::load(const std::wstring &name, const std::wstring &file, const std::wstring &devfile) {
+void driver::load(const std::wstring &name, const std::wstring &file, const std::wstring &devfile) 
+{
+	TRACEV("[driver] [load(3)]  > Entering routine.");
 	if(m_loaded) throw std::exception("driver already loaded", 0);
 
 	m_name = name;
@@ -165,14 +171,21 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 	CloseServiceHandle(manager);
 
 	m_loaded = true;
+	TRACEV("[driver] [load(3)]  < Leaving routine.");
 }
 
-void driver::close() {
+
+
+void driver::close() 
+{
+	TRACEV("[driver] [close]  > Entering routine.");
 	if(!m_loaded) return;
 
 	stop();
 
-	if(this->removable) {
+	if(this->removable) 
+	{
+		TRACEV("[driver] [close]    driver is removable");
 		SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 		if(!manager) throw win32_error("OpenSCManager");
 
@@ -191,9 +204,15 @@ void driver::close() {
 	}
 
 	m_loaded = false;
-}
+	TRACEV("[driver] [close]  < Leaving routine.");
 
-bool driver::isrunning() {
+} // End of close()
+
+
+
+bool driver::isrunning() 
+{
+	TRACEV("[driver] [isrunning]  > Entering routine.");
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if(!manager) throw win32_error("OpenSCManager");
 
@@ -219,20 +238,31 @@ bool driver::isrunning() {
 	CloseServiceHandle(service);
 	CloseServiceHandle(manager);
 
+	TRACEV("[driver] [isrunning]  < Leaving routine.");
 	return status.dwCurrentState == SERVICE_RUNNING;
-}
 
-void driver::start() {
+} // End of isrunning()
+
+
+
+void driver::start() 
+{
+	TRACEV("[driver] [start]  > Entering routine.");
 	if(m_started) return;
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-	if(!manager) throw win32_error("OpenSCManager");
+	if(!manager) 
+	{
+		TRACEE("[driver] [start]    ERROR: OpenSCManager");
+		throw win32_error("OpenSCManager");
+	}
 
 	SC_HANDLE service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
 	if(!service) {
 		DWORD err = GetLastError();
 
 		CloseServiceHandle(manager);
+		TRACEE("[driver] [start]    ERROR: OpenService");
 		throw win32_error("OpenService", err);
 	}
 
@@ -242,6 +272,7 @@ void driver::start() {
 		CloseServiceHandle(service);
 		CloseServiceHandle(manager);
 
+		TRACEE("[driver] [start]    ERROR: StartService");
 		throw win32_error("StartService", err);
 	}
 
@@ -251,14 +282,22 @@ void driver::start() {
 	m_dev = CreateFile(m_devfile.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
 
-	if(m_dev == INVALID_HANDLE_VALUE) {
+	if(m_dev == INVALID_HANDLE_VALUE) 
+	{
+		TRACEE("[driver] [start]    ERROR: CreateFile");
 		throw win32_error("CreateFile");
 	}
 
 	m_started = true;
-}
+	TRACEV("[driver] [start]  < Leaving routine.");
 
-void driver::stop() {
+} // End of start()
+
+
+
+void driver::stop() 
+{
+	TRACEV("[driver] [stop]  > Entering routine.");
 	if(!m_started) return;
 
 	if(m_dev != INVALID_HANDLE_VALUE) {
@@ -267,13 +306,18 @@ void driver::stop() {
 	}
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-	if(!manager) throw win32_error("OpenSCManager");
+	if(!manager) 
+	{
+		TRACEI("[driver] [stop]    ERROR:  Can't OpenSCManager");
+		throw win32_error("OpenSCManager");
+	}
 
 	SC_HANDLE service=OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
 	if(!service) {
 		DWORD err = GetLastError();
 
 		CloseServiceHandle(manager);
+		TRACEI("[driver] [stop]    ERROR:  Can't OpenService");
 		throw win32_error("OpenService", err);
 	}
 
@@ -293,6 +337,7 @@ void driver::stop() {
 		CloseServiceHandle(service);
 		CloseServiceHandle(manager);
 
+		TRACEI("[driver] [stop]    ERROR:  Can't ControlService");
 		throw win32_error("ControlService", err);
 	}
 
@@ -300,35 +345,70 @@ void driver::stop() {
 	CloseServiceHandle(manager);
 
 	m_started = false;
-}
+	TRACEV("[driver] [stop]  < Leaving routine.");
 
-DWORD driver::rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD outsize, OVERLAPPED *ovl) {
+} // End of stop()
+
+
+
+DWORD driver::rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD outsize, OVERLAPPED *ovl) 
+{
+	TRACEI("[driver] [rawio]  > Entering routine.");
 	DWORD bytes;
 
 	BOOL ret = DeviceIoControl(m_dev, ioctl, inbuf, insize, outbuf, outsize, &bytes, ovl);
-	if(ret) return ERROR_SUCCESS;
-	else {
+	if(ret) 
+	{
+		TRACEI("[driver] [rawio]    Successfully sent IOCTL to driver");
+		TRACEI("[driver] [rawio]  < Leaving routine.");
+		return ERROR_SUCCESS;
+	}
+	else 
+	{
+		TRACEE("[driver] [rawio]    ERROR sending IOCTL to driver");
+		TRACEI("[driver] [rawio]  < Leaving routine.");
 		DWORD err = GetLastError();
 		return (err == ERROR_IO_PENDING) ? ERROR_SUCCESS : err;
 	}
-}
 
-DWORD driver::read(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl) {
+} // End of rawio()
+
+
+
+DWORD driver::read(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl) 
+{
+	TRACEV("[driver] [read]    Entering routine.");
 	return rawio(ioctl, 0, 0, buf, size, ovl);
-}
 
-DWORD driver::write(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl) {
+} // End of read()
+
+
+
+DWORD driver::write(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl) 
+{
+	TRACEV("[driver] [write]    Entering routine.");
 	return rawio(ioctl, buf, size, 0, 0, ovl);
-}
 
-DWORD driver::cancelio() {
+} // End of write()
+
+
+
+DWORD driver::cancelio() 
+{
+	TRACEV("[driver] [cancelio]    Entering routine.");
 	BOOL ret = CancelIo(m_dev);
 	return ret ? ERROR_SUCCESS : GetLastError();
-}
 
-DWORD driver::getresult(OVERLAPPED *ovl) {
+} // End of cancelio()
+
+
+
+DWORD driver::getresult(OVERLAPPED *ovl) 
+{
+	TRACEV("[driver] [getresult]    Entering routine.");
 	DWORD bytes;
 
 	BOOL ret = GetOverlappedResult(m_dev, ovl, &bytes, TRUE);
 	return ret ? ERROR_SUCCESS : GetLastError();
-}
+
+} // End of getresult()

@@ -33,6 +33,10 @@
 #include "messagebox.h"
 #include "win32_error.h"
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
+
 class thread : boost::noncopyable {
 public:
 	typedef boost::function<void()> function_type;
@@ -77,11 +81,25 @@ private:
 	CRITICAL_SECTION cs;
 
 public:
-	void enter() { EnterCriticalSection(&cs); }
+	void enter() 
+	{ 
+		TCHAR chBuf[256];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  > Entering Mutex:[%x]"), this);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
+
+		EnterCriticalSection(&cs); 
+	}
 #ifdef _WIN32_WINNT
 	bool tryenter() { return TryEnterCriticalSection(&cs)!=0; }
 #endif
-	void leave() { LeaveCriticalSection(&cs); }
+	void leave() 
+	{ 
+		TCHAR chBuf[256];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  < Leaving Mutex:[%x]"), this);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
+
+		LeaveCriticalSection(&cs); 
+	}
 
 private:
 	class lock {

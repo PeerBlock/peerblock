@@ -28,6 +28,9 @@
 #include "../pgfilter/filter.h"
 #include "win32_error.h"
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
 static const wchar_t* PGFILTER_NAME = L"pgfilter";
 static const wchar_t* PGFILTER_PATH = L"pgfilter.sys";
 
@@ -87,11 +90,16 @@ void pgfilter_base::setblockhttp(bool block) {
 void pgfilter_base::setranges(const p2p::list &ranges, bool block) {
 	typedef stdext::hash_map<std::wstring, const wchar_t*> hmap_type;
 
+	TRACEI("[pgfilter_base] [setranges]  > Entering routine.");
+
 	hmap_type labels;
 	std::vector<wchar_t> labelsbuf;
 	unsigned int ipcount = 0;
 
-	for(p2p::list::const_iterator iter = ranges.begin(); iter != ranges.end(); ++iter) {
+	TRACEI("[pgfilter_base] [setranges]    initial for-loop");
+
+	for(p2p::list::const_iterator iter = ranges.begin(); iter != ranges.end(); ++iter) 
+	{
 		const wchar_t* &label = labels[iter->name];
 
 		if(!label) {
@@ -101,6 +109,8 @@ void pgfilter_base::setranges(const p2p::list &ranges, bool block) {
 			labelsbuf.push_back(L'\0');
 		}
 	}
+
+	TRACEI("[pgfilter_base] [setranges]    second for-loop");
 
 	for(hmap_type::iterator iter = labels.begin(); iter != labels.end(); ++iter) {
 		iter->second = (&labelsbuf.front()) + (std::vector<wchar_t>::size_type)iter->second;
@@ -114,6 +124,8 @@ void pgfilter_base::setranges(const p2p::list &ranges, bool block) {
 	pgr->block = block ? 1 : 0;
 	pgr->count = (ULONG)ranges.size();
 
+	TRACEI("[pgfilter_base] [setranges]    third for-loop");
+
 	unsigned int i = 0;
 	for(p2p::list::const_iterator iter = ranges.begin(); iter != ranges.end(); ++iter) {
 		pgr->ranges[i].label = labels[iter->name];
@@ -125,7 +137,9 @@ void pgfilter_base::setranges(const p2p::list &ranges, bool block) {
 
 	DWORD ret;
 	{
+		TRACEI("[pgfilter_base] [setranges]    about to acquire mutex");
 		mutex::scoped_lock lock(m_lock);
+		TRACEI("[pgfilter_base] [setranges]    acquired mutex");
 		
 		pgr->labelsid = block ? (m_blocklabelsid + 1) : (m_allowlabelsid + 1);
 
@@ -142,21 +156,35 @@ void pgfilter_base::setranges(const p2p::list &ranges, bool block) {
 				m_allowlabels.swap(labelsbuf);
 			}
 		}
+		TRACEI("[pgfilter_base] [setranges]    mutex leaving scope");
 	}
 
 	free(pgr);
 	
+	TRACEI("[pgfilter_base] [setranges]  < Leaving routine.");
+
 	if(ret != ERROR_SUCCESS) {
 		throw win32_error("DeviceIoControl", ret);
 	}
-}
 
-void pgfilter_base::setactionfunc(const action_function &func) {
+} // End of setranges()
+
+
+
+void pgfilter_base::setactionfunc(const action_function &func) 
+{
+	TRACEI("[pgfilter_base] [setactionfunc]  > Entering routine.");
 	mutex::scoped_lock lock(m_lock);
 	m_onaction = func;
-}
+	TRACEI("[pgfilter_base] [setactionfunc]  < Entering routine.");
 
-void pgfilter_base::thread_func() {
+} // End of setactionfunc()
+
+
+
+void pgfilter_base::thread_func() 
+{
+	TRACEI("[pgfilter_base] [thread_func]  > Entering routine.");
 	HANDLE evts[2];
 
 	evts[0] = CreateEvent(0, TRUE, FALSE, 0);
@@ -168,14 +196,18 @@ void pgfilter_base::thread_func() {
 
 		PGNOTIFICATION pgn;
 
+		TRACEI("[pgfilter_base] [thread_func]    sending IOCTL_PEERGUARDIAN_GETNOTIFICATION to driver");
 		DWORD ret = m_filter.read(IOCTL_PEERGUARDIAN_GETNOTIFICATION, &pgn, sizeof(pgn), &ovl);
 		if(ret != ERROR_SUCCESS) {
+			TRACEW("[pgfilter_base] [thread_func]    ERROR reading from filter driver");
 			if(ret == ERROR_OPERATION_ABORTED) break;
 			else {
 				std::wcout << L"error: read failed." << std::endl;
 			}
 		}
 
+		// waiting for overlapped-event (0), or exit-event (1)
+		TRACEI("[pgfilter_base] [thread_func]    waiting for multiple objects");
 		ret = WaitForMultipleObjects(2, evts, FALSE, INFINITE);
 		if(ret < WAIT_OBJECT_0 || ret > (WAIT_OBJECT_0 + 1)) {
 			std::wcout << L"error: WaitForMultipleObjects failed." << std::endl;
@@ -188,7 +220,9 @@ void pgfilter_base::thread_func() {
 		}
 
 		ret = m_filter.getresult(&ovl);
-		if(ret == ERROR_SUCCESS) {
+		if(ret == ERROR_SUCCESS) 
+		{
+			TRACEI("[pgfilter_base] [thread_func]    m_filter.getresult() succeeded");
 			action a;
 
 			if(pgn.action == 0) a.type = action::blocked;
@@ -207,6 +241,7 @@ void pgfilter_base::thread_func() {
 			}
 
 			{
+				TRACEI("[pgfilter_base] [thread_func]    acquiring mutex");
 				mutex::scoped_lock lock(m_lock);
 
 				if(pgn.label && ((a.type == action::blocked && pgn.labelsid == m_blocklabelsid) || (a.type == action::allowed && pgn.labelsid == m_allowlabelsid))) {
@@ -216,10 +251,13 @@ void pgfilter_base::thread_func() {
 				if(m_onaction) {
 					m_onaction(a);
 				}
+				TRACEI("[pgfilter_base] [thread_func]    mutex going out of scope, releasing");
 			}
 		}
 		else if(ret == ERROR_OPERATION_ABORTED) break;
-		else {
+		else 
+		{
+			TRACEI("[pgfilter_base] [thread_func]    ERROR:  getresult failed");
 			std::wcout << L"error: getresult failed." << std::endl;
 		}
 
@@ -227,7 +265,10 @@ void pgfilter_base::thread_func() {
 	}
 
 	CloseHandle(evts[0]);
+	TRACEI("[pgfilter_base] [thread_func]  < Leaving routine.");
 }
+
+
 
 DWORD WINAPI pgfilter_base::thread_thunk(void *arg) {
 	reinterpret_cast<pgfilter_base*>(arg)->thread_func();

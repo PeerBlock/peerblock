@@ -217,14 +217,23 @@ public:
 	int changes;
 	bool aborted;
 
-	UpdateThread() {}
-	UpdateThread(HWND hwnd, HWND list, HWND progress, bool autoupdate)
-		: hwnd(hwnd), list(list), progress(progress), autoupdate(autoupdate),changes(0),aborted(false),progressmod(0.0) {}
+	UpdateThread() 
+	{
+		TRACEI("[UpdateThread] [UpdateThread]    created thread (base constructor)");
+	}
 
-	~UpdateThread() {
+	UpdateThread(HWND hwnd, HWND list, HWND progress, bool autoupdate)
+		: hwnd(hwnd), list(list), progress(progress), autoupdate(autoupdate),changes(0),aborted(false),progressmod(0.0) 
+	{
+		TRACEI("[UpdateThread] [UpdateThread]    created thread");
+	}
+
+	~UpdateThread() 
+	{
 		if(allowed.size() > 0 && g_filter) {
 			g_filter->setranges(p2p::list(), false);
 		}
+		TRACEI("[UpdateThread] [UpdateThread]    destroyed thread");
 	}
 
 
@@ -549,7 +558,7 @@ public:
 
 									if(code==200) 
 									{
-										TRACEV("[UpdateThread] [_Process]    code==200");
+										TRACEV("[UpdateThread] [_Process]    code: [200]");
 										if(data->list) 
 										{
 											try 
@@ -611,7 +620,7 @@ public:
 									}
 									else if(code==304) 
 									{
-										TRACEV("[UpdateThread] [_Process]    code==304");
+										TRACEV("[UpdateThread] [_Process]    code == 304");
 										if(data->list) 
 										{
 											TRACEV("[UpdateThread] [_Process]    found data->list");
@@ -632,7 +641,7 @@ public:
 									}
 									else if(code>=300) 
 									{
-										TRACEV("[UpdateThread] [_Process]    code==300");
+										TRACEV("[UpdateThread] [_Process]    code >= 300");
 										if(data->list) data->list->FailedUpdate=true;
 
 										if(list) 
@@ -749,6 +758,8 @@ public:
 		EnableWindow(abort, FALSE);
 		EnableWindow(close, TRUE);
 
+		TRACEI("[UpdateThread] [_Process]    waiting for user to close dialog box");
+
 		if(IsWindowVisible(hwnd)) 
 		{
 			TRACEV("[UpdateThread] [_Process]    window visible");
@@ -769,7 +780,7 @@ public:
 		else if(g_updater==(HWND)-1) EndDialog(hwnd, changes);
 		else DestroyWindow(hwnd);
 
-		TRACEV("[UpdateThread] [GetFileSize]  < Leaving routine.");
+		TRACEV("[UpdateThread] [_Process]  < Leaving routine.");
 		return changes;
 
 	} // End of _Process()
@@ -1563,27 +1574,45 @@ public:
 static UpdateThread g_ut;
 static boost::shared_ptr<thread> g_updatethread;
 
+
+
 static void UpdateLists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
-	if(id==IDC_ABORT) {
+	if(id==IDC_ABORT) 
+	{
+		TRACEI("[UpdateLists_OnCommand]    IDC_ABORT");
 		EnableWindow(GetDlgItem(hwnd, IDC_ABORT), FALSE);
 		g_ut.aborted=true;
 	}
 	else if(id==IDC_CLOSE) {
+		TRACEI("[UpdateLists_OnCommand]    IDC_CLOSE");
 		if(g_updater==(HWND)-1) EndDialog(hwnd, g_ut.changes);
 		else DestroyWindow(hwnd);
 	}
-}
 
-static void UpdateLists_OnDestroy(HWND hwnd) {
+} // End of UpdateLists_OnCommand()
+
+
+
+static void UpdateLists_OnDestroy(HWND hwnd) 
+{
+	TRACEI("[UpdateLists_OnDestroy]  > Entering routine.");
+
+	TRACEI("[UpdateLists_OnDestroy]    loading lists");
 	if(g_ut.changes>0) LoadLists(GetParent(hwnd));
 
+	TRACEI("[UpdateLists_OnDestroy]    resetting update-thread");
 	g_updatethread.reset();
 
+	TRACEI("[UpdateLists_OnDestroy]    updating list columns");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	SaveListColumns(list, g_config.UpdateColumns);
 
 	g_updater=NULL;
-}
+	TRACEI("[UpdateLists_OnDestroy]  < Leaving routine.");
+
+} // End of UpdateLists_OnDestroy()
+
+
 
 static void UpdateLists_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {
 	RECT rc={0};
@@ -1610,8 +1639,12 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	ListView_InsertColumn(hList, iSubItem, &lvc);
 }
 
+
+
 static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy);
-static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+{
+	TRACEI("[UpdateLists_OnInitDialog]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
 
@@ -1636,10 +1669,16 @@ static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	GetClientRect(hwnd, &rc);
 	UpdateLists_OnSize(hwnd, 0, rc.right, rc.bottom);
 
+	TRACEI("[UpdateLists_OnInitDialog]    spawning updatethread");
 	g_ut=UpdateThread(hwnd, list, GetDlgItem(hwnd, IDC_PROGRESS), false);
 	g_updatethread=boost::shared_ptr<thread>(new thread(boost::ref(g_ut)));
+
+	TRACEI("[UpdateLists_OnInitDialog]  < Leaving routine.");
 	return TRUE;
-}
+
+} // End of UpdateLists_OnInitDialog()
+
+
 
 static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
@@ -1671,7 +1710,11 @@ static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 	}
 }
 
-static void UpdateLists_OnTimer(HWND hwnd, UINT id) {
+
+
+static void UpdateLists_OnTimer(HWND hwnd, UINT id) 
+{
+	TRACEI("[UpdateLists_OnTimer]  > Entering routine.");
 	if(id==TIMER_COUNTDOWN) {
 		if(!--g_countdown) {
 			if(g_updater==(HWND)-1) EndDialog(hwnd, g_ut.changes);
@@ -1683,7 +1726,12 @@ static void UpdateLists_OnTimer(HWND hwnd, UINT id) {
 			SetDlgItemText(hwnd, IDC_CLOSE, s.c_str());
 		}
 	}
-}
+
+	TRACEI("[UpdateLists_OnTimer]  < Leaving routine.");
+
+} // End of UpdateLists_OnTimer()
+
+
 
 static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
@@ -1707,26 +1755,46 @@ static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, 
 	}
 }
 
-int UpdateLists(HWND parent) {
+
+
+int UpdateLists(HWND parent) 
+{
+	TRACEI("[UpdateLists]  > Entering routine.");
+
 	int ret=0;
 
 	if(g_updater==NULL) {
 		if(parent) {
 			g_updater=(HWND)-1;
+			TRACEI("[UpdateLists]    g_updater null, found parent, creating dialog-box");
 			ret=(int)DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
+			TRACEI("[UpdateLists]    dialog box finished running");
 		}
-		else g_updater=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
+		else 
+		{
+			TRACEI("[UpdateLists]    g_updater null, no parent, creating dialog-box");
+			g_updater=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
+		}
 
 		time(&g_config.LastUpdate);
 	}
 	else if(parent) {	
+		TRACEI("[UpdateLists]    g_updater not null, found parent, creating dialog-box");
 		ShowWindow(g_updater, SW_SHOW);
 		ShowWindow(g_updater, SW_RESTORE);
 		SetForegroundWindow(g_updater);
 	}
+	else
+	{
+		TRACEE("[UpdateLists]    g_updater not null, no parent, WTF??!?");
+	}
 
+	TRACEI("[UpdateLists]  < Leaving routine.");
 	return ret;
-}
+
+} // End of UpdateLists()
+
+
 
 //void BlockWithoutUpdate(HWND hwnd)
 //{
