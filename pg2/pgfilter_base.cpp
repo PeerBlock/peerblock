@@ -189,9 +189,10 @@ void pgfilter_base::setranges(const p2p::list &ranges, bool block)
 
 	DWORD ret;
 	{
-		TRACEV("[pgfilter_base] [setranges]    about to acquire mutex");
-		mutex::scoped_lock lock(m_lock);
-		TRACEV("[pgfilter_base] [setranges]    acquired mutex");
+		// TODO: this mutex doesn't appear necessary, and removing it fixes the "hangs at startup" bug; but is it safe?
+		//TRACEV("[pgfilter_base] [setranges]    about to acquire mutex");
+		//mutex::scoped_lock lock(m_lock);
+		//TRACEV("[pgfilter_base] [setranges]    acquired mutex");
 		
 		pgr->labelsid = block ? (m_blocklabelsid + 1) : (m_allowlabelsid + 1);
 
@@ -208,7 +209,7 @@ void pgfilter_base::setranges(const p2p::list &ranges, bool block)
 				m_allowlabels.swap(labelsbuf);
 			}
 		}
-		TRACEV("[pgfilter_base] [setranges]    mutex leaving scope");
+		//TRACEV("[pgfilter_base] [setranges]    mutex leaving scope");
 	}
 
 	free(pgr);
