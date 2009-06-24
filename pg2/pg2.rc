@@ -56,7 +56,7 @@ END
 IDD_MAIN DIALOGEX 0, 0, 358, 225
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "PeerGuardian 2"
+CAPTION "PeerBlock"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_TABS,"SysTabControl32",0x0,7,7,344,211
@@ -192,7 +192,7 @@ BEGIN
     EDITTEXT        IDC_CUSTOM,238,28,30,14,ES_AUTOHSCROLL | ES_READONLY | ES_NUMBER
     LTEXT           "Days",IDC_STATIC,274,28,17,14,SS_CENTERIMAGE
     CONTROL         "",IDC_CUSTOMSPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,259,28,11,14
-    CONTROL         "PeerBlock",IDC_PEERGUARDIAN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,82,59,10
+    CONTROL         "PeerBlock",IDC_PEERBLOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,82,59,10
     CONTROL         "Lists",IDC_LISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,84,82,30,10
     GROUPBOX        "Schedule",IDC_STATIC,7,7,303,43
     GROUPBOX        "Update",IDC_STATIC,7,58,303,41
@@ -657,7 +657,7 @@ IDR_TRAYMENU MENU
 BEGIN
     POPUP "&Tray"
     BEGIN
-        MENUITEM "&PeerBlock",                  ID_TRAY_PEERGUARDIAN, CHECKED
+        MENUITEM "&PeerBlock",                  ID_TRAY_PEERBLOCK, CHECKED
         MENUITEM SEPARATOR
         MENUITEM "&Enabled",                    ID_TRAY_ENABLED, CHECKED
         MENUITEM "&Disabled",                   ID_TRAY_DISABLED
@@ -855,7 +855,7 @@ BEGIN
     IDS_ABORTED             "Aborted"
     IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
     IDS_CLOSEX              "&Close - %1%"
-    IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerGuardian to bring it back."
+    IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerBlock to bring it back."
     IDS_HIDING              "Hiding PeerBlock"
     IDS_EXPORTING           "Exporting History..."
     IDS_BLOCKXFOR15MIN      "Block %1% for 15 minutes"
@@ -893,7 +893,7 @@ BEGIN
     IDS_LISTERR             "List Error"
     IDS_LISTERRTEXT         "PeerBlock is unable to load the list at:\r\n%1%\r\n\r\nThis could be due to an invalid/unrecognized format, or corruption when downloading.\r\n\r\n%2%\r\n%3%"
     IDS_DRIVERERR           "Driver Error"
-    IDS_DRIVERERRTEXT       "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pgfilter.sys can't be found.\r\n\r\n%1%\r\n%2%"
+    IDS_DRIVERERRTEXT       "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pbfilter.sys can't be found.\r\n\r\n%1%\r\n%2%"
     IDS_FILEOPENERR         "Unable to open file"
     IDS_FILEOPENERRTEXT     "Unable to open the file at:\r\n%1%\r\n\r\nCheck to make sure you have permissions to write to that location."
     IDS_LOGALLOWED          "Log Allowed"
@@ -905,7 +905,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occured!\r\nThis problem has been automatically reported to Phoenix Labs.  The report contains the following information:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%\r\n\r\nThankyou for helping us improve PeerGuardian!"
-    IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pgfilter.sys can't be found.\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
+    IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pbfilter.sys can't be found.\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
 	IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows\r\ndriver-signing checking.\r\n\r\nTo resolve this problem you need to press F8 while your machine is\r\nbooting and disable driver-signing.  Alternatively, you can run a tool\r\nsuch as ReadyDriver Plus (on Vista), or use a tool such as Driver Signature Enforcement Overrider to 'test-sign' the driver.\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
 END
 

@@ -81,7 +81,7 @@ static void Main_OnClose(HWND hwnd) {
 
 static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	switch(id) {
-		case ID_TRAY_PEERGUARDIAN:
+		case ID_TRAY_PEERBLOCK:
 			Main_OnVisible(hwnd, g_config.WindowHidden?TRUE:FALSE);
 			break;
 		case ID_TRAY_ENABLED:
@@ -505,7 +505,7 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
 		HMENU menu=LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_TRAYMENU));
 		HMENU submenu=GetSubMenu(menu, 0);
 
-		CheckMenuItem(submenu, ID_TRAY_PEERGUARDIAN, MF_BYCOMMAND|(g_config.WindowHidden?MF_UNCHECKED:MF_CHECKED));
+		CheckMenuItem(submenu, ID_TRAY_PEERBLOCK, MF_BYCOMMAND|(g_config.WindowHidden?MF_UNCHECKED:MF_CHECKED));
 		CheckMenuItem(submenu, ID_TRAY_ALWAYSONTOP, MF_BYCOMMAND|(g_config.AlwaysOnTop?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_ENABLED, MF_BYCOMMAND|(g_config.Block?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_DISABLED, MF_BYCOMMAND|(g_config.Block?MF_UNCHECKED:MF_CHECKED));

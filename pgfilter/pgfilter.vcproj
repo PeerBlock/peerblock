@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="pgfilter"
+	Name="pbfilter"
 	ProjectGUID="{141BF107-16D2-4AF8-85F2-FA655A327F35}"
 	RootNamespace="pgfilter"
 	Keyword="ManagedCProj"
@@ -835,13 +835,6 @@
 			<File
 				RelativePath=".\filter_wfp.c"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|x64"
 					ExcludedFromBuild="true"

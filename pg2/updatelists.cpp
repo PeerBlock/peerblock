@@ -282,7 +282,7 @@ public:
 
 			if(g_config.UpdatePeerGuardian) 
 			{
-				TRACEI("[UpdateThread] [_Process]    updating peerguardian");
+				TRACEI("[UpdateThread] [_Process]    updating peerblock");
 				HandleData *data=new HandleData(this);
 
 				CURL *site=curl_easy_init();
@@ -344,7 +344,7 @@ public:
 			}
 			else
 			{
-				TRACEI("[UpdateThread] [_Process]    not updating peerguardian, as per config");
+				TRACEI("[UpdateThread] [_Process]    not updating peerblock, as per config");
 			}
 
 			///////////////////////////////////////////////

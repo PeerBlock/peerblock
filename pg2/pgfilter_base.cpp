@@ -31,8 +31,8 @@
 #include "tracelog.h"
 extern TraceLog g_tlog;
 
-static const wchar_t* PGFILTER_NAME = L"pgfilter";
-static const wchar_t* PGFILTER_PATH = L"pgfilter.sys";
+static const wchar_t* PGFILTER_NAME = L"pbfilter";
+static const wchar_t* PGFILTER_PATH = L"pbfilter.sys";
 
 pgfilter_base::pgfilter_base() : m_block(false),m_blockhttp(true),m_blockcount(0),m_allowcount(0) {}
 

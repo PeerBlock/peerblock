@@ -30,8 +30,8 @@ using namespace std;
 static const LPCTSTR IPFILTER_NAME=_T("IpFilterDriver");
 static const LPCTSTR IPFILTER_PATH=_T("System32\\Drivers\\IpFltDrv.sys");
 
-static const wchar_t* PGFILTER_NAME = L"pgfilter";
-static const wchar_t* PGFILTER_PATH = L"pgfilter.sys";
+static const wchar_t* PGFILTER_NAME = L"pbfilter";
+static const wchar_t* PGFILTER_PATH = L"pbfilter.sys";
 
 pgfilter::pgfilter() {
 	m_ipfltdrv.removable = false;

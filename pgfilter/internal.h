@@ -35,8 +35,8 @@
 #include "filter.h"
 #include "notifyqueue.h"
 
-#define NT_DEVICE_NAME L"\\Device\\pgfilter"
-#define DOS_DEVICE_NAME L"\\DosDevices\\pgfilter"
+#define NT_DEVICE_NAME L"\\Device\\pbfilter"
+#define DOS_DEVICE_NAME L"\\DosDevices\\pbfilter"
 
 /*#define HTONL(l) (\
 	(((l) & 0xff000000) >> 24) | \

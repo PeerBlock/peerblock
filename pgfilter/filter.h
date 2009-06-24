@@ -53,7 +53,7 @@
 //
 // Name that Win32 front end will use to open the PeerDefender device
 //
-#define PEERGUARDIAN_DEVICE_NAME_WIN32	_T("\\\\.\\pgfilter")
+#define PEERGUARDIAN_DEVICE_NAME_WIN32	_T("\\\\.\\pbfilter")
 
 // {5464FE75-7BB9-43c0-81C8-E52BCC71C1AB}
 DEFINE_GUID(PGWFP_CONNECT_CALLOUT_V4, 

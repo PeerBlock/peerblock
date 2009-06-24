@@ -128,7 +128,7 @@ static INT_PTR CALLBACK Updates_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				EnableWindow(GetDlgItem(hwnd, IDC_CUSTOMSPIN), FALSE);
 			}
 
-			if(g_config.UpdatePeerGuardian) CheckDlgButton(hwnd, IDC_PEERGUARDIAN, BST_CHECKED);
+			if(g_config.UpdatePeerGuardian) CheckDlgButton(hwnd, IDC_PEERBLOCK, BST_CHECKED);
 			if(g_config.UpdateLists) CheckDlgButton(hwnd, IDC_LISTS, BST_CHECKED);
 
 			tstring s=LoadString(IDS_STARTUP_UPDATES);
@@ -159,8 +159,8 @@ static INT_PTR CALLBACK Updates_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				case IDC_CUSTOM:
 					g_config.UpdateInterval=GetDlgItemInt(hwnd, IDC_CUSTOM, NULL, FALSE);
 					break;
-				case IDC_PEERGUARDIAN:
-					g_config.UpdatePeerGuardian=(IsDlgButtonChecked(hwnd, IDC_PEERGUARDIAN)==BST_CHECKED);
+				case IDC_PEERBLOCK:
+					g_config.UpdatePeerGuardian=(IsDlgButtonChecked(hwnd, IDC_PEERBLOCK)==BST_CHECKED);
 					break;
 				case IDC_LISTS:
 					g_config.UpdateLists=(IsDlgButtonChecked(hwnd, IDC_LISTS)==BST_CHECKED);

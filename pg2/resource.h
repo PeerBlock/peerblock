@@ -204,7 +204,7 @@
 #define IDC_EVERYXDAYS                  1012
 #define IDC_UPDATEINTERVAL              1013
 #define IDC_UPDATEINTERVALSPIN          1014
-#define IDC_PEERGUARDIAN                1015
+#define IDC_PEERBLOCK					1015
 #define IDC_LISTS                       1016
 #define IDC_LOGSIZE                     1017
 #define IDC_LOGSIZESPIN                 1018
@@ -322,7 +322,7 @@
 #define IDC_HTTPBG                      1180
 #define IDC_PROGRESS1                   1181
 #define IDC_UPDATE_AT_STARTUP			1182
-#define ID_TRAY_PEERGUARDIAN            40001
+#define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
 #define ID_TRAY_DISABLED                40003
 #define ID_TRAY_BLOCKHTTP               40004

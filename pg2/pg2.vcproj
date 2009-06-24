@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="pg2"
+	Name="peerblock"
 	ProjectGUID="{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
 	RootNamespace="pg2"
 	Keyword="ManagedCProj"

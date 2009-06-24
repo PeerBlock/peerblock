@@ -28,8 +28,8 @@
 #include "../pgfilter/filter.h"
 #include "wfp.hpp"
 
-static const wchar_t* PGFILTER_NAME = L"pgfilter";
-static const wchar_t* PGFILTER_PATH = L"pgfilter.sys";
+static const wchar_t* PGFILTER_NAME = L"pbfilter";
+static const wchar_t* PGFILTER_PATH = L"pbfilter.sys";
 
 pgfilter::pgfilter() {
 	std::wstring p = L"\\??\\" + (path::base_dir() / PGFILTER_PATH).file_str();
