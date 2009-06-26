@@ -246,9 +246,17 @@ TraceLog::~TraceLog()
 	}
 	while (!MsgFreelist.empty())
 	{
-		MsgFreelist.dequeue(&tlEnt);
-		delete tlEnt;
-		tlEnt = NULL;
+		try
+		{
+			MsgFreelist.dequeue(&tlEnt);
+			delete tlEnt;
+			tlEnt = NULL;
+		}
+		catch (...)
+		{
+			// TODO:  Why do we occasionally hit an exception here??
+			int debugbreak=1;
+		}
 	}
 
 	LogFile.close();            // Close file
