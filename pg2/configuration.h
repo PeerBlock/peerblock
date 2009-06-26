@@ -109,6 +109,7 @@ struct Configuration {
 
 	bool Load();
 	void Save();
+	bool LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view);
 };
 
 template<size_t len>

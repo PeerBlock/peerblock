@@ -26,6 +26,9 @@
 #include "stdafx.h"
 using namespace std;
 
+#include "tracelog.h"
+extern TraceLog g_tlog;
+
 Configuration g_config;
 
 Configuration::Configuration() :
@@ -319,31 +322,115 @@ public:
 	}
 };
 
-bool Configuration::Load() {
+
+
+//================================================================================================
+//
+//  LoadFile()
+//
+//    - Called by Configuration::Load()
+//
+/// <summary>
+///   Attempts to load the specified config-file.  Returns true if successful, false if not
+/// </summary>
+//
+bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view) 
+{
+		TCHAR chBuf[256];
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Configuration] [LoadFile]    loading file:[%s]"), file);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
+
+		*fp=CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		if(*fp==INVALID_HANDLE_VALUE) 
+		{
+			TRACEW("[Configuration] [LoadFile]    WARNING:  Can't load file, INVALID_HANDLE_VALUE");
+			return false;
+		}
+		*map=CreateFileMapping(*fp, NULL, PAGE_READONLY, 0, 0, NULL);
+		if(*map==NULL) 
+		{
+			TRACEE("[Configuration] [LoadFile]    ERROR:  Can't create file map");
+			throw win32_error("CreateFileMapping");
+		}
+		*view=MapViewOfFile(*map, FILE_MAP_READ, 0, 0, 0);
+		if(*view==NULL) 
+		{
+			TRACEE("[Configuration] [LoadFile]    ERROR:  Can't map view of file");
+			throw win32_error("MapViewOfFile");
+		}
+		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Configuration] [LoadFile]    Successfully loaded file:[%s]"), file);
+		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
+
+		return true;
+
+}; // End of LoadFile()
+
+
+
+//================================================================================================
+//
+//  Load()
+//
+//    - Called by Main_OnInitDialog()
+//
+/// <summary>
+///   Attempts to load the config-file.  Returns true if successful, false if not
+/// </summary>
+/// <remarks>
+///	  If we're unsuccessful, the caller will assume this is the first time we've run the program
+///	  and will run through the startup-wizard.
+///	</remarks>
+//
+bool Configuration::Load() 
+{
+	TRACEI("[Configuration] [Load]  > Entering routine.");
+
 	TiXmlDocument doc;
 	{
-		const path p=path::base_dir()/_T("pg2.conf");
+		HANDLE fp = NULL;
+		HANDLE map = NULL;
+		const void *view = NULL;
 
-		HANDLE fp=CreateFile(p.file_str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-		if(fp==INVALID_HANDLE_VALUE) return false;
+		const path pb=path::base_dir()/_T("peerblock.conf");
+		const path pg2=path::base_dir()/_T("pg2.conf");
+
+		if (LoadFile(pb.file_str().c_str(), &fp, &map, &view))	// first try to find a PeerBlock file
+		{
+			TRACEI("[Configuration] [Load]    found peerblock configuration file");
+		}
+		else if (LoadFile(pg2.file_str().c_str(), &fp, &map, &view))	// fall back to old PG2 version
+		{
+			TRACEI("[Configuration] [Load]    found old-style pg2 configuration file");
+		}
+		else	// can't find anything, return false so caller can run the startup-wizard
+		{
+			TRACEW("[Configuration] [Load]    WARNING:  No configuration file found.");
+			return false;
+		}
+
 		boost::shared_ptr<void> fp_safe(fp, CloseHandle);
-
-		HANDLE map=CreateFileMapping(fp, NULL, PAGE_READONLY, 0, 0, NULL);
-		if(map==NULL) throw win32_error("CreateFileMapping");
 		boost::shared_ptr<void> map_safe(map, CloseHandle);
-
-		const void *view=MapViewOfFile(map, FILE_MAP_READ, 0, 0, 0);
-		if(view==NULL) throw win32_error("MapViewOfFile");
 		boost::shared_ptr<const void> view_safe(view, UnmapViewOfFile);
 
 		doc.Parse((const char*)view);
 
-		if(doc.Error()) throw runtime_error("unable to parse configuration");
+		if(doc.Error()) 
+		{
+			TRACEE("[Configuration] [Load]    ERROR:  Can't parse configuration");
+			throw runtime_error("unable to parse configuration");
+		}
 	}
 
-	const TiXmlElement *root=doc.RootElement();
-	if(!root || strcmp(root->Value(), "PeerGuardian2")) return false;
+	TRACEI("[Configuration] [Load]    parsing config root element");
 
+	const TiXmlElement *root=doc.RootElement();
+	if(!root || (strcmp(root->Value(), "PeerGuardian2") && strcmp(root->Value(), "PeerBlock"))) 
+	{
+		TRACEI("[Configuration] [Load]    ERROR:  Not a valid configuration file!");
+		return false;
+	}
+
+	TRACEI("[Configuration] [Load]    parsing config settings element");
 	if(const TiXmlElement *settings=root->FirstChildElement("Settings")) {
 		GetChild(settings, "Block", this->Block);
 		GetChild(settings, "BlockHttp", this->BlockHttp);
@@ -353,6 +440,7 @@ bool Configuration::Load() {
 		GetChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config logging element");
 	if(const TiXmlElement *logging=root->FirstChildElement("Logging")) {
 		GetChild(logging, "LogSize", this->LogSize);
 		GetChild(logging, "LogAllowed", this->LogAllowed);
@@ -371,6 +459,7 @@ bool Configuration::Load() {
 			this->ArchivePath=p;
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config colors element");
 	if(const TiXmlElement *colors=root->FirstChildElement("Colors")) {
 		GetChild(colors, "ColorCode", this->ColorCode);
 		GetChild(colors, "Blocked", this->BlockedColor);
@@ -378,6 +467,7 @@ bool Configuration::Load() {
 		GetChild(colors, "Http", this->HttpColor);
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config windowing element");
 	if(const TiXmlElement *windowing=root->FirstChildElement("Windowing")) {
 		GetChild(windowing, "Main", this->WindowPos);
 		GetChild(windowing, "Update", this->UpdateWindowPos);
@@ -451,6 +541,7 @@ bool Configuration::Load() {
 		}
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config updates element");
 	if(const TiXmlElement *updates=root->FirstChildElement("Updates")) {
 		string lastupdate;
 
@@ -479,12 +570,14 @@ bool Configuration::Load() {
 		}
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config messages element");
 	if(const TiXmlElement *messages=root->FirstChildElement("Messages")) {
 		GetChild(messages, "FirstBlock", this->FirstBlock);
 		GetChild(messages, "FirstHide", this->FirstHide);
 	}
 
 	//night_stalker_z: read ports to allow/block
+	TRACEI("[Configuration] [Load]    parsing config ports element");
 	if (const TiXmlElement *ports = root->FirstChildElement("Ports")) {
 		string port;
 
@@ -511,6 +604,7 @@ bool Configuration::Load() {
 		*/
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config lists element");
 	if(const TiXmlElement *lists=root->FirstChildElement("Lists")) {
 		for(const TiXmlElement *list=lists->FirstChildElement("List"); list!=NULL; list=list->NextSiblingElement("List")) {
 			string file, url, type, description, lastupdate;
@@ -564,18 +658,34 @@ bool Configuration::Load() {
 	this->DynamicLists.erase(new_end, this->DynamicLists.end());
 	this->DynamicLists.insert(this->DynamicLists.end(), nl.begin(), nl.end());
 
+	TRACEI("[Configuration] [Load]  < Leaving routine.");
 	return true;
-}
+
+} // End of Load()
+
+
 
 static bool RectValid(const RECT &rc) {
 	return (rc.top!=0 || rc.left!=0 || rc.bottom!=0 || rc.right!=0);
 }
 
+
+
+//================================================================================================
+//
+//  Save()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Writes out currently-set config to peerblock.conf file.
+/// </summary>
+//
 void Configuration::Save() {
 	TiXmlDocument doc;
 	doc.InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 
-	TiXmlElement *root=InsertChild(&doc, "PeerGuardian2");
+	TiXmlElement *root=InsertChild(&doc, "PeerBlock");
 
 	{
 		TiXmlElement *settings=InsertChild(root, "Settings");
@@ -761,10 +871,15 @@ void Configuration::Save() {
 		}
 	}
 
-	FILE *fp=_tfopen((path::base_dir()/_T("pg2.conf")).file_str().c_str(), _T("w"));
-	if(!fp) throw runtime_error("unable to save configuration");
+	FILE *fp=_tfopen((path::base_dir()/_T("peerblock.conf")).file_str().c_str(), _T("w"));
+	if(!fp) 
+	{
+		TRACEE("[Configuration] [Save]    ERROR:  Can't open peerblock.conf file!!");
+		throw runtime_error("unable to save configuration");
+	}
 
 	boost::shared_ptr<void> ptr(fp, fclose);
 
 	doc.Print(fp);
-}
+
+} // End of Save()
