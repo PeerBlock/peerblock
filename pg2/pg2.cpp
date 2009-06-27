@@ -63,21 +63,21 @@ typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE hProcess, DWORD dwPid, HANDLE hF
 ///	  on this implementation.
 /// </remarks>
 //
-LONG PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo) 
+LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo) 
 {
 	HMODULE hDll = NULL;
 
 	hDll = LoadLibrary(_T("DBGHELP.DLL"));
 	if (!hDll)
 	{
-		TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't load dbghelp.dll!!");
+		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't load dbghelp.dll!!");
 		return -1;
 	}
 
 	MINIDUMPWRITEDUMP pDump = (MINIDUMPWRITEDUMP)::GetProcAddress( hDll, "MiniDumpWriteDump" );
 	if (!pDump)
 	{
-		TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't find MiniDumpWriteDump() routine!!");
+		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't find MiniDumpWriteDump() routine!!");
 		return -1;
 	}
 
@@ -85,7 +85,7 @@ LONG PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
 								FILE_ATTRIBUTE_NORMAL, NULL );
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't create dumpfile!!");
+		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't create dumpfile!!");
 		return -1;
 	}
 
@@ -99,11 +99,11 @@ LONG PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
 	BOOL bOK = pDump( GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL );
 	if (bOK)
 	{
-		TRACES("[PeerblockExceptionFilter]    Saved dumpfile");
+		//TRACES("[PeerblockExceptionFilter]    Saved dumpfile");
 	}
 	else
 	{
-		TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't save dump to file!!");
+		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't save dump to file!!");
 		return -1;
 	}
 	CloseHandle(hFile);
