@@ -58,7 +58,7 @@ void pgfilter_base::start_thread()
 	}
 
 	TCHAR chBuf[256];
-	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[pgfilter_base] [start_thread]    thread_thunk created with handle:[%x]"), m_thread);
+	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[pgfilter_base] [start_thread]    thread_thunk created with handle:[%p]"), m_thread);
 	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
 	TRACEV("[pgfilter_base] [start_thread]  > Entering routine.");
