@@ -26,14 +26,15 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include "dbghelp.h"
 #include "updatelists.h"
+#include "exceptionfilter.h"
 using namespace std;
 
-#if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0500
+#if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0501
 static const LPCTSTR g_mutex_name=_T("Global\\PeerGuardian2");
 #else
 static const LPCTSTR g_mutex_name=_T("PeerGuardian2");
+#define SM_SERVERR2             89
 #endif
 
 #include "TraceLog.h"
@@ -41,77 +42,6 @@ TraceLog g_tlog;
 
 // blocks ips without updating for vista
 //void BlockWithoutUpdating(HWND hwnd);
-
-typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE hProcess, DWORD dwPid, HANDLE hFile, MINIDUMP_TYPE DumpType,
-									CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-									CONST PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-									CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam
-									);
-
-
-//================================================================================================
-//
-//  PeerblockExceptionFilter()
-//
-//    - Called by Windows if the app throws an unhandled exception.
-//
-/// <summary>
-///   Writes out a mini-dump file "peerblock.dmp" into the program's current working directory.
-/// </summary>
-/// <remarks>
-///   See (http://www.codeproject.com/KB/debug/postmortemdebug_standalone1.aspx) for more details 
-///	  on this implementation.
-/// </remarks>
-//
-LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo) 
-{
-	HMODULE hDll = NULL;
-
-	hDll = LoadLibrary(_T("DBGHELP.DLL"));
-	if (!hDll)
-	{
-		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't load dbghelp.dll!!");
-		return -1;
-	}
-
-	MINIDUMPWRITEDUMP pDump = (MINIDUMPWRITEDUMP)::GetProcAddress( hDll, "MiniDumpWriteDump" );
-	if (!pDump)
-	{
-		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't find MiniDumpWriteDump() routine!!");
-		return -1;
-	}
-
-	HANDLE hFile = CreateFile( _T("peerblock.dmp"), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
-								FILE_ATTRIBUTE_NORMAL, NULL );
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't create dumpfile!!");
-		return -1;
-	}
-
-	_MINIDUMP_EXCEPTION_INFORMATION ExInfo;
-
-	ExInfo.ThreadId = GetCurrentThreadId();
-	ExInfo.ExceptionPointers = pExceptionInfo;
-	ExInfo.ClientPointers = NULL;
-
-	// write the dump
-	BOOL bOK = pDump( GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL );
-	if (bOK)
-	{
-		//TRACES("[PeerblockExceptionFilter]    Saved dumpfile");
-	}
-	else
-	{
-		//TRACEE("[PeerblockExceptionFilter]    ERROR:  Can't save dump to file!!");
-		return -1;
-	}
-	CloseHandle(hFile);
-
-	return EXCEPTION_EXECUTE_HANDLER;
-
-}; // End of UnhandledExceptionFilter()
-
 
 
 //================================================================================================
@@ -247,6 +177,15 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	}
 
 	SetUnhandledExceptionFilter( PeerblockExceptionFilter );
+	BOOL bRet = PreventSetUnhandledExceptionFilter();
+	if (bRet)
+	{
+		TRACES("Successfully PreventSetUnhandledExceptionFilter()");
+	}
+	else
+	{
+		TRACEW("Successfully PreventSetUnhandledExceptionFilter()");
+	}
 
 	try {
 		// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program

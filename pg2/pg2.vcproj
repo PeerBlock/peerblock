@@ -761,6 +761,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\exceptionfilter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\exporthistoryproc.cpp"
 				>
 			</File>
@@ -1088,6 +1092,10 @@
 			</File>
 			<File
 				RelativePath=".\editlistproc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\exceptionfilter.h"
 				>
 			</File>
 			<File
