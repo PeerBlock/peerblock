@@ -215,7 +215,11 @@ TraceLog::TraceLog()
 
 	for (int i=0; i<TRACELOG_QUEUE_LENGTH; ++i)
 	{
-		MsgFreelist.enqueue(new TRACELOG_ENTRY);
+		TRACELOG_ENTRY * tlEnt = new TRACELOG_ENTRY;
+		tlEnt->Level = TRACELOG_LEVEL_DEFAULT;
+		tlEnt->Tid = 0;
+		tlEnt->Message = _T("(no message)");	// fix problem while exiting program
+		MsgFreelist.enqueue(tlEnt);
 	}
 
 	// start logging thread
