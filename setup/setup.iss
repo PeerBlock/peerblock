@@ -1,6 +1,6 @@
 [Setup]
 AppName=PeerBlock
-AppVerName=PeerBlock 0.0
+AppVerName=PeerBlock 0.9.0 (r52)
 AppPublisher=PeerBlock Project
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
@@ -11,12 +11,12 @@ SourceDir=../
 LicenseFile=setup/license.txt
 InfoBeforeFile=setup/readme.rtf
 OutputDir=setup
-OutputBaseFilename=PeerBock-Setup_v1.0rev52
+OutputBaseFilename=PeerBock-Setup_v0.9.0.r52
 Compression=lzma/ultra
 SolidCompression=yes
 MinVersion=4.0,4.0
-AppVersion=2.1.0.2
-VersionInfoVersion=0.0.0.0
+AppVersion=0.9.0.52
+VersionInfoVersion=0.9.0.52
 AppMutex=Global\PeerBlock
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
