@@ -55,12 +55,15 @@ void TraceLog::ProcessMessages()
     //////////-----------------------------------------------------------------
 	// Process all messages
 
-	TracelogEntry * tlEnt;
-//    DWORD bytesWritten;
+	TracelogEntry * tlEnt = NULL;
 
 	while (!MsgQueue.empty())
 	{
 		MsgQueue.dequeue(&tlEnt);
+
+		// sanity-check
+		if (NULL == tlEnt)
+			continue;
 
 		// re-format message, as needed
 
@@ -68,15 +71,13 @@ void TraceLog::ProcessMessages()
 		if (tlEnt->Level <= LoggingLevel && HaveLogfile)
 		{
 			// write it out to file
-//		    WriteFile (hFile, tlEnt->Message.c_str(), (int) tlEnt->Message.length(), &bytesWritten, NULL);
 			tstring strLine = boost::str(tformat(_T("[%1%] %2%\n")) % tlEnt->Tid % tlEnt->Message );
-//			LogFile << boost::str(tlEnt->Tid) << tlEnt->Message.c_str() << _T("\n");
 			LogFile << strLine;
 		}
 
 		// reset the tracelog-entry and stick it onto the free-list
-//		tlEnt->Level = TRACELOG_LEVEL_MAX;
-//		tlEnt->Message = _T("");
+		//tlEnt->Level = TRACELOG_LEVEL_MAX;
+		//tlEnt->Message = _T("");
 		MsgFreelist.enqueue(tlEnt);
 	}
 
@@ -104,6 +105,11 @@ void TraceLog::ProcessMessages()
 //
 void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 {
+
+	if (WaitForSingleObject(LoggingReady, 0) != WAIT_OBJECT_0)
+	{
+		return;
+	}
 
 	// insert message into ringbuf at position indicated
 	TRACELOG_ENTRY * tlEnt;
@@ -170,6 +176,7 @@ void TraceLog::SetLogfile(tstring _fname)
 	{
 		LogfileName = _fname;
 		HaveLogfile = true;
+		SetEvent(LoggingReady);
 	}
 	else
 	{
@@ -212,6 +219,7 @@ TraceLog::TraceLog()
 {
 	LoggingLevel = TRACELOG_LEVEL_DEFAULT;
 	HaveLogfile = false;
+	LoggingReady = CreateEvent (NULL, TRUE, FALSE, _T("PB LoggingReady Event"));
 
 	for (int i=0; i<TRACELOG_QUEUE_LENGTH; ++i)
 	{
@@ -240,6 +248,8 @@ TraceLog::TraceLog()
 //
 TraceLog::~TraceLog()
 {
+	ResetEvent(LoggingReady);	// Sets signalled to FALSE, so noone else will try logging
+
 	TRACELOG_ENTRY * tlEnt = NULL;
 	while (!MsgQueue.empty())
 	{

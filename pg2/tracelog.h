@@ -69,6 +69,7 @@ private:
 
 
 public:
+	HANDLE LoggingReady;
 	void LogMessage(tstring messsage, TracelogLevel level);
 	void SetLogfile(tstring filename = _T("peerblock.log"));
 	void SetLoglevel(TRACELOG_LEVEL level);
