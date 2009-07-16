@@ -362,7 +362,7 @@ public:
 					const path file=g_config.DynamicLists[i].File();
 
 					TCHAR chBuf[256];
-					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    updating file: [%s]"), file);
+					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    updating file: [%s]"), file.c_str());
 					g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
 
 					if(curtime-g_config.DynamicLists[i].LastUpdate >= 43200 || !path::exists(file) || GetFileSize(file.c_str())==0) 
