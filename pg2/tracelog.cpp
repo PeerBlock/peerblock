@@ -263,6 +263,8 @@ TraceLog::~TraceLog()
 		try
 		{
 			MsgFreelist.dequeue(&tlEnt);
+			tlEnt->Tid = 0;
+			tlEnt->Message = _T("no message");
 			delete tlEnt;
 			tlEnt = NULL;
 		}
