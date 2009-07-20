@@ -250,30 +250,33 @@ TraceLog::~TraceLog()
 {
 	ResetEvent(LoggingReady);	// Sets signalled to FALSE, so noone else will try logging
 
-	TRACELOG_ENTRY * tlEnt = NULL;
-	while (!MsgQueue.empty())
-	{
-		// TODO: Flush out these messages to-disk!
-		MsgQueue.dequeue(&tlEnt);
-		delete tlEnt;
-		tlEnt = NULL;
-	}
-	while (!MsgFreelist.empty())
-	{
-		try
-		{
-			MsgFreelist.dequeue(&tlEnt);
-			tlEnt->Tid = 0;
-			tlEnt->Message = _T("no message");
-			delete tlEnt;
-			tlEnt = NULL;
-		}
-		catch (...)
-		{
-			// TODO:  Why do we occasionally hit an exception here??
-			int debugbreak=1;
-		}
-	}
+
+
+	// Looks like the boost::lockfree stuff still isn't quite ready for primetime...
+	//TRACELOG_ENTRY * tlEnt = NULL;
+	//while (!MsgQueue.empty())
+	//{
+	//	// TODO: Flush out these messages to-disk!
+	//	MsgQueue.dequeue(&tlEnt);
+	//	delete tlEnt;
+	//	tlEnt = NULL;
+	//}
+	//while (!MsgFreelist.empty())
+	//{
+	//	try
+	//	{
+	//		MsgFreelist.dequeue(&tlEnt);
+	//		tlEnt->Tid = 0;
+	//		tlEnt->Message = _T("no message");
+	//		delete tlEnt;
+	//		tlEnt = NULL;
+	//	}
+	//	catch (...)
+	//	{
+	//		// TODO:  Why do we occasionally hit an exception here??
+	//		int debugbreak=1;
+	//	}
+	//}
 
 	LogFile.close();            // Close file
 
