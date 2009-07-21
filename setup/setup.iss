@@ -1,6 +1,6 @@
 [Setup]
 AppName=PeerBlock
-AppVerName=PeerBlock 0.9.0 (r52)
+AppVerName=PeerBlock 0.9.1 (r61)
 AppPublisher=PeerBlock Project
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
@@ -11,13 +11,13 @@ SourceDir=../
 LicenseFile=setup/license.txt
 InfoBeforeFile=setup/readme.rtf
 OutputDir=setup
-OutputBaseFilename=PeerBock-Setup_v0.9.0.r52
+OutputBaseFilename=PeerBock-Setup_v0.9.1.r61
 Compression=lzma/ultra64
 SolidCompression=true
 ;New set minimum to Win2k/NT5.0
 MinVersion=5.0.2195,5.0.2195
-AppVersion=0.9.0.52
-VersionInfoVersion=0.9.0.52
+AppVersion=0.9.1.61
+VersionInfoVersion=0.9.0.61
 AppMutex=Global\PeerBlock
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
@@ -34,7 +34,7 @@ UninstallDisplayName=PeerBlock
 VersionInfoCompany=PeerBlock
 VersionInfoCopyright=PeerBlock
 VersionInfoProductName=PeerBlock
-VersionInfoProductVersion=0.9.0.52
+VersionInfoProductVersion=0.9.1.61
 ;Prevents binary mixup "Need to enable md5 check before this should be enabled"
 MergeDuplicateFiles=false
 ;New setup image BMP's
