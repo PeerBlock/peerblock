@@ -197,6 +197,12 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		{
 			TRACES("[Main_OnInitDialog]    Config loaded.");
 		}
+
+		// Setup tracelogging
+		if (g_config.TracelogEnabled)
+			g_tlog.SetLoglevel((TRACELOG_LEVEL)g_config.TracelogLevel);
+		else
+			g_tlog.SetLoglevel(TRACELOG_LEVEL_NONE);
 	}
 	catch(exception &ex) {
 		TRACEC("[Main_OnInitDialog]    Exception trying to load config!");

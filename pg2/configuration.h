@@ -102,6 +102,9 @@ struct Configuration {
 	tstring UpdateProxy;
 	long UpdateProxyType;
 
+	bool TracelogEnabled;
+	int TracelogLevel;
+
 	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
 

@@ -40,6 +40,7 @@ Configuration::Configuration() :
 	ListEditorWindowPos(RECT()),HistoryWindowPos(RECT()),HideOnClose(true),
 	AlwaysOnTop(false),HideTrayIcon(false),FirstBlock(true),FirstHide(true),
 	BlinkOnBlock(OnHttpBlock),NotifyOnBlock(Never),CleanupType(None),
+	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT),
 	ArchivePath(_T("archives")),StartMinimized(false),ColorCode(true) {
 		HistoryColumns[0]=64;
 		HistoryColumns[1]=128;
@@ -459,6 +460,12 @@ bool Configuration::Load()
 			this->ArchivePath=p;
 	}
 
+	TRACEI("[Configuration] [Load]    parsing config tracelogging element");
+	if(const TiXmlElement *logging=root->FirstChildElement("TraceLog")) {
+		GetChild(logging, "Enabled", this->TracelogEnabled);
+		GetChild(logging, "Level", this->TracelogLevel);
+	}
+
 	TRACEI("[Configuration] [Load]    parsing config colors element");
 	if(const TiXmlElement *colors=root->FirstChildElement("Colors")) {
 		GetChild(colors, "ColorCode", this->ColorCode);
@@ -712,6 +719,13 @@ void Configuration::Save() {
 		}
 
 		InsertChild(logging, "ArchivePath", this->ArchivePath.directory_str());
+	}
+
+	{
+		TiXmlElement *logging=InsertChild(root, "TraceLog");
+
+		InsertChild(logging, "Enabled", this->TracelogEnabled);
+		InsertChild(logging, "Level", this->TracelogLevel);
 	}
 
 	{

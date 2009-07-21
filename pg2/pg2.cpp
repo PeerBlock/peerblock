@@ -184,7 +184,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	}
 	else
 	{
-		TRACEW("Successfully PreventSetUnhandledExceptionFilter()");
+		TRACEW("Could NOT PreventSetUnhandledExceptionFilter()");
 	}
 
 	try {
