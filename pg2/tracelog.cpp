@@ -111,29 +111,58 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 		return;
 	}
 
-	// insert message into ringbuf at position indicated
-	TRACELOG_ENTRY * tlEnt;
-
-	if (MsgFreelist.empty())
+	DWORD waitResult = WaitForSingleObject(LoggingMutex, 1000);
+	switch (waitResult)
 	{
-		// TODO:  log a message warning that we had to grow the queue-length
-		// TODO:  grow queue by some number of items at a time
-		tlEnt = new TRACELOG_ENTRY;
+		case WAIT_OBJECT_0:
+
+			// insert message into ringbuf at position indicated
+			TRACELOG_ENTRY * tlEnt;
+
+			if (MsgFreelist.empty())
+			{
+				// TODO:  log a message warning that we had to grow the queue-length
+				// TODO:  grow queue by some number of items at a time
+				tlEnt = new TRACELOG_ENTRY;
+			}
+			else
+			{
+				MsgFreelist.dequeue(&tlEnt);
+			}
+
+			tlEnt->Level = _lvl;
+			tlEnt->Message = _msg;
+			tlEnt->Tid = GetCurrentThreadId();
+			MsgQueue.enqueue(tlEnt);
+
+			// signal Logging Thread that it has something to do
+			ProcessMessages();	// TODO:  This should be its own real thread...
+
+			// done!			
+            if (!ReleaseMutex(LoggingMutex)) 
+            { 
+				return;
+            } 
+
+			break;
+
+		case WAIT_TIMEOUT:
+			// TODO:  handle case where we timeout waiting for logging mutex
+			return;
+			break;
+
+		case WAIT_FAILED:
+			// TODO:  handle case where waiting for logging mutex fails
+			return;
+			break;
+
+		case WAIT_ABANDONED:
+			// TODO:  handle case where the logging-mutex owner abandoned it
+			return;
+			break;
 	}
-	else
-	{
-		MsgFreelist.dequeue(&tlEnt);
-	}
 
-	tlEnt->Level = _lvl;
-	tlEnt->Message = _msg;
-	tlEnt->Tid = GetCurrentThreadId();
-	MsgQueue.enqueue(tlEnt);
 
-	// signal Logging Thread that it has something to do
-	ProcessMessages();	// TODO:  This should be its own real thread...
-
-	// done!
 
 } // End of LogMessage()
 
@@ -176,7 +205,8 @@ void TraceLog::SetLogfile(tstring _fname)
 	{
 		LogfileName = _fname;
 		HaveLogfile = true;
-		SetEvent(LoggingReady);
+		if (LoggingMutex != NULL)
+			SetEvent(LoggingReady);
 	}
 	else
 	{
@@ -219,7 +249,8 @@ TraceLog::TraceLog()
 {
 	LoggingLevel = TRACELOG_LEVEL_DEFAULT;
 	HaveLogfile = false;
-	LoggingReady = CreateEvent (NULL, TRUE, FALSE, _T("PB LoggingReady Event"));
+	LoggingReady = CreateEvent(NULL, TRUE, FALSE, _T("PB LoggingReady Event"));
+	LoggingMutex = CreateMutex(NULL, FALSE, _T("PB TraceLogging Mutex"));
 
 	for (int i=0; i<TRACELOG_QUEUE_LENGTH; ++i)
 	{

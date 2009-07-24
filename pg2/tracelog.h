@@ -71,6 +71,8 @@ private:
 
 public:
 	HANDLE LoggingReady;
+	HANDLE LoggingMutex;	// TODO:  Change this to PG2 mutex-object
+
 	void LogMessage(tstring messsage, TracelogLevel level);
 	void SetLogfile(tstring filename = _T("peerblock.log"));
 	void SetLoglevel(TRACELOG_LEVEL level);
