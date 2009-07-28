@@ -159,6 +159,17 @@ Curl_hash_add(struct curl_hash *h, void *key, size_t key_len, void *p)
 
   he = mk_hash_element(key, key_len, p);
   if(he) {
+    /* fix tail-pointer if it's null; works around rare bug on Windows */
+    if(!l->tail && l->size != 0) {
+      struct curl_llist_element *te = l->head;
+      size_t l_size = 0;
+      while (te) {
+        ++l_size;
+        te = te->next;
+      }
+      l->tail = te;
+      l->size = l_size;
+    }
     if(Curl_llist_insert_next(l, l->tail, he)) {
       ++h->size;
       return p; /* return the new entry */
