@@ -70,11 +70,13 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 
 	if(!service) {
+		TRACEI("[driver] [load(3)]    driver not currently installed as service");
 		service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
 
 		if(!service) {
 			DWORD err = GetLastError();
 
+			TRACEC("[driver] [load(3)]    ERROR opening service");
 			CloseServiceHandle(manager);
 			throw win32_error("OpenService", err);
 		}
@@ -86,13 +88,16 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 		DWORD err;
 		if(ret || (err = GetLastError()) != ERROR_INSUFFICIENT_BUFFER) {
+			TRACEC("[driver] [load(3)]    ERROR calling QueryServiceConfig");
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
 			throw win32_error("QueryServiceConfig");
 		}
+		err = 0;	// reset error-code, so that nobody else accidentally trips over it.
 
 		QUERY_SERVICE_CONFIG *qsc = (QUERY_SERVICE_CONFIG*)malloc(bytes);
 		if(!qsc) {
+			TRACEC("[driver] [load(3)]    ERROR allocating memory for QueryServiceConfig");
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
 			throw std::bad_alloc("unable to allocate memory for QueryServiceConfig");
@@ -100,6 +105,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 		ret = QueryServiceConfig(service, qsc, bytes, &bytes);
 		if(!ret) {
+			TRACEC("[driver] [load(3)]    ERROR with second call to QueryServiceConfig");
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
 			throw win32_error("QueryServiceConfig");
@@ -111,8 +117,10 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 		// paths don't match, remove service and recreate.
 		if(del) {
+			TRACEW("[driver] [load(3)]    paths don't match, removing and recreating driver-service");
 			// if it's not removable, bail out.
 			if(!this->removable) {
+				TRACEC("[driver] [load(3)]    ERROR trying to remove driver-service");
 				CloseServiceHandle(service);
 				CloseServiceHandle(manager);
 				throw std::exception("unremovable service mismatch", 0);
@@ -124,6 +132,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			if(!ret) {
 				DWORD err = GetLastError();
 
+				TRACEC("[driver] [load(3)]    ERROR calling QueryServiceStatus");
 				CloseServiceHandle(service);
 				CloseServiceHandle(manager);
 				throw win32_error("QueryServiceStatus", err);
@@ -135,6 +144,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 				if(!ret) {
 					DWORD err = GetLastError();
 
+					TRACEC("[driver] [load(3)]    ERROR stopping driver-service");
 					CloseServiceHandle(service);
 					CloseServiceHandle(manager);
 					throw win32_error("ControlService", err);
@@ -146,6 +156,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			CloseServiceHandle(service);
 
 			if(!ret && (err = GetLastError()) != ERROR_SERVICE_MARKED_FOR_DELETE) {
+				TRACEC("[driver] [load(3)]    ERROR deleting driver-service");
 				CloseServiceHandle(manager);
 				throw win32_error("DeleteService", err);
 			}
@@ -156,15 +167,27 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 				m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 
 			if(!service) {
+				err = GetLastError();
+				TRACEC("[driver] [load(3)]    ERROR re-creating driver-service");
 				CloseServiceHandle(manager);
 				throw win32_error("CreateService", err);
 			}
+			TRACEI("[driver] [load(3)]    finished re-creating driver-service, now starting it");
 		}
 	}
 
 	SERVICE_STATUS status;
-	if(QueryServiceStatus(service, &status)) {
-		m_started = (status.dwCurrentState == SERVICE_RUNNING);
+	if(QueryServiceStatus(service, &status)) 
+	{
+		if (status.dwCurrentState == SERVICE_RUNNING)
+		{
+			TRACES("[driver] [load(3)]    driver-service is running");
+			m_started = true;
+		}
+		else
+		{
+			TRACEW("[driver] [load(3)]    Driver-service NOT running!");
+		}
 	}
 
 	CloseServiceHandle(service);
