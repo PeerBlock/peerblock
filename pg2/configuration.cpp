@@ -554,7 +554,7 @@ bool Configuration::Load()
 
 		GetChild(updates, "UpdatePeerGuardian", this->UpdatePeerGuardian);
 		GetChild(updates, "UpdateLists", this->UpdateLists);
-		GetChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
+		//GetChild(updates, "UpdateAtStartup", this->UpdateAtStartup);	// commented-out since we currently require this {Bug#22}
 		GetChild(updates, "UpdateInterval", this->UpdateInterval);
 		GetChild(updates, "UpdateCountdown", this->UpdateCountdown);
 
@@ -817,7 +817,7 @@ void Configuration::Save() {
 
 		InsertChild(updates, "UpdatePeerGuardian", this->UpdatePeerGuardian);
 		InsertChild(updates, "UpdateLists", this->UpdateLists);
-		InsertChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
+		//InsertChild(updates, "UpdateAtStartup", this->UpdateAtStartup);	// commented-out since we currently require this {Bug#22}
 		InsertChild(updates, "UpdateInterval", this->UpdateInterval);
 		InsertChild(updates, "UpdateCountdown", this->UpdateCountdown);
 		
