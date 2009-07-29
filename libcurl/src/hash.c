@@ -165,7 +165,12 @@ Curl_hash_add(struct curl_hash *h, void *key, size_t key_len, void *p)
       size_t l_size = 0;
       while (te) {
         ++l_size;
-        te = te->next;
+        if (te->next) {
+          te = te->next;
+        }
+        else {
+          break;
+        }
       }
       l->tail = te;
       l->size = l_size;
