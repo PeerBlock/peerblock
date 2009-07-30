@@ -1,6 +1,6 @@
 [Setup]
 AppName=PeerBlock
-AppVerName=PeerBlock 0.9.1 (r65)
+AppVerName=PeerBlock 0.9.1 (r71)
 AppPublisher=PeerBlock Project
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
@@ -12,13 +12,13 @@ LicenseFile=setup/license.txt
 InfoBeforeFile=setup/readme.rtf
 OutputDir=setup
 ;Nice I think I can spell\/
-OutputBaseFilename=PeerBlock-Setup_v0.9.1.r65
+OutputBaseFilename=PeerBlock-Setup_v0.9.1.r71
 Compression=lzma/ultra64
 SolidCompression=true
 ;New set minimum to Win2k/NT5.0
 MinVersion=5.0.2195,5.0.2195
-AppVersion=0.9.1.65
-VersionInfoVersion=0.9.0.65
+AppVersion=0.9.1.71
+VersionInfoVersion=0.9.0.71
 ;The Mutex signing in the executible itself is not set to peerblock.
 ;So the program is still identifying its self as peerguardian2
 ;It seems the naming of the Mutex durring install is taken from the AppName (See First Line)
@@ -41,7 +41,7 @@ UninstallDisplayName=PeerBlock
 VersionInfoCompany=PeerBlock
 VersionInfoCopyright=PeerBlock
 VersionInfoProductName=PeerBlock
-VersionInfoProductVersion=0.9.1.65
+VersionInfoProductVersion=0.9.1.71
 ;File checks are manditory by compiler..
 MergeDuplicateFiles=true
 ;New setup image BMP's
