@@ -461,19 +461,29 @@ static void Main_ProcessDb() {
 			}
 		}
 
-		if(g_config.CleanupType==Delete || g_config.CleanupType==ArchiveDelete) {
-			try {
+		if(g_config.CleanupType==Delete || g_config.CleanupType==ArchiveDelete) 
+		{
+			try 
+			{
 				ostringstream ss;
-				ss << "delete from t_history where time <= julianday('now', '-" << g_config.CleanupInterval << " days');";
 
+				// first delete all data from the t_history table
+				ss << "delete from t_history where time <= julianday('now', '-" << g_config.CleanupInterval << " days');";
 				g_con.executenonquery(ss.str());
+				lock.commit();
+
+				// now delete all free btree page structures, as per 
+				// http://web.utk.edu/~jplyon/sqlite/SQLite_optimization_FAQ.html#compact
+				g_con.executenonquery(_T("vacuum;"));
+
+				// HACK:  For some reason, vacuum doesn't do anything if we call it prior to commit(),
+				//		  and commit() throws an exception if we call it twice, so we're doing it this way.
 			}
-			catch(database_error &ex) {
+			catch(database_error &ex) 
+			{
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
 			}
 		}
-
-		lock.commit();
 	}
 
 	g_dbthread=boost::shared_ptr<thread>();
