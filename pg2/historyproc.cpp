@@ -818,7 +818,7 @@ static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 
 					if(!found) {
 						StaticList list;
-						list.Type=List::Allow;
+						list.Type=List::Block;
 						list.Description=LoadString(IDS_PERMBLOCKS);
 						list.File=_T("lists\\permblock.p2b");
 
