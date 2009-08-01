@@ -35,7 +35,7 @@ Configuration::Configuration() :
 	Block(true),BlockHttp(true),AllowLocal(true),UpdatePeerGuardian(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(true),WindowHidden(false),UpdateInterval(2),
 	LogSize(12),LastUpdate(0),CleanupInterval(0),LogAllowed(true),LogBlocked(true),
-	ShowAllowed(true),CacheCrc(0),UpdateCountdown(-1),UpdateProxyType(CURLPROXY_HTTP),
+	ShowAllowed(true),CacheCrc(0),UpdateCountdown(10),UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()),ListManagerWindowPos(RECT()),StayHidden(false),
 	ListEditorWindowPos(RECT()),HistoryWindowPos(RECT()),HideOnClose(true),
 	AlwaysOnTop(false),HideTrayIcon(false),FirstBlock(true),FirstHide(true),
