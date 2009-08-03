@@ -80,11 +80,11 @@ static bool CheckOS() {
 		strOsName = _T("Windows Server 2003 R2");
 	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && osv.wSuiteMask == VER_SUITE_WH_SERVER )
 		strOsName = _T("Windows Home Server");
+	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && osv.wProductType == VER_NT_WORKSTATION
+				&& si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
+		strOsName = _T("Windows XP Professional 64-bit Edition");
 	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && GetSystemMetrics(SM_SERVERR2) == 0 )
 		strOsName = _T("Windows Server 2003");
-	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 2 && ((osv.wProductType == VER_NT_WORKSTATION) 
-				&& (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)) == 0 )
-		strOsName = _T("Windows XP Professional 64-bit Edition");
 	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 1 )
 		strOsName = _T("Windows XP");
 	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 0 )
@@ -136,7 +136,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 	// MARKMOD: test tracelog functionality
 	g_tlog.LogMessage(_T("PeerBlock Starting"), TRACELOG_LEVEL_CRITICAL);
-	g_tlog.LogMessage(_T("PeerBlock v0.9.1.71"), TRACELOG_LEVEL_CRITICAL);
+	g_tlog.LogMessage(_T("PeerBlock v0.9.1.71"), TRACELOG_LEVEL_CRITICAL);	// PB_REV r71
 	g_tlog.ProcessMessages();
 
 	if(!CheckOS()) {
