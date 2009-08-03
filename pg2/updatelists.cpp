@@ -34,7 +34,8 @@ extern TraceLog g_tlog;
 #define STRINGIFY(x) DO_STRINGIFY(x)
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nn is for build-number
-#define BUILDDATE 907280071	// PB_REV r71
+//#define BUILDDATE 907280071	// PB_REV
+#define BUILDDATE 998010075	// PB_REV
 
 #ifdef _WIN32_WINNT
 #ifdef _WIN64
