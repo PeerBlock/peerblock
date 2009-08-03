@@ -163,17 +163,15 @@ BEGIN
     CONTROL         "P2P",IDC_P2P,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,78,10
     CONTROL         "Ads",IDC_ADS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,20,78,10
     CONTROL         "Spyware",IDC_SPYWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,33,78,10
-    CONTROL         "Government",IDC_GOVERNMENT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,46,78,10
-    CONTROL         "Educational",IDC_EDUCATIONAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,59,78,10
-    CONTROL         "Import/Create Lists",IDC_CUSTOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,78,10
+    CONTROL         "Educational",IDC_EDUCATIONAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,46,78,10
+    CONTROL         "Import/Create Lists",IDC_CUSTOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,59,78,10
     LTEXT           "Anti-P2P organizations",IDC_STATIC,90,7,220,10,SS_CENTERIMAGE
     LTEXT           "Advertising and data tracker servers",IDC_STATIC,90,20,220,10,SS_CENTERIMAGE
     LTEXT           "Malicious spyware and adware servers",IDC_STATIC,90,33,220,10,SS_CENTERIMAGE
-    LTEXT           "Known government addresses",IDC_STATIC,90,46,220,10,SS_CENTERIMAGE
-    LTEXT           "Educational institutions and universities",IDC_STATIC,90,59,220,10,SS_CENTERIMAGE
-    LTEXT           "Import or create your own custom lists",IDC_STATIC,90,72,220,10,SS_CENTERIMAGE
-    CONTROL         "Always Allow HTTP",IDC_BLOCKHTTP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,92,78,10
-    LTEXT           "Always allows connections on port 80 and 443, even if they are in your blocklists",IDC_STATIC,90,92,220,18
+    LTEXT           "Educational institutions and universities",IDC_STATIC,90,46,220,10,SS_CENTERIMAGE
+    LTEXT           "Import or create your own custom lists",IDC_STATIC,90,59,220,10,SS_CENTERIMAGE
+    CONTROL         "Always Allow HTTP",IDC_BLOCKHTTP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,85,78,10
+    LTEXT           "Always allows connections on port 80 and 443, even if they are in your blocklists",IDC_STATIC,90,85,220,18
     GROUPBOX        "Recommendation",IDC_STATIC,7,131,303,48
     LTEXT           "Text to long, so -> IDS_STARTUP_LISTS",IDC_RECOMMEND,14,142,289,34
     LTEXT           "To continue, click Next.",IDC_STATIC,103,196,76,8
@@ -774,7 +772,6 @@ BEGIN
     IDS_P2P                 "P2P"
     IDS_ADS                 "Ads"
     IDS_SPY                 "Spyware"
-    IDS_GOV                 "Government"
     IDS_EDU                 "Educational"
     IDS_COPYXTOCLIPBOARD    "Copy %1% to clipboard"
     IDS_INVALIDAPPID        "Error: Invalid Application ID recieved"

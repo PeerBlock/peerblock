@@ -125,7 +125,7 @@ static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	for(size_t i=0; i<g_presetcount; i++)
 		ComboBox_AddString(url, g_presets[i]);
-	ComboBox_SetCurSel(url, 3);
+	ComboBox_SetCurSel(url, 2);
 
 	CheckDlgButton(hwnd, IDC_ADDFILE, BST_CHECKED);
 	CheckDlgButton(hwnd, IDC_BLOCK, BST_CHECKED);

@@ -54,7 +54,6 @@ static INT_PTR CALLBACK PickLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LP
 			if(g_p2p) CheckDlgButton(hwnd, IDC_P2P, BST_CHECKED);
 			if(g_ads) CheckDlgButton(hwnd, IDC_ADS, BST_CHECKED);
 			if(g_spy) CheckDlgButton(hwnd, IDC_SPYWARE, BST_CHECKED);
-			if(g_gov) CheckDlgButton(hwnd, IDC_GOVERNMENT, BST_CHECKED);
 			if(g_edu) CheckDlgButton(hwnd, IDC_EDUCATIONAL, BST_CHECKED);
 			if(g_custom) CheckDlgButton(hwnd, IDC_CUSTOM, BST_CHECKED);
 			if(!g_config.BlockHttp) CheckDlgButton(hwnd, IDC_BLOCKHTTP, BST_CHECKED);
@@ -72,9 +71,6 @@ static INT_PTR CALLBACK PickLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LP
 					break;
 				case IDC_SPYWARE:
 					g_spy=(IsDlgButtonChecked(hwnd, IDC_SPYWARE)==BST_CHECKED);
-					break;
-				case IDC_GOVERNMENT:
-					g_gov=(IsDlgButtonChecked(hwnd, IDC_GOVERNMENT)==BST_CHECKED);
 					break;
 				case IDC_EDUCATIONAL:
 					g_edu=(IsDlgButtonChecked(hwnd, IDC_EDUCATIONAL)==BST_CHECKED);
@@ -302,20 +298,14 @@ void DisplayStartupWizard(HWND parent) {
 			g_config.DynamicLists.push_back(dl);
 		}
 
-		if(g_gov) {
-			dl.Url=g_presets[2];
-			dl.Description=LoadString(IDS_GOV);
-			g_config.DynamicLists.push_back(dl);
-		}
-
 		if(g_p2p) {
-			dl.Url=g_presets[3];
+			dl.Url=g_presets[2];
 			dl.Description=LoadString(IDS_P2P);
 			g_config.DynamicLists.push_back(dl);
 		}
 
 		if(g_spy) {
-			dl.Url=g_presets[4];
+			dl.Url=g_presets[3];
 			dl.Description=LoadString(IDS_SPY);
 			g_config.DynamicLists.push_back(dl);
 		}

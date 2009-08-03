@@ -76,7 +76,6 @@
 #define IDR_HISTORYMENU                 137
 #define IDS_SPY                         138
 #define IDD_HISTORY_CALENDAR            138
-#define IDS_GOV                         139
 #define IDD_HISTORY_FIND                139
 #define IDS_EDU                         140
 #define IDD_SETTINGS_FIRST              140
@@ -228,7 +227,6 @@
 #define IDC_P2P                         1040
 #define IDC_ADS                         1041
 #define IDC_SPYWARE                     1042
-#define IDC_GOVERNMENT                  1043
 #define IDC_EDUCATIONAL                 1044
 #define IDC_CUSTOM                      1045
 #define IDC_CUSTOMSPIN                  1051

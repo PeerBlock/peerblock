@@ -26,11 +26,10 @@
 #include "stdafx.h"
 
 LPCTSTR const g_presets[]={
-	_T("http://peerguardian.sourceforge.net/lists/ads.php"),
-	_T("http://peerguardian.sourceforge.net/lists/edu.php"),
-	_T("http://peerguardian.sourceforge.net/lists/gov.php"),
-	_T("http://peerguardian.sourceforge.net/lists/p2p.php"),
-	_T("http://peerguardian.sourceforge.net/lists/spy.php"),
+	_T("http://list.iblocklist.com/?list=bt_ads"),
+	_T("http://list.iblocklist.com/?list=bt_edu"),
+	_T("http://list.iblocklist.com/?list=bt_level1"),
+	_T("http://list.iblocklist.com/?list=bt_spyware"),
 	_T("http://www.bluetack.co.uk/config/ads-trackers-and-bad-pr0n.gz"),
 	_T("http://www.bluetack.co.uk/config/level1.gz"),
 	_T("http://www.bluetack.co.uk/config/level2.gz"),
