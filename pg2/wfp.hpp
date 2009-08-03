@@ -61,7 +61,7 @@ public:
 
 	void add(const FWPM_CALLOUT0 &callout) {
 		DWORD err = FwpmCalloutAdd0(m_session, &callout, 0, 0);
-		if(err != ERROR_SUCCESS) throw win32_error("FwpmCalloutAdd0", err);
+		if (err != ERROR_SUCCESS && err != FWP_E_ALREADY_EXISTS) throw win32_error("FwpmCalloutAdd0", err);
 	}
 
 	void add(const FWPM_SUBLAYER0 &sublayer) {
