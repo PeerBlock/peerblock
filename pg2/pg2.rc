@@ -604,8 +604,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,0,4
- PRODUCTVERSION 2,1,0,4
+ FILEVERSION 0,9,1,71		// PB_REV r71
+ PRODUCTVERSION 0,9,1,71	// PB_REV r71
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -620,15 +620,15 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "http://sites.google.com/site/peerblock/"
+            VALUE "Comments", "http://www.peerblock.com"
             VALUE "CompanyName", "PeerBlock Project"
             VALUE "FileDescription", "PeerBlock"
-            VALUE "FileVersion", "2, 1, 0, 4"
-            VALUE "InternalName", "PG2"
-            VALUE "LegalCopyright", "Copyright (C) 2004-2007 Cory Nelson, 2009 Mark Bulas"
-            VALUE "OriginalFilename", "pg2.exe"
+            VALUE "FileVersion", "0, 9, 1, 71"	// PB_REV r71
+            VALUE "InternalName", "PeerBlock"
+            VALUE "LegalCopyright", "Copyright (C) 2009 Mark Bulas"
+            VALUE "OriginalFilename", "peerblock.exe"
             VALUE "ProductName", "PeerBlock"
-            VALUE "ProductVersion", "2, 1, 0, 4"
+            VALUE "ProductVersion", "0, 9, 1, 71"
         END
     END
     BLOCK "VarFileInfo"
@@ -783,7 +783,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UPDATEAVAILABLE     "Update available, see http://peerguardian.sf.net"
+    IDS_UPDATEAVAILABLE     "Update available, see http://www.peerblock.com"
     IDS_ALLOWXFORONEHOUR    "Allow %1% for one hour"
     IDS_DOWNLOADINGPCNT     "Downloading - %1%%%"
     IDS_PERMALLOWS          "Permanent Allows"
