@@ -818,7 +818,7 @@ BEGIN
     IDS_UNCAUGHTTEXT        "An uncaught exception occured!\r\nThis problem has been automatically reported to Phoenix Labs.  The report contains the following information:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%\r\n\r\nThankyou for helping us improve PeerGuardian!"
     IDS_UNCAUGHT            "Uncaught exception"
     IDS_PGUPDATE            "Update Available"
-    IDS_PGUPDATETEXT        "There is an update available for PeerGuardian.\r\nWould you like to go there now?"
+    IDS_PGUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
 END
 
 STRINGTABLE 

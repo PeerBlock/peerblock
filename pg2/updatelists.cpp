@@ -33,8 +33,8 @@ extern TraceLog g_tlog;
 #define DO_STRINGIFY(x) #x
 #define STRINGIFY(x) DO_STRINGIFY(x)
 
-// BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nn is for build-number
-#define BUILDDATE 907280071	// PB_REV r71
+// BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
+#define BUILDDATE 908040071	// PB_REV
 
 #ifdef _WIN32_WINNT
 #ifdef _WIN64
@@ -59,11 +59,11 @@ extern TraceLog g_tlog;
 
 // TODO:  make a special page to display for update-found purposes; pass in build-string?
 static const char *g_agent="PeerBlock/0.9.2.72";	// PB_REV r71
-static const LPCTSTR g_homepage=_T("http://www.peerblock.com");		// displayed in web-browser if new program version is found
+static const LPCTSTR g_homepage=_T("http://www.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
 
 const unsigned long long g_build=BUILDNUM;
-static const char *g_updateurl="http://forums.peerblock.com/pb_update.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
+static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
 
 static const UINT TIMER_COUNTDOWN=1;
 static unsigned short g_countdown;
