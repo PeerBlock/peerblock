@@ -71,7 +71,7 @@ void TraceLog::ProcessMessages()
 		if (tlEnt->Level <= LoggingLevel && HaveLogfile)
 		{
 			// write it out to file
-			tstring strLine = boost::str(tformat(_T("[%1%] %2%\n")) % tlEnt->Tid % tlEnt->Message );
+			tstring strLine = boost::str(tformat(_T("%1%\n")) % tlEnt->Message );
 			LogFile << strLine;
 		}
 
@@ -130,9 +130,14 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 				MsgFreelist.dequeue(&tlEnt);
 			}
 
+			SYSTEMTIME st;
+			GetLocalTime(&st);
+
+			tlEnt->Message = boost::str(tformat(_T("[%1%/%2%/%3%] [%|4$0+2|:%|5$0+2|:%|6$0+2|.%|7$0+3|] [%|8$0+5|]  %9%")) 
+				% st.wMonth % st.wDay % st.wYear % st.wHour % st.wMinute % st.wSecond % st.wMilliseconds % GetCurrentThreadId() % _msg );
 			tlEnt->Level = _lvl;
-			tlEnt->Message = _msg;
 			tlEnt->Tid = GetCurrentThreadId();
+
 			MsgQueue.enqueue(tlEnt);
 
 			// signal Logging Thread that it has something to do
