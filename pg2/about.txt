@@ -1,4 +1,4 @@
-PeerBlock v0.9.1.71
+PeerBlock 0.9.2 (r86)
 
 Base PeerGuardian code copyright (C) 2004-2007 Cory Nelson
 PeerBlock modifications copyright (c) 2009 Mark Bulas

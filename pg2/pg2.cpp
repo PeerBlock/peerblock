@@ -136,7 +136,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 	// MARKMOD: test tracelog functionality
 	g_tlog.LogMessage(_T("PeerBlock Starting"), TRACELOG_LEVEL_CRITICAL);
-	g_tlog.LogMessage(_T("PeerBlock v0.9.1.71"), TRACELOG_LEVEL_CRITICAL);
+	g_tlog.LogMessage(_T("PeerBlock 0.9.2 (r86)"), TRACELOG_LEVEL_CRITICAL);	// PB_REV
 	g_tlog.ProcessMessages();
 
 	if(!CheckOS()) {

@@ -34,7 +34,7 @@ extern TraceLog g_tlog;
 #define STRINGIFY(x) DO_STRINGIFY(x)
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 908040071	// PB_REV
+#define BUILDDATE 908040086	// PB_REV
 
 #ifdef _WIN32_WINNT
 #ifdef _WIN64
@@ -58,7 +58,7 @@ extern TraceLog g_tlog;
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE)
 
 // TODO:  make a special page to display for update-found purposes; pass in build-string?
-static const char *g_agent="PeerBlock/0.9.2.72";	// PB_REV r71
+static const char *g_agent="PeerBlock/0.9.2.86";	// PB_REV
 static const LPCTSTR g_homepage=_T("http://www.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
 
