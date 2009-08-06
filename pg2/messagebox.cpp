@@ -28,7 +28,10 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "tracelog.h"
 using namespace std;
+
+extern TraceLog g_tlog;
 
 int MessageBox(HWND hwnd, const tstring &text, const tstring &caption, UINT type) {
 	return MessageBox(hwnd, text.c_str(), caption.c_str(), type);
@@ -51,7 +54,9 @@ int MessageBox(HWND hwnd, UINT textid, UINT captionid, UINT type) {
 static const char *g_bughost="bugs.phoenixlabs.org";
 static const char *g_bugport="50005";
 
-static void ReportException(const exception *ex, const char *file, int line) {
+static void ReportException(const exception *ex, const char *file, int line) 
+{
+	TRACEC("Reporting exception to bugs.phoenixlabs.org:50005");
 	string packet;
 	{
 		ostringstream buf;
@@ -111,6 +116,9 @@ void ExceptionBox(HWND hwnd, const exception &ex, const char *file, int line) {
 	ReportException(&ex, file, line);
 
 	tstring str=boost::str(tformat(LoadString(IDS_EXCEPTIONTEXT))%g_build%file%line%typeid(ex).name()%ex.what());
+	TRACEC("    vvvv  EXCEPTION!!  vvvv");
+	TRACEBUFC(str.c_str());
+	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
 	MessageBox(hwnd, str, IDS_EXCEPTION, MB_ICONERROR|MB_OK);
 }
 
@@ -118,6 +126,9 @@ void UncaughtExceptionBox(HWND hwnd, const char *file, int line) {
 	ReportException(NULL, file, line);
 
 	tstring str=boost::str(tformat(LoadString(IDS_CAUGHTUNKNOWNTEXT))%g_build%file%line);
+	TRACEC("    vvvv  EXCEPTION!!  vvvv");
+	TRACEBUFC(str.c_str());
+	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
 	MessageBox(hwnd, str, IDS_UNCAUGHT, MB_ICONERROR|MB_OK);
 }
 
@@ -133,5 +144,8 @@ void UncaughtExceptionBox(HWND hwnd, const exception &ex, const char *file, int 
 		str=boost::str(tformat(LoadString(IDS_UNCAUGHTTEXT)) % g_build % file % line % typeid(ex).name() % ex.what());
 	}
 
+	TRACEC("    vvvv  EXCEPTION!!  vvvv");
+	TRACEBUFC(str.c_str());
+	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
 	MessageBox(hwnd, str, IDS_UNCAUGHT, MB_ICONERROR|MB_OK);
 }
