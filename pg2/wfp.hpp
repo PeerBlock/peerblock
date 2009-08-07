@@ -28,6 +28,7 @@
 
 #include <stdexcept>
 #include <windows.h>
+#include "resource.h"
 
 #ifndef INCLUDED_FWPMU
 #define INCLUDED_FWPMU
@@ -49,7 +50,10 @@ public:
 		if(m_session) throw std::exception("session already open", 0);
 
 		DWORD err = FwpmEngineOpen0(0, RPC_C_AUTHN_WINNT, 0, &session, &m_session);
-		if(err != ERROR_SUCCESS) throw win32_error("FwpmEngineOpen0", err);
+		if (err == 1753)
+			throw peerblock_error(IDS_NEEDSVCSERR, IDS_NEEDSVCSERRTEXT);
+		if (err != ERROR_SUCCESS) 
+			throw win32_error("FwpmEngineOpen0", err);
 	}
 
 	void close() {

@@ -34,5 +34,6 @@ int MessageBox(HWND hwnd, const tstring &text, UINT captionid, UINT type);
 int MessageBox(HWND hwnd, UINT textid, UINT captionid, UINT type);
 
 void ExceptionBox(HWND hwnd, const std::exception &ex, const char *file, int line);
+void PeerBlockExceptionBox(HWND hwnd, const peerblock_error &ex);
 void UncaughtExceptionBox(HWND hwnd, const char *file, int line);
 void UncaughtExceptionBox(HWND hwnd, const std::exception &ex, const char *file, int line);

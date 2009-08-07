@@ -54,6 +54,12 @@ int MessageBox(HWND hwnd, UINT textid, UINT captionid, UINT type) {
 static const char *g_bughost="bugs.phoenixlabs.org";
 static const char *g_bugport="50005";
 
+
+
+// TODO:  Break this out into a wrapper around a base function that simply accepts a string input.
+//		  This way, we will be able to report whatever we want, regardless of whether it's a
+//		  complete exception or not.  Need to check on the code that's actually handling these
+//		  sorts of problem-reports, to see what it's expecting.
 static void ReportException(const exception *ex, const char *file, int line) 
 {
 	TRACEC("Reporting exception to bugs.phoenixlabs.org:50005");
@@ -112,6 +118,21 @@ static void ReportException(const exception *ex, const char *file, int line)
 
 #endif
 
+
+
+void PeerBlockExceptionBox(HWND _hwnd, const peerblock_error &_ex)
+{
+//	ReportException(&ex, file, line);
+
+	tstring str=boost::str(tformat(LoadString(_ex.m_textId)));
+	TRACEC("    vvvv  EXCEPTION!!  vvvv");
+	TRACEBUFC(str.c_str());
+	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
+	MessageBox(_hwnd, str, _ex.m_codeId, MB_ICONERROR|MB_OK);
+}
+
+
+
 void ExceptionBox(HWND hwnd, const exception &ex, const char *file, int line) {
 	ReportException(&ex, file, line);
 
@@ -122,6 +143,8 @@ void ExceptionBox(HWND hwnd, const exception &ex, const char *file, int line) {
 	MessageBox(hwnd, str, IDS_EXCEPTION, MB_ICONERROR|MB_OK);
 }
 
+
+
 void UncaughtExceptionBox(HWND hwnd, const char *file, int line) {
 	ReportException(NULL, file, line);
 
@@ -131,6 +154,8 @@ void UncaughtExceptionBox(HWND hwnd, const char *file, int line) {
 	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
 	MessageBox(hwnd, str, IDS_UNCAUGHT, MB_ICONERROR|MB_OK);
 }
+
+
 
 void UncaughtExceptionBox(HWND hwnd, const exception &ex, const char *file, int line) {
 	ReportException(&ex, file, line);

@@ -216,6 +216,12 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		g_filter.reset(new pgfilter());
 		TRACES("[Main_OnInitDialog]    g_filter reset.");
 	}
+	catch(peerblock_error &ex) 
+	{
+		PeerBlockExceptionBox(NULL, ex);
+		DestroyWindow(hwnd);
+		return FALSE;
+	}
 	catch(win32_error &ex) {
 		DWORD code = ex.error();
 		if (code == 577)

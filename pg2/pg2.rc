@@ -893,6 +893,8 @@ BEGIN
     IDS_DRIVERERRTEXT       "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pbfilter.sys can't be found.\r\n\r\n%1%\r\n%2%"
     IDS_FILEOPENERR         "Unable to open file"
     IDS_FILEOPENERRTEXT     "Unable to open the file at:\r\n%1%\r\n\r\nCheck to make sure you have permissions to write to that location."
+    IDS_NEEDSVCSERR         "Required services not running"
+	IDS_NEEDSVCSERRTEXT     "One or more of the following Windows Services are not running:\r\n\r\nBase Filtering Engine\r\nIPsec Policy Agent\r\nIKE and AuthIP IPsec Keyring Modules\r\n\r\nPlease verify that these Windows Services have not been disabled, and are running.\r\n\r\nSee http://www.peerblock.com/required-services for more information."
     IDS_LOGALLOWED          "Log Allowed"
     IDS_LOGBLOCKED          "Log Blocked"
     IDS_LOGBOTH             "Log Allowed & Blocked"
