@@ -1219,6 +1219,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\versioninfo.h"
+				>
+			</File>
+			<File
 				RelativePath=".\wfp.hpp"
 				>
 			</File>

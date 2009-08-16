@@ -33,9 +33,6 @@ extern TraceLog g_tlog;
 #define DO_STRINGIFY(x) #x
 #define STRINGIFY(x) DO_STRINGIFY(x)
 
-// BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 908040071	// PB_REV
-
 #ifdef _WIN32_WINNT
 #ifdef _WIN64
 // nt x64 build
@@ -58,12 +55,26 @@ extern TraceLog g_tlog;
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE)
 
 // TODO:  make a special page to display for update-found purposes; pass in build-string?
-static const char *g_agent="PeerBlock/0.9.2.72";	// PB_REV r71
-static const LPCTSTR g_homepage=_T("http://www.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
+static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "." MAKE_STR(PB_VER_C) "." MAKE_STR(PB_BLDNUM);	// PB_REV r71
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
-
 const unsigned long long g_build=BUILDNUM;
+
+#ifdef PB_RELTYPE_PUBLIC
 static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
+static const LPCTSTR g_homepage=_T("http://www.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
+#endif
+#ifdef PB_RELTYPE_INTERIM
+static const char *g_updateurl="http://update.peerblock.com/pb_update_ir.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
+static const LPCTSTR g_homepage=_T("http://devblog.peerblock.com");		// displayed in web-browser if new program version is found
+#endif
+#ifdef PB_RELTYPE_TEST
+static const char *g_updateurl="http://update.peerblock.com/pb_update_test.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
+static const LPCTSTR g_homepage=_T("http://forums.peerblock.com");		// displayed in web-browser if new program version is found
+#endif
+#ifdef PB_RELTYPE_DEV
+static const char *g_updateurl="http://update.peerblock.com/pb_update_dev.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
+static const LPCTSTR g_homepage=_T("http://www.peerblock.com");		// displayed in web-browser if new program version is found
+#endif
 
 static const UINT TIMER_COUNTDOWN=1;
 static unsigned short g_countdown;
@@ -301,6 +312,14 @@ public:
 			if(g_config.UpdatePeerGuardian) 
 			{
 				TRACEI("[UpdateThread] [_Process]    updating peerblock");
+				TCHAR buf[128];
+				swprintf_s(buf, sizeof(buf)/2, L"[UpdateThread] [_Process]    update url:[%S]", g_updateurl);
+				TRACEBUFI(buf);
+				swprintf_s(buf, sizeof(buf)/2, L"[UpdateThread] [_Process]    homepage url:[%s]", g_homepage);
+				TRACEBUFI(buf);
+				swprintf_s(buf, sizeof(buf)/2, L"[UpdateThread] [_Process]    agent string:[%S]", g_agent);
+				TRACEBUFI(buf);
+
 				HandleData *data=new HandleData(this);
 
 				CURL *site=curl_easy_init();
