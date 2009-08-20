@@ -39,7 +39,7 @@ static void About_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 			ShellExecute(NULL, NULL, _T("http://sites.google.com/site/peerblock/"), NULL, NULL, SW_SHOW);
 			break;
 		case IDC_FORUMS:
-			ShellExecute(NULL, NULL, _T("http://peerguardian.sourceforge.net/forums/"), NULL, NULL, SW_SHOW);
+			ShellExecute(NULL, NULL, _T("http://forums.peerblock.com/"), NULL, NULL, SW_SHOW);
 			break;
 		case IDOK:
 			DestroyWindow(hwnd);

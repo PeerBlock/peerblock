@@ -1,14 +1,19 @@
-PeerGuardian 2 RC1
-Copyright (C) 2004-2007 Cory Nelson
+PeerBlock v0.9.2+ (r93)
+
+Base PeerGuardian code copyright (C) 2004-2007 Cory Nelson
+PeerBlock modifications copyright (C) 2009 Mark Bulas
 Based on the original work by Tim Leonard
 
-PeerGuardian 2 is available freely under a zlib License (license.txt).
+PeerBlock is available freely under a zlib License (license.txt).
 Please make sure you understand it well before messing with the included
-source.  Though not required, we would love to hear from you at the Methlabs
+source.  Though not required, we would love to hear from you at the PeerBlock
 forums if you use it.
 
 Building
 ---------
-Project files are included for Visual C++ 2005.  To build PeerGuardian you
-will need Boost (http://www.boost.org) 1.33.  To build the driver you will
-need the Windows Vista DDK.
+Project files are included for Visual C++ 2008 Express Edition and The Vista
+/Server 2008 SDK.  To build the driver you will need the Windows Vista 6.1 
+WDK.
+
+See (http://code.google.com/p/peerblock/wiki/BuildingPeerBlock) for more
+details.

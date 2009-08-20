@@ -1,17 +1,17 @@
-This describe ways to interface external applications with PG2.  It may provide
-documentation for creating plugins later on.
+This file describes ways to interface external applications with PeerBlock.
+It may provide documentation for creating plugins later on.
 
-Hide/Unhide PG2
+Hide/Unhide PeerBlock
 -------------------------------
-If you would like to bring PG2 out of the tray or send it back, you can do:
+To bring PeerBlock out of the tray or send it back, you can do the following:
 
-UINT msg=RegisterWindowMessage(_T("PeerGuardian2SetVisible"));
+UINT msg=RegisterWindowMessage(_T("PeerBlockSetVisible"));
 SendMessage(HWND_BROADCAST, msg, 0, TRUE); // TRUE to show, FALSE to hide.
 
-Force PG2 to reload its lists
+Force PeerBlock to reload its lists:
 -------------------------------
-As of beta 6, PeerGuardian 2 allows external list editors to force a list
+PeerBlock allows external list editors to force a list
 reload and possibly cache regeneration.  This can be done like so:
 
-UINT msg=RegisterWindowMessage(_T("PeerGuardian2LoadLists"));
++UINT msg=RegisterWindowMessage(_T("PeerBlockLoadLists"));
 SendMessage(HWND_BROADCAST, msg, 0, 0);
