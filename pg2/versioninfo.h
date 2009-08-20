@@ -26,15 +26,15 @@
 
 // only one of these should be uncommented at any given time
 //#define PB_RELTYPE_PUBLIC
-//#define PB_RELTYPE_INTERIM
-#define PB_RELTYPE_TEST
+#define PB_RELTYPE_INTERIM
+//#define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
 
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 908120089	// PB_REV
+#define BUILDDATE 908190093	// PB_REV
 
-#define PB_BLDNUM 89
+#define PB_BLDNUM 93	// PB_REV
 
 #define PB_VER_A 0
 #define PB_VER_B 9

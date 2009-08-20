@@ -55,7 +55,7 @@ extern TraceLog g_tlog;
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE)
 
 // TODO:  make a special page to display for update-found purposes; pass in build-string?
-static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "." MAKE_STR(PB_VER_C) "." MAKE_STR(PB_BLDNUM);	// PB_REV r71
+static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "." MAKE_STR(PB_VER_C) "." MAKE_STR(PB_BLDNUM);
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
 const unsigned long long g_build=BUILDNUM;
 
@@ -200,25 +200,20 @@ private:
 	{
 		// TODO:  Remove, or at least reduce severity of, these tracelog statements, as they're for INTERIM DEBUG PURPOSES ONLY!
 
-//		TRACEI(">up");
 		TRACED("[UpdateThread] [UpdateProgress]  > Entering routine.");
 
 		double total=this->progressmod;
 
-//		TRACEI(" 1");
 		TRACED("[UpdateThread] [UpdateProgress]    about to spin through vector");
 		for(vector<HandleData*>::size_type i=0; i<hdata.size(); i++)
 			total+=hdata[i]->progress;
 		
-//		TRACEI(" 2");
 		TRACED("[UpdateThread] [UpdateProgress]    computing temporary Total value");
 		total=min(total, maxprogress);
 
-//		TRACEI(" 3");
 		TRACED("[UpdateThread] [UpdateProgress]    sending message to progress-bar");
 		SendMessage(progress, PBM_SETPOS, (WPARAM)(int)total, 0);
 
-//		TRACEI("<up");
 		TRACED("[UpdateThread] [UpdateProgress]  < Leaving routine.");
 	}
 

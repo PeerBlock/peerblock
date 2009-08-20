@@ -56,7 +56,7 @@ END
 IDD_MAIN DIALOGEX 0, 0, 358, 225
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "PeerBlock r89 - TEST RELEASE"	// PB_REV
+CAPTION "PeerBlock r93 - INTERIM RELEASE"	// PB_REV
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_TABS,"SysTabControl32",0x0,7,7,344,211
@@ -602,8 +602,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,9,2,89		// PB_REV r71
- PRODUCTVERSION 0,9,2,89	// PB_REV r71
+ FILEVERSION 0,9,2,93		// PB_REV
+ PRODUCTVERSION 0,9,2,93	// PB_REV
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -621,12 +621,12 @@ BEGIN
             VALUE "Comments", "http://www.peerblock.com"
             VALUE "CompanyName", "PeerBlock Project"
             VALUE "FileDescription", "PeerBlock"
-            VALUE "FileVersion", "0, 9, 2, 89"	// PB_REV r71
+            VALUE "FileVersion", "0, 9, 2, 93"	// PB_REV
             VALUE "InternalName", "PeerBlock"
             VALUE "LegalCopyright", "Copyright (C) 2009 Mark Bulas"
             VALUE "OriginalFilename", "peerblock.exe"
             VALUE "ProductName", "PeerBlock"
-            VALUE "ProductVersion", "0, 9, 1, 71"
+            VALUE "ProductVersion", "0, 9, 2, 93"	// PB_REV
         END
     END
     BLOCK "VarFileInfo"
