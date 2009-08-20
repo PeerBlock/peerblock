@@ -200,25 +200,25 @@ private:
 	{
 		// TODO:  Remove, or at least reduce severity of, these tracelog statements, as they're for INTERIM DEBUG PURPOSES ONLY!
 
-		TRACEI(">up");
+//		TRACEI(">up");
 		TRACED("[UpdateThread] [UpdateProgress]  > Entering routine.");
 
 		double total=this->progressmod;
 
-		TRACEI(" 1");
+//		TRACEI(" 1");
 		TRACED("[UpdateThread] [UpdateProgress]    about to spin through vector");
 		for(vector<HandleData*>::size_type i=0; i<hdata.size(); i++)
 			total+=hdata[i]->progress;
 		
-		TRACEI(" 2");
+//		TRACEI(" 2");
 		TRACED("[UpdateThread] [UpdateProgress]    computing temporary Total value");
 		total=min(total, maxprogress);
 
-		TRACEI(" 3");
+//		TRACEI(" 3");
 		TRACED("[UpdateThread] [UpdateProgress]    sending message to progress-bar");
 		SendMessage(progress, PBM_SETPOS, (WPARAM)(int)total, 0);
 
-		TRACEI("<up");
+//		TRACEI("<up");
 		TRACED("[UpdateThread] [UpdateProgress]  < Leaving routine.");
 	}
 
