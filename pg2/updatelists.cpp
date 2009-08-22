@@ -1646,7 +1646,21 @@ static boost::shared_ptr<thread> g_updatethread;
 
 
 
-static void UpdateLists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
+static void UpdateLists_OnClose(HWND hwnd)
+{
+	g_ut.aborted=true;
+
+	if(g_updater==(HWND)-1)
+		EndDialog(hwnd, g_ut.changes);
+	else
+		DestroyWindow(hwnd);
+
+} // End of UpdateLists_OnClose()
+
+
+
+static void UpdateLists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+{
 	if(id==IDC_ABORT) 
 	{
 		TRACEI("[UpdateLists_OnCommand]    IDC_ABORT");
@@ -1806,6 +1820,7 @@ static void UpdateLists_OnTimer(HWND hwnd, UINT id)
 static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		switch(msg) {
+			HANDLE_MSG(hwnd, WM_CLOSE, UpdateLists_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, UpdateLists_OnCommand);
 			HANDLE_MSG(hwnd, WM_DESTROY, UpdateLists_OnDestroy);
 			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, UpdateLists_OnGetMinMaxInfo);
