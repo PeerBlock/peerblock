@@ -195,6 +195,13 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program
 		HWND hwnd=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_MAIN), NULL, Main_DlgProc);
 
+		// Set main window caption to version-string from versioninfo.h
+		TCHAR * chBuf;
+		chBuf = (TCHAR *)malloc(256 * sizeof(chBuf));
+		swprintf_s(chBuf, 256, L"%S", PB_BLDSTR);
+		SetWindowText(hwnd, chBuf);
+		free(chBuf);
+
 		MSG msg;
 		while(GetMessage(&msg, NULL, 0, 0)>0) {
 			TranslateMessage(&msg);

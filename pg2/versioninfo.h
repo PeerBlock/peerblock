@@ -30,11 +30,12 @@
 //#define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
 
+// PB_REV:  Don't forget to update the version strings in license.txt, pg2/about.txt, readme.txt, and setup/readme.rtf!
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 908190093	// PB_REV
+#define BUILDDATE 908190099	// PB_REV
 
-#define PB_BLDNUM 93	// PB_REV
+#define PB_BLDNUM 99	// PB_REV
 
 #define PB_VER_A 0
 #define PB_VER_B 9

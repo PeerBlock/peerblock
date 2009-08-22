@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "versioninfo.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@ END
 IDD_MAIN DIALOGEX 0, 0, 358, 225
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "PeerBlock r93 - INTERIM RELEASE"	// PB_REV
+CAPTION "PeerBlock"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_TABS,"SysTabControl32",0x0,7,7,344,211
@@ -602,8 +603,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,9,2,93		// PB_REV
- PRODUCTVERSION 0,9,2,93	// PB_REV
+ FILEVERSION PB_VER_A,PB_VER_B,PB_VER_C,PB_BLDNUM
+ PRODUCTVERSION PB_VER_A,PB_VER_B,PB_VER_C,PB_BLDNUM
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -621,12 +622,12 @@ BEGIN
             VALUE "Comments", "http://www.peerblock.com"
             VALUE "CompanyName", "PeerBlock Project"
             VALUE "FileDescription", "PeerBlock"
-            VALUE "FileVersion", "0, 9, 2, 93"	// PB_REV
+            VALUE "FileVersion", MAKE_STR(PB_VER_A) ", " MAKE_STR(PB_VER_B) ", " MAKE_STR(PB_VER_C) ", " MAKE_STR(PB_BLDNUM)
             VALUE "InternalName", "PeerBlock"
             VALUE "LegalCopyright", "Copyright (C) 2009 Mark Bulas"
             VALUE "OriginalFilename", "peerblock.exe"
             VALUE "ProductName", "PeerBlock"
-            VALUE "ProductVersion", "0, 9, 2, 93"	// PB_REV
+            VALUE "ProductVersion", MAKE_STR(PB_VER_A) ", " MAKE_STR(PB_VER_B) ", " MAKE_STR(PB_VER_C) ", " MAKE_STR(PB_BLDNUM)
         END
     END
     BLOCK "VarFileInfo"
