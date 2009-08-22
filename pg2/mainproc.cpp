@@ -124,8 +124,7 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 static void Main_OnDestroy(HWND hwnd) {
 	{
 		try {
-			for(size_t i=0; i<g_tabcount; i++)
-				DestroyWindow(g_tabs[i].Tab);
+			g_config.Save();
 		}
 		catch(exception &ex) {
 			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
@@ -136,16 +135,8 @@ static void Main_OnDestroy(HWND hwnd) {
 
 	{
 		try {
-			g_filter=boost::shared_ptr<pgfilter>();
-		}
-		catch(exception &ex) {
-			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		}
-	}
-
-	{
-		try {
-			g_config.Save();
+			for(size_t i=0; i<g_tabcount; i++)
+				DestroyWindow(g_tabs[i].Tab);
 		}
 		catch(exception &ex) {
 			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
