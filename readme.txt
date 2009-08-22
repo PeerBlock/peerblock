@@ -47,7 +47,7 @@ PeerBlock Credits
 Mark Bulas       Lead Programmer
 Night_stalker_z  Programmer
 DisCoStu         Installer
-XhmikosR         Installer, Build System
+XhmikosR         Installer
 
 
 PeerGuardian 2 Credits

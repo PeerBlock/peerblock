@@ -106,7 +106,7 @@ Source: {#= input_path}\x64\release (Vista)\peerblock.exe; DestDir: {app}; Flags
 Source: {#= input_path}\x64\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
 Source: {pf}\PeerGuardian2\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Flags: skipifsourcedoesntexist external onlyifdoesntexist; Check: IsVista64
 
-Source: {#= input_path}\setup\license.txt; DestDir: {app}; Flags: ignoreversion
+Source: {#= input_path}\license.txt; DestDir: {app}; Flags: ignoreversion
 Source: {#= input_path}\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 
 
@@ -114,14 +114,14 @@ Source: {#= input_path}\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
 Name: {group}\Uninstall; Filename: {app}\unins000.exe; WorkingDir: {app}; Comment: {cm:UninstallProgram,PeerBlock}
 Name: {group}\{cm:ProgramOnTheWeb,PeerBlock}; Filename: http://www.peerblock.com/; WorkingDir: {app}
-Name: {group}\License; Filename: {app}\license.txt; WorkingDir: {app}
-Name: {group}\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}
+Name: {group}\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: License
+Name: {group}\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: ReadMe
 Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
 
 
 [Registry]
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: """{app}\peerblock.exe"""; Tasks: startup_task; Flags: uninsdeletevalue
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset_settings remove_startup_task; Flags: deletevalue uninsdeletevalue
 
 
@@ -153,6 +153,19 @@ begin
   Result := True;
   if RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock') then
   Result := False;
+end;
+
+
+// Check if PeerBlock is configured to run on startup with the old registry value "PeerGuardian"
+function StartupCheckOld(): Boolean;
+var
+  svalue: String;
+begin
+  Result := False;
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian', svalue) then begin
+	if svalue = (ExpandConstant('{app}\peerblock.exe')) then
+    Result := True;
+  end;
 end;
 
 
@@ -198,6 +211,16 @@ var
 begin
   GetWindowsVersionEx(ver);
   Result := UsingWinNT and (ver.Major >= 6) and Is64BitInstallMode;
+end;
+
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then begin
+    if StartupCheckOld then begin
+	  RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
+    end;
+  end;
 end;
 
 
