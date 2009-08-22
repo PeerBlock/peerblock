@@ -395,9 +395,29 @@ public:
 
 					TCHAR chBuf[256];
 					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    updating file: [%s]"), file.c_str());
-					g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
+					TRACEBUFI(chBuf);
 
-					if(curtime-g_config.DynamicLists[i].LastUpdate >= 43200 || !path::exists(file) || GetFileSize(file.c_str())==0) 
+					time_t elapsedTime = curtime-g_config.DynamicLists[i].LastUpdate;
+					bool fileExists = path::exists(file);
+					DWORD fileSize = 0;
+
+					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %d seconds have passed since last update"), elapsedTime);
+					TRACEBUFI(chBuf);
+
+					if (fileExists)
+					{
+						TRACEI("[UpdateThread] [_Process]    + file exists");
+
+						fileSize = GetFileSize(file.c_str());
+						_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + fileSize = %d"), fileSize);
+						TRACEBUFI(chBuf);
+					}
+					else
+					{
+						TRACEI("[UpdateThread] [_Process]    + file does not exist");
+					}
+
+					if(elapsedTime >= 43200 || !fileExists || fileSize==0) 
 					{
 						HandleData *data=new HandleData(this);
 
