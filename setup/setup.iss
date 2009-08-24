@@ -1,4 +1,4 @@
-; ISTool v5.3.0/Inno Setup v5.3.4, script by XhmikosR
+; ISTool v5.3.0/Inno Setup v5.3.4
 ;
 ; Requirements:
 ; *Inno Setup QuickStart Pack:
@@ -6,7 +6,6 @@
 
 
 #define getversionpath "..\Win32\Release (Vista)"
-#define input_path ".."
 #define app_version	GetFileVersion(AddBackslash(getversionpath) + "\peerblock.exe")
 
 #define VerMajor
@@ -80,42 +79,41 @@ BeveledLabel=PeerBlock {#= simple_app_version} (r{#= VerBuild}) built on {#= ins
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
-Name: startup_task; Description: Start PeerBlock on system startup; GroupDescription: Startup options:; Check: StartupCheck(); Flags: unchecked
-Name: remove_startup_task; Description: Remove PeerBlock from Windows startup; GroupDescription: Other tasks:; Check: NOT StartupCheck(); Flags: unchecked
-Name: reset_settings; Description: Reset PeerBlock's settings; GroupDescription: Other tasks:; Check: SettingsExistCheck(); Flags: unchecked
+Name: startup_task; Description: Start PeerBlock on system startup; GroupDescription: Startup options:; Check: StartupCheck() AND NOT StartupCheckOld(); Flags: unchecked
+Name: startup_task; Description: Start PeerBlock on system startup; GroupDescription: Startup options:; Check: StartupCheck() AND StartupCheckOld()
+Name: remove_startup_task; Description: Remove PeerBlock from Windows startup; GroupDescription: Startup options:; Check: NOT StartupCheck(); Flags: unchecked
+Name: reset_settings; Description: Reset PeerBlock's settings; GroupDescription: Other tasks:; Check: SettingsExist(); Flags: unchecked
+Name: use_pg2_settings; Description: Use PeerGuardian2 settings; GroupDescription: Other tasks:; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) AND NOT SettingsExist()
 
 
 [Files]
 ; Win2k files
-Source: {#= input_path}\win32\release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is2k
-Source: {#= input_path}\win32\release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is2k
-Source: {pf}\PeerGuardian2\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Flags: skipifsourcedoesntexist external onlyifdoesntexist; Check: Is2k
+Source: ..\win32\release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is2k
+Source: ..\win32\release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is2k
 
 ; WinXP x64 files
-Source: {#= input_path}\x64\release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsXP64
-Source: {#= input_path}\x64\release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsXP64
-Source: {pf}\PeerGuardian2\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Flags: skipifsourcedoesntexist external onlyifdoesntexist; Check: IsXP64
+Source: ..\x64\release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsXP64
+Source: ..\x64\release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsXP64
 
 ; Vista files
-Source: {#= input_path}\win32\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista
-Source: {#= input_path}\win32\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista
-Source: {pf}\PeerGuardian2\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Flags: skipifsourcedoesntexist external onlyifdoesntexist; Check: IsVista
+Source: ..\win32\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista
+Source: ..\win32\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista
 
 ; Vista x64 files
-Source: {#= input_path}\x64\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
-Source: {#= input_path}\x64\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
-Source: {pf}\PeerGuardian2\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Flags: skipifsourcedoesntexist external onlyifdoesntexist; Check: IsVista64
+Source: ..\x64\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
+Source: ..\x64\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
 
-Source: {#= input_path}\license.txt; DestDir: {app}; Flags: ignoreversion
-Source: {#= input_path}\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
+Source: {code:GetPG2Path}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
+Source: ..\license.txt; DestDir: {app}; Flags: ignoreversion
+Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 
 
 [Icons]
 Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
-Name: {group}\Uninstall; Filename: {app}\unins000.exe; WorkingDir: {app}; Comment: {cm:UninstallProgram,PeerBlock}
-Name: {group}\{cm:ProgramOnTheWeb,PeerBlock}; Filename: http://www.peerblock.com/; WorkingDir: {app}
-Name: {group}\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: License
-Name: {group}\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: ReadMe
+Name: {group}\Uninstall PeerBlock; Filename: {app}\unins000.exe; WorkingDir: {app}; Comment: {cm:UninstallProgram,PeerBlock}
+Name: {group}\Help and Support\{cm:ProgramOnTheWeb,PeerBlock}; Filename: http://www.peerblock.com/; WorkingDir: {app}
+Name: {group}\Help and Support\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: PeerBlock's License
+Name: {group}\Help and Support\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
 
@@ -131,6 +129,7 @@ Filename: http://www.peerblock.com/; Description: Visit PeerBlock's Website; Fla
 
 
 [InstallDelete]
+// During installation, delete older files in install folder: 
 Name: {app}\peerblock.url; Type: files
 Name: {app}\readme.rtf; Type: files
 Name: {app}\license.txt; Type: files
@@ -139,6 +138,11 @@ Name: {app}\cache.p2b; Type: files; Tasks: reset_settings
 Name: {app}\history.db; Type: files; Tasks: reset_settings
 Name: {app}\peerblock.log; Type: files; Tasks: reset_settings
 
+// During installation, delete older start menu entries: 
+Name: {group}\License.lnk; Type: files
+Name: {group}\PeerBlock on the Web.url; Type: files
+Name: {group}\ReadMe.lnk; Type: files
+Name: {group}\Uninstall.lnk; Type: files
 
 
 [Code]
@@ -146,7 +150,7 @@ Name: {app}\peerblock.log; Type: files; Tasks: reset_settings
 const installer_mutex_name = 'peerblock_setup_mutex';
 
 
-// Check if PeerBlock is configured to run on startup in order to control
+// Check if PeerBlock is configured to run on startup, in order to control
 // startup choice within the installer
 function StartupCheck(): Boolean;
 begin
@@ -156,7 +160,7 @@ begin
 end;
 
 
-// Check if PeerBlock is configured to run on startup with the old registry value "PeerGuardian"
+// Check if PeerBlock is configured to run on startup, looking for the old registry value "PeerGuardian"
 function StartupCheckOld(): Boolean;
 var
   svalue: String;
@@ -170,11 +174,26 @@ end;
 
 
 // Check if PeerBlock's settings exist
-function SettingsExistCheck(): Boolean;
+function SettingsExist(): Boolean;
 begin
   Result := False;
   if FileExists(ExpandConstant('{app}\peerblock.conf')) then
   Result := True;
+end;
+
+
+// Get PeerGuardian's installation path
+function GetPG2Path(S: String): String;
+var
+  PG2PathKeyName, PG2Path, PG2PathValueName: String;
+begin
+	PG2Path := '';
+    PG2PathKeyName := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
+    PG2PathValueName := 'Inno Setup: App Path';
+
+    if not RegQueryStringValue(HKLM, PG2PathKeyName, PG2PathValueName, PG2Path) then
+    RegQueryStringValue(HKCU, PG2PathKeyName, PG2PathValueName, PG2Path);
+	Result := PG2Path;
 end;
 
 
@@ -224,12 +243,12 @@ begin
 end;
 
 
-Procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  // When uninstalling ask user to delete PeerBlock's logs and settings
+  // When uninstalling, ask user if they want to delete PeerBlock's logs and settings
    if CurUninstallStep = usUninstall then begin
    if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-    if MsgBox(ExpandConstant('Do you also want to delete PeerBlock logs and settings? If you plan on reinstalling PeerBlock you do not have to delete them.'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
+    if MsgBox(ExpandConstant('Do you also want to delete PeerBlock log, history and settings?  If you plan on reinstalling PeerBlock you do not have to delete them.'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
       DelTree(ExpandConstant('{app}\lists\'), True, True, True);
       DeleteFile(ExpandConstant('{app}\peerblock.conf'));
     end;
@@ -243,7 +262,7 @@ end;
 
 function InitializeSetup(): Boolean;
 begin
-	// Create a mutex for the installer and if it's already running then expose a message and stop installation
+	// Create a mutex for the installer.  If it's already running display a message and stop installation
 	Result := True;
 	if CheckForMutexes(installer_mutex_name) then begin
 		if not WizardSilent() then
