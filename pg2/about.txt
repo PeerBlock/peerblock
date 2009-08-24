@@ -1,4 +1,4 @@
-PeerBlock r104 - TEST RELEASE
+
 
 Base PeerGuardian code copyright (C) 2004-2007 Cory Nelson
 PeerBlock modifications copyright (C) 2009 Mark Bulas

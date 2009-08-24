@@ -57,7 +57,8 @@ static BOOL About_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	DWORD ressize=SizeofResource(mod, res);
 	HGLOBAL resdata=LoadResource(mod, res);
 
-	const string s((const char*)LockResource(resdata), ressize);
+	string s((const char*)LockResource(resdata), ressize);
+	s = PB_BLDSTR + s;
 	UnlockResource(resdata);
 
 	SetDlgItemTextA(hwnd, IDC_LICENSE, s.c_str());
