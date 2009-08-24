@@ -33,9 +33,9 @@
 // PB_REV:  Don't forget to update the version string in pg2/about.txt!
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 908220106	// PB_REV
+#define BUILDDATE 908220$WCREV$	// PB_REV
 
-#define PB_BLDNUM 106	// PB_REV
+#define PB_BLDNUM $WCREV$	// PB_REV
 
 #define PB_VER_A 0
 #define PB_VER_B 9
