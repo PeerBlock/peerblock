@@ -400,6 +400,7 @@ static spinlock g_processlock;
 
 static void Main_ProcessDb() 
 {
+	TRACEI("[mainproc] [Main_ProcessDb]  > Entering routine.");
 	sqlite3_try_lock lock(g_con, true);
 
 	if(lock.is_locked()) 
@@ -407,9 +408,11 @@ static void Main_ProcessDb()
 		// Handle archival function first; deletion will be processed later
 		if(g_config.CleanupType==ArchiveDelete) 
 		{
+			TRACEI("[mainproc] [Main_ProcessDb]    performing 'archive & delete' type cleanup");
 			try 
 			{
 				// First, archive history.db entries
+				TRACEI("[mainproc] [Main_ProcessDb]    archiving history.db");
 				queue<string> dates;
 
 				{
@@ -466,6 +469,7 @@ static void Main_ProcessDb()
 				} // End for(!dates.empty())
 
 				// Now archive peerblock.log
+				TRACEI("[mainproc] [Main_ProcessDb]    archiving peerblock.log");
 				path p=g_config.ArchivePath;
 				if(!p.has_root()) p=path::base_dir()/p;
 				if(!path::exists(p)) path::create_directory(p);
@@ -473,7 +477,7 @@ static void Main_ProcessDb()
 				SYSTEMTIME st;
 				GetLocalTime(&st);
 				TCHAR chToFilename[270];
-				swprintf_s(chToFilename, sizeof(chToFilename)/2, L"peerblock.%4$d-%2$d-%2$d.log", st.wYear, st.wMonth, st.wDay);
+				swprintf_s(chToFilename, sizeof(chToFilename)/2, L"peerblock.%4d-%02d-%02d.log", st.wYear, st.wMonth, st.wDay);
 
 				path pathLogFrom = path::base_dir()/L"peerblock.log";
 				path pathLogTo = p/chToFilename;
@@ -482,10 +486,12 @@ static void Main_ProcessDb()
 			catch(exception &ex) {
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
 			}
+			TRACEI("[mainproc] [Main_ProcessDb]    done with 'archive & delete' type cleanup");
 		}
 
 		if(g_config.CleanupType==Delete || g_config.CleanupType==ArchiveDelete) 
 		{
+			TRACEI("[mainproc] [Main_ProcessDb]    performing 'delete' type cleanup");
 			try 
 			{
 				ostringstream ss;
@@ -521,11 +527,13 @@ static void Main_ProcessDb()
 				TRACEE("[mainproc] [Main_ProcessDb]  * ERROR:  Caught exception while deleting files!!");
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
 			}
+			TRACEI("[mainproc] [Main_ProcessDb]    done with 'delete' type cleanup");
 		}
 	}
 
 	g_dbthread=boost::shared_ptr<thread>();
 	g_processlock.leave();
+	TRACEI("[mainproc] [Main_ProcessDb]  < Leaving routine.");
 }
 
 static void Main_OnTimer(HWND hwnd, UINT id) {
