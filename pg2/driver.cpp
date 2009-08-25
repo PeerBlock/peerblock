@@ -118,6 +118,12 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		// paths don't match, remove service and recreate.
 		if(del) {
 			TRACEW("[driver] [load(3)]    paths don't match, removing and recreating driver-service");
+			TCHAR buf[128];
+			swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]    - service name: [%S]", qsc->lpBinaryPathName);
+			TRACEBUFW(buf);
+			swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]    - file name: [%S]", m_file.c_str());
+			TRACEBUFW(buf);
+			
 			// if it's not removable, bail out.
 			if(!this->removable) {
 				TRACEC("[driver] [load(3)]    ERROR trying to remove driver-service");
@@ -139,6 +145,42 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			}
 
 			// and stop it if it is.
+			switch(status.dwCurrentState)
+			{
+				case SERVICE_STOPPED:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_STOPPED]");
+					break;
+
+				case SERVICE_START_PENDING:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_START_PENDING]");
+					break;
+
+				case SERVICE_STOP_PENDING:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_STOP_PENDING]");
+					break;
+
+				case SERVICE_RUNNING:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_RUNNING]");
+					break;
+
+				case SERVICE_CONTINUE_PENDING:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_CONTINUE_PENDING]");
+					break;
+
+				case SERVICE_PAUSE_PENDING:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_PAUSE_PENDING]");
+					break;
+
+				case SERVICE_PAUSED:
+					TRACEI("[driver] [load(3)]    service state: [SERVICE_PAUSED]");
+					break;
+
+				default:
+					swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]  * ERROR: Unknown service state: [%d]", status.dwCurrentState);
+					TRACEBUFE(buf);
+					break;
+			}
+			TRACEBUFW(buf);
 			if(status.dwCurrentState != SERVICE_STOPPED && status.dwCurrentState != SERVICE_STOP_PENDING) {
 				ret = ControlService(service, SERVICE_CONTROL_STOP, &status);
 				if(!ret) {
@@ -155,8 +197,21 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			ret = DeleteService(service);
 			CloseServiceHandle(service);
 
-			if(!ret && (err = GetLastError()) != ERROR_SERVICE_MARKED_FOR_DELETE) {
-				TRACEC("[driver] [load(3)]    ERROR deleting driver-service");
+			if(!ret && (err = GetLastError()) == ERROR_SERVICE_MARKED_FOR_DELETE) 
+			{
+				TRACEW("[driver] [load(3)]    Service marked for delete; trying closing/reopening SCM");
+				MessageBox(NULL, L"PeerBlock has encountered Issue #26, and would normally fail here complaining about \"service marked for deletion\".  Instead, we're going to try and close/re-open the service control manager handle to see if this resolves things.  Please let us know that you saw this, and send us your peerblock.log!!", L"PeerBlock Issue #26 encountered!", MB_ICONWARNING|MB_OK);
+				CloseServiceHandle(manager);
+				manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+				if (!manager)
+				{
+					TRACEE("[driver] [load(3)]  * ERROR while re-opening SCM");
+					throw win32_error("OpenSCManager 2", err = GetLastError());
+				}
+			}
+			else if(!ret && (err = GetLastError()) != ERROR_SERVICE_MARKED_FOR_DELETE) 
+			{
+				TRACEC("[driver] [load(3)]  * ERROR deleting driver-service");
 				CloseServiceHandle(manager);
 				throw win32_error("DeleteService", err);
 			}
@@ -181,12 +236,15 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 	{
 		if (status.dwCurrentState == SERVICE_RUNNING)
 		{
-			TRACES("[driver] [load(3)]    driver-service is running");
+			TRACES("[driver] [load(3)]    Driver-service is running");
 			m_started = true;
 		}
 		else
 		{
 			TRACEW("[driver] [load(3)]    Driver-service NOT running!");
+			TCHAR buf[128];
+			swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]    - service state: [%d]", status.dwCurrentState);
+			TRACEBUFW(buf);
 		}
 	}
 
