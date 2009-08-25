@@ -1,5 +1,6 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2009 Mark Bulas
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -125,35 +126,76 @@ public:
 			path p;
 
 			if(!PathRelativePathTo(p.buf, from.buf, fromdir?FILE_ATTRIBUTE_DIRECTORY:0, to.buf, 0))
+			{
+				TCHAR chBuf[1024];
+				swprintf_s(chBuf, sizeof(chBuf)/2, L"PathRelativePathTo() from:[%s] to:[%s] failed!!", from.buf, to.buf);
+				TRACEERR("[path] [relative_to]", chBuf, GetLastError());
 				throw path_error("PathRelativePathTo");
+			}
 
 			return p;
 		}
 		else if(to.has_root()) return to;
-		else throw std::runtime_error("unable to create relative path: paths have different roots");
+		else 
+		{
+			TRACEE("[path] [relative_to]  * ERROR:  unable to create relative path: paths have different roots!!");
+			throw std::runtime_error("unable to create relative path: paths have different roots");
+		}
 	}
 
 	static bool exists(const path &p) { return PathFileExists(p.buf)==TRUE; }
 
 	static void remove(const path &p) {
-		if(!DeleteFile(p.buf))
+		if(exists(p) && !DeleteFile(p.buf))
+		{
+			TCHAR chBuf[1024];
+			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't delete file [%s]!!", p.buf);
+			TRACEERR("[path] [remove]", chBuf, GetLastError());
 			throw path_error("DeleteFile");
+		}
 	}
 
 	static void move(const path &from, const path &to, bool replace=false) {
 #ifdef _WIN32_WINNT
 		if(!MoveFileEx(from.buf, to.buf, replace?MOVEFILE_REPLACE_EXISTING:0))
+		{
+			TCHAR chBuf[1024];
+			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
+			TRACEERR("[path] [move]", chBuf, GetLastError());
 			throw path_error("MoveFileEx");
+		}
 #else
 		if(replace && exists(to)) remove(to);
 		if(!MoveFile(from.buf, to.buf))
+		{
+			TCHAR chBuf[1024];
+			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
+			TRACEERR("[path] [move]", chBuf, GetLastError());
 			throw path_error("MoveFile");
+		}
 #endif
+	}
+
+	static void copy(const path &from, const path &to, bool replace=false) 
+	{
+		if(replace && exists(to)) remove(to);
+		if(!CopyFile(from.buf, to.buf, true))
+		{
+			TCHAR chBuf[2048];
+			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't copy file from:[%s] to:[%s]!!", from.buf, to.buf);
+			TRACEERR("[path] [copy]", chBuf, GetLastError());
+			throw path_error("CopyFile");
+		}
 	}
 
 	static void create_directory(const path &p) {
 		if(!CreateDirectory(p.directory_str().c_str(), NULL))
+		{
+			TCHAR chBuf[2048];
+			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't create directory:[%s]!!", p.buf);
+			TRACEERR("[path] [create_directory]", chBuf, GetLastError());
 			throw path_error("CreateDirectory");
+		}
 	}
 
 	static path base() {
