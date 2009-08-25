@@ -481,7 +481,7 @@ static void Main_ProcessDb()
 
 				path pathLogFrom = path::base_dir()/L"peerblock.log";
 				path pathLogTo = p/chToFilename;
-				path::copy(pathLogFrom, pathLogTo);
+				path::copy(pathLogFrom, pathLogTo, true);
 			}
 			catch(exception &ex) {
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
