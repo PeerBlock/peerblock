@@ -391,16 +391,27 @@ static string format_ipport(unsigned int ip, unsigned short port) {
 	return buf;
 }
 
+
+
 static boost::shared_ptr<thread> g_dbthread;
 static spinlock g_processlock;
 
-static void Main_ProcessDb() {
+
+
+static void Main_ProcessDb() 
+{
 	sqlite3_try_lock lock(g_con, true);
 
-	if(lock.is_locked()) {
-		if(g_config.CleanupType==ArchiveDelete) {
-			try {
+	if(lock.is_locked()) 
+	{
+		// Handle archival function first; deletion will be processed later
+		if(g_config.CleanupType==ArchiveDelete) 
+		{
+			try 
+			{
+				// First, archive history.db entries
 				queue<string> dates;
+
 				{
 					ostringstream ss;
 					ss << "select distinct date(time, 'localtime') from t_history where time <= julianday('now', '-" << g_config.CleanupInterval << " days');";
@@ -411,7 +422,8 @@ static void Main_ProcessDb() {
 						dates.push(reader.getstring(0));
 				}
 
-				for(; !dates.empty(); dates.pop()) {
+				for(; !dates.empty(); dates.pop()) 
+				{
 					path p=g_config.ArchivePath;
 
 					if(!p.has_root()) p=path::base_dir()/p;
@@ -451,7 +463,21 @@ static void Main_ProcessDb() {
 								protocol, reader.getint(7)?"Blocked":"Allowed");
 						}
 					}
-				}
+				} // End for(!dates.empty())
+
+				// Now archive peerblock.log
+				path p=g_config.ArchivePath;
+				if(!p.has_root()) p=path::base_dir()/p;
+				if(!path::exists(p)) path::create_directory(p);
+
+				SYSTEMTIME st;
+				GetLocalTime(&st);
+				TCHAR chToFilename[270];
+				swprintf_s(chToFilename, sizeof(chToFilename)/2, L"peerblock.%4$d-%2$d-%2$d.log", st.wYear, st.wMonth, st.wDay);
+
+				path pathLogFrom = path::base_dir()/L"peerblock.log";
+				path pathLogTo = p/chToFilename;
+				path::copy(pathLogFrom, pathLogTo);
 			}
 			catch(exception &ex) {
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
@@ -475,9 +501,24 @@ static void Main_ProcessDb() {
 
 				// HACK:  For some reason, vacuum doesn't do anything if we call it prior to commit(),
 				//		  and commit() throws an exception if we call it twice, so we're doing it this way.
+
+				// finally delete the peerblock.log file
+				path pathLog = path::base_dir()/L"peerblock.log";
+				g_tlog.StopLogging();
+				path::remove(pathLog);
+				g_tlog.StartLogging();
+				if (g_config.CleanupType==ArchiveDelete)
+					TRACES("[mainproc] [Main_ProcessDb]    Archived & deleted history.db and peerblock.log files")
+				else
+					TRACES("[mainproc] [Main_ProcessDb]    Deleted history.db and peerblock.log files");
 			}
 			catch(database_error &ex) 
 			{
+				TRACEE("[mainproc] [Main_ProcessDb]  * ERROR:  Caught database_error exception while deleting files!!");
+				ExceptionBox(NULL, ex, __FILE__, __LINE__);
+			}
+			catch(exception &ex) {
+				TRACEE("[mainproc] [Main_ProcessDb]  * ERROR:  Caught exception while deleting files!!");
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
 			}
 		}

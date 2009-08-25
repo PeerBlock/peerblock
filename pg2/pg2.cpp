@@ -131,37 +131,43 @@ static bool CheckOS() {
 //
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) 
 {
+	path pathLog = path::base_dir()/L"peerblock.log";	// TODO: This should be a config-string!
+	g_tlog.SetLogfile(pathLog.c_str());
 
-	g_tlog.SetLogfile();
-
-	g_tlog.LogMessage(_T("PeerBlock Starting"), TRACELOG_LEVEL_CRITICAL);
+	TRACEC("PeerBlock Starting");
 
 	TCHAR buf[64];
 	swprintf_s(buf, sizeof(buf)/2, L"%S", PB_BLDSTR);
 	TRACEBUFC(buf);
 
 	g_tlog.ProcessMessages();
+	TRACES("Flushed tracelog");
 
 	if(!CheckOS()) {
+		TRACEE("ERROR:  Failed checking for OS rev!");
 		return -1;
 	}
 
 #ifdef _WIN32_WINNT
-	// PG2 requires Admin Mode in order to load the pgfilter.sys driver
+	// PeerBlock requires Admin Mode in order to load the pbfilter.sys driver
 	if(!IsUserAnAdmin()) {
+		TRACEE("ERROR:  User not running as Admin!");
 		MessageBox(NULL, IDS_NEEDADMINTEXT, IDS_NEEDADMIN, MB_ICONERROR|MB_OK);
 		return -1;
 	}
+	TRACES("User running as Admin");
 #endif
 
 	// If PeerGuardian2 is already running, bring it to the forefront and exit this new instance.
 	HANDLE mutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_mutex_name);
 	if(mutex) {
+		TRACEW("PG/PeerBlock already running");
 		UINT msg=RegisterWindowMessage(_T("PeerGuardian2SetVisible"));
 		if(msg) SendMessage(HWND_BROADCAST, msg, 0, TRUE);
 		return 0;
 	}
 	else mutex=CreateMutex(NULL, FALSE, g_mutex_name);
+	TRACES("Created program mutex");
 
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
 
@@ -172,13 +178,16 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 		InitCommonControlsEx(&icx);
 	}
+	TRACES("Initialized common controls");
 
 	RegisterColorPicker(hInstance);
+	TRACES("Registered color picker");
 
 	{
 		WSADATA data;
 		WSAStartup(WINSOCK_VERSION, &data);
 	}
+	TRACES("Initialized winsock");
 
 	SetUnhandledExceptionFilter( PeerblockExceptionFilter );
 	BOOL bRet = PreventSetUnhandledExceptionFilter();
@@ -194,6 +203,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	try {
 		// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program
 		HWND hwnd=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_MAIN), NULL, Main_DlgProc);
+		TRACES("Created main UI window");
 
 		// Set main window caption to version-string from versioninfo.h
 		TCHAR * chBuf;
@@ -202,11 +212,13 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		SetWindowText(hwnd, chBuf);
 		free(chBuf);
 
+		TRACES("Starting message-loop");
 		MSG msg;
 		while(GetMessage(&msg, NULL, 0, 0)>0) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		TRACES("Message loop ended, shutting down PeerBlock");
 	}
 	catch(exception &ex) {
 		UncaughtExceptionBox(NULL, ex, __FILE__, __LINE__);
@@ -215,10 +227,16 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		UncaughtExceptionBox(NULL, __FILE__, __LINE__);
 	}
 
-	if(g_filter) g_filter.reset();
+	if(g_filter) 
+	{
+		TRACES("Resetting filter driver on exit");
+		g_filter.reset();
+	}
 
+	TRACES("Shutting down winsock");
 	WSACleanup();
 
+	TRACES("PeerBlock has finished shutting down.  Have a nice day!");
 	return 0;
 
 } // End of _tWinMain()
