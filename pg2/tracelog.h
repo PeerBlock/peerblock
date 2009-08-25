@@ -74,8 +74,11 @@ public:
 	HANDLE LoggingMutex;	// TODO:  Change this to PG2 mutex-object
 
 	void LogMessage(tstring messsage, TracelogLevel level);
+	void LogErrorMessage(tstring location, tstring buf, DWORD err);
 	void SetLogfile(tstring filename = _T("peerblock.log"));
 	void SetLoglevel(TRACELOG_LEVEL level);
+	void StartLogging();
+	void StopLogging();
 	
 	void ProcessMessages();
 
@@ -100,4 +103,5 @@ public:
 #define TRACEBUFV(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_VERBOSE);
 #define TRACEBUFD(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_DEBUG);
 
+#define TRACEERR(loc, buf, err) 	g_tlog.LogErrorMessage(_T(loc), buf, err);
 

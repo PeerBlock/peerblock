@@ -175,6 +175,40 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 
 //================================================================================================
 //
+//  LogErrorMessage()
+//
+//    - Called from wherever when we encounter an error
+//
+/// <summary>
+///   Logs an error message to the tracelog, including a second line with error number and 
+///	  description.
+/// </summary>
+//
+void TraceLog::LogErrorMessage(tstring _location, tstring _buf, DWORD _err)
+{
+	LogMessage(_location + L"  * Error:  " + _buf, TRACELOG_LEVEL_ERROR);
+
+	TCHAR chBuf[1024];
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		_err,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &lpMsgBuf,
+		0, NULL );
+	swprintf_s(chBuf, sizeof(chBuf)/2, L"%s    - err:[%d], desc:[%s]", _location.c_str(), _err, (LPTSTR)lpMsgBuf);
+	LogMessage(chBuf, TRACELOG_LEVEL_ERROR);
+	LocalFree(lpMsgBuf);
+
+} // End of LogErrorMessage()
+
+
+
+//================================================================================================
+//
 //  SetLogfile()
 //
 //    - Should be only instantiated from pg2.cpp
@@ -187,14 +221,6 @@ void TraceLog::SetLogfile(tstring _fname)
 {
 	bool success = false;
 
-	// open file
- //   hFile = CreateFile (_fname.c_str (), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 
-	//	FILE_ATTRIBUTE_NORMAL, 0);
- //   if (hFile == INVALID_HANDLE_VALUE) 
-	//	success = false;
-	//else
-	//	success = true;
-	
 	LogFile.open(_fname.c_str());
 	if (LogFile.good())
 	{
@@ -237,6 +263,56 @@ void TraceLog::SetLoglevel(TRACELOG_LEVEL _lvl)
 	LoggingLevel = _lvl;
 
 } // End of SetLoglevel()
+
+
+
+//================================================================================================
+//
+//  StartLogging()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Starts logging after we've stopped it for whatever reason, reopening the file if necessary.
+/// </summary>
+//
+void TraceLog::StartLogging()
+{
+	SetLogfile(LogfileName);
+	TRACEI("[TraceLog] [StartLogging]    starting logging");
+
+} // End of StartLogging()
+
+
+
+//================================================================================================
+//
+//  StopLogging()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Stops logging, and closes the file we were using.
+/// </summary>
+/// <remarks>
+///	  This routine is generally called when we need to relinquish control of a file, for example
+///	  so that it can be deleted out from under us.  A call to TraceLog::StartLogging() will be
+///	  required to start logging back up again.  No messages will be logged while we're in Stopped
+///	  mode, though a future version of TraceLog (i.e. a dedicated log-writer thread) should be
+///	  able to better handle queueing of messages while we're stopped...
+/// </remarks>
+//
+void TraceLog::StopLogging()
+{
+	TRACEI("[TraceLog] [StopLogging]    stopping logging");
+	ResetEvent(LoggingReady);	// Sets signalled to FALSE, so noone else will try logging	
+	if (LogFile.is_open())
+	{
+//		TRACEI("[TraceLog] [StopLogging]    closing file");
+		LogFile.close();
+	}
+
+} // End of StopLogging()
 
 
 
