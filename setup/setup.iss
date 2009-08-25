@@ -1,21 +1,12 @@
 ; ISTool v5.3.0/Inno Setup v5.3.4
 ;
 ; Requirements:
-; *Inno Setup QuickStart Pack:
+; *Inno Setup QuickStart Pack
 ;   http://www.jrsoftware.org/isdl.php#qsp
 
-
-#define getversionpath "..\Win32\Release (Vista)"
-#define app_version	GetFileVersion(AddBackslash(getversionpath) + "\peerblock.exe")
-
-#define VerMajor
-#define VerMinor
-#define VerRevision
-#define VerBuild
-
-#expr ParseVersion(AddBackslash(getversionpath) + "\peerblock.exe", VerMajor, VerMinor, VerRevision, VerBuild)
-#define app_version str(VerMajor) + "." + str(VerMinor) + "." + str(VerRevision) + "." + str(VerBuild)
-#define simple_app_version str(VerMajor) + "." + str(VerMinor) + "." + str(VerRevision)
+#include "../pg2/versioninfo_setup.h"
+#define app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C) + "." + str(PB_BLDNUM)
+#define simple_app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C)
 #define installer_build_date GetDateTimeString('dd/mm/yyyy', '.', '')
 
 
@@ -23,7 +14,7 @@
 AppID={{015C5B35-B678-451C-9AEE-821E8D69621C}
 AppName=PeerBlock
 AppVersion={#= app_version}
-AppVerName=PeerBlock {#= simple_app_version} (r{#= VerBuild})
+AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 AppPublisher=PeerBlock Project
 AppCopyright=Mark Bulas
 AppPublisherURL=http://www.peerblock.com/
@@ -34,25 +25,23 @@ VersionInfoCopyright=PeerBlock Project
 VersionInfoProductName=PeerBlock
 VersionInfoProductVersion={#= app_version}
 VersionInfoVersion={#= app_version}
-VersionInfoDescription=PeerBlock {#= simple_app_version} (r{#= VerBuild}) Setup
+VersionInfoDescription=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM}) Setup
 VersionInfoTextVersion={#= app_version}
 DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
-LicenseFile=license.txt
+LicenseFile=..\license.txt
 InfoBeforeFile=readme.rtf
 OutputDir=.
-OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}.r{#= VerBuild}
+OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}.r{#= PB_BLDNUM}
 Compression=lzma/ultra64
 InternalCompressLevel=ultra64
 SolidCompression=True
 MinVersion=5.0.2195,5.0.2195
-UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= VerBuild})
+UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
-WizardImageBackColor=clBlack
-BackColor=clGray
 DirExistsWarning=No
 EnableDirDoesntExistWarning=False
 AllowNoIcons=True
@@ -61,8 +50,8 @@ AlwaysShowDirOnReadyPage=True
 AlwaysShowGroupOnReadyPage=True
 WizardImageStretch=False
 PrivilegesRequired=Admin
-DisableDirPage=Yes
-DisableProgramGroupPage=Yes
+DisableDirPage=Auto
+DisableProgramGroupPage=Auto
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
 AppMutex=Global\PeerGuardian2
@@ -73,17 +62,31 @@ Name: en; MessagesFile: compiler:Default.isl
 
 
 [Messages]
-BeveledLabel=PeerBlock {#= simple_app_version} (r{#= VerBuild}) built on {#= installer_build_date}
+BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM}) built on {#= installer_build_date}
+
+
+[CustomMessages]
+; sm=Start Menu, tsk=Task, msg=Message
+; English
+en.msg_SetupIsRunningWarning=PeerBlock Setup is already running!
+en.msg_DeleteLogSettings=Do you also want to delete PeerBlock log, history and settings?%nIf you plan on reinstalling PeerBlock you do not have to delete them.
+en.tsk_other=Other tasks:
+en.tsk_remove_startup=Remove PeerBlock from Windows startup
+en.tsk_reset_settings=Reset PeerBlock's settings
+en.tsk_startup_descr=Start PeerBlock on system startup
+en.tsk_startup=Startup options:
+en.tsk_use_PG2_settings=Use PeerGuardian2 settings
+en.run_visit_website=Visit PeerBlock's Website
 
 
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
-Name: startup_task; Description: Start PeerBlock on system startup; GroupDescription: Startup options:; Check: StartupCheck() AND NOT StartupCheckOld(); Flags: unchecked
-Name: startup_task; Description: Start PeerBlock on system startup; GroupDescription: Startup options:; Check: StartupCheck() AND StartupCheckOld()
-Name: remove_startup_task; Description: Remove PeerBlock from Windows startup; GroupDescription: Startup options:; Check: NOT StartupCheck(); Flags: unchecked
-Name: reset_settings; Description: Reset PeerBlock's settings; GroupDescription: Other tasks:; Check: SettingsExist(); Flags: unchecked
-Name: use_pg2_settings; Description: Use PeerGuardian2 settings; GroupDescription: Other tasks:; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) AND NOT SettingsExist()
+Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck() AND NOT StartupCheckOld(); Flags: unchecked
+Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck() AND StartupCheckOld()
+Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: unchecked
+Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: unchecked
+Name: use_pg2_settings; Description: {cm:tsk_use_PG2_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) AND NOT SettingsExist()
 
 
 [Files]
@@ -109,13 +112,13 @@ Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 
 
 [Icons]
-Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
+Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 Name: {group}\Uninstall PeerBlock; Filename: {app}\unins000.exe; WorkingDir: {app}; Comment: {cm:UninstallProgram,PeerBlock}
 Name: {group}\Help and Support\{cm:ProgramOnTheWeb,PeerBlock}; Filename: http://www.peerblock.com/; WorkingDir: {app}
 Name: {group}\Help and Support\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: PeerBlock's License
 Name: {group}\Help and Support\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: PeerBlock's ReadMe
-Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= VerBuild})
+Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 
 
 [Registry]
@@ -125,7 +128,7 @@ Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: Pe
 
 [Run]
 Filename: {app}\peerblock.exe; Description: {cm:LaunchProgram,PeerBlock}; Flags: nowait postinstall skipifsilent runascurrentuser
-Filename: http://www.peerblock.com/; Description: Visit PeerBlock's Website; Flags: nowait postinstall skipifsilent shellexec runascurrentuser unchecked
+Filename: http://www.peerblock.com/; Description: {cm:run_visit_website}; Flags: nowait postinstall skipifsilent shellexec runascurrentuser unchecked
 
 
 [InstallDelete]
@@ -133,6 +136,7 @@ Filename: http://www.peerblock.com/; Description: Visit PeerBlock's Website; Fla
 Name: {app}\peerblock.url; Type: files
 Name: {app}\readme.rtf; Type: files
 Name: {app}\license.txt; Type: files
+
 Name: {app}\peerblock.conf; Type: files; Tasks: reset_settings
 Name: {app}\cache.p2b; Type: files; Tasks: reset_settings
 Name: {app}\history.db; Type: files; Tasks: reset_settings
@@ -160,7 +164,8 @@ begin
 end;
 
 
-// Check if PeerBlock is configured to run on startup, looking for the old registry value "PeerGuardian"
+// Check if PeerBlock is configured to run on startup,
+// looking for the old registry value "PeerGuardian"
 function StartupCheckOld(): Boolean;
 var
   svalue: String;
@@ -248,7 +253,7 @@ begin
   // When uninstalling, ask user if they want to delete PeerBlock's logs and settings
    if CurUninstallStep = usUninstall then begin
    if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-    if MsgBox(ExpandConstant('Do you also want to delete PeerBlock log, history and settings?  If you plan on reinstalling PeerBlock you do not have to delete them.'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
+    if MsgBox(ExpandConstant('{cm:msg_DeleteLogSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
       DelTree(ExpandConstant('{app}\lists\'), True, True, True);
       DeleteFile(ExpandConstant('{app}\peerblock.conf'));
     end;
@@ -266,7 +271,7 @@ begin
 	Result := True;
 	if CheckForMutexes(installer_mutex_name) then begin
 		if not WizardSilent() then
-			MsgBox(ExpandConstant('PeerBlock Setup is already running!'), mbError, MB_OK);
+			MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
 			Result := False;
 		end
 		else begin
@@ -280,7 +285,7 @@ begin
 	Result := True;
 	if CheckForMutexes(installer_mutex_name) then begin
 		if not WizardSilent() then
-			MsgBox(ExpandConstant('PeerBlock Setup is already running!'), mbError, MB_OK);
+			MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
 		Result := False;
 		end
 		else begin

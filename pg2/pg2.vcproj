@@ -466,6 +466,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="$(SolutionDir)\pg2\versioninfo_setup.bat"
 			/>
 		</Configuration>
 		<Configuration
