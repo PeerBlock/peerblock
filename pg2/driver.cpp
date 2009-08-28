@@ -113,17 +113,17 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 		bool del = _wcsicmp(qsc->lpBinaryPathName, m_file.c_str()) != 0;
 
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    service name: [%1%], file name: [%2%]")) 
+			% qsc->lpBinaryPathName % m_file.c_str() );
+		TRACEBUFI(strBuf);
+
 		free(qsc);
 
 		// paths don't match, remove service and recreate.
 		if(del) {
 			TRACEW("[driver] [load(3)]    paths don't match, removing and recreating driver-service");
 			TCHAR buf[128];
-			swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]    - service name: [%S]", qsc->lpBinaryPathName);
-			TRACEBUFW(buf);
-			swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]    - file name: [%S]", m_file.c_str());
-			TRACEBUFW(buf);
-			
+
 			// if it's not removable, bail out.
 			if(!this->removable) {
 				TRACEC("[driver] [load(3)]    ERROR trying to remove driver-service");
