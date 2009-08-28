@@ -1,4 +1,4 @@
-; ISTool v5.3.0/Inno Setup v5.3.4
+; Inno Setup v5.3.4
 ;
 ; Requirements:
 ; *Inno Setup QuickStart Pack
@@ -66,7 +66,7 @@ BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM}) built on {#= in
 
 
 [CustomMessages]
-; sm=Start Menu, tsk=Task, msg=Message
+; tsk=Task, msg=Message
 ; English
 en.msg_SetupIsRunningWarning=PeerBlock Setup is already running!
 en.msg_DeleteLogSettings=Do you also want to delete PeerBlock log, history and settings?%nIf you plan on reinstalling PeerBlock you do not have to delete them.
@@ -81,7 +81,7 @@ en.run_visit_website=Visit PeerBlock's Website
 
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
-Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; OnlyBelowVersion: 0,6.01; Flags: unchecked
 Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck() AND NOT StartupCheckOld(); Flags: unchecked
 Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck() AND StartupCheckOld()
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: unchecked
@@ -254,7 +254,10 @@ begin
    if CurUninstallStep = usUninstall then begin
    if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
     if MsgBox(ExpandConstant('{cm:msg_DeleteLogSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
-      DelTree(ExpandConstant('{app}\lists\'), True, True, True);
+      DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
+      DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
+      DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
+      RemoveDir(ExpandConstant('{app}\lists\'))
       DeleteFile(ExpandConstant('{app}\peerblock.conf'));
     end;
    end;
