@@ -208,7 +208,6 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			if(!service && (err = GetLastError()) == ERROR_SERVICE_MARKED_FOR_DELETE) 
 			{
 				TRACEW("[driver] [load(3)]    Service marked for delete; trying closing/reopening SCM");
-				MessageBox(NULL, L"PeerBlock has encountered Issue #26, and would normally fail here complaining about \"service marked for deletion\".  Instead, we're going to wait for 10 seconds then try and close/re-open the service control manager handle to see if this resolves things.  Please let us know that you saw this, and send us your peerblock.log!!", L"PeerBlock Issue #26 encountered!", MB_ICONWARNING|MB_OK);
 				CloseServiceHandle(manager);
 				Sleep(10000);
 				manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
