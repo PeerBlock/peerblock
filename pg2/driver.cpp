@@ -61,6 +61,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 	m_name = name;
 	m_file = file;
 	m_devfile = devfile;
+	DWORD err = 0;
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if(!manager) throw win32_error("OpenSCManager");
@@ -74,7 +75,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
 
 		if(!service) {
-			DWORD err = GetLastError();
+			err = GetLastError();
 
 			TRACEC("[driver] [load(3)]    ERROR opening service");
 			CloseServiceHandle(manager);
@@ -86,7 +87,6 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		DWORD bytes;
 		BOOL ret = QueryServiceConfig(service, NULL, 0, &bytes);
 
-		DWORD err;
 		if(ret || (err = GetLastError()) != ERROR_INSUFFICIENT_BUFFER) {
 			TRACEC("[driver] [load(3)]    ERROR calling QueryServiceConfig");
 			CloseServiceHandle(service);
@@ -136,9 +136,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			SERVICE_STATUS status;
 			ret = QueryServiceStatus(service, &status);
 			if(!ret) {
-				DWORD err = GetLastError();
-
-				TRACEC("[driver] [load(3)]    ERROR calling QueryServiceStatus");
+				TRACEERR("[driver] [load(3)]", L"ERROR calling QueryServiceStatus", err = GetLastError());
 				CloseServiceHandle(service);
 				CloseServiceHandle(manager);
 				throw win32_error("QueryServiceStatus", err);
@@ -184,9 +182,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			if(status.dwCurrentState != SERVICE_STOPPED && status.dwCurrentState != SERVICE_STOP_PENDING) {
 				ret = ControlService(service, SERVICE_CONTROL_STOP, &status);
 				if(!ret) {
-					DWORD err = GetLastError();
-
-					TRACEC("[driver] [load(3)]    ERROR stopping driver-service");
+					TRACEERR("[driver] [load(3)]", L"ERROR stopping driver-service", err = GetLastError());
 					CloseServiceHandle(service);
 					CloseServiceHandle(manager);
 					throw win32_error("ControlService", err);
@@ -197,21 +193,9 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			ret = DeleteService(service);
 			CloseServiceHandle(service);
 
-			if(!ret && (err = GetLastError()) == ERROR_SERVICE_MARKED_FOR_DELETE) 
+			if(!ret && (err = GetLastError()) != ERROR_SERVICE_MARKED_FOR_DELETE) 
 			{
-				TRACEW("[driver] [load(3)]    Service marked for delete; trying closing/reopening SCM");
-				MessageBox(NULL, L"PeerBlock has encountered Issue #26, and would normally fail here complaining about \"service marked for deletion\".  Instead, we're going to try and close/re-open the service control manager handle to see if this resolves things.  Please let us know that you saw this, and send us your peerblock.log!!", L"PeerBlock Issue #26 encountered!", MB_ICONWARNING|MB_OK);
-				CloseServiceHandle(manager);
-				manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-				if (!manager)
-				{
-					TRACEE("[driver] [load(3)]  * ERROR while re-opening SCM");
-					throw win32_error("OpenSCManager 2", err = GetLastError());
-				}
-			}
-			else if(!ret && (err = GetLastError()) != ERROR_SERVICE_MARKED_FOR_DELETE) 
-			{
-				TRACEC("[driver] [load(3)]  * ERROR deleting driver-service");
+				TRACEERR("[driver] [load(3)]", L"ERROR deleting driver-service", err);
 				CloseServiceHandle(manager);
 				throw win32_error("DeleteService", err);
 			}
@@ -221,12 +205,32 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 				SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
 				m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 
-			if(!service) {
-				err = GetLastError();
-				TRACEC("[driver] [load(3)]    ERROR re-creating driver-service");
+			if(!service && (err = GetLastError()) == ERROR_SERVICE_MARKED_FOR_DELETE) 
+			{
+				TRACEW("[driver] [load(3)]    Service marked for delete; trying closing/reopening SCM");
+				MessageBox(NULL, L"PeerBlock has encountered Issue #26, and would normally fail here complaining about \"service marked for deletion\".  Instead, we're going to wait for 10 seconds then try and close/re-open the service control manager handle to see if this resolves things.  Please let us know that you saw this, and send us your peerblock.log!!", L"PeerBlock Issue #26 encountered!", MB_ICONWARNING|MB_OK);
+				CloseServiceHandle(manager);
+				Sleep(10000);
+				manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+
+				if (!manager)
+				{
+					TRACEERR("[driver] [load(3)]", L"ERROR while re-opening SCM", err = GetLastError());
+					throw win32_error("OpenSCManager 2", err);
+				}
+
+				service = CreateService(manager, m_name.c_str(), m_name.c_str(),
+					SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
+					m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
+			}
+
+			if(!service) 
+			{
+				TRACEERR("[driver] [load(3)]", L"ERROR re-creating driver-service", err = GetLastError());
 				CloseServiceHandle(manager);
 				throw win32_error("CreateService", err);
 			}
+
 			TRACEI("[driver] [load(3)]    finished re-creating driver-service, now starting it");
 		}
 	}
