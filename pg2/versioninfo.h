@@ -30,10 +30,8 @@
 #define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
 
-// PB_REV:  Don't forget to update the version string in pg2/about.txt!
-
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 908240$WCREV$	// PB_REV
+#define BUILDDATE 908280$WCREV$	// PB_REV
 
 #define PB_BLDNUM $WCREV$
 
