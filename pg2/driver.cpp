@@ -333,32 +333,75 @@ bool driver::isrunning()
 void driver::start() 
 {
 	TRACEV("[driver] [start]  > Entering routine.");
-	if(m_started) return;
+	if(m_started) 
+	{
+		TRACEI("[driver] [start]    driver already started");
+		return;
+	}
+
+	DWORD err = 0;
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if(!manager) 
 	{
-		TRACEE("[driver] [start]    ERROR: OpenSCManager");
+		TRACEERR("[driver] [start]", L"ERROR: OpenSCManager", err = GetLastError());
 		throw win32_error("OpenSCManager");
 	}
 
 	SC_HANDLE service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
-	if(!service) {
-		DWORD err = GetLastError();
-
+	if(!service) 
+	{
 		CloseServiceHandle(manager);
-		TRACEE("[driver] [start]    ERROR: OpenService");
+		TRACEERR("[driver] [start]", L"ERROR: OpenService", err = GetLastError());
 		throw win32_error("OpenService", err);
 	}
 
-	if(!StartService(service, 0, NULL) && GetLastError() != ERROR_SERVICE_ALREADY_RUNNING) {
-		DWORD err = GetLastError();
+	if(!StartService(service, 0, NULL) && (err = GetLastError()) != ERROR_SERVICE_ALREADY_RUNNING) 
+	{
+		bool startFailed = true;
 
-		CloseServiceHandle(service);
-		CloseServiceHandle(manager);
+		if (err == ERROR_SERVICE_DATABASE_LOCKED)
+		{
+			int numRetries = 0;
 
-		TRACEE("[driver] [start]    ERROR: StartService");
-		throw win32_error("StartService", err);
+			do
+			{
+				TRACEW("[driver] [start]    experiencing ERROR_SERVICE_DATABASE_LOCKED condition; waiting 10 seconds and trying again");
+				Sleep(10000);	// 10 seconds
+				err = 0;
+
+				if (!StartService(service, 0, NULL) && (err = GetLastError()) != ERROR_SERVICE_ALREADY_RUNNING)
+					// still having problems
+					++numRetries;
+				else
+					// either success, or another error
+					break;
+
+			} while (err == ERROR_SERVICE_DATABASE_LOCKED && numRetries < 6);
+
+			if (numRetries < 6 && (err == 0 || err == ERROR_SERVICE_ALREADY_RUNNING))
+			{
+				startFailed = false;
+				TRACES("[driver] [start]    successfully recovered from ERROR_SERVICE_DATABASE_LOCKED condition");
+			}
+			else if (err == ERROR_SERVICE_DATABASE_LOCKED)
+			{
+				TRACEE("[driver] [start]    cannot recover from ERROR_SERVICE_DATABASE_LOCKED condition; giving up");
+			}
+			else
+			{
+				TRACEE("[driver] [start]    cannot recover from ERROR_SERVICE_DATABASE_LOCKED condition; another error surfaced; giving up");
+			}
+		}
+
+		if (startFailed)
+		{
+			CloseServiceHandle(service);
+			CloseServiceHandle(manager);
+
+			TRACEERR("[driver] [start]", L"ERROR: StartService", err);
+			throw win32_error("StartService", err);
+		}
 	}
 
 	CloseServiceHandle(service);
@@ -369,7 +412,7 @@ void driver::start()
 
 	if(m_dev == INVALID_HANDLE_VALUE) 
 	{
-		TRACEE("[driver] [start]    ERROR: CreateFile");
+		TRACEERR("[driver] [start]", L"ERROR: CreateFile", err = GetLastError());
 		throw win32_error("CreateFile");
 	}
 
