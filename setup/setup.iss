@@ -71,7 +71,7 @@ BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM}) built on {#= in
 ; tsk=Task, msg=Message
 ; English
 en.msg_SetupIsRunningWarning=PeerBlock Setup is already running!
-en.msg_DeleteLogSettings=Do you also want to delete PeerBlock log, history and settings?%nIf you plan on reinstalling PeerBlock you do not have to delete them.
+en.msg_DeleteLogSettings=Do you also want to delete PeerBlock settings?%nIf you plan on reinstalling PeerBlock you might not want to delete them.
 en.tsk_other=Other tasks:
 en.tsk_remove_startup=Remove PeerBlock from Windows startup
 en.tsk_reset_settings=Reset PeerBlock's settings
@@ -266,6 +266,8 @@ begin
    DeleteFile(ExpandConstant('{app}\peerblock.log'));
    DeleteFile(ExpandConstant('{app}\cache.p2b'));
    DeleteFile(ExpandConstant('{app}\history.db'));
+   DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
+   RemoveDir(ExpandConstant('{app}\archives\'))
   end;
 end;
 
