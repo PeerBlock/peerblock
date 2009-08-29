@@ -221,10 +221,10 @@ void TraceLog::SetLogfile(tstring _fname)
 {
 	bool success = false;
 
-	LogFile.open(_fname.c_str());
+	LogFile.open(_fname.c_str(), ios::app);
 	if (LogFile.good())
 	{
-		LogFile << _T("Logging Started...\n");
+		LogFile << _T("\n\n--------------------------------------------------------------------------------\n\nLogging Started...\n");
 		success = true;
 	}
 	else
