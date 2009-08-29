@@ -620,11 +620,11 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "http://www.peerblock.com"
-            VALUE "CompanyName", "PeerBlock Project"
+            VALUE "CompanyName", "PeerBlock, LLC"
             VALUE "FileDescription", "PeerBlock"
             VALUE "FileVersion", MAKE_STR(PB_VER_A) ", " MAKE_STR(PB_VER_B) ", " MAKE_STR(PB_VER_C) ", " MAKE_STR(PB_BLDNUM)
             VALUE "InternalName", "PeerBlock"
-            VALUE "LegalCopyright", "Copyright (C) 2009 Mark Bulas"
+            VALUE "LegalCopyright", "Copyright (C) 2009 PeerBlock, LLC"
             VALUE "OriginalFilename", "peerblock.exe"
             VALUE "ProductName", "PeerBlock"
             VALUE "ProductVersion", MAKE_STR(PB_VER_A) ", " MAKE_STR(PB_VER_B) ", " MAKE_STR(PB_VER_C) ", " MAKE_STR(PB_BLDNUM)

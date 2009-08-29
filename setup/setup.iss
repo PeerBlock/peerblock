@@ -1,5 +1,7 @@
 ; Inno Setup v5.3.4
 ;
+; PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+;
 ; Requirements:
 ; *Inno Setup QuickStart Pack
 ;   http://www.jrsoftware.org/isdl.php#qsp
@@ -15,13 +17,13 @@ AppID={{015C5B35-B678-451C-9AEE-821E8D69621C}
 AppName=PeerBlock
 AppVersion={#= app_version}
 AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
-AppPublisher=PeerBlock Project
-AppCopyright=Mark Bulas
+AppPublisher=PeerBlock, LLC
+AppCopyright=PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
 AppUpdatesURL=http://www.peerblock.com/
-VersionInfoCompany=PeerBlock
-VersionInfoCopyright=PeerBlock Project
+VersionInfoCompany=PeerBlock, LLC
+VersionInfoCopyright=PeerBlock, LLC
 VersionInfoProductName=PeerBlock
 VersionInfoProductVersion={#= app_version}
 VersionInfoVersion={#= app_version}
