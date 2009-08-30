@@ -330,7 +330,7 @@ static boost::shared_ptr<LogFilterAction> g_log;
 
 static void UpdateStatus(HWND hwnd) 
 {
-	TRACEI("[LogProc] [UpdateStatus]  > Entering routine.");
+	TRACEV("[LogProc] [UpdateStatus]  > Entering routine.");
 	tstring enable, http, blocking, httpstatus, update, lastupdate;
 
 	enable=LoadString(g_config.Block?IDS_DISABLE:IDS_ENABLE);
