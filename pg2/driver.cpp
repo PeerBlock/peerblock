@@ -41,8 +41,14 @@ driver::~driver() {
 	this->close(); 
 }
 
-void driver::load(const std::wstring &name) {
+void driver::load(const std::wstring &name) 
+{
 	wchar_t path[MAX_PATH + 1], *pathend;
+
+	{
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(1)]   preparing to load driver - name: [%1%]")) % name.c_str() );
+		TRACEBUFI(strBuf);
+	}
 
 	DWORD ret = SearchPath(NULL, name.c_str(), L".sys", MAX_PATH, path, &pathend);
 	if(!ret) throw win32_error("SearchPath");
@@ -50,7 +56,14 @@ void driver::load(const std::wstring &name) {
 	load(name, path);
 }
 
-void driver::load(const std::wstring &name, const std::wstring &file) {
+void driver::load(const std::wstring &name, const std::wstring &file) 
+{
+	{
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(2)]   preparing to load driver - name: [%1%], file: [%2%]")) 
+			% name.c_str() % file.c_str() );
+		TRACEBUFI(strBuf);
+	}
+
 	load(name, file, L"\\\\.\\" + name);
 }
 
@@ -58,6 +71,12 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 {
 	TRACEV("[driver] [load(3)]  > Entering routine.");
 	if(m_loaded) throw std::exception("driver already loaded", 0);
+
+	{
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]   loading driver - name: [%1%], file: [%2%], devfile: [%3%]")) 
+			% name.c_str() % file.c_str() % devfile.c_str() );
+		TRACEBUFI(strBuf);
+	}
 
 	m_name = name;
 	m_file = file;
@@ -243,6 +262,10 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			TRACES("[driver] [load(3)]    Driver-service is running");
 			m_started = true;
 		}
+		else if (status.dwCurrentState == SERVICE_START_PENDING)
+		{
+			TRACEI("[driver] [load(3)]    Driver-service is starting");
+		}
 		else
 		{
 			TRACEW("[driver] [load(3)]    Driver-service NOT running!");
@@ -264,8 +287,13 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 void driver::close() 
 {
 	TRACEV("[driver] [close]  > Entering routine.");
-	if(!m_loaded) return;
+	if(!m_loaded) 
+	{
+		TRACEW("[driver] [close]    Tried to close driver, but it wasn't loaded.");
+		return;
+	}
 
+	TRACEI("[driver] [close]    closing driver");
 	stop();
 
 	if(this->removable) 
@@ -288,7 +316,9 @@ void driver::close()
 		CloseServiceHandle(manager);
 	}
 
+	TRACEI("[driver] [close]    unloaded driver");
 	m_loaded = false;
+
 	TRACEV("[driver] [close]  < Leaving routine.");
 
 } // End of close()
@@ -338,6 +368,8 @@ void driver::start()
 		TRACEI("[driver] [start]    driver already started");
 		return;
 	}
+
+	TRACEI("[driver] [start]    starting driver");
 
 	DWORD err = 0;
 
@@ -407,6 +439,11 @@ void driver::start()
 	CloseServiceHandle(service);
 	CloseServiceHandle(manager);
 
+	{
+		tstring strBuf = boost::str(tformat(_T("[driver] [start]   getting handle to driver - devfile: [%1%]")) % m_devfile.c_str() );
+		TRACEBUFI(strBuf);
+	}
+
 	m_dev = CreateFile(m_devfile.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
 
@@ -416,7 +453,9 @@ void driver::start()
 		throw win32_error("CreateFile");
 	}
 
+	TRACEI("[driver] [start]    started driver");
 	m_started = true;
+
 	TRACEV("[driver] [start]  < Leaving routine.");
 
 } // End of start()
@@ -426,7 +465,13 @@ void driver::start()
 void driver::stop() 
 {
 	TRACEV("[driver] [stop]  > Entering routine.");
-	if(!m_started) return;
+	if(!m_started) 
+	{
+		TRACEW("[driver] [stop]    Tried to stop driver, but it is not started");
+		return;
+	}
+
+	TRACEI("[driver] [stop]    stopping driver");
 
 	if(m_dev != INVALID_HANDLE_VALUE) {
 		CloseHandle(m_dev);
@@ -472,7 +517,9 @@ void driver::stop()
 	CloseServiceHandle(service);
 	CloseServiceHandle(manager);
 
+	TRACEI("[driver] [stop]    driver has been stopped");
 	m_started = false;
+
 	TRACEV("[driver] [stop]  < Leaving routine.");
 
 } // End of stop()
