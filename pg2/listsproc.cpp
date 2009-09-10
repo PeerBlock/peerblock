@@ -1,5 +1,12 @@
+//================================================================================================
+//  listsproc.cpp
+//
+//  This file contains all the routines used to handle the List Manager window.
+//================================================================================================
+
 /*
 	Copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -17,24 +24,37 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/06/09 04:30:08 $
-		$Revision: 1.24 $
 */
 
 #include "stdafx.h"
 #include "resource.h"
 using namespace std;
 
+
 static INT_PTR g_ret;
 static const UINT ID_CONTEXT_MAKESTATIC=200;
 
-static void Lists_OnClose(HWND hwnd) {
+
+
+//================================================================================================
+//
+//  Lists_OnClose()
+//
+//    - Called by Lists_DlgProc()
+//
+/// <summary>
+///   Closes the List Manager window.
+/// </summary>
+//
+static void Lists_OnClose(HWND hwnd) 
+{
+	TRACEI("[listsproc] [Lists_OnClose]  > Entering routine.");
+
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	int count=ListView_GetItemCount(list);
 
-	for(int i=0; i<count; i++) {
+	for(int i=0; i<count; i++) 
+	{
 		LVITEM lvi={0};
 		lvi.mask=LVIF_PARAM;
 		lvi.iItem=i;
@@ -44,15 +64,35 @@ static void Lists_OnClose(HWND hwnd) {
 		
 		bool checked=(ListView_GetCheckState(list, i)!=0);
 
-		if(l->Enabled!=checked) {
+		if(l->Enabled!=checked) 
+		{
 			l->Enabled=checked;
 			g_ret|=LISTS_NEEDRELOAD;
 		}
 	}
-	EndDialog(hwnd, g_ret);
-}
 
-static void InsertItem(HWND list, int index, List *plist) {
+	EndDialog(hwnd, g_ret);
+	TRACEI("[listsproc] [Lists_OnClose]  < Leaving routine.");
+
+} // End of Lists_OnClose()
+
+
+
+//================================================================================================
+//
+//  InsertItem(*plist)
+//
+//    - Called by lots of people
+//
+/// <summary>
+///   Inserts a list into our Lists ListView.
+/// </summary>
+/// <remarks>
+///   Note that there are two InsertItem routines.  This one takes a List pointer as the third arg.
+/// </remarks>
+//
+static void InsertItem(HWND list, int index, List *plist) 
+{
 	LVITEM lvi={0};
 	lvi.mask=LVIF_TEXT|LVIF_PARAM;
 	lvi.iItem=index;
@@ -80,9 +120,26 @@ static void InsertItem(HWND list, int index, List *plist) {
 	ListView_SetItem(list, &lvi);
 
 	ListView_SetCheckState(list, index, plist->Enabled?TRUE:FALSE);
-}
 
-static void InsertItem(HWND list, int index, List &plist) {
+} // End of InsertItem()
+
+
+
+//================================================================================================
+//
+//  InsertItem(&plist)
+//
+//    - Called by lots of people
+//
+/// <summary>
+///   Inserts a list into our Lists ListView.
+/// </summary>
+/// <remarks>
+///   Note that there are two InsertItem routines.  This one takes a List ref as the third arg.
+/// </remarks>
+//
+static void InsertItem(HWND list, int index, List &plist) 
+{
 	List *nlist;
 
 	if(StaticList *l=dynamic_cast<StaticList*>(&plist))
@@ -91,9 +148,23 @@ static void InsertItem(HWND list, int index, List &plist) {
 		nlist=new DynamicList(*l);
 
 	InsertItem(list, index, nlist);
-}
 
-static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
+} // End of InsertItem()
+
+
+
+//================================================================================================
+//
+//  InsertColumn()
+//
+//    - Called from Lists_OnInitDialog()
+//
+/// <summary>
+///   Inserts a new column into our Lists ListView.
+/// </summary>
+//
+static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) 
+{
 	LVCOLUMN lvc={0};
 	
 	lvc.mask=LVCF_FMT|LVCF_WIDTH|LVCF_TEXT|LVCF_SUBITEM;
@@ -105,13 +176,30 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	lvc.pszText=(LPTSTR)buf.c_str();
 
 	ListView_InsertColumn(hList, iSubItem, &lvc);
-}
 
-static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
-	switch(id) {
-		case IDC_ADD: {
+} // End of InsertColumn()
+
+
+
+//================================================================================================
+//
+//  Lists_OnCommand()
+//
+//    - Called by Lists_DlgProc()
+//
+/// <summary>
+///   Handles clicks on buttons on List Manager window.
+/// </summary>
+//
+static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+{
+	switch(id) 
+	{
+		case IDC_ADD: 
+		{
 			List *l;
-			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ADDLIST), hwnd, AddList_DlgProc, (LPARAM)&l)==IDOK) {
+			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ADDLIST), hwnd, AddList_DlgProc, (LPARAM)&l)==IDOK) 
+			{
 				tstring s;
 
 				if(DynamicList *dl=dynamic_cast<DynamicList*>(l))
@@ -126,19 +214,23 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				lvfi.psz=s.c_str();
 
 				int index=ListView_FindItem(list, -1, &lvfi);
-				if(index==-1) {
+				if(index==-1) 
+				{
 					InsertItem(list, ListView_GetItemCount(list), l);
 
 					if(typeid(*l)==typeid(DynamicList))
 						g_ret|=LISTS_NEEDUPDATE;
 					g_ret|=LISTS_NEEDRELOAD;
 				}
-				else {
+				else 
+				{
 					delete l;
 
 					int count=ListView_GetItemCount(list);
-					for(int i=0; i<count; i++) {
-						if(i==index) {
+					for(int i=0; i<count; i++) 
+					{
+						if(i==index) 
+						{
 							ListView_EnsureVisible(list, i, FALSE);
 							ListView_SetItemState(list, i, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
 						}
@@ -147,11 +239,15 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				}
 			}
 		} break;
-		case IDC_EDIT: {
+
+
+		case IDC_EDIT: 
+		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 			int index=ListView_GetSelectionMark(list);
 
-			if(index!=-1) {
+			if(index!=-1) 
+			{
 				LVITEM lvi={0};
 				lvi.iItem=index;
 				lvi.mask=LVIF_PARAM;
@@ -160,7 +256,8 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				List *plist=(List*)lvi.lParam;
 
 				INT_PTR ret=DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_EDITLIST), hwnd, EditList_DlgProc, (LPARAM)&plist);
-				if(ret) {
+				if(ret) 
+				{
 					g_ret|=ret;
 
 					lvi.lParam=(LPARAM)plist;
@@ -171,10 +268,12 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 					ListView_SetItemText(list, index, 1, (LPTSTR)type.c_str());
 					ListView_SetItemText(list, index, 2, (LPTSTR)plist->Description.c_str());
 
-					if(StaticList *l=dynamic_cast<StaticList*>(plist)) {
+					if(StaticList *l=dynamic_cast<StaticList*>(plist)) 
+					{
 						ListView_SetItemText(list, index, 0, (LPTSTR)l->File.c_str());
 					}
-					else if(DynamicList *l=dynamic_cast<DynamicList*>(plist)) {
+					else if(DynamicList *l=dynamic_cast<DynamicList*>(plist)) 
+					{
 						ListView_SetItemText(list, index, 0, (LPTSTR)l->Url.c_str());
 
 						if(!path::exists(l->File()))
@@ -183,7 +282,10 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				}
 			}
 		} break;
-		case IDC_REMOVE: {
+
+
+		case IDC_REMOVE: 
+		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 
 			stack<int> items;
@@ -194,7 +296,8 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 			if(items.size()>0)
 				g_ret|=LISTS_NEEDRELOAD;
 
-			while(items.size()>0) {
+			while(items.size()>0) 
+			{
 				int index=items.top(); items.pop();
 
 				LVITEM lvi={0};
@@ -207,11 +310,15 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				delete l;
 			}
 		} break;
-		case IDC_OPEN: {
+
+
+		case IDC_OPEN: 
+		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 			int index=ListView_GetSelectionMark(list);
 
-			if(index!=-1) {
+			if(index!=-1) 
+			{
 				LVITEM lvi={0};
 				lvi.iItem=index;
 				lvi.mask=LVIF_PARAM;
@@ -221,11 +328,16 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 					g_ret|=LISTS_NEEDRELOAD;
 			}
 		} break;
-		case IDC_CREATE: {
+
+
+		case IDC_CREATE: 
+		{
 			StaticList *sl;
 			
-			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CREATELIST), hwnd, CreateList_DlgProc, (LPARAM)&sl)==IDOK) {
-				if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LIST), hwnd, List_DlgProc, (LPARAM)sl)==IDOK) {
+			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CREATELIST), hwnd, CreateList_DlgProc, (LPARAM)&sl)==IDOK) 
+			{
+				if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LIST), hwnd, List_DlgProc, (LPARAM)sl)==IDOK) 
+				{
 					HWND list=GetDlgItem(hwnd, IDC_LIST);
 					InsertItem(list, ListView_GetItemCount(list), sl);
 
@@ -234,10 +346,14 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				else delete sl;
 			}
 		} break;
-		case ID_CONTEXT_EXPORTTO: {
+
+
+		case ID_CONTEXT_EXPORTTO: 
+		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 
-			if(ListView_GetSelectedCount(list)>0) {
+			if(ListView_GetSelectedCount(list)>0) 
+			{
 				TCHAR file[MAX_PATH]={0};
 
 				OPENFILENAME ofn={0};
@@ -249,10 +365,12 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				ofn.nMaxFile=MAX_PATH;
 				ofn.Flags=OFN_HIDEREADONLY|OFN_PATHMUSTEXIST;
 
-				if(GetSaveFileName(&ofn)) {
+				if(GetSaveFileName(&ofn)) 
+				{
 					p2p::list l;
 
-					for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED)) {
+					for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED)) 
+					{
 						LVITEM lvi={0};
 						lvi.iItem=index;
 						lvi.mask=LVIF_PARAM;
@@ -271,10 +389,14 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				}
 			}
 		} break;
-		case ID_CONTEXT_MAKESTATIC: {
+
+
+		case ID_CONTEXT_MAKESTATIC: 
+		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 
-			if(ListView_GetSelectedCount(list)==1 && MessageBox(hwnd, IDS_MAKESTATICTEXT, IDS_WARNING, MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2)==IDYES) {
+			if(ListView_GetSelectedCount(list)==1 && MessageBox(hwnd, IDS_MAKESTATICTEXT, IDS_WARNING, MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2)==IDYES) 
+			{
 				TCHAR file[MAX_PATH]={0};
 
 				OPENFILENAME ofn={0};
@@ -288,7 +410,8 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				ofn.nMaxFile=MAX_PATH;
 				ofn.Flags=OFN_HIDEREADONLY|OFN_PATHMUSTEXIST;
 
-				if(GetSaveFileName(&ofn)) {
+				if(GetSaveFileName(&ofn)) 
+				{
 					path p=path::relative_to(path::base_dir(), file);
 					tstring fs=p.file_str();
 
@@ -322,16 +445,31 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 			}
 		} break;
 	}
-}
 
-static void Lists_OnDestroy(HWND hwnd) {
+} // End of Lists_OnCommand()
+
+
+
+//================================================================================================
+//
+//  Lists_OnDestroy()
+//
+//    - Called by Windows
+//
+/// <summary>
+///   Handles List Manager window destruction, and saves current set of lists to g_config.
+/// </summary>
+//
+static void Lists_OnDestroy(HWND hwnd) 
+{
 	g_config.StaticLists.clear();
 	g_config.DynamicLists.clear();
 
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	int count=ListView_GetItemCount(list);
 
-	for(int i=0; i<count; i++) {
+	for(int i=0; i<count; i++) 
+	{
 		LVITEM lvi={0};
 		lvi.iItem=i;
 		lvi.mask=LVIF_PARAM;
@@ -348,9 +486,23 @@ static void Lists_OnDestroy(HWND hwnd) {
 	}
 
 	SaveListColumns(list, g_config.ListManagerColumns);
-}
 
-static void Lists_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {
+} // End of Lists_OnDestroy()
+
+
+
+//================================================================================================
+//
+//  Lists_OnGetMinMaxInfo()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Returns size of the client area of our window.
+/// </summary>
+//
+static void Lists_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) 
+{
 	RECT rc={0};
 	rc.right=349;
 	rc.bottom=219;
@@ -359,10 +511,30 @@ static void Lists_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {
 
 	lpMinMaxInfo->ptMinTrackSize.x=rc.right;
 	lpMinMaxInfo->ptMinTrackSize.y=rc.bottom;
-}
+
+} // End of Lists_OnGetMinMaxInfo()
+
+
 
 static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy);
-static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+
+
+
+//================================================================================================
+//
+//  Lists_OnInitDialog()
+//
+//    - Called by Lists_DlgProc()
+//
+/// <summary>
+///   Sets up our List Manager window.  Configures our Lists ListView, reading in the master "list
+///   of lists" from g_config.
+/// </summary>
+//
+static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+{
+	TRACEI("[listsproc] [Lists_OnInitDialog]  > Entering routine.");
+
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_CHECKBOXES|LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
 
@@ -380,34 +552,50 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	g_ret=0;
 
-	if(
-		g_config.ListManagerWindowPos.left!=0 || g_config.ListManagerWindowPos.top!=0 ||
-		g_config.ListManagerWindowPos.right!=0 || g_config.ListManagerWindowPos.bottom!=0
-	) {
+	if(	g_config.ListManagerWindowPos.left!=0 || g_config.ListManagerWindowPos.top!=0 ||
+		g_config.ListManagerWindowPos.right!=0 || g_config.ListManagerWindowPos.bottom!=0 ) 
+	{
 		SetWindowPos(hwnd, NULL,
 			g_config.ListManagerWindowPos.left,
 			g_config.ListManagerWindowPos.top,
 			g_config.ListManagerWindowPos.right-g_config.ListManagerWindowPos.left,
 			g_config.ListManagerWindowPos.bottom-g_config.ListManagerWindowPos.top,
-			SWP_NOACTIVATE|SWP_NOOWNERZORDER|SWP_NOZORDER
-		);
+			SWP_NOACTIVATE|SWP_NOOWNERZORDER|SWP_NOZORDER );
 	}
 
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 	Lists_OnSize(hwnd, 0, rc.right, rc.bottom);
 
+	TRACEI("[listsproc] [Lists_OnInitDialog]  < Exiting routine.");
 	return TRUE;
-}
 
-static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
-	if(nmh->idFrom==IDC_LIST) {
-		if(nmh->code==LVN_ITEMCHANGED) {
+} // End of Lists_OnInitDialog()
+
+
+
+//================================================================================================
+//
+//  Lists_OnNotify()
+//
+//    - Called by Lists_DlgProc()
+//
+/// <summary>
+///   Handles list-selection and right-clicking.
+/// </summary>
+//
+static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) 
+{
+	if(nmh->idFrom==IDC_LIST) 
+	{
+		if(nmh->code==LVN_ITEMCHANGED) 
+		{
 			unsigned int num=ListView_GetSelectedCount(nmh->hwndFrom);
 
 			BOOL open, edit, remove;
 
-			switch(num) {
+			switch(num) 
+			{
 				case 0:
 					open=FALSE;
 					edit=FALSE;
@@ -428,16 +616,19 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 			EnableWindow(GetDlgItem(hwnd, IDC_EDIT), edit);
 			EnableWindow(GetDlgItem(hwnd, IDC_REMOVE), remove);
 		}
-		else if(nmh->code==NM_RCLICK) {
+		else if(nmh->code==NM_RCLICK) 
+		{
 			int count=ListView_GetSelectedCount(nmh->hwndFrom);
 
-			if(count>0) {
+			if(count>0) 
+			{
 				NMITEMACTIVATE *nmia=(NMITEMACTIVATE*)nmh;
 
 				HMENU menu=LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_LISTSCONTEXT));
 				HMENU context=GetSubMenu(menu, 0);
 
-				if(count==1) {
+				if(count==1) 
+				{
 					tstring buf;
 					MENUITEMINFO info={0};
 
@@ -453,7 +644,8 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 
 						List *l=(List*)lvi.lParam;
 
-						if(typeid(*l)==typeid(DynamicList)) {
+						if(typeid(*l)==typeid(DynamicList)) 
+						{
 							buf=LoadString(IDS_MAKESTATIC);
 							info.wID=ID_CONTEXT_MAKESTATIC;
 							info.dwTypeData=(LPTSTR)buf.c_str();
@@ -483,9 +675,23 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 	else if(nmh->code==PSN_SETACTIVE)
 		PropSheet_SetWizButtons(nmh->hwndFrom, PSWIZB_BACK|PSWIZB_NEXT);
 	return FALSE;
-}
 
-static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy) {
+} // End of Lists_OnNotify()
+
+
+
+//================================================================================================
+//
+//  Lists_OnSize()
+//
+//    - Called by Lists_DlgProc()
+//
+/// <summary>
+///   Handles resizing of the List Manager window.
+/// </summary>
+//
+static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy) 
+{
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	HWND open=GetDlgItem(hwnd, IDC_OPEN);
 	HWND create=GetDlgItem(hwnd, IDC_CREATE);
@@ -507,18 +713,36 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 
 	EndDeferWindowPos(dwp);
 
-	if(state==SIZE_RESTORED) {
+	if(state==SIZE_RESTORED) 
+	{
 		RECT rc;
 		GetWindowRect(hwnd, &rc);
 
 		if(rc.left>=0 && rc.top>=0 && rc.right>=0 && rc.bottom>=0)
 			g_config.ListManagerWindowPos=rc;
 	}
-}
 
-INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
+} // End of Lists_OnSize()
+
+
+
+//================================================================================================
+//
+//  Lists_DlgProc()
+//
+//    - Called by Windows
+//
+/// <summary>
+///   The List Manager's messageproc, it simply passes off handleable messages to the appropriate
+///   subroutine.
+/// </summary>
+//
+INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+{
+	try 
+	{
+		switch(msg) 
+		{
 			HANDLE_MSG(hwnd, WM_CLOSE, Lists_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, Lists_OnCommand);
 			HANDLE_MSG(hwnd, WM_DESTROY, Lists_OnDestroy);
@@ -529,12 +753,15 @@ INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 			default: return 0;
 		}
 	}
-	catch(exception &ex) {
+	catch(exception &ex) 
+	{
 		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		return 0;
 	}
-	catch(...) {
+	catch(...) 
+	{
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
 		return 0;
 	}
-}
+
+} // End of Lists_DlgProc()
