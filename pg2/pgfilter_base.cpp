@@ -89,7 +89,7 @@ void pgfilter_base::setblock(bool block)
 {
 	TRACEV("[pgfilter_base] [setblock]  > Entering routine.");
 	TRACEV("[pgfilter_base] [setblock]    acquiring lock");
-	mutex::scoped_lock lock(m_lock);
+	mutex::scoped_lock lock(m_blocklock);
 
 	if(block != m_block) 
 	{
@@ -116,7 +116,7 @@ void pgfilter_base::setblockhttp(bool block)
 {
 	TRACEV("[pgfilter_base] [setblockhttp]  > Entering routine.");
 	TRACEV("[pgfilter_base] [setblockhttp]    acquiring lock");
-	mutex::scoped_lock lock(m_lock);
+	mutex::scoped_lock lock(m_blocklock);
 
 	if(block != m_blockhttp) 
 	{

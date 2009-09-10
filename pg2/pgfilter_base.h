@@ -89,4 +89,5 @@ private:
 	volatile bool m_runthread;
 
 	mutex m_lock;
+	mutex m_blocklock;
 };
