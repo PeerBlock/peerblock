@@ -896,7 +896,7 @@ static void Log_OnTimer(HWND hwnd, UINT id)
 			TRACEV("[LogProc] [Log_OnTimer]    TIMER_UPDATE");
 			if(g_config.UpdateInterval>0 && (time(NULL)-g_config.LastUpdate >= ((time_t)g_config.UpdateInterval)*86400))
 			{
-				TRACEV("[LogProc] [Log_OnTimer]    updating lists");
+				TRACEI("[LogProc] [Log_OnTimer]    performing automated update of program/lists");
 				UpdateLists(NULL);
 			}
 			UpdateStatus(hwnd);

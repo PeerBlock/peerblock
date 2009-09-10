@@ -18,10 +18,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/07/16 00:43:00 $
-		$Revision: 1.94 $
 */
 
 #include "stdafx.h"
@@ -829,18 +825,18 @@ public:
 		EnableWindow(abort, FALSE);
 		EnableWindow(close, TRUE);
 
-		TRACEI("[UpdateThread] [_Process]    waiting for user to close dialog box");
+		TRACEI("[UpdateThread] [_Process]    finished downloading updates");
 
 		if(IsWindowVisible(hwnd)) 
 		{
-			TRACEV("[UpdateThread] [_Process]    window visible");
+			TRACEV("[UpdateThread] [_Process]    waiting for update-window to close");
 			if(g_config.UpdateCountdown==0) {
-				TRACEV("[UpdateThread] [_Process]    UpdateCountdown == 0");
+				TRACEI("[UpdateThread] [_Process]    closing window now, since UpdateCountdown == 0");
 				if(g_updater==(HWND)-1) EndDialog(hwnd, changes);
 				else DestroyWindow(hwnd);
 			}
 			if(g_config.UpdateCountdown>0) {
-				TRACEV("[UpdateThread] [_Process]    UpdateCountdown > 0, setting timer");
+				TRACEI("[UpdateThread] [_Process]    starting countdown, since UpdateCountdown > 0");
 				g_countdown=(unsigned short)g_config.UpdateCountdown;
 				tstring s=boost::str(tformat(LoadString(IDS_CLOSEX))%g_countdown);
 				SetDlgItemText(hwnd, IDC_CLOSE, s.c_str());
@@ -848,8 +844,40 @@ public:
 				SetTimer(hwnd, TIMER_COUNTDOWN, 1000, NULL);
 			}
 		}
-		else if(g_updater==(HWND)-1) EndDialog(hwnd, changes);
-		else DestroyWindow(hwnd);
+		else if(g_updater==(HWND)-1) 
+		{
+			TRACEV("[UpdateThread] [_Process]    window not visible, g_updater:[FFFFFFFF]:  calling EndDialog()");
+			if (!EndDialog(hwnd, changes))
+			{
+				DWORD err = GetLastError();
+				if (err == 5) // access denied
+				{
+					SendMessage(hwnd, WM_CLOSE, 0, 0);
+				}
+				else
+				{
+					TRACEERR("[UpdateThread] [_Process]", L"ERROR calling EndDialog(), trying WM_CLOSE", GetLastError());
+					SendMessage(hwnd, WM_CLOSE, 0, 0);
+				}
+			}
+		}
+		else 
+		{
+			TRACEV("[UpdateThread] [_Process]    closing invisible auto-update window");
+			if (!DestroyWindow(hwnd))
+			{
+				DWORD err = GetLastError();
+				if (err == 5) // access denied
+				{
+					SendMessage(hwnd, WM_CLOSE, 0, 0);
+				}
+				else
+				{
+					TRACEERR("[UpdateThread] [_Process]", L"ERROR calling DestroyWindow(), trying WM_CLOSE", GetLastError());
+					SendMessage(hwnd, WM_CLOSE, 0, 0);
+				}
+			}
+		}
 
 		TRACEV("[UpdateThread] [_Process]  < Leaving routine.");
 		return changes;
@@ -1849,8 +1877,11 @@ int UpdateLists(HWND parent)
 
 	int ret=0;
 
-	if(g_updater==NULL) {
-		if(parent) {
+	if(g_updater==NULL) 
+	{
+		if(parent) 
+		{
+			// Either user-initiated, or else "update at startup"
 			g_updater=(HWND)-1;
 			TRACEI("[UpdateLists]    g_updater null, found parent, creating dialog-box");
 			ret=(int)DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
@@ -1858,13 +1889,16 @@ int UpdateLists(HWND parent)
 		}
 		else 
 		{
+			// auto-updating
 			TRACEI("[UpdateLists]    g_updater null, no parent, creating dialog-box");
 			g_updater=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
 		}
 
 		time(&g_config.LastUpdate);
 	}
-	else if(parent) {	
+	else if(parent) 
+	{	
+		// restoring update-window?
 		TRACEI("[UpdateLists]    g_updater not null, found parent, creating dialog-box");
 		ShowWindow(g_updater, SW_SHOW);
 		ShowWindow(g_updater, SW_RESTORE);
@@ -1872,6 +1906,7 @@ int UpdateLists(HWND parent)
 	}
 	else
 	{
+		// update-window stuck in "waiting for user to close" state, while we re-enter update routine?
 		TRACEE("[UpdateLists]    g_updater not null, no parent, WTF??!?");
 	}
 
