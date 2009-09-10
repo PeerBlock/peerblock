@@ -18,10 +18,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/07/12 02:20:35 $
-		$Revision: 1.30 $
 */
 
 #pragma once
@@ -64,7 +60,13 @@ struct DynamicList : List {
 	path TempFile() const;
 
 	path Path() const { return File(); }
+
+	bool operator==(const DynamicList &right)
+	{
+		return Url.find(right.Url) != string::npos;
+	}
 };
+
 
 // contains allowed/blocked ports
 struct PortList {
@@ -105,6 +107,7 @@ struct Configuration {
 
 	bool TracelogEnabled;
 	int TracelogLevel;
+	int LastVersionRun;
 
 	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;

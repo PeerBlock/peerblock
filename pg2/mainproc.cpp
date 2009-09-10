@@ -74,6 +74,124 @@ void SetBlockHttp(bool block) {
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 }
 
+
+
+//================================================================================================
+//
+//  PerformPrevRelUpdates()
+//
+//    - Called by Main_OnInitDialog()
+//
+/// <summary>
+///   Checks the version of the last time we ran, and if that number falls within certain ranges
+///	  we'll do some release-specific cleanup.
+/// </summary>
+//
+void PerformPrevRelUpdates()
+{
+	int prevRelease = g_config.LastVersionRun;
+
+	if (prevRelease == PB_BLDNUM)
+		return;
+
+	if (prevRelease > PB_BLDNUM)
+	{
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    WARNING:  Downgrade detected!");
+		return;
+	}
+
+
+	//--------------------------------------------------
+	// Update PG hosted lists to iblocklist
+
+	if (prevRelease < 134)
+	{
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for old peerguardian-hosted lists, and updating any found to iblocklist.com-hosted ones");
+
+		bool bOldUrlFound = false;
+		vector<DynamicList> tempList;
+
+		// check each list in configured lists
+		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
+		{
+			// if it's a peerguardian list
+			DynamicList *list = &(g_config.DynamicLists[i]);	
+			if (list->Url.find(_T("http://peerguardian.sourceforge.net/lists/")) != string::npos)
+			{
+				// swap it out
+				tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    found old URL: [%1%]")) % list->Url );
+				TRACEBUFW(strBuf);
+				bOldUrlFound = true;
+
+				if (list->Url.find(_T("ads.php")) != string::npos)
+				{
+					// http://list.iblocklist.com/?list=bt_ads
+					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing ads.php list with bt_ads");
+					//list->Url = _T("http://list.iblocklist.com/?list=bt_ads");
+					DynamicList newList = *list;
+					newList.Url = _T("http://list.iblocklist.com/?list=bt_ads");
+					tempList.push_back(newList);
+				}
+				else if (list->Url.find(_T("edu.php")) != string::npos)
+				{
+					// http://list.iblocklist.com/?list=bt_edu
+					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing edu.php list with bt_edu");
+					//list->Url = _T("http://list.iblocklist.com/?list=bt_edu");
+					DynamicList newList = *list;
+					newList.Url = _T("http://list.iblocklist.com/?list=bt_edu");
+					tempList.push_back(newList);
+				}
+				else if (list->Url.find(_T("p2p.php")) != string::npos)
+				{
+					// http://list.iblocklist.com/?list=bt_level1
+					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing p2p.php list with bt_level1");
+					//list->Url = _T("http://list.iblocklist.com/?list=bt_level1");
+					DynamicList newList = *list;
+					newList.Url = _T("http://list.iblocklist.com/?list=bt_level1");
+					tempList.push_back(newList);
+				}
+				else if (list->Url.find(_T("spy.php")) != string::npos)
+				{
+					// http://list.iblocklist.com/?list=bt_spyware
+					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing spy.php list with bt_spyware");
+					//list->Url = _T("http://list.iblocklist.com/?list=bt_spyware");
+					DynamicList newList = *list;
+					newList.Url = _T("http://list.iblocklist.com/?list=bt_spyware");
+					tempList.push_back(newList);
+				}
+				else if (list->Url.find(_T("gov.php")) != string::npos)
+				{
+					// remove list
+					TRACEW("[mainproc] [PerformPrevRelUpdates]    - removing gov list");
+				}
+				else
+				{
+					TRACEE("[mainproc] [PerformPrevRelUpdates]    ERROR:  Unknown PG2 list!!");
+				}
+			}
+			else
+			{
+				TRACED("[mainproc] [PerformPrevRelUpdates]    found non-PG2 URL");
+				DynamicList newList = *list;
+				tempList.push_back(newList);
+			}
+		}
+
+		// Rebuild list if we need to remove Gov list.  Also, check for duplicates.
+		g_config.DynamicLists.clear();
+		for(vector<DynamicList>::size_type i = 0; i < tempList.size(); ++i)
+		{
+			if (std::find(g_config.DynamicLists.begin(), g_config.DynamicLists.end(), tempList[i]) == g_config.DynamicLists.end())
+			{
+				g_config.DynamicLists.push_back(tempList[i]);
+			}
+		}
+	}
+
+}; // End of PerformPrevRelUpdates()
+
+
+
 static void Main_OnVisible(HWND hwnd, BOOL visible);
 static void Main_OnClose(HWND hwnd) {
 	if(g_config.HideOnClose) Main_OnVisible(hwnd, FALSE);
@@ -174,39 +292,44 @@ static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_main=hwnd;
 
-	TRACEI("[Main_OnInitDialog]  > Entering routine.");
+	TRACEI("[mainproc] [Main_OnInitDialog]  > Entering routine.");
 
-	TRACEI("[Main_OnInitDialog]    loading config");
+	TRACEI("[mainproc] [Main_OnInitDialog]    loading config");
 	bool firsttime=false;
 	try {
 		if(!g_config.Load()) {
-			TRACEI("[Main_OnInitDialog]    displaying first-time wizard");
+			TRACEI("[mainproc] [Main_OnInitDialog]    displaying first-time wizard");
 			DisplayStartupWizard(hwnd);
 			g_config.Save();
 			firsttime=true;
 		}
 		else
 		{
-			TRACES("[Main_OnInitDialog]    Config loaded.");
+			TRACES("[mainproc] [Main_OnInitDialog]    Config loaded.");
+			TRACEI("[mainproc] [Main_OnInitDialog]    checking if previous-release updates are required");
+			PerformPrevRelUpdates();
 		}
 
 		// Setup tracelogging
 		if (g_config.TracelogEnabled)
 			g_tlog.SetLoglevel((TRACELOG_LEVEL)g_config.TracelogLevel);
 		else
+		{
+			TRACEC("Logging disabled, shutting down logger.");
 			g_tlog.SetLoglevel(TRACELOG_LEVEL_NONE);
+		}
 	}
 	catch(exception &ex) {
-		TRACEC("[Main_OnInitDialog]    Exception trying to load config!");
+		TRACEC("[mainproc] [Main_OnInitDialog]    Exception trying to load config!");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		DestroyWindow(hwnd);
 		return FALSE;
 	}
 
-	TRACEI("[Main_OnInitDialog]    resetting g_filter");
+	TRACEI("[mainproc] [Main_OnInitDialog]    resetting g_filter");
 	try {
 		g_filter.reset(new pgfilter());
-		TRACES("[Main_OnInitDialog]    g_filter reset.");
+		TRACES("[mainproc] [Main_OnInitDialog]    g_filter reset.");
 	}
 	catch(peerblock_error &ex) 
 	{
@@ -238,7 +361,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		return FALSE;
 	}
 
-	TRACEI("[Main_OnInitDialog]    getting tabs");
+	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
 	for(size_t i=0; i<g_tabcount; i++) {
@@ -254,24 +377,24 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	}
 
 	if(firsttime) {
-		TRACEI("[Main_OnInitDialog]    updating lists for firsttime");
+		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
 		UpdateLists(g_tabs[0].Tab);
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
 
-	TRACEI("[Main_OnInitDialog]    setting block");
+	TRACEI("[mainproc] [Main_OnInitDialog]    setting block");
 	g_filter->setblock(g_config.Block);
 
-	TRACEI("[Main_OnInitDialog]    setting HTTP block");
+	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
 
-	TRACEI("[Main_OnInitDialog]    loading lists");
+	TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
 	LoadLists(hwnd);
-	TRACES("[Main_OnInitDialog]    Lists loaded.");
+	TRACES("[mainproc] [Main_OnInitDialog]    Lists loaded.");
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, g_config.Block?TRUE:FALSE);
 
-	TRACEI("[Main_OnInitDialog]    doing other stuff");
+	TRACEI("[mainproc] [Main_OnInitDialog]    doing other stuff");
 	g_nid.cbSize=sizeof(NOTIFYICONDATA);
 	g_nid.hWnd=hwnd;
 	g_nid.uID=TRAY_ID;

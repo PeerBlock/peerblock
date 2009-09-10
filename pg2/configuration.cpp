@@ -18,10 +18,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/07/13 05:45:02 $
-		$Revision: 1.48 $
 */
 
 #include "stdafx.h"
@@ -41,7 +37,7 @@ Configuration::Configuration() :
 	ListEditorWindowPos(RECT()),HistoryWindowPos(RECT()),HideOnClose(true),
 	AlwaysOnTop(false),HideTrayIcon(false),FirstBlock(true),FirstHide(true),
 	BlinkOnBlock(OnHttpBlock),NotifyOnBlock(Never),CleanupType(None),
-	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT),
+	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
 	ArchivePath(_T("archives")),StartMinimized(false),ColorCode(true) {
 		HistoryColumns[0]=64;
 		HistoryColumns[1]=128;
@@ -440,6 +436,7 @@ bool Configuration::Load()
 		GetChild(settings, "CacheCrc", this->CacheCrc);
 		GetChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		GetChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
+		GetChild(settings, "LastVersionRun", this->LastVersionRun);
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config logging element");
@@ -704,6 +701,7 @@ void Configuration::Save() {
 		InsertChild(settings, "CacheCrc", this->CacheCrc);
 		InsertChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		InsertChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
+		InsertChild(settings, "LastVersionRun", this->LastVersionRun);
 	}
 
 	{
