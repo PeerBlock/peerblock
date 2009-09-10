@@ -43,13 +43,94 @@ FOR /f "delims=" %%a IN (
 	SET "InnoSetupPath=%%a"&Call :Sub %%InnoSetupPath:*Z=%%)
 
 CD setup
+ECHO:Compiling installer...
+ECHO.
 IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /Q "setup.iss"&&(
 ECHO:Installer compiled successfully!)) ELSE (ECHO:%M_%)
 
 
+REM Create all the zip files ready for distribution
+CD ..
+MD "Distribution" >NUL 2>&1
+DEL "tools\buildnum_parsed.txt" >NUL 2>&1
+ECHO.
+"tools\SubWCRev.exe" "." "tools\buildnum.txt" "tools\buildnum_parsed.txt"
+
+FOR /f "delims=" %%G IN (
+	'FINDSTR ".*" "tools\buildnum_parsed.txt"') DO (
+	SET "buildnum=%%G"&Call :Sub2 %%buildnum:*Z=%%)
+
+ECHO.
+MD "temp_zip" >NUL 2>&1
+COPY "Win32\Release\peerblock.exe" "temp_zip\" /Y
+COPY "Win32\Release\pbfilter.sys" "temp_zip\" /Y
+COPY "license.txt" "temp_zip\" /Y
+COPY "setup\readme.rtf" "temp_zip\" /Y
+CD "temp_zip"
+START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
+ "PeerBlock_r%buildnum%__Win32_Release.zip" "peerblock.exe" "pbfilter.sys"^
+ "license.txt" "readme.rtf">NUL&&(
+	ECHO:PeerBlock_r%buildnum%__Win32_Release.zip created successfully!)
+MOVE /Y "PeerBlock_r%buildnum%__Win32_Release.zip" "..\Distribution" >NUL 2>&1
+CD ..
+RD /S /Q "temp_zip" >NUL 2>&1
+
+
+ECHO.
+MD "temp_zip" >NUL 2>&1
+COPY "Win32\Release (Vista)\peerblock.exe" "temp_zip\" /Y
+COPY "Win32\Release (Vista)\pbfilter.sys" "temp_zip\" /Y
+COPY "license.txt" "temp_zip\" /Y
+COPY "setup\readme.rtf" "temp_zip\" /Y
+CD "temp_zip"
+START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
+ "PeerBlock_r%buildnum%__Win32_Release_(Vista).zip" "peerblock.exe" "pbfilter.sys"^
+ "license.txt" "readme.rtf">NUL&&(
+	ECHO:PeerBlock_r%buildnum%__Win32_Release_Vista.zip created successfully!)
+MOVE /Y "PeerBlock_r%buildnum%__Win32_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
+CD ..
+RD /S /Q "temp_zip" >NUL 2>&1
+
+
+ECHO.
+MD "temp_zip" >NUL 2>&1
+COPY "x64\Release\peerblock.exe" "temp_zip\" /Y
+COPY "x64\Release\pbfilter.sys" "temp_zip\" /Y
+COPY "license.txt" "temp_zip\" /Y
+COPY "setup\readme.rtf" "temp_zip\" /Y
+CD "temp_zip"
+START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
+ "PeerBlock_r%buildnum%__x64_Release.zip" "peerblock.exe" "pbfilter.sys"^
+ "license.txt" "readme.rtf">NUL&&(
+	ECHO:PeerBlock_r%buildnum%__x64_Release.zip created successfully!)
+MOVE /Y "PeerBlock_r%buildnum%__x64_Release.zip" "..\Distribution" >NUL 2>&1
+CD ..
+RD /S /Q "temp_zip" >NUL 2>&1
+
+
+ECHO.
+MD "temp_zip" >NUL 2>&1
+COPY "x64\Release (Vista)\peerblock.exe" "temp_zip\" /Y
+COPY "x64\Release (Vista)\pbfilter.sys" "temp_zip\" /Y
+COPY "license.txt" "temp_zip\" /Y
+COPY "setup\readme.rtf" "temp_zip\" /Y
+CD "temp_zip"
+START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
+ "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "peerblock.exe" "pbfilter.sys"^
+ "license.txt" "readme.rtf">NUL&&(
+	ECHO:PeerBlock_r%buildnum%__x64_Release_Vista.zip created successfully!)
+MOVE /Y "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
+CD ..
+RD /S /Q "temp_zip" >NUL 2>&1
+
+
 :END
+ECHO.
 ECHO.
 ENDLOCAL && PAUSE
 
 :Sub
 SET InnoSetupPath=%*
+
+:Sub2
+SET buildnum=%*

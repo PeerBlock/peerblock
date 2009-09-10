@@ -32,8 +32,8 @@ VersionInfoTextVersion={#= app_version}
 DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
 LicenseFile=..\license.txt
-InfoBeforeFile=readme.rtf
-OutputDir=.
+InfoBeforeFile=readme_before.rtf
+OutputDir=..\Distribution
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}.r{#= PB_BLDNUM}
 Compression=lzma/ultra64
 InternalCompressLevel=ultra64
@@ -116,7 +116,8 @@ Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 [Icons]
 Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 Name: {group}\Uninstall PeerBlock; Filename: {app}\unins000.exe; WorkingDir: {app}; Comment: {cm:UninstallProgram,PeerBlock}
-Name: {group}\Help and Support\{cm:ProgramOnTheWeb,PeerBlock}; Filename: http://www.peerblock.com/; WorkingDir: {app}
+Name: {group}\Help and Support\Forums; Filename: http://forums.peerblock.com/; WorkingDir: {app}
+Name: {group}\Help and Support\Homepage; Filename: http://www.peerblock.com/; WorkingDir: {app}
 Name: {group}\Help and Support\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: PeerBlock's License
 Name: {group}\Help and Support\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
@@ -147,6 +148,7 @@ Name: {app}\peerblock.log; Type: files; Tasks: reset_settings
 // During installation, delete older start menu entries: 
 Name: {group}\License.lnk; Type: files
 Name: {group}\PeerBlock on the Web.url; Type: files
+Name: {group}\Help and Support\PeerBlock on the Web.url; Type: files
 Name: {group}\ReadMe.lnk; Type: files
 Name: {group}\Uninstall.lnk; Type: files
 
