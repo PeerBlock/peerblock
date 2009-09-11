@@ -9,21 +9,25 @@ ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO END)
 
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
  /t:Rebuild /p:Configuration=Release /p:Platform="Win32"
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 ECHO.
 ECHO.
 
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
  /t:Rebuild /p:Configuration="Release (Vista)" /p:Platform="Win32"
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 ECHO.
 ECHO.
 
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
  /t:Rebuild /p:Configuration=Release /p:Platform="x64"
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 ECHO.
 ECHO.
 
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
  /t:Rebuild /p:Configuration="Release (Vista)" /p:Platform="x64"
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 ECHO.
 ECHO.
 
@@ -122,7 +126,12 @@ START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
 MOVE /Y "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
 CD ..
 RD /S /Q "temp_zip" >NUL 2>&1
+GOTO :AllOK
 
+:ErrorDetected
+ECHO: ERROR:  Failed to build PeerBlock!
+
+:AllOK
 
 :END
 ECHO.

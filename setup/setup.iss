@@ -18,12 +18,12 @@ AppName=PeerBlock
 AppVersion={#= app_version}
 AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 AppPublisher=PeerBlock, LLC
-AppCopyright=PeerBlock, LLC
+AppCopyright=Copyright © 2009, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
 AppUpdatesURL=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
-VersionInfoCopyright=PeerBlock, LLC
+VersionInfoCopyright=Copyright © 2009, PeerBlock, LLC
 VersionInfoProductName=PeerBlock
 VersionInfoProductVersion={#= app_version}
 VersionInfoVersion={#= app_version}
