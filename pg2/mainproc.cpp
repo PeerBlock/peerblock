@@ -403,10 +403,9 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), g_config.Block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
 	StringCbCopy(g_nid.szTip, sizeof(g_nid.szTip), _T("PeerBlock"));
 
-	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden))) {
+	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden))) 
+	{
 		Shell_NotifyIcon(NIM_ADD, &g_nid);
-		
-		g_nid.uFlags=NIF_ICON;
 	}
 
 	WM_TRAY_CREATED=RegisterWindowMessage(_T("TaskbarCreated"));
