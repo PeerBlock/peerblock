@@ -398,7 +398,7 @@ public:
 					bool fileExists = path::exists(file);
 					DWORD fileSize = 0;
 
-					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %d seconds have passed since last update"), elapsedTime);
+					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %d (of 43200) seconds have passed since last update"), elapsedTime);
 					TRACEBUFI(chBuf);
 
 					if (fileExists)
@@ -603,11 +603,11 @@ public:
 									curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &code);
 									_stprintf_s(chBuf, sizeof(chBuf)/2, 
 										_T("[UpdateThread] [_Process]    response code: [%ld]"), code);
-									g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
+									g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
 
 									if(code==200) 
 									{
-										TRACEV("[UpdateThread] [_Process]    code: [200]");
+										TRACEI("[UpdateThread] [_Process]    successfully contacted URL; code:[200]");
 										if(data->list) 
 										{
 											TRACEV("[UpdateThread] [_Process]    data is a list");
@@ -649,7 +649,7 @@ public:
 												{
 													if (b > g_build)
 													{
-														TRACEI("[UpdateThread] [_Process]    found list var; new program version found");
+														TRACES("[UpdateThread] [_Process]    found list var; new program version found");
 														updatepg = true;
 													}
 													else
@@ -668,7 +668,7 @@ public:
 												{
 													if (b > g_build)
 													{
-														TRACEI("[UpdateThread] [_Process]    no list var; new program version found");
+														TRACES("[UpdateThread] [_Process]    no list var; new program version found");
 														updatepg = true;
 													}
 													else
@@ -687,17 +687,17 @@ public:
 									}
 									else if(code==304) 
 									{
-										TRACEV("[UpdateThread] [_Process]    code == 304");
+										TRACEI("[UpdateThread] [_Process]    NO UPDATE AVAILABLE; code:[304]");
 										if(data->list) 
 										{
-											TRACEV("[UpdateThread] [_Process]    found data->list");
+											TRACEV("[UpdateThread] [_Process]    found data->list; NO UPDATE AVAILABLE");
 											time(&data->list->LastUpdate);
 											data->list->FailedUpdate=false;
 										}
 
 										if(list) 
 										{
-											TRACEV("[UpdateThread] [_Process]    found data->list; NOUPDATEAVAIL");
+											TRACEV("[UpdateThread] [_Process]    found list; NO UPDATE AVAILABLE");
 											const tstring str=LoadString(IDS_NOUPDATEAVAIL);
 
 											lvi.iItem=data->index;
@@ -708,13 +708,17 @@ public:
 									}
 									else if(code>=300) 
 									{
-										TRACEV("[UpdateThread] [_Process]    code >= 300");
+										tstring strBuf = boost::str(tformat(
+											_T("[UpdateThread] [_Process]    code >= 300; code:[%1%]")) % code );
+										TRACEBUFE(strBuf);
 										if(data->list) data->list->FailedUpdate=true;
 
 										if(list) 
 										{
-											TRACEV("[UpdateThread] [_Process]    found list; ERRORCONTACTING");
-											const tstring str=LoadString(IDS_ERRORCONTACTING);
+											tstring strBuf = boost::str(tformat(
+												_T("[UpdateThread] [_Process]    found list; ERROR CONTACTING URL, code:[%1%]")) % code );
+											TRACEBUFE(strBuf);
+											const tstring str=boost::str(tformat(LoadString(IDS_ERRORCONTACTINGWHY)) % code);
 
 											lvi.iItem=data->index;
 											lvi.iSubItem=2;
@@ -722,10 +726,31 @@ public:
 											ListView_SetItem(list, &lvi);
 										}
 									}
-								}
+									else if(code>200) 
+									{
+										tstring strBuf = boost::str(tformat(
+											_T("[UpdateThread] [_Process]    code > 200, code < 300; code:[%1%]")) % code );
+										TRACEBUFE(strBuf);
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list) 
+										{
+											tstring strBuf = boost::str(tformat(
+												_T("[UpdateThread] [_Process]    found list; UNEXPECTED RESPONSE contacting url, code:[%1%]")) % code );
+											TRACEBUFE(strBuf);
+											const tstring str=boost::str(tformat(LoadString(IDS_UNEXPCONTACTINGWHY)) % code);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+								} // end if CURLE_OK
 								else if(data->list) 
 								{
-									TRACEW("[UpdateThread] [_Process]    *  failed update");
+									tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    *  failed update, !CURLE_OK, result:[%1%]")) % msg->data.result );
+									TRACEBUFE(strBuf);
 									data->list->FailedUpdate=true;
 
 									if(list) {
@@ -733,13 +758,17 @@ public:
 										
 										if(data->errbuf[0])
 										{
-											TRACEI("[UpdateThread] [_Process]    ERROR CONTACTING WHY");
+											tstring strBuf = boost::str(tformat(
+												_T("[UpdateThread] [_Process]    ERROR CONTACTING URL, result:[%1%] err:[%2%]")) 
+												% msg->data.result % data->errbuf );
+											TRACEBUFE(strBuf);
 											str=boost::str(tformat(LoadString(IDS_ERRORCONTACTINGWHY))%data->errbuf);
 										}
 										else 
 										{
-											TRACEI("[UpdateThread] [_Process]    ERROR CONTACTING");
-											str=LoadString(IDS_ERRORCONTACTING);
+											tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    ERROR CONTACTING URL, result:[%1%]")) % msg->data.result );
+											TRACEBUFE(strBuf);
+											str=boost::str(tformat(LoadString(IDS_ERRORCONTACTINGWHY))%msg->data.result);
 										}
 
 										lvi.iItem=data->index;

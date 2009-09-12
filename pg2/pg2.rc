@@ -862,6 +862,7 @@ BEGIN
     IDS_NONEAVAILABLE       "None available"
     IDS_ABORTED             "Aborted"
     IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
+    IDS_UNEXPCONTACTINGWHY  "Unexpected Response Contacting URL: %1%"
     IDS_CLOSEX              "&Close - %1%"
     IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerBlock to bring it back."
     IDS_HIDING              "Hiding PeerBlock"
