@@ -613,8 +613,34 @@ public:
 											TRACEV("[UpdateThread] [_Process]    data is a list");
 											try 
 											{
-												TRACEV("[UpdateThread] [_Process]    moving tempfile to real file location");
-												path::move(data->tempfile, data->list->File(), true);
+												// Verify that list is useful
+												p2p::list testlist;
+												LoadList(data->tempfile, testlist);
+												if (testlist.size() > 0)
+												{
+													// Overwrite old list-file
+													TRACES("[UpdateThread] [_Process]    Verified newly downloaded list, so overwriting old list");
+													path::move(data->tempfile, data->list->File(), true);
+													data->list->FailedUpdate=false;
+
+													time(&data->list->LastUpdate);
+													changes++;
+												}
+												else
+												{
+													// Failed to verify!
+													TRACEW("[UpdateThread] [_Process]    Newly downloaded list failed verification: has 0 elements!!");
+
+													if (list)
+													{
+														const tstring str = LoadString(IDS_DNLISTFAILEDVERIFY);
+														lvi.iItem = data->index;
+														lvi.iSubItem = 2;
+														lvi.pszText = (LPTSTR)str.c_str();
+														ListView_SetItem(list, &lvi);
+														data->list->FailedUpdate = true;
+													}
+												}
 											}
 											catch(exception &ex) 
 											{
@@ -622,12 +648,8 @@ public:
 												data->list->FailedUpdate=true;
 											}
 											
-											data->list->FailedUpdate=false;
 
-											time(&data->list->LastUpdate);
-											changes++;
-
-											if(list) 
+											if(list && !data->list->FailedUpdate) 
 											{
 												TRACEV("[UpdateThread] [_Process]    updating list entry to IDS_FINISHED");
 												const tstring str=LoadString(IDS_FINISHED);
