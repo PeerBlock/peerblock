@@ -38,7 +38,7 @@ OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}.r{#= PB_BLDNUM}
 Compression=lzma/ultra64
 InternalCompressLevel=ultra64
 SolidCompression=True
-MinVersion=5.0.2195,5.0.2195
+MinVersion=0,5.0.2195
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
@@ -71,13 +71,13 @@ BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM}) built on {#= in
 ; tsk=Task, msg=Message
 ; English
 en.msg_SetupIsRunningWarning=PeerBlock Setup is already running!
-en.msg_DeleteLogSettings=Do you also want to delete PeerBlock settings?%nIf you plan on reinstalling PeerBlock you might not want to delete them.
+en.msg_DeleteListsSettings=Do you also want to delete PeerBlock settings and lists?%nIf you plan on reinstalling PeerBlock you might not want to delete them.
 en.tsk_other=Other tasks:
 en.tsk_remove_startup=Remove PeerBlock from Windows startup
 en.tsk_reset_settings=Reset PeerBlock's settings
 en.tsk_startup_descr=Start PeerBlock on system startup
 en.tsk_startup=Startup options:
-en.tsk_use_PG2_settings=Use PeerGuardian2 settings
+en.tsk_use_PG2_settings=Use PeerGuardian2 settings and custom lists
 en.run_visit_website=Visit PeerBlock's Website
 
 
@@ -88,7 +88,7 @@ Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:t
 Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck() AND StartupCheckOld()
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: unchecked
 Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: unchecked
-Name: use_pg2_settings; Description: {cm:tsk_use_PG2_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) AND NOT SettingsExist()
+Name: use_pg2_settings; Description: {cm:tsk_use_PG2_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) OR PG2CustomListsExist() AND NOT SettingsExist()
 
 
 [Files]
@@ -108,7 +108,12 @@ Source: ..\win32\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignorevers
 Source: ..\x64\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
 Source: ..\x64\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
 
+;Copy PG2 settings and custom lists only if PG2 is installed and the user has choosed to do so
 Source: {code:GetPG2Path}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
+Source: {code:GetPG2Path}\*.p2p; DestDir: {app}; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
+Source: {code:GetPG2Path}\lists\*.p2b; DestDir: {app}\lists; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
+Source: {code:GetPG2Path}\lists\*.p2p; DestDir: {app}\lists; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
+
 Source: ..\license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 
@@ -154,6 +159,10 @@ Name: {group}\Uninstall.lnk; Type: files
 
 
 [Code]
+var
+  PG2PathKeyName, PG2Path, PG2PathValueName: String;
+
+
 // Create a mutex for the installer
 const installer_mutex_name = 'peerblock_setup_mutex';
 
@@ -193,8 +202,6 @@ end;
 
 // Get PeerGuardian's installation path
 function GetPG2Path(S: String): String;
-var
-  PG2PathKeyName, PG2Path, PG2PathValueName: String;
 begin
 	PG2Path := '';
     PG2PathKeyName := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
@@ -206,6 +213,20 @@ begin
 end;
 
 
+// Check if PeerGuardian's custom lists exist
+function PG2CustomListsExist(): Boolean;
+var
+FindRec: TFindRec;
+begin
+  Result := True;
+  if FindFirst(ExpandConstant('PG2Path\*.p2p'), FindRec)
+  OR FindFirst(ExpandConstant('PG2Path\lists\*.p2b'), FindRec)
+  OR FindFirst(ExpandConstant('PG2Path\lists\*.p2p'), FindRec) then
+  Result := False;
+end;
+
+
+// Functions to check Windows versions
 function Is2k: Boolean;
 var
   ver: TWindowsVersion;
@@ -242,6 +263,7 @@ begin
 end;
 
 
+// Delete old startup registry entry while installing
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssPostInstall then begin
@@ -257,7 +279,7 @@ begin
   // When uninstalling, ask user if they want to delete PeerBlock's logs and settings
    if CurUninstallStep = usUninstall then begin
    if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-    if MsgBox(ExpandConstant('{cm:msg_DeleteLogSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
+    if MsgBox(ExpandConstant('{cm:msg_DeleteListsSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
       DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
       DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
       DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
@@ -276,7 +298,7 @@ end;
 
 function InitializeSetup(): Boolean;
 begin
-	// Create a mutex for the installer.  If it's already running display a message and stop installation
+	// Create a mutex for the installer. If it's already running display a message and stop installation
 	Result := True;
 	if CheckForMutexes(installer_mutex_name) then begin
 		if not WizardSilent() then
