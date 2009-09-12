@@ -322,6 +322,13 @@
 #define IDC_HTTPBG                      1180
 #define IDC_PROGRESS1                   1181
 #define IDC_UPDATE_AT_STARTUP			1182
+#define IDC_P2PLIST						1183
+#define IDC_SPYLIST						1184
+#define IDC_ADSLIST						1185
+#define IDC_EDULIST						1186
+#define IDC_MORELISTS					1187
+#define IDC_DEFGROUP					1188
+
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
 #define ID_TRAY_DISABLED                40003

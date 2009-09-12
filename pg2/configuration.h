@@ -65,6 +65,18 @@ struct DynamicList : List {
 	{
 		return Url.find(right.Url) != string::npos;
 	}
+	bool operator==(const tstring &url)
+	{
+		return Url.find(url) != string::npos;
+	}
+
+	void Dump(TRACELOG_LEVEL _lvl)
+	{
+		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%]")) 
+			% Description % Url % Enabled % Type % LastUpdate);
+
+		g_tlog.LogMessage(strBuf, _lvl);
+	}
 };
 
 

@@ -33,6 +33,40 @@ using namespace std;
 
 static INT_PTR g_ret;
 static const UINT ID_CONTEXT_MAKESTATIC=200;
+static vector<DynamicList> g_deflists;	// temporary storage of default lists
+
+
+//------------------------------------------------------------
+// Internal routines.  If this were a class, these routines would be marked as Private.
+
+static void AddToDefLists(tstring _url, tstring _desc, List::ListType _type) 
+{
+	tstring strBuf = boost::str(tformat(_T("[listsproc] [AddToDefLists]    adding url:[%1%] desc:[%2%]")) % _url % _desc );
+	TRACEBUFD(strBuf);
+
+	DynamicList *list = new DynamicList;
+	list->Url = _url;
+	list->Description = _desc;
+	list->Type = _type;
+	list->Enabled = true;
+
+	g_deflists.push_back(*list);
+	g_ret|=LISTS_NEEDUPDATE;
+
+} // End of AddToDefLists()
+
+
+static void RemoveFromDefLists(tstring _url) 
+{
+	tstring strBuf = boost::str(tformat(_T("[listsproc] [AddToDefLists]    removing url:[%1%]")) % _url );
+	TRACEBUFD(strBuf);
+
+	vector<DynamicList>::iterator invalid;
+	invalid = remove(g_deflists.begin(), g_deflists.end(), _url);
+	g_deflists.erase(invalid, g_deflists.end());
+	g_ret|=LISTS_NEEDUPDATE;
+
+} // End of RemoveFromDefLists()
 
 
 
@@ -188,13 +222,81 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText)
 //    - Called by Lists_DlgProc()
 //
 /// <summary>
-///   Handles clicks on buttons on List Manager window.
+///   Handles clicks on buttons/items on List Manager window.
 /// </summary>
 //
 static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 {
 	switch(id) 
 	{
+		case IDC_P2PLIST: 
+		{
+			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_P2PLIST");
+			if (IsDlgButtonChecked(hwnd, IDC_P2PLIST)==BST_CHECKED)
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    P2P list now selected");
+				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_level1"), _T("Default P2P List"), List::Block);
+			}
+			else
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    P2P list now NOT selected");
+				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_level1"));
+			}
+
+		} break; // end case IDC_P2PLIST
+
+
+		case IDC_SPYLIST: 
+		{
+			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_SPYLIST");
+			if (IsDlgButtonChecked(hwnd, IDC_SPYLIST)==BST_CHECKED)
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    Spy list now selected");
+				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"), _T("Default Spy List"), List::Block);
+			}
+			else
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    Spy list now NOT selected");
+				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"));
+			}
+
+		} break; // end case IDC_SPYLIST
+
+
+		case IDC_ADSLIST: 
+		{
+			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_ADSLIST");
+			if (IsDlgButtonChecked(hwnd, IDC_ADSLIST)==BST_CHECKED)
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    Ads list now selected");
+				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_ads"), _T("Default Ads List"), List::Block);
+			}
+			else
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    Ads list now NOT selected");
+				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_ads"));
+			}
+
+		} break; // end case IDC_ADSLIST
+
+
+		case IDC_EDULIST: 
+		{
+			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_EDULIST");
+			if (IsDlgButtonChecked(hwnd, IDC_EDULIST)==BST_CHECKED)
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    Edu list now selected");
+				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_edu"), _T("Default Edu List"), List::Block);
+			}
+			else
+			{
+				TRACEI("[listsproc] [Lists_OnCommand]    Edu list now NOT selected");
+				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_edu"));
+			}
+
+		} break; // end case IDC_EDULIST
+
+
 		case IDC_ADD: 
 		{
 			List *l;
@@ -465,6 +567,14 @@ static void Lists_OnDestroy(HWND hwnd)
 	g_config.StaticLists.clear();
 	g_config.DynamicLists.clear();
 
+	// Check default-lists first
+	for(vector<DynamicList>::size_type i=0; i<g_deflists.size(); i++)
+	{
+		g_config.DynamicLists.push_back(g_deflists[i]);
+	}
+	g_deflists.clear();
+
+	// Now check non-standard lists
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	int count=ListView_GetItemCount(list);
 
@@ -547,8 +657,38 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++)
 		InsertItem(list, index++, g_config.StaticLists[i]);
 
+	g_deflists.clear();
 	for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++)
-		InsertItem(list, index++, g_config.DynamicLists[i]);
+	{
+		if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_level1")) != tstring::npos)
+		{
+			TRACED("[listsproc] [Lists_OnInitDialog]    found bt_level1 list");
+			CheckDlgButton(hwnd, IDC_P2PLIST, BST_CHECKED);
+			g_deflists.push_back(g_config.DynamicLists[i]);
+		}
+		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_spyware")) != tstring::npos)
+		{
+			TRACED("[listsproc] [Lists_OnInitDialog]    found spy list");
+			CheckDlgButton(hwnd, IDC_SPYLIST, BST_CHECKED);
+			g_deflists.push_back(g_config.DynamicLists[i]);
+		}
+		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_ads")) != tstring::npos)
+		{
+			TRACED("[listsproc] [Lists_OnInitDialog]    found ads list");
+			CheckDlgButton(hwnd, IDC_ADSLIST, BST_CHECKED);
+			g_deflists.push_back(g_config.DynamicLists[i]);
+		}
+		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_edu")) != tstring::npos)
+		{
+			TRACED("[listsproc] [Lists_OnInitDialog]    found edu list");
+			CheckDlgButton(hwnd, IDC_EDULIST, BST_CHECKED);
+			g_deflists.push_back(g_config.DynamicLists[i]);
+		}
+		else
+		{
+			InsertItem(list, index++, g_config.DynamicLists[i]);
+		}
+	}
 
 	g_ret=0;
 
@@ -698,18 +838,22 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy)
 	HWND add=GetDlgItem(hwnd, IDC_ADD);
 	HWND edit=GetDlgItem(hwnd, IDC_EDIT);
 	HWND remove=GetDlgItem(hwnd, IDC_REMOVE);
+	HWND morelists=GetDlgItem(hwnd, IDC_MORELISTS);
+	HWND defgroup=GetDlgItem(hwnd, IDC_DEFGROUP);
 
 	RECT rc;
 	GetWindowRect(open, &rc);
 
-	HDWP dwp=BeginDeferWindowPos(5);
+	HDWP dwp=BeginDeferWindowPos(8);
 
-	DeferWindowPos(dwp, list, NULL, 7, 7, cx-14, cy-21-(rc.bottom-rc.top), SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
+	DeferWindowPos(dwp, defgroup, NULL, 7, 2, cx-14, 120, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
+	DeferWindowPos(dwp, list, NULL, 7, 130, cx-14, cy-21-140-(rc.bottom-rc.top), SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
 	DeferWindowPos(dwp, open, NULL, 7, cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, create, NULL, (rc.right-rc.left)+14, cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, add, NULL, cx-((rc.right-rc.left+7)*3), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, edit, NULL, cx-((rc.right-rc.left+7)*2), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, remove, NULL, cx-(rc.right-rc.left+7), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
+	DeferWindowPos(dwp, morelists, NULL, cx/2-90, cy-7-(rc.bottom-rc.top)-20, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 
 	EndDeferWindowPos(dwp);
 
