@@ -226,9 +226,10 @@ public:
 
 					// We should log at least a few Allowed messages even if ShowAllowed is false, so that the user 
 					// sees at least some activity and doesn't think that we're broken.
-					if (g_numlogged > 9 && !g_config.ShowAllowed)
+					if (g_numlogged == 9 && !g_config.ShowAllowed)
 					{
 						TRACEI("[LogFilterAction] [operator()]    Stopping default Allowed Packet logging");
+						++g_numlogged;
 
 						LVITEM lvi2={0};
 						lvi2.mask=LVIF_TEXT|LVIF_PARAM;
