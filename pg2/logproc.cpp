@@ -18,10 +18,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/07/09 03:47:26 $
-		$Revision: 1.68 $
 */
 
 #include "stdafx.h"
@@ -45,6 +41,7 @@ static const UINT ID_LIST_COPYIP=207;
 
 allowlist_t g_allowlist, g_blocklist;
 threaded_sqlite3_connection g_con;
+int g_numlogged = 0;	// used to make sure we log at least a few allowed-packets before stopping, so that the user sees some activity
 
 class LogFilterAction {
 private:
@@ -145,7 +142,7 @@ public:
 			destport = htons(action.dest.addr6.sin6_port);
 		}
 
-		if((action.type == pgfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK)) 
+		if((action.type == pgfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed || g_numlogged < 10) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK)) 
 		{
 			TRACEV("[LogFilterAction] [operator()]    allowed, not loopbacks");
 			if(action.type == pgfilter::action::blocked && g_config.BlinkOnBlock!=Never && (g_config.BlinkOnBlock==OnBlock || destport==80 || destport==443))
@@ -154,7 +151,7 @@ public:
 				g_blinkstart=GetTickCount();
 			}
 
-			if(g_config.ShowAllowed || action.type == pgfilter::action::blocked) 
+			if(g_config.ShowAllowed || action.type == pgfilter::action::blocked || g_numlogged < 10) 
 			{
 				TCHAR chBuf[256];
 				_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [operator()]    updating list for window log:[%p]"), log);
@@ -182,14 +179,15 @@ public:
 					lvi.pszText=(LPTSTR)time.c_str();
 
 					if(action.type == pgfilter::action::blocked) {
-						TRACEV("[LogFilterAction] [operator()]    blocked action");
+						TRACEV("[LogFilterAction] [operator()]    logging blocked packet");
 						if(action.protocol==IPPROTO_TCP && (destport==80 || destport==443))
 							lvi.lParam=(LPARAM)2;
 						else lvi.lParam=(LPARAM)1;
 					}
 					else 
 					{
-						TRACEV("[LogFilterAction] [operator()]    not blocked action");
+						TRACEV("[LogFilterAction] [operator()]    logging allowed packet");
+						if (g_numlogged < 20) ++g_numlogged;
 						lvi.lParam=(LPARAM)0;
 					}
 
@@ -225,6 +223,25 @@ public:
 					lvi.iSubItem=5;
 					lvi.pszText=(LPTSTR)actionstr.c_str();
 					ListView_SetItem(log, &lvi);
+
+					// We should log at least a few Allowed messages even if ShowAllowed is false, so that the user 
+					// sees at least some activity and doesn't think that we're broken.
+					if (g_numlogged > 9 && !g_config.ShowAllowed)
+					{
+						TRACEI("[LogFilterAction] [operator()]    Stopping default Allowed Packet logging");
+
+						LVITEM lvi2={0};
+						lvi2.mask=LVIF_TEXT|LVIF_PARAM;
+						lvi2.iSubItem=0;
+						lvi2.pszText=(LPTSTR)time.c_str();
+						ListView_InsertItem(log, &lvi2);
+
+						lvi2.mask=LVIF_TEXT;
+						lvi2.iSubItem=1;
+						lvi2.pszText=_T("Stopped logging allowed packets, for performance reasons - check 'Show allowed connections' option to override");;
+						lvi2.lParam=(LPARAM)0;
+						ListView_SetItem(log, &lvi2);
+					}
 				}
 			}
 
