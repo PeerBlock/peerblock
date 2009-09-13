@@ -103,7 +103,7 @@ struct Configuration {
 	PortList Ports;
 	bool ColorCode;
 	Color BlockedColor, AllowedColor, HttpColor;
-	time_t LastUpdate;
+	time_t LastUpdate, LastArchived;
 	unsigned int CacheCrc;
 	bool Block, BlockHttp, AllowLocal;
 	bool UpdatePeerGuardian, UpdateLists, UpdateAtStartup;

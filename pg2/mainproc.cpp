@@ -659,7 +659,8 @@ static void Main_ProcessDb()
 	TRACEI("[mainproc] [Main_ProcessDb]  < Leaving routine.");
 }
 
-static void Main_OnTimer(HWND hwnd, UINT id) {
+static void Main_OnTimer(HWND hwnd, UINT id) 
+{
 	if(id==TIMER_BLINKTRAY && g_trayactive) {
 		if(g_config.BlinkOnBlock!=Never && (GetTickCount()-6000) < g_blinkstart) {
 			if((g_trayblink=!g_trayblink)) {
@@ -677,7 +678,17 @@ static void Main_OnTimer(HWND hwnd, UINT id) {
 		}
 	}
 	else if(id==TIMER_PROCESSDB && g_config.CleanupType!=None && g_processlock.tryenter())
-		g_dbthread=boost::shared_ptr<thread>(new thread(Main_ProcessDb, THREAD_PRIORITY_BELOW_NORMAL));
+	{
+		if(time(NULL)-g_config.LastArchived > 86400 /* seconds */ * g_config.CleanupInterval)
+		{
+			TRACEI("[mainproc] [Main_OnTimer]    Starting archival process");
+			g_config.LastArchived = time(NULL);
+			g_dbthread=boost::shared_ptr<thread>(new thread(Main_ProcessDb, THREAD_PRIORITY_BELOW_NORMAL));
+			TRACEI("[mainproc] [Main_OnTimer]    finished with archival process");
+		}
+		else
+			g_processlock.leave();
+	}
 }
 
 static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {

@@ -31,7 +31,7 @@ Configuration g_config;
 Configuration::Configuration() :
 	Block(true),BlockHttp(true),AllowLocal(true),UpdatePeerGuardian(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(true),WindowHidden(false),UpdateInterval(2),
-	LogSize(12),LastUpdate(0),CleanupInterval(0),LogAllowed(true),LogBlocked(true),
+	LogSize(12),LastUpdate(0),LastArchived(0),CleanupInterval(0),LogAllowed(true),LogBlocked(true),
 	ShowAllowed(true),CacheCrc(0),UpdateCountdown(10),UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()),ListManagerWindowPos(RECT()),StayHidden(false),
 	ListEditorWindowPos(RECT()),HistoryWindowPos(RECT()),HideOnClose(true),
@@ -564,10 +564,19 @@ bool Configuration::Load()
 		}
 
 		GetChild(updates, "LastUpdate", lastupdate);
-
 		if(lastupdate.length()>0) {
 			try {
 				this->LastUpdate=boost::lexical_cast<int>(lastupdate);
+			}
+			catch(...) {
+				// keep going
+			}
+		}
+
+		GetChild(updates, "LastArchived", lastupdate);
+		if(lastupdate.length()>0) {
+			try {
+				this->LastArchived=boost::lexical_cast<int>(lastupdate);
 			}
 			catch(...) {
 				// keep going
@@ -826,10 +835,15 @@ void Configuration::Save() {
 		}
 
 		TiXmlElement *lastupdate=InsertChild(updates, "LastUpdate");
-
 		if(this->LastUpdate) {
 			string t=boost::lexical_cast<string>((int)this->LastUpdate);
 			lastupdate->InsertEndChild(TiXmlText(t));
+		}
+
+		TiXmlElement *lastarchived=InsertChild(updates, "LastArchived");
+		if(this->LastArchived) {
+			string t=boost::lexical_cast<string>((int)this->LastArchived);
+			lastarchived->InsertEndChild(TiXmlText(t));
 		}
 	}
 
