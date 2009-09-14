@@ -64,7 +64,7 @@ static void RemoveFromDefLists(tstring _url)
 	vector<DynamicList>::iterator invalid;
 	invalid = remove(g_deflists.begin(), g_deflists.end(), _url);
 	g_deflists.erase(invalid, g_deflists.end());
-	g_ret|=LISTS_NEEDUPDATE;
+	g_ret|=LISTS_NEEDRELOAD;
 
 } // End of RemoveFromDefLists()
 
