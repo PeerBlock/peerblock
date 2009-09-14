@@ -194,6 +194,8 @@
 #define IDS_NEEDSVCSERRTEXT             244
 #define IDS_UNEXPCONTACTINGWHY          245
 #define IDS_DNLISTFAILEDVERIFY          246
+#define IDS_PGALREADYRUNNING			247
+#define IDS_PGALREADYRUNNINGTEXT		248
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003

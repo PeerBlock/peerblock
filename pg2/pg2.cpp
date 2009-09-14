@@ -31,9 +31,11 @@
 using namespace std;
 
 #if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0501
-static const LPCTSTR g_mutex_name=_T("Global\\PeerGuardian2");
+static const LPCTSTR g_pgmutex_name=_T("Global\\PeerGuardian2");
+static const LPCTSTR g_pbmutex_name=_T("Global\\PeerBlock");
 #else
-static const LPCTSTR g_mutex_name=_T("PeerGuardian2");
+static const LPCTSTR g_pgmutex_name=_T("PeerGuardian2");
+static const LPCTSTR g_pbmutex_name=_T("PeerBlock");
 #define SM_SERVERR2             89
 #endif
 
@@ -158,15 +160,25 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	TRACES("User running as Admin");
 #endif
 
-	// If PeerGuardian2 is already running, bring it to the forefront and exit this new instance.
-	HANDLE mutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_mutex_name);
-	if(mutex) {
-		TRACEW("PG/PeerBlock already running");
+	// If PeerBlock is already running, bring it to the forefront and exit this new instance.
+	HANDLE pbmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
+	if(pbmutex) {
+		TRACEW("PeerBlock already running!  Attempting to bring that other instance to the foreground, then exiting this instance.");
 		UINT msg=RegisterWindowMessage(_T("PeerGuardian2SetVisible"));
 		if(msg) SendMessage(HWND_BROADCAST, msg, 0, TRUE);
 		return 0;
 	}
-	else mutex=CreateMutex(NULL, FALSE, g_mutex_name);
+	else pbmutex=CreateMutex(NULL, FALSE, g_pbmutex_name);
+
+	// If PeerGuardian2 is already running, warn the user and then exit.
+	HANDLE pgmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pgmutex_name);
+	if(pgmutex) {
+		TRACEW("PeerGuardian already running!  Warning user and exiting.");
+		MessageBox(NULL, IDS_PGALREADYRUNNINGTEXT, IDS_PGALREADYRUNNING, MB_ICONWARNING|MB_OK);		
+		return 0;
+	}
+	else pgmutex=CreateMutex(NULL, FALSE, g_pgmutex_name);
+
 	TRACES("Created program mutex");
 
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);

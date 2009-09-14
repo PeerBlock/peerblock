@@ -769,6 +769,8 @@ BEGIN
     IDS_UPDATEPG            "PeerBlock Update"
     IDS_UPDATINGLISTS       "Updating Lists..."
     IDS_LISTSUPTODATE       "Last Updated %1%"
+    IDS_PGALREADYRUNNING    "PeerGuardian already running!"
+    IDS_PGALREADYRUNNINGTEXT	"PeerGuardian2 is currently running on your system.  Running both PG2 and PeerBlock at the same time is not supported, and is really just a bad idea in general.  Please close PeerGuardian and run PeerBlock again."
 END
 
 STRINGTABLE 
