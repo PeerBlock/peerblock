@@ -232,6 +232,7 @@ public:
 						++g_numlogged;
 
 						LVITEM lvi2={0};
+						lvi2.lParam=(LPARAM)1;
 						lvi2.mask=LVIF_TEXT|LVIF_PARAM;
 						lvi2.iSubItem=0;
 						lvi2.pszText=(LPTSTR)time.c_str();
@@ -240,7 +241,6 @@ public:
 						lvi2.mask=LVIF_TEXT;
 						lvi2.iSubItem=1;
 						lvi2.pszText=_T("Stopped logging allowed packets, for performance reasons - check 'Show allowed connections' option to override");;
-						lvi2.lParam=(LPARAM)0;
 						ListView_SetItem(log, &lvi2);
 					}
 				}
