@@ -558,6 +558,7 @@ INT_PTR CALLBACK Settings_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 				const int cx=LOWORD(lParam);
 				const int cy=HIWORD(lParam);
 
+				HWND save=GetDlgItem(hwnd, IDC_SAVE);
 				HWND left=GetDlgItem(hwnd, IDC_BACK);
 				HWND right=GetDlgItem(hwnd, IDC_NEXT);
 
@@ -570,8 +571,9 @@ INT_PTR CALLBACK Settings_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 					bh=rc.bottom-rc.top;
 				}
 
-				HDWP dwp=BeginDeferWindowPos(2+(int)g_pagecount);
+				HDWP dwp=BeginDeferWindowPos(3+(int)g_pagecount);
 
+				DeferWindowPos(dwp, save, NULL, 7, cy-7-bh, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 				DeferWindowPos(dwp, left, NULL, cx-14-bw*2, cy-7-bh, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 				DeferWindowPos(dwp, right, NULL, cx-7-bw, cy-7-bh, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 
@@ -584,6 +586,10 @@ INT_PTR CALLBACK Settings_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 			} break;
 			case WM_COMMAND: {
 				switch(LOWORD(wParam)) {
+					case IDC_SAVE:
+						TRACEI("[settingsproc] [Settings_DlgProc]    saving configuration, at user request");
+						g_config.Save();
+						break;
 					case IDC_BACK:
 						--g_curpage;
 						Settings_SetPage(hwnd);

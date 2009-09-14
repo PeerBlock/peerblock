@@ -330,6 +330,7 @@
 #define IDC_EDULIST						1186
 #define IDC_MORELISTS					1187
 #define IDC_DEFGROUP					1188
+#define IDC_SAVE						1189
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
