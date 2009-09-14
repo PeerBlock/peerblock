@@ -88,7 +88,7 @@ Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:t
 Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck() AND StartupCheckOld()
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: unchecked
 Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: unchecked
-Name: use_pg2_settings; Description: {cm:tsk_use_PG2_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) OR PG2CustomListsExist() AND NOT SettingsExist()
+Name: use_pg2_settings; Description: {cm:tsk_use_PG2_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) AND NOT SettingsExist()
 
 
 [Files]
@@ -210,19 +210,6 @@ begin
     if not RegQueryStringValue(HKLM, PG2PathKeyName, PG2PathValueName, PG2Path) then
     RegQueryStringValue(HKCU, PG2PathKeyName, PG2PathValueName, PG2Path);
 	Result := PG2Path;
-end;
-
-
-// Check if PeerGuardian's custom lists exist
-function PG2CustomListsExist(): Boolean;
-var
-FindRec: TFindRec;
-begin
-  Result := True;
-  if FindFirst(ExpandConstant('PG2Path\*.p2p'), FindRec)
-  OR FindFirst(ExpandConstant('PG2Path\lists\*.p2b'), FindRec)
-  OR FindFirst(ExpandConstant('PG2Path\lists\*.p2p'), FindRec) then
-  Result := False;
 end;
 
 
