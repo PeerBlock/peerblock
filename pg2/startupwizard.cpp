@@ -223,7 +223,7 @@ static HFONT MakeFont(LPCTSTR name, int size, bool bold) {
 }
 
 void DisplayStartupWizard(HWND parent) {
-	g_font=MakeFont(_T("Veranda Bold"), 12, true);
+	g_font=MakeFont(_T("Verdana Bold"), 12, true);
 
 	PROPSHEETPAGE psp[5]={0};
 	HPROPSHEETPAGE hpsp[5]={0};

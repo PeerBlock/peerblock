@@ -376,7 +376,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		FitTabChild(tabs, g_tabs[i].Tab);
 	}
 
-	if(firsttime) {
+	if(firsttime && !g_config.UpdateAtStartup) {
 		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
 		UpdateLists(g_tabs[0].Tab);
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
@@ -388,9 +388,12 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
 
-	TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
-	LoadLists(hwnd);
-	TRACES("[mainproc] [Main_OnInitDialog]    Lists loaded.");
+	if (!firsttime)
+	{
+		TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
+		LoadLists(hwnd);
+		TRACES("[mainproc] [Main_OnInitDialog]    Lists loaded.");
+	}
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, g_config.Block?TRUE:FALSE);
 
