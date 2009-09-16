@@ -483,7 +483,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\tools\SubWCRev.exe . ..\pg2\versioninfo.h ..\pg2\versioninfo_parsed.h"
+				CommandLine="..\tools\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\pg2\versioninfo.h ..\pg2\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
