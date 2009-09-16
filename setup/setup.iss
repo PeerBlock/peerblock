@@ -56,7 +56,7 @@ DisableDirPage=Auto
 DisableProgramGroupPage=Auto
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
-AppMutex=Global\PeerGuardian2
+AppMutex=Global\PeerBlock
 
 
 [Languages]
@@ -109,10 +109,10 @@ Source: ..\x64\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversi
 Source: ..\x64\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64
 
 ;Copy PG2 settings and custom lists only if PG2 is installed and the user has choosed to do so
-Source: {code:GetPG2Path}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
-Source: {code:GetPG2Path}\*.p2p; DestDir: {app}; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
-Source: {code:GetPG2Path}\lists\*.p2b; DestDir: {app}\lists; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
-Source: {code:GetPG2Path}\lists\*.p2p; DestDir: {app}\lists; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external
+Source: {code:GetPG2Path}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPG2Path}\*.p2p; DestDir: {app}; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPG2Path}\lists\*.p2b; DestDir: {app}\lists; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPG2Path}\lists\*.p2p; DestDir: {app}\lists; Tasks: use_pg2_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 
 Source: ..\license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
@@ -149,6 +149,9 @@ Name: {app}\peerblock.conf; Type: files; Tasks: reset_settings
 Name: {app}\cache.p2b; Type: files; Tasks: reset_settings
 Name: {app}\history.db; Type: files; Tasks: reset_settings
 Name: {app}\peerblock.log; Type: files; Tasks: reset_settings
+
+Name: {userdesktop}\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('desktopicon')
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon')
 
 // During installation, delete older start menu entries: 
 Name: {group}\License.lnk; Type: files
