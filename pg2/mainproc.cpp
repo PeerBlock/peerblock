@@ -717,43 +717,70 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
 	}
 }
 
-static void Main_OnVisible(HWND hwnd, BOOL visible) {
+static void Main_OnVisible(HWND hwnd, BOOL visible) 
+{
+	TRACEI("[Main_OnVisible]  > Entering routine.");
 	int index=TabCtrl_GetCurSel(GetDlgItem(hwnd, IDC_TABS));
+	TRACEV("[Main_OnVisible]    tabctrl_getcursel");
 
 	if(visible) {
-		if(index!=-1) ShowWindow(g_tabs[index].Tab, SW_SHOW);
+		TRACEI("[Main_OnVisible]    visible:[TRUE]");
+		if(index!=-1) 
+		{
+			TRACEI("[Main_OnVisible]    index != [-1], showing window based on tab");
+			ShowWindow(g_tabs[index].Tab, SW_SHOW);
+		}
 
+		TRACEI("[Main_OnVisible]    showing window (SH_SHOW)");
 		ShowWindow(hwnd, SW_SHOW);
+		TRACEV("[Main_OnVisible]    showing window (SW_RESTORE)");
 		ShowWindow(hwnd, SW_RESTORE);
+		TRACEV("[Main_OnVisible]    set foreground window");
 		SetForegroundWindow(hwnd);
+		TRACEV("[Main_OnVisible]    setting g_config.WindowHidden to false");
 		g_config.WindowHidden=false;
+		TRACEI("[Main_OnVisible]    checking for g_trayactive and g_config.StayHidden");
 
 		if(!g_trayactive && !g_config.StayHidden) {
+			TRACEV("[Main_OnVisible]    NOT g_trayactive AND NOT g_config.StayHidden");
 			g_trayactive=true;
 			g_config.HideTrayIcon=false;
+			TRACEI("[Main_OnVisible]    showing notify-icon (NIM_ADD)");
 			Shell_NotifyIcon(NIM_ADD, &g_nid);
+			TRACEV("[Main_OnVisible]    done showing notify-icon");
 		}
 	}
 	else {
-		if(index!=-1) ShowWindow(g_tabs[index].Tab, SW_HIDE);
+		TRACEI("[Main_OnVisible]    visible:[FALSE]");
+		if(index!=-1) 
+		{
+			TRACEI("[Main_OnVisible]    index != [-1], hiding window based on tab");
+			ShowWindow(g_tabs[index].Tab, SW_HIDE);
+		}
 
+		TRACEI("[Main_OnVisible]    about to hide window");
 		ShowWindow(hwnd, SW_HIDE);
+		TRACEV("[Main_OnVisible]    done hiding window");
 		g_config.WindowHidden=true;
+		TRACEV("[Main_OnVisible]    set g_config.WindowHidden to [TRUE]");
 
 	#ifdef _WIN32_WINNT
+		TRACEI("[Main_OnVisible]    about to SetProcessWorkingSetSize");
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
+		TRACEV("[Main_OnVisible]    finished with SetProcessWorkingSetSize");
 	#endif
 	}
+	TRACEI("[Main_OnVisible]  < Leaving routine.");
 }
 
 INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
-	TCHAR chBuf[128];
-	if (msg != 289)
-	{
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Main_DlgProc]  Received MSG: [%d]"), msg);
-		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
-	}
+	//TCHAR chBuf[128];
+	//if (msg != 289)
+	//{
+	//	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Main_DlgProc]  Processing Window MSG: [%d]"), msg);
+	//	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
+	//}
 
 	try {
 
@@ -776,8 +803,11 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 1;
 			default:
 				if(msg==WM_TRAY_CREATED && g_trayactive) Shell_NotifyIcon(NIM_ADD, &g_nid);
-				else if(msg==WM_PG2_VISIBLE) {
+				else if(msg==WM_PG2_VISIBLE) 
+				{
+					TRACEI("[Main_DlgProc]    received WM_PG2_VISIBLE message; setting visible");
 					Main_OnVisible(hwnd, (BOOL)lParam);
+					TRACEI("[Main_DlgProc]    finished setting visible");
 					return 1;
 				}
 				else if(msg==WM_PG2_LOADLISTS) {

@@ -133,6 +133,20 @@ static bool CheckOS() {
 //
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) 
 {
+	// If PeerBlock is already running, bring it to the forefront and exit this new instance.
+	HANDLE pbmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
+	if(pbmutex) {
+		//TRACEW("PeerBlock already running!  Attempting to bring that other instance to the foreground, then exiting this instance.");
+		//MessageBox(NULL, _T("DBG: PeerBlock Already Running, attempting to RegisterWindowMessage when you click OK"), _T("DBG: PeerBlock Already Running"), MB_ICONINFORMATION|MB_OK);
+		UINT msg=RegisterWindowMessage(_T("PeerGuardian2SetVisible"));
+		//MessageBox(NULL, _T("DBG: RegisterWindowMessage succeeded, attempting to SendMessage when you click OK"), _T("DBG: calling sendmessage"), MB_ICONINFORMATION|MB_OK);
+		if(msg) SendNotifyMessage(HWND_BROADCAST, msg, 0, TRUE);
+		//MessageBox(NULL, _T("DBG: Exiting new instance"), _T("DBG: Exiting new instance"), MB_ICONINFORMATION|MB_OK);
+		return 0;
+	}
+	else pbmutex=CreateMutex(NULL, FALSE, g_pbmutex_name);
+
+
 	path pathLog = path::base_dir()/L"peerblock.log";	// TODO: This should be a config-string!
 	g_tlog.SetLogfile(pathLog.c_str());
 
@@ -159,16 +173,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	}
 	TRACES("User running as Admin");
 #endif
-
-	// If PeerBlock is already running, bring it to the forefront and exit this new instance.
-	HANDLE pbmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
-	if(pbmutex) {
-		TRACEW("PeerBlock already running!  Attempting to bring that other instance to the foreground, then exiting this instance.");
-		UINT msg=RegisterWindowMessage(_T("PeerGuardian2SetVisible"));
-		if(msg) SendMessage(HWND_BROADCAST, msg, 0, TRUE);
-		return 0;
-	}
-	else pbmutex=CreateMutex(NULL, FALSE, g_pbmutex_name);
 
 	// If PeerGuardian2 is already running, warn the user and then exit.
 	HANDLE pgmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pgmutex_name);
