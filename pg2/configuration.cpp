@@ -30,7 +30,7 @@ Configuration g_config;
 
 Configuration::Configuration() :
 	Block(true),BlockHttp(true),AllowLocal(true),UpdatePeerGuardian(true),
-	UpdateLists(true), UpdateAtStartup(true), ShowSplash(true),WindowHidden(false),UpdateInterval(2),
+	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false) ,WindowHidden(false), UpdateInterval(2),
 	LogSize(12),LastUpdate(0),LastArchived(0),CleanupInterval(0),LogAllowed(true),LogBlocked(true),
 	ShowAllowed(false),CacheCrc(0),UpdateCountdown(10),UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()),ListManagerWindowPos(RECT()),StayHidden(false),
