@@ -149,6 +149,7 @@ Name: {app}\peerblock.conf; Type: files; Tasks: reset_settings
 Name: {app}\cache.p2b; Type: files; Tasks: reset_settings
 Name: {app}\history.db; Type: files; Tasks: reset_settings
 Name: {app}\peerblock.log; Type: files; Tasks: reset_settings
+Name: {app}\peerblock.dmp; Type: files; Tasks: reset_settings
 
 Name: {userdesktop}\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('desktopicon')
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon')
@@ -277,11 +278,12 @@ begin
       DeleteFile(ExpandConstant('{app}\peerblock.conf'));
     end;
    end;
-   DeleteFile(ExpandConstant('{app}\peerblock.log'));
-   DeleteFile(ExpandConstant('{app}\cache.p2b'));
-   DeleteFile(ExpandConstant('{app}\history.db'));
    DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
    RemoveDir(ExpandConstant('{app}\archives\'))
+   DeleteFile(ExpandConstant('{app}\cache.p2b'));
+   DeleteFile(ExpandConstant('{app}\history.db'));
+   DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
+   DeleteFile(ExpandConstant('{app}\peerblock.log'));
   end;
 end;
 
