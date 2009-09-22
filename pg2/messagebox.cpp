@@ -63,7 +63,7 @@ static const char *g_bugport="50005";
 //		  sorts of problem-reports, to see what it's expecting.
 static void ReportException(const exception *ex, const char *file, int line) 
 {
-	TRACEC("Reporting exception to bugs.phoenixlabs.org:50005");
+/*	TRACEC("Reporting exception to bugs.phoenixlabs.org:50005");
 	string packet;
 	{
 		ostringstream buf;
@@ -114,7 +114,7 @@ static void ReportException(const exception *ex, const char *file, int line)
 	if(sock==INVALID_SOCKET) return;
 
 	send(sock, packet.c_str(), (socklen_t)packet.size(), 0);
-	closesocket(sock);
+	closesocket(sock);*/
 }
 
 #endif
