@@ -333,6 +333,10 @@
 #define IDC_MORELISTS					1187
 #define IDC_DEFGROUP					1188
 #define IDC_SAVE						1189
+#define IDC_OPENP2P						1190
+#define IDC_OPENSPY						1191
+#define IDC_OPENADS						1192
+#define IDC_OPENEDU						1193
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
