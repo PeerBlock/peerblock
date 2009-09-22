@@ -105,6 +105,8 @@ void TraceLog::ProcessMessages()
 //
 void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 {
+	if (_lvl > LoggingLevel)
+		return;
 
 	if (WaitForSingleObject(LoggingReady, 0) != WAIT_OBJECT_0)
 	{
