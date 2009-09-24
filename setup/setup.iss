@@ -116,6 +116,7 @@ Source: {code:GetPG2Path}\lists\*.p2p; DestDir: {app}\lists; Tasks: use_pg2_sett
 
 Source: ..\license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
+Source: ..\manual\*; DestDir: {app}\manual; Flags: ignoreversion recursesubdirs createallsubdirs
 
 
 [Icons]
@@ -125,6 +126,7 @@ Name: {group}\Help and Support\Forums; Filename: http://forums.peerblock.com/; W
 Name: {group}\Help and Support\Homepage; Filename: http://www.peerblock.com/; WorkingDir: {app}
 Name: {group}\Help and Support\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: PeerBlock's License
 Name: {group}\Help and Support\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: PeerBlock's ReadMe
+Name: {group}\Help and Support\User Manual; Filename: {app}\manual\index.htm; WorkingDir: {app}\manual; Comment: PeerBlock's User Manual
 Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 
@@ -160,6 +162,10 @@ Name: {group}\PeerBlock on the Web.url; Type: files
 Name: {group}\Help and Support\PeerBlock on the Web.url; Type: files
 Name: {group}\ReadMe.lnk; Type: files
 Name: {group}\Uninstall.lnk; Type: files
+
+
+[UninstallDelete]
+Name: {app}\manual; Type: filesandordirs
 
 
 [Code]
