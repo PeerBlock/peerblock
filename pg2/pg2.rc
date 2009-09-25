@@ -98,7 +98,7 @@ BEGIN
     PUSHBUTTON      "Remove",IDC_REMOVE,289,194,50,14,WS_DISABLED
     PUSHBUTTON      "&Add",IDC_ADD,178,194,50,14
     PUSHBUTTON      "&Edit",IDC_EDIT,233,194,50,14,WS_DISABLED
-    PUSHBUTTON      "&Open List",IDC_OPEN,5,194,50,14,WS_DISABLED
+    PUSHBUTTON      "&View",IDC_OPEN,5,194,50,14,WS_DISABLED
     PUSHBUTTON      "&Create List",IDC_CREATE,60,194,50,14
     GROUPBOX        "Default Lists", IDC_DEFGROUP, 6, 2, 332, 74
     AUTOCHECKBOX    "P2P", IDC_P2PLIST, 13, 15, 50, 10
@@ -809,7 +809,7 @@ BEGIN
     IDS_ERRORCONTACTING     "Error contacting URL"
     IDS_CLEARLOG            "Clear Log"
     IDS_NEEDUPDATE          "Need Update"
-    IDS_OPEN                "&Open..."
+    IDS_OPEN                "&View..."
     IDS_EDIT                "&Edit..."
     IDS_NEEDUPDATETEXT      "Some lists were not found.\r\nFor your best protection, you should perform an update."
     IDS_FILENOTFOUND        "File not found"
