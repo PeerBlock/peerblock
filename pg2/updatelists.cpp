@@ -57,20 +57,20 @@ static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed
 const unsigned long long g_build=BUILDNUM;
 
 #ifdef PB_RELTYPE_PUBLIC
-static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
-static const LPCTSTR g_homepage=_T("http://www.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
+static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;
+static const LPCTSTR g_homepage=_T("http://update.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
 #endif
 #ifdef PB_RELTYPE_INTERIM
-static const char *g_updateurl="http://update.peerblock.com/pb_update_ir.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
-static const LPCTSTR g_homepage=_T("http://devblog.peerblock.com");		// displayed in web-browser if new program version is found
+static const char *g_updateurl="http://update.peerblock.com/pb_update_ir.php?build="BUILDSTR;
+static const LPCTSTR g_homepage=_T("http://update.peerblock.com/latest-interim-release");
 #endif
 #ifdef PB_RELTYPE_TEST
-static const char *g_updateurl="http://update.peerblock.com/pb_update_test.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
-static const LPCTSTR g_homepage=_T("http://forums.peerblock.com");		// displayed in web-browser if new program version is found
+static const char *g_updateurl="http://update.peerblock.com/pb_update_test.php?build="BUILDSTR;
+static const LPCTSTR g_homepage=_T("http://update.peerblock.com/latest-test-release");
 #endif
 #ifdef PB_RELTYPE_DEV
-static const char *g_updateurl="http://update.peerblock.com/pb_update_dev.php?build="BUILDSTR;	// TODO:  additional URLs for test- and dev- updates
-static const LPCTSTR g_homepage=_T("http://www.peerblock.com");		// displayed in web-browser if new program version is found
+static const char *g_updateurl="http://update.peerblock.com/pb_update_dev.php?build="BUILDSTR;
+static const LPCTSTR g_homepage=_T("http://www.peerblock.com");
 #endif
 
 static const UINT TIMER_COUNTDOWN=1;
