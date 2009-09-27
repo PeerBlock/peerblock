@@ -286,26 +286,31 @@ void DisplayStartupWizard(HWND parent) {
 	if(PropertySheet(&psh)) {
 		DynamicList dl;
 		dl.Type=List::Block;
+		vector<DynamicList>::size_type idx=0;
 
-		if(g_ads) {
+		idx = FindUrl(g_presets[0], g_config.DynamicLists);
+		if(g_ads && idx == -1) {
 			dl.Url=g_presets[0];
 			dl.Description=LoadString(IDS_ADS);
 			g_config.DynamicLists.push_back(dl);
 		}
 
-		if(g_edu) {
+		idx = FindUrl(g_presets[1], g_config.DynamicLists);
+		if(g_edu && idx == -1) {
 			dl.Url=g_presets[1];
 			dl.Description=LoadString(IDS_EDU);
 			g_config.DynamicLists.push_back(dl);
 		}
 
-		if(g_p2p) {
+		idx = FindUrl(g_presets[2], g_config.DynamicLists);
+		if(g_p2p && idx == -1) {
 			dl.Url=g_presets[2];
 			dl.Description=LoadString(IDS_P2P);
 			g_config.DynamicLists.push_back(dl);
 		}
 
-		if(g_spy) {
+		idx = FindUrl(g_presets[3], g_config.DynamicLists);
+		if(g_spy && idx == -1) {
 			dl.Url=g_presets[3];
 			dl.Description=LoadString(IDS_SPY);
 			g_config.DynamicLists.push_back(dl);

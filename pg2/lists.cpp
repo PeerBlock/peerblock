@@ -267,6 +267,39 @@ bool LoadList(path file, p2p::list &list)
 
 
 
+//================================================================================================
+//
+//  FindUrl()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Checks for a list-url in the specified container.  Returns true if found, false if not.
+/// </summary>
+//
+vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list) 
+{
+	tstring strBuf = boost::str(tformat(_T("[lists] [FindUrl]    finding url:[%1%]")) % _url );
+	TRACEBUFV(strBuf);
+
+	for(vector<DynamicList>::size_type i=0; i<_list.size(); i++)
+	{
+		strBuf = boost::str(tformat(_T("[lists] [FindUrl]    checking listnum:[%1%] url:[%2%]")) % i % _list[i].Url);
+		TRACEBUFV(strBuf);
+		if (_list[i].Url.find(_url) != tstring::npos)
+		{
+			strBuf = boost::str(tformat(_T("[lists] [FindUrl]    found listnum:[%1%] url:[%2%]")) % i % _list[i].Url);
+			TRACEBUFV(strBuf);
+			return i;
+		}
+	}
+	
+	return -1;
+
+} // End of FindUrl()
+
+
+
 class GenCacheFuncs {
 private:
 	HWND hwnd;

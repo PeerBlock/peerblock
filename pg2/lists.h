@@ -32,6 +32,7 @@
 
 void LoadLists(HWND parent);
 bool LoadList(path file, p2p::list &list);
+vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list);
 
 extern p2p::list g_tempallow;
 extern p2p::list g_tempblock;

@@ -77,11 +77,11 @@ static vector<DynamicList>::size_type FindInDefLists(tstring _url)
 
 	for(vector<DynamicList>::size_type i=0; i<g_deflists.size(); i++)
 	{
-		strBuf = boost::str(tformat(_T("[listsproc] [AddToDefLists]    checking def[%1%] url:[%2%]")) % i % g_deflists[i].Url);
+		strBuf = boost::str(tformat(_T("[listsproc] [FindInDefLists]    checking def[%1%] url:[%2%]")) % i % g_deflists[i].Url);
 		TRACEBUFV(strBuf);
 		if (g_deflists[i].Url.find(_url) != tstring::npos)
 		{
-			strBuf = boost::str(tformat(_T("[listsproc] [AddToDefLists]    found def[%1%] url:[%2%]")) % i % g_deflists[i].Url);
+			strBuf = boost::str(tformat(_T("[listsproc] [FindInDefLists]    found def[%1%] url:[%2%]")) % i % g_deflists[i].Url);
 			TRACEBUFV(strBuf);
 			return i;
 		}
@@ -415,7 +415,66 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 					s=dl->Url;
 				else if(StaticList *sl=dynamic_cast<StaticList*>(l))
 					s=sl->File.file_str();
-				
+
+				// make sure this newly-added list isn't a dupe of one of the Default Lists
+				if (s.find(_T("http://list.iblocklist.com/?list=bt_level1")) != tstring::npos ||
+					s.find(_T("http://list.iblocklist.com/?list=bt_spyware")) != tstring::npos ||
+					s.find(_T("http://list.iblocklist.com/?list=bt_ads")) != tstring::npos ||
+					s.find(_T("http://list.iblocklist.com/?list=bt_edu")) != tstring::npos )
+				{
+					// found dupe
+					tstring strBuf = boost::str(tformat(_T("[listsproc] [Lists_OnCommand]    Newly-added url:[%1%] found in custom lists!")) % s );
+					TRACEBUFI(strBuf);
+
+					vector<DynamicList>::size_type idx = FindUrl(s, g_deflists);
+					if (idx != -1)
+					{
+						// url already present and enabled, ignore
+						TRACEI("[listsproc] [Lists_OnCommand]    found url in selected def-lists");
+					}
+					else
+					{
+						// url not already enabled in def lists, so enable it
+						TRACEI("[listsproc] [Lists_OnCommand]    url NOT found in selected def-lists, enabling it");
+						if (s.find(_T("http://list.iblocklist.com/?list=bt_level1")) != tstring::npos)
+						{
+							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_level1"), _T("Default P2P List"), List::Block);
+							EnableWindow(GetDlgItem(hwnd, IDC_OPENP2P), true);
+							CheckDlgButton(hwnd, IDC_P2PLIST, BST_CHECKED);
+						}
+						else if (s.find(_T("http://list.iblocklist.com/?list=bt_spyware")) != tstring::npos)
+						{
+							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"), _T("Default Spy List"), List::Block);
+							EnableWindow(GetDlgItem(hwnd, IDC_OPENSPY), true);
+							CheckDlgButton(hwnd, IDC_SPYLIST, BST_CHECKED);
+						}
+						else if (s.find(_T("http://list.iblocklist.com/?list=bt_ads")) != tstring::npos)
+						{
+							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_ads"), _T("Default Ads List"), List::Block);
+							EnableWindow(GetDlgItem(hwnd, IDC_OPENADS), true);
+							CheckDlgButton(hwnd, IDC_ADSLIST, BST_CHECKED);
+						}
+						else if (s.find(_T("http://list.iblocklist.com/?list=bt_edu")) != tstring::npos)
+						{
+							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_edu"), _T("Default Edu List"), List::Block);
+							EnableWindow(GetDlgItem(hwnd, IDC_OPENEDU), true);
+							CheckDlgButton(hwnd, IDC_EDULIST, BST_CHECKED);
+						}
+						else
+						{
+							TRACEE("[listsproc] [Lists_OnCommand]  * ERROR:  Can't figure out which list to select!!");
+						}
+					}
+
+					delete l;
+					break;
+				}
+				else
+				{
+					tstring strBuf = boost::str(tformat(_T("[listsproc] [Lists_OnCommand]    newly-added url:[%1%] NOT found in custom lists")) % s );
+					TRACEBUFV(strBuf);
+				}
+
 				HWND list=GetDlgItem(hwnd, IDC_LIST);
 				
 				LVFINDINFO lvfi;
