@@ -13,11 +13,30 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 
 PeerBlock Credits:
-Mark Bulas - Lead Programmer
-Night_stalker_z - Programming
-DisCoStu - Installer
+Mark Bulas (MarkSide) - Lead Developer
+Night_stalker_z - Developer
+A. Jesse Harper (DarC / DisCoStu) - Installer
 XhmikosR - Installer
-Lots o' People - Testing
+
+Test Team:
+2Ceedz
+Gjp
+Petri Nurmi (Keefa)
+LANsquared
+Opus
+Praeses (PraesesZA)
+RavenSoft
+Userrr
+
+Documentation:
+Nathan van der Velden (hoodadilly) - Documentation
+Martin Eilbeck (Freelandr) - Start with Windows Tutorial
+
+Website:
+Brian Quinn (ss18) - Site Admin
+Rob Robinson (RobrPatty) - Forum Moderator
+Jesse Hall (Jessay) - Web Design
+LANsquared - Hosting
 
 PeerGuardian 2 Credits:
 Cory Nelson - Programming        (http://int64.org)
