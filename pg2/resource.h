@@ -359,6 +359,8 @@
 #define ID_FILE_EXIT                    40024
 #define ID_FILE_RESTOREDATABASE         40025
 #define ID_FILE_BACKUPDATABASE          40026
+#define ID_TRAY_HELP                    40027
+#define ID_TRAY_SUPPORT                 40028
 
 // Next default values for new objects
 // 

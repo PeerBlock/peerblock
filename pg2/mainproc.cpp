@@ -198,28 +198,41 @@ static void Main_OnClose(HWND hwnd) {
 	else DestroyWindow(hwnd);
 }
 
-static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
-	switch(id) {
+static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+{
+	switch(id) 
+	{
 		case ID_TRAY_PEERBLOCK:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'PeerBlock' item");
 			Main_OnVisible(hwnd, g_config.WindowHidden?TRUE:FALSE);
 			break;
+
 		case ID_TRAY_ENABLED:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Enabled' item");
 			if(!g_config.Block) SetBlock(true);
 			break;
+
 		case ID_TRAY_DISABLED:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Disabled' item");
 			if(g_config.Block) SetBlock(false);
 			break;
+
 		case ID_TRAY_BLOCKHTTP:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Block HTTP' item");
 			SetBlockHttp(!g_config.BlockHttp);
 			break;
+
 		case ID_TRAY_ALWAYSONTOP:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Always on Top' item");
 			g_config.AlwaysOnTop=!g_config.AlwaysOnTop;
 			SetWindowPos(hwnd, g_config.AlwaysOnTop?HWND_TOPMOST:HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
 
 			// kinda hackish
 			CheckDlgButton(g_pages[1].hwnd, IDC_ONTOP, g_config.AlwaysOnTop?BST_CHECKED:BST_UNCHECKED);
 			break;
+
 		case ID_TRAY_HIDETRAYICON:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Hide tray menu' item");
 			if(g_trayactive) {
 				g_trayactive=false;
 				Shell_NotifyIcon(NIM_DELETE, &g_nid);
@@ -230,11 +243,25 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 				}
 			}
 			break;
+
+		case ID_TRAY_HELP:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Help' item");
+			ShellExecute(NULL, NULL, _T("http://www.peerblock.com/quick-guide"), NULL, NULL, SW_SHOWNORMAL);
+			break;
+
+		case ID_TRAY_SUPPORT:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Support' item");
+			ShellExecute(NULL, NULL, _T("http://forums.peerblock.com"), NULL, NULL, SW_SHOWNORMAL);
+			break;
+
 		case ID_TRAY_ABOUT:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'About' item");
 			if(!g_about) g_about=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ABOUT), hwnd, About_DlgProc);
 			else SetForegroundWindow(g_about);
 			break;
+
 		case ID_TRAY_EXIT:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Exit' item");
 			DestroyWindow(hwnd);
 			break;
 	}

@@ -679,9 +679,12 @@ BEGIN
         MENUITEM "&Block HTTP",                 ID_TRAY_BLOCKHTTP, CHECKED
         MENUITEM SEPARATOR
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
-        MENUITEM "&Hide tray menu",             ID_TRAY_HIDETRAYICON
+        MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
         MENUITEM SEPARATOR
+        MENUITEM "&Help",						ID_TRAY_HELP
+        MENUITEM "&Support",					ID_TRAY_SUPPORT
         MENUITEM "&About",                      ID_TRAY_ABOUT
+        MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_TRAY_EXIT
     END
 END
