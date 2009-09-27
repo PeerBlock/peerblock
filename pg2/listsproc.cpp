@@ -762,6 +762,7 @@ static void Lists_OnDestroy(HWND hwnd)
 	}
 
 	SaveListColumns(list, g_config.ListManagerColumns);
+	std::sort(g_config.DynamicLists.begin(), g_config.DynamicLists.end());
 
 } // End of Lists_OnDestroy()
 
@@ -828,6 +829,7 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	EnableWindow(GetDlgItem(hwnd, IDC_OPENADS), false);
 	EnableWindow(GetDlgItem(hwnd, IDC_OPENEDU), false);
 
+	std::sort(g_config.DynamicLists.begin(), g_config.DynamicLists.end());
 	g_deflists.clear();
 	for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++)
 	{

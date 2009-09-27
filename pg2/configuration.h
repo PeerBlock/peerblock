@@ -70,6 +70,11 @@ struct DynamicList : List {
 		return Url.find(url) != string::npos;
 	}
 
+	bool operator<(const DynamicList &right)
+	{
+		return Url < right.Url;
+	}
+
 	void Dump(TRACELOG_LEVEL _lvl)
 	{
 		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%]")) 
