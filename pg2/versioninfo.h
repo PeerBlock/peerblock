@@ -25,25 +25,27 @@
 #define MAKE_STR(x) DO_MAKE_STR(x)
 
 // only one of these should be uncommented at any given time
-//#define PB_RELTYPE_PUBLIC
+#define PB_RELTYPE_PUBLIC
 //#define PB_RELTYPE_INTERIM
-#define PB_RELTYPE_TEST
+//#define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 909210$WCREV$	// PB_REV
+#define BUILDDATE 909270$WCREV$	// PB_REV
 
 #define PB_BLDNUM $WCREV$
 
-#define PB_VER_A 0
-#define PB_VER_B 9
-#define PB_VER_C 2
+#define PB_VER_A 1
+#define PB_VER_B 0
+#define PB_VER_C 0
 
 #ifdef PB_RELTYPE_PUBLIC
-#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "." MAKE_STR(PB_VER_C) " (r" MAKE_STR(PB_BLDNUM) ")" 
+//#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "." MAKE_STR(PB_VER_C) 
+#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B)
 #endif
 #ifdef PB_RELTYPE_INTERIM
-#define PB_BLDSTR "PeerBlock r" MAKE_STR(PB_BLDNUM) " - INTERIM RELEASE" 
+#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "+" " (r" MAKE_STR(PB_BLDNUM) ")" 
+//#define PB_BLDSTR "PeerBlock r" MAKE_STR(PB_BLDNUM) " - INTERIM RELEASE" 
 #endif
 #ifdef PB_RELTYPE_TEST
 #define PB_BLDSTR "PeerBlock r" MAKE_STR(PB_BLDNUM) " - TEST RELEASE" 
