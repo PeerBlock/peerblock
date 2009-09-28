@@ -37,10 +37,10 @@ static void About_OnClose(HWND hwnd) {
 static void About_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	switch(id) {
 		case IDC_HOMEPAGE:
-			ShellExecute(NULL, NULL, _T("http://sites.google.com/site/peerblock/"), NULL, NULL, SW_SHOW);
+			ShellExecute(NULL, NULL, _T("http://www.peerblock.com"), NULL, NULL, SW_SHOW);
 			break;
 		case IDC_FORUMS:
-			ShellExecute(NULL, NULL, _T("http://forums.peerblock.com/"), NULL, NULL, SW_SHOW);
+			ShellExecute(NULL, NULL, _T("http://forums.peerblock.com"), NULL, NULL, SW_SHOW);
 			break;
 		case IDOK:
 			DestroyWindow(hwnd);
