@@ -125,7 +125,7 @@ Name: {group}\Help and Support\Forums; Filename: http://forums.peerblock.com/; W
 Name: {group}\Help and Support\Homepage; Filename: http://www.peerblock.com/; WorkingDir: {app}
 Name: {group}\Help and Support\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: PeerBlock's License
 Name: {group}\Help and Support\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: PeerBlock's ReadMe
-Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/quick-guide; WorkingDir: {app}; Comment: PeerBlock's User Manual
+Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/userguide; WorkingDir: {app}; Comment: PeerBlock's User Manual
 Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 
@@ -145,6 +145,22 @@ Filename: http://www.peerblock.com/; Description: {cm:run_visit_website}; Flags:
 Name: {app}\peerblock.url; Type: files
 Name: {app}\readme.rtf; Type: files
 Name: {app}\license.txt; Type: files
+
+Name: {app}\manual\index.htm; Type: files
+Name: {app}\manual\FAQ\index.htm; Type: files
+Name: {app}\manual\FAQ; Type: dirifempty
+Name: {app}\manual\how_to_use\installation.htm; Type: files
+Name: {app}\manual\how_to_use\quick_start_wizard.htm; Type: files
+Name: {app}\manual\how_to_use\selecting_appropriate_lists.htm; Type: files
+Name: {app}\manual\how_to_use\using_lists.htm; Type: files
+Name: {app}\manual\how_to_use; Type: dirifempty
+Name: {app}\manual\images\*.png; Type: files
+Name: {app}\manual\images; Type: dirifempty
+Name: {app}\manual\introduction; Type: dirifempty
+Name: {app}\manual\settings\index.htm; Type: files
+Name: {app}\manual\settings; Type: dirifempty
+Name: {app}\manual\what_you_can_do; Type: dirifempty
+Name: {app}\manual; Type: dirifempty
 
 Name: {app}\peerblock.conf; Type: files; Tasks: reset_settings
 Name: {app}\cache.p2b; Type: files; Tasks: reset_settings
