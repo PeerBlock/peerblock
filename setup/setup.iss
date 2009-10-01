@@ -1,4 +1,4 @@
-; Inno Setup v5.3.4
+; Inno Setup v5.3.5
 ;
 ; PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
 ;
@@ -22,6 +22,7 @@ AppCopyright=Copyright © 2009, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
 AppUpdatesURL=http://www.peerblock.com/
+AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
 VersionInfoCopyright=Copyright © 2009, PeerBlock, LLC
 VersionInfoProductName=PeerBlock
@@ -44,6 +45,7 @@ UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
+SetupIconFile=pg2.ico
 DirExistsWarning=No
 EnableDirDoesntExistWarning=False
 AllowNoIcons=True
@@ -119,15 +121,14 @@ Source: ..\setup\readme.rtf; DestDir: {app}; Flags: ignoreversion
 
 
 [Icons]
-Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
-Name: {group}\Uninstall PeerBlock; Filename: {app}\unins000.exe; WorkingDir: {app}; Comment: {cm:UninstallProgram,PeerBlock}
+Name: {group}\PeerBlock; Filename: {app}\peerblock.exe; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
+Name: {group}\Uninstall PeerBlock; Filename: {app}\unins000.exe; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 1; Comment: {cm:UninstallProgram,PeerBlock}
 Name: {group}\Help and Support\Forums; Filename: http://forums.peerblock.com/; WorkingDir: {app}
 Name: {group}\Help and Support\Homepage; Filename: http://www.peerblock.com/; WorkingDir: {app}
-Name: {group}\Help and Support\License; Filename: {app}\license.txt; WorkingDir: {app}; Comment: PeerBlock's License
 Name: {group}\Help and Support\ReadMe; Filename: {app}\readme.rtf; WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/userguide; WorkingDir: {app}; Comment: PeerBlock's User Manual
-Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
+Name: {userdesktop}\PeerBlock; Filename: {app}\peerblock.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 
 
 [Registry]
@@ -174,6 +175,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 // During installation, delete older start menu entries: 
 Name: {group}\License.lnk; Type: files
 Name: {group}\PeerBlock on the Web.url; Type: files
+Name: {group}\Help and Support\License.url; Type: files
 Name: {group}\Help and Support\PeerBlock on the Web.url; Type: files
 Name: {group}\ReadMe.lnk; Type: files
 Name: {group}\Uninstall.lnk; Type: files
@@ -307,7 +309,8 @@ end;
 
 function InitializeSetup(): Boolean;
 begin
-	// Create a mutex for the installer. If it's already running display a message and stop installation
+	// Create a mutex for the installer.
+	// If it's already running display a message and stop installation
 	Result := True;
 	if CheckForMutexes(installer_mutex_name) then begin
 		if not WizardSilent() then
