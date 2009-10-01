@@ -32,6 +32,33 @@ ECHO.
 ECHO.
 
 
+REM Sign drivers and programs
+IF NOT EXIST %PB_CERT% (
+ECHO:Certificate not found!!&&(GOTO :BuildInstaller)
+)
+
+PUSHD ".\x64\Release (Vista)"
+CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+POPD
+
+PUSHD ".\x64\Release"
+CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+POPD
+
+PUSHD ".\Win32\Release (Vista)"
+CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+POPD
+
+PUSHD ".\Win32\Release"
+CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+POPD
+
+
+:BuildInstaller
 REM Detect if we are running on 64bit WIN and use Wow6432Node, set the path
 REM of Inno Setup accordingly and compile installer
 IF "%PROGRAMFILES(x86)%zzz"=="zzz" (SET "U_=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
@@ -46,15 +73,26 @@ FOR /f "delims=" %%a IN (
 	'REG QUERY "%U_%\%A_%_is1" /v "%I_%: App Path"2^>Nul^|FIND "REG_"') DO (
 	SET "InnoSetupPath=%%a"&Call :Sub %%InnoSetupPath:*Z=%%)
 
-CD setup
+PUSHD setup
 ECHO:Compiling installer...
 ECHO.
 IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /Q "setup.iss"&&(
 ECHO:Installer compiled successfully!)) ELSE (ECHO:%M_%)
+POPD
+
+
+REM Sign installer
+IF NOT EXIST %PB_CERT% (
+ECHO:Certificate not found!!&&(GOTO :CreateZips)
+)
+
+PUSHD ".\Distribution"
+FOR %%A IN (*.exe) DO CALL ..\tools\sign_driver.cmd %%A 
+POPD
 
 
 REM Create all the zip files ready for distribution
-CD ..
+:CreateZips
 MD "Distribution" >NUL 2>&1
 DEL "tools\buildnum_parsed.txt" >NUL 2>&1
 ECHO.
@@ -70,13 +108,13 @@ COPY "Win32\Release\peerblock.exe" "temp_zip\" /Y
 COPY "Win32\Release\pbfilter.sys" "temp_zip\" /Y
 COPY "license.txt" "temp_zip\" /Y
 COPY "setup\readme.rtf" "temp_zip\" /Y
-CD "temp_zip"
+PUSHD "temp_zip"
 START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__Win32_Release.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf">NUL&&(
 	ECHO:PeerBlock_r%buildnum%__Win32_Release.zip created successfully!)
 MOVE /Y "PeerBlock_r%buildnum%__Win32_Release.zip" "..\Distribution" >NUL 2>&1
-CD ..
+POPD
 RD /S /Q "temp_zip" >NUL 2>&1
 
 
@@ -86,13 +124,13 @@ COPY "Win32\Release (Vista)\peerblock.exe" "temp_zip\" /Y
 COPY "Win32\Release (Vista)\pbfilter.sys" "temp_zip\" /Y
 COPY "license.txt" "temp_zip\" /Y
 COPY "setup\readme.rtf" "temp_zip\" /Y
-CD "temp_zip"
+PUSHD "temp_zip"
 START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__Win32_Release_(Vista).zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf">NUL&&(
 	ECHO:PeerBlock_r%buildnum%__Win32_Release_Vista.zip created successfully!)
 MOVE /Y "PeerBlock_r%buildnum%__Win32_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
-CD ..
+POPD
 RD /S /Q "temp_zip" >NUL 2>&1
 
 
@@ -102,13 +140,13 @@ COPY "x64\Release\peerblock.exe" "temp_zip\" /Y
 COPY "x64\Release\pbfilter.sys" "temp_zip\" /Y
 COPY "license.txt" "temp_zip\" /Y
 COPY "setup\readme.rtf" "temp_zip\" /Y
-CD "temp_zip"
+PUSHD "temp_zip"
 START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__x64_Release.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf">NUL&&(
 	ECHO:PeerBlock_r%buildnum%__x64_Release.zip created successfully!)
 MOVE /Y "PeerBlock_r%buildnum%__x64_Release.zip" "..\Distribution" >NUL 2>&1
-CD ..
+POPD
 RD /S /Q "temp_zip" >NUL 2>&1
 
 
@@ -118,14 +156,16 @@ COPY "x64\Release (Vista)\peerblock.exe" "temp_zip\" /Y
 COPY "x64\Release (Vista)\pbfilter.sys" "temp_zip\" /Y
 COPY "license.txt" "temp_zip\" /Y
 COPY "setup\readme.rtf" "temp_zip\" /Y
-CD "temp_zip"
+PUSHD "temp_zip"
 START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf">NUL&&(
 	ECHO:PeerBlock_r%buildnum%__x64_Release_Vista.zip created successfully!)
 MOVE /Y "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
-CD ..
+POPD
 RD /S /Q "temp_zip" >NUL 2>&1
+
+
 GOTO :AllOK
 
 :ErrorDetected
