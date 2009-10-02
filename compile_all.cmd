@@ -4,7 +4,7 @@ TITLE Compiling PeerBlock...
 
 REM Check if Windows DDK 6.1 is present in PATH
 IF NOT EXIST %PB_DDK_DIR% (
-ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO END)
+ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO :END)
 )
 
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
@@ -33,28 +33,28 @@ ECHO.
 
 
 REM Sign drivers and programs
-IF NOT EXIST %PB_CERT% (
+IF NOT DEFINED PB_CERT (
 ECHO:Certificate not found!!&&(GOTO :BuildInstaller)
 )
 
-PUSHD ".\x64\Release (Vista)"
-CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+PUSHD "x64\Release (Vista)"
+CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd peerblock.exe
 POPD
 
-PUSHD ".\x64\Release"
-CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+PUSHD "x64\Release"
+CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd peerblock.exe
 POPD
 
-PUSHD ".\Win32\Release (Vista)"
-CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+PUSHD "Win32\Release (Vista)"
+CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd peerblock.exe
 POPD
 
-PUSHD ".\Win32\Release"
-CALL ..\..\tools\sign_driver.cmd .\pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd .\peerblock.exe
+PUSHD "Win32\Release"
+CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
+CALL ..\..\tools\sign_driver.cmd peerblock.exe
 POPD
 
 
@@ -82,11 +82,11 @@ POPD
 
 
 REM Sign installer
-IF NOT EXIST %PB_CERT% (
+IF NOT DEFINED PB_CERT (
 ECHO:Certificate not found!!&&(GOTO :CreateZips)
 )
 
-PUSHD ".\Distribution"
+PUSHD "Distribution"
 FOR %%A IN (*.exe) DO CALL ..\tools\sign_driver.cmd %%A 
 POPD
 

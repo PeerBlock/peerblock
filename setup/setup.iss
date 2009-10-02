@@ -142,7 +142,7 @@ Filename: http://www.peerblock.com/; Description: {cm:run_visit_website}; Flags:
 
 
 [InstallDelete]
-// During installation, delete older files in install folder: 
+// During installation, delete older files in install folder:
 Name: {app}\peerblock.url; Type: files
 Name: {app}\readme.rtf; Type: files
 Name: {app}\license.txt; Type: files
@@ -172,10 +172,10 @@ Name: {app}\peerblock.dmp; Type: files; Tasks: reset_settings
 Name: {userdesktop}\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('desktopicon')
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon')
 
-// During installation, delete older start menu entries: 
+// During installation, delete older start menu entries:
 Name: {group}\License.lnk; Type: files
 Name: {group}\PeerBlock on the Web.url; Type: files
-Name: {group}\Help and Support\License.url; Type: files
+Name: {group}\Help and Support\License.lnk; Type: files
 Name: {group}\Help and Support\PeerBlock on the Web.url; Type: files
 Name: {group}\ReadMe.lnk; Type: files
 Name: {group}\Uninstall.lnk; Type: files
