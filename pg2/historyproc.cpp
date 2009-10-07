@@ -84,7 +84,7 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 				if(!r.full) {
 					sqlite3_lock lock(g_con);
 
-					sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid");
+					sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid order by t_history.ROWID desc;");
 					cmd.bind(1, r.id);
 
 					sqlite3_reader reader=cmd.executereader();
@@ -147,7 +147,7 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 
 				sqlite3_lock lock(g_con);
 
-				sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid;");
+				sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid order by t_history.ROWID desc;");
 
 				for(int i=ch.iFrom; i<=ch.iTo; i++) {
 					HistoryRow &r=g_rows[i];
@@ -453,7 +453,7 @@ static void History_LoadData(HWND hwnd, const SYSTEMTIME &st) {
 			ss << "action=0 and ";
 			break;
 	}
-	ss << "time>=julianday('" << st << "', 'utc') and time<julianday('" << st << "', 'utc', '+1 day');";
+	ss << "time>=julianday('" << st << "', 'utc') and time<julianday('" << st << "', 'utc', '+1 day') order by t_history.ROWID desc;";
 
 	g_allowed=LoadString(IDS_ALLOWED);
 	g_blocked=LoadString(IDS_BLOCKED);
@@ -588,7 +588,7 @@ static void History_PerformSearch(HWND hwnd) {
 		name=ss.str();
 	}
 
-	ss << ';';
+	ss << " order by t_history.ROWID desc;";
 
 	SendMessage(g_list, WM_SETREDRAW, FALSE, 0);
 
