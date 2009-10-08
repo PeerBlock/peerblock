@@ -1290,6 +1290,10 @@
 				RelativePath=".\pg2_disabled.ico"
 				>
 			</File>
+			<File
+				RelativePath=".\pg2_httpdisabled.ico"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

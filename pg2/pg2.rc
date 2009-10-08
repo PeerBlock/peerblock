@@ -661,6 +661,7 @@ END
 // remains consistent on all systems.
 IDI_MAIN                ICON                    "pg2.ico"
 IDI_DISABLED            ICON                    "pg2_disabled.ico"
+IDI_HTTPDISABLED        ICON                    "pg2_httpdisabled.ico" 
 
 /////////////////////////////////////////////////////////////////////////////
 //

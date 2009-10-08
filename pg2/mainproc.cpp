@@ -58,7 +58,7 @@ void SetBlock(bool block) {
 	g_config.Block=block;
 	g_filter->setblock(block);
 	
-	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?g_config.BlockHttp?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
 	if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
 
 	SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
@@ -70,7 +70,16 @@ void SetBlock(bool block) {
 void SetBlockHttp(bool block) {
 	g_config.BlockHttp=block;
 	g_filter->setblockhttp(block);
-	
+
+	if (g_config.Block)
+	{
+		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+		if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
+
+		SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
+		SendMessage(g_main, WM_SETICON, ICON_SMALL, (LPARAM)g_nid.hIcon);
+	}
+
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 }
 
@@ -430,7 +439,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_nid.uID=TRAY_ID;
 	g_nid.uCallbackMessage=WM_PG2_TRAY;
 	g_nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;	
-	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), g_config.Block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), g_config.Block?g_config.BlockHttp?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
 	StringCbCopy(g_nid.szTip, sizeof(g_nid.szTip), _T("PeerBlock"));
 
 	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden))) 

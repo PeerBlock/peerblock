@@ -14,6 +14,7 @@
 #define IDI_DISABLED                    107
 #define IDS_SOURCE                      107
 #define IDD_STARTUP_LAST                107
+#define IDI_HTTPDISABLED                108
 #define IDS_DESTINATION                 108
 #define IDS_BLOCK                       109
 #define IDD_LISTS                       110
