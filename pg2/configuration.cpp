@@ -31,12 +31,12 @@ Configuration g_config;
 Configuration::Configuration() :
 	Block(true),BlockHttp(true),AllowLocal(true),UpdatePeerGuardian(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false) ,WindowHidden(false), UpdateInterval(2),
-	LogSize(12),LastUpdate(0),LastArchived(0),CleanupInterval(0),LogAllowed(true),LogBlocked(true),
+	LogSize(12), LastUpdate(0), LastArchived(0), CleanupInterval(2), LogAllowed(true), LogBlocked(true),
 	ShowAllowed(false),CacheCrc(0),UpdateCountdown(10),UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()),ListManagerWindowPos(RECT()),StayHidden(false),
 	ListEditorWindowPos(RECT()),HistoryWindowPos(RECT()),HideOnClose(true),
 	AlwaysOnTop(false),HideTrayIcon(false),FirstBlock(true),FirstHide(true),
-	BlinkOnBlock(OnHttpBlock),NotifyOnBlock(Never),CleanupType(None),
+	BlinkOnBlock(OnHttpBlock),NotifyOnBlock(Never),CleanupType(Delete),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
 	ArchivePath(_T("archives")),StartMinimized(false),ColorCode(true) {
 		HistoryColumns[0]=64;
