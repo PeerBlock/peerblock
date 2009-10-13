@@ -360,7 +360,7 @@ bool driver::isrunning()
 
 
 
-void driver::start() 
+void driver::start(bool _gethandle) 
 {
 	TRACEV("[driver] [start]  > Entering routine.");
 	if(m_started) 
@@ -439,18 +439,19 @@ void driver::start()
 	CloseServiceHandle(service);
 	CloseServiceHandle(manager);
 
+	if (_gethandle)
 	{
 		tstring strBuf = boost::str(tformat(_T("[driver] [start]   getting handle to driver - devfile: [%1%]")) % m_devfile.c_str() );
 		TRACEBUFI(strBuf);
-	}
 
-	m_dev = CreateFile(m_devfile.c_str(), GENERIC_READ | GENERIC_WRITE,
-		0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
+		m_dev = CreateFile(m_devfile.c_str(), GENERIC_READ | GENERIC_WRITE,
+			0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
 
-	if(m_dev == INVALID_HANDLE_VALUE) 
-	{
-		TRACEERR("[driver] [start]", L"ERROR: CreateFile", err = GetLastError());
-		throw win32_error("CreateFile");
+		if(m_dev == INVALID_HANDLE_VALUE) 
+		{
+			TRACEERR("[driver] [start]", L"ERROR: CreateFile", err = GetLastError());
+			throw win32_error("CreateFile");
+		}
 	}
 
 	TRACEI("[driver] [start]    started driver");

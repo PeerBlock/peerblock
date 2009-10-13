@@ -1,6 +1,7 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
 	Based on the original work by Tim Leonard
+	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -40,7 +41,7 @@ public:
 	void close();
 
 	bool isrunning();
-	void start();
+	void start(bool gethandle = true);
 	void stop();
 
 	DWORD rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD outsize, OVERLAPPED *ovl = 0);

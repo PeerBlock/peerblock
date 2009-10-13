@@ -37,7 +37,7 @@ static const wchar_t* PGFILTER_PATH = L"pbfilter.sys";
 pgfilter::pgfilter() {
 	m_ipfltdrv.removable = false;
 	m_ipfltdrv.load(IPFILTER_NAME, IPFILTER_PATH);
-	m_ipfltdrv.start();
+	m_ipfltdrv.start(false);
 	
 	wstring p = L"\\??\\" + (path::base_dir() / PGFILTER_PATH).file_str();
 
