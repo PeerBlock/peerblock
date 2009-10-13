@@ -19,10 +19,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/04/18 17:47:46 $
-		$Revision: 1.9 $
 */
 
 #include <stddef.h>
@@ -38,12 +34,14 @@
 #include <pfhook.h>
 #include "internal.h"
 
-static void setfilter(PacketFilterExtensionPtr fn) {
+static void setfilter(PacketFilterExtensionPtr fn) 
+{
 	UNICODE_STRING name;
 	PDEVICE_OBJECT device=NULL;
 	PFILE_OBJECT file=NULL;
 	NTSTATUS status;
 
+	DbgPrint("pbfilter:  > Entering setfilter()\n");
 	RtlInitUnicodeString(&name, DD_IPFLTRDRVR_DEVICE_NAME);
 	status=IoGetDeviceObjectPointer(&name, STANDARD_RIGHTS_ALL, &file, &device);
 
@@ -65,6 +63,7 @@ static void setfilter(PacketFilterExtensionPtr fn) {
 
 		if(file) ObDereferenceObject(file);
 	}
+	DbgPrint("pbfilter:  < Leaving setfilter()\n");
 }
 
 static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet, unsigned int len, unsigned int recvindex, unsigned int sendindex, IPAddr nextrecvhop, IPAddr nextsendhop) {
@@ -146,15 +145,21 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 	return PF_FORWARD;
 }
 
-static NTSTATUS drv_create(PDEVICE_OBJECT device, PIRP irp) {
+static NTSTATUS drv_create(PDEVICE_OBJECT device, PIRP irp) 
+{
+	DbgPrint("pbfilter:  > Entering drv_create()\n");
 	irp->IoStatus.Status=STATUS_SUCCESS;
 	irp->IoStatus.Information=0;
 
 	IoCompleteRequest(irp, IO_NO_INCREMENT);
+	DbgPrint("pbfilter:  < Leaving drv_create()\n");
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS drv_cleanup(PDEVICE_OBJECT device, PIRP irp) {
+static NTSTATUS drv_cleanup(PDEVICE_OBJECT device, PIRP irp) 
+{
+	DbgPrint("pbfilter:  > Entering drv_cleanup()\n");
+
 	setfilter(NULL);
 	SetRanges(NULL, 0);
 	SetRanges(NULL, 1);
@@ -165,6 +170,7 @@ static NTSTATUS drv_cleanup(PDEVICE_OBJECT device, PIRP irp) {
 	irp->IoStatus.Information=0;
 
 	IoCompleteRequest(irp, IO_NO_INCREMENT);
+	DbgPrint("pbfilter:  < Leaving drv_cleanup()\n");
 	return STATUS_SUCCESS;
 }
 
@@ -218,29 +224,44 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp) {
 	return status;
 }
 
-static void drv_unload(PDRIVER_OBJECT driver) {
+static void drv_unload(PDRIVER_OBJECT driver) 
+{
 	UNICODE_STRING devlink;
 
+	DbgPrint("pbfilter:  > Entering drv_unload()\n");
 	RtlInitUnicodeString(&devlink, DOS_DEVICE_NAME);
 	IoDeleteSymbolicLink(&devlink);
 
 	IoDeleteDevice(driver->DeviceObject);
+
+	DbgPrint("pbfilter:  < Leaving drv_unload()\n");
 }
 
-NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) {
+NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) 
+{
 	UNICODE_STRING devicename;
 	PDEVICE_OBJECT device=NULL;
 	NTSTATUS status;
 
+	DbgPrint("pbfilter:  > Entering DriverEntry()\n");
+
+	DbgPrint("pbfilter:    setting up devicename\n");
 	RtlInitUnicodeString(&devicename, NT_DEVICE_NAME);
+
+	DbgPrint("pbfilter:    creating device\n");
 	status=IoCreateDevice(driver, sizeof(PGINTERNAL), &devicename, FILE_DEVICE_PEERGUARDIAN, 0, FALSE, &device);
 
-	if(NT_SUCCESS(status)) {
+	if(NT_SUCCESS(status)) 
+	{
 		UNICODE_STRING devicelink;
 
+		DbgPrint("pbfilter:    created device, initting internal data\n");
+
+		DbgPrint("pbfilter:    ... creating symbolic link\n");
 		RtlInitUnicodeString(&devicelink, DOS_DEVICE_NAME);
 		status=IoCreateSymbolicLink(&devicelink, &devicename);
 
+		DbgPrint("pbfilter:    ... setting up irp-handling functions\n");
 		driver->MajorFunction[IRP_MJ_CREATE]=
 		driver->MajorFunction[IRP_MJ_CLOSE]=drv_create;
 		driver->MajorFunction[IRP_MJ_CLEANUP]=drv_cleanup;
@@ -248,19 +269,28 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) {
 		driver->DriverUnload=drv_unload;
 		device->Flags|=DO_BUFFERED_IO;
 
+		DbgPrint("pbfilter:    ... setting up device extension\n");
 		g_internal=device->DeviceExtension;
 
+		DbgPrint("pbfilter:    ... initializing lock and queue\n");
 		KeInitializeSpinLock(&g_internal->rangeslock);
 		InitNotificationQueue(&g_internal->queue);
 
+		DbgPrint("pbfilter:    ... resetting counters\n");
 		g_internal->blockedcount = 0;
 		g_internal->allowedcount = 0;
 
 		g_internal->blockhttp=1;
+		DbgPrint("pbfilter:    internal data initted\n");
 	}
 
 	if(!NT_SUCCESS(status))
+	{
+		DbgPrint("pbfilter:  * ERROR: couldn't create device, status:[%d] . . . unloading\n", status);
 		drv_unload(driver);
+	}
+
+	DbgPrint("pbfilter:  < Leaving DriverEntry(), status:[%d]\n", status);
 
 	return status;
 }
