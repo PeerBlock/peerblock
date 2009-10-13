@@ -472,6 +472,16 @@ void driver::stop()
 		return;
 	}
 
+	// HACK:  We're only intentionally NOT getting an m_dev if this driver is the Microsoft 
+	//        IpFilterDriver, which is also the only driver we really don't want to try to stop since
+	//        it's likely to get hung up in a STOP_PENDING state and screw us up the next time the
+	//        user tries to run us...
+	if(m_dev == INVALID_HANDLE_VALUE) 
+	{
+		TRACEW("[driver] [stop]    Tried to stop driver, but we really shouldn't (MS IpFilterDriver) so we won't.");
+		return;
+	}
+
 	TRACEI("[driver] [stop]    stopping driver");
 
 	if(m_dev != INVALID_HANDLE_VALUE) {

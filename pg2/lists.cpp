@@ -219,7 +219,7 @@ bool LoadList(path file, p2p::list &list)
 
 		case File_Unknown: 
 		{
-			TRACEW("[LoadList]    WARNING: unknown file type");
+			TRACEV("[LoadList]    found p2p/p2b file");
 			HANDLE h=CreateFile(file.file_str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 			if(h==INVALID_HANDLE_VALUE) throw win32_error("CreateFile");
 
@@ -256,7 +256,7 @@ bool LoadList(path file, p2p::list &list)
 				CloseHandle(m);
 			}
 			CloseHandle(h);
-			TRACEV("[LoadList]    done with unknown file type");
+			TRACEV("[LoadList]    done with found p2p/p2b file");
 		} break;
 		default: __assume(0);
 	}
