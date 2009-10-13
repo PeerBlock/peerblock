@@ -317,6 +317,7 @@ static void History_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 static void History_OnDestroy(HWND hwnd) {
 	g_rows=boost::shared_array<HistoryRow>();
 	SaveListColumns(g_list, g_config.HistoryColumns);
+	SaveWindowPosition(hwnd, g_config.HistoryWindowPos);
 }
 
 static void History_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {
@@ -897,11 +898,7 @@ static void History_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 	FitTabChild_Tight(caltabs, g_search);
 
 	if(state==SIZE_RESTORED) {
-		RECT rc;
-		GetWindowRect(hwnd, &rc);
-
-		if(rc.left>=0 && rc.top>=0 && rc.right>=0 && rc.bottom>=0)
-			g_config.HistoryWindowPos=rc;
+		SaveWindowPosition(hwnd, g_config.HistoryWindowPos);
 	}
 }
 

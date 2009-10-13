@@ -762,6 +762,9 @@ static void Lists_OnDestroy(HWND hwnd)
 	}
 
 	SaveListColumns(list, g_config.ListManagerColumns);
+
+	SaveWindowPosition(hwnd, g_config.ListManagerWindowPos);
+
 	std::sort(g_config.DynamicLists.begin(), g_config.DynamicLists.end());
 
 } // End of Lists_OnDestroy()
@@ -1036,11 +1039,7 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	if(state==SIZE_RESTORED) 
 	{
-		RECT rc;
-		GetWindowRect(hwnd, &rc);
-
-		if(rc.left>=0 && rc.top>=0 && rc.right>=0 && rc.bottom>=0)
-			g_config.ListManagerWindowPos=rc;
+		SaveWindowPosition(hwnd, g_config.ListManagerWindowPos);
 	}
 
 } // End of Lists_OnSize()

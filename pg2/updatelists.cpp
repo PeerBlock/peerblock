@@ -1771,6 +1771,8 @@ static void UpdateLists_OnDestroy(HWND hwnd)
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	SaveListColumns(list, g_config.UpdateColumns);
 
+	SaveWindowPosition(hwnd, g_config.UpdateWindowPos);
+
 	g_updater=NULL;
 	TRACEI("[UpdateLists_OnDestroy]  < Leaving routine.");
 
@@ -1866,11 +1868,7 @@ static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 	EndDeferWindowPos(dwp);
 
 	if(state==SIZE_RESTORED) {
-		RECT rc;
-		GetWindowRect(hwnd, &rc);
-
-		if(rc.left>=0 && rc.top>=0 && rc.right>=0 && rc.bottom>=0)
-			g_config.UpdateWindowPos=rc;
+		SaveWindowPosition(hwnd, g_config.UpdateWindowPos);
 	}
 }
 

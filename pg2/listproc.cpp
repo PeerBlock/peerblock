@@ -945,11 +945,7 @@ static void List_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	if(state==SIZE_RESTORED) 
 	{
-		RECT rc;
-		GetWindowRect(hwnd, &rc);
-
-		if(rc.left>=0 && rc.top>=0 && rc.right>=0 && rc.bottom>=0)
-			g_config.ListEditorWindowPos=rc;
+		SaveWindowPosition(hwnd, g_config.ListEditorWindowPos);
 	}
 
 	TRACED("[listproc] [List_OnSize]  < Leaving routine.");
