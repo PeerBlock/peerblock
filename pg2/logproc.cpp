@@ -491,6 +491,8 @@ static void Log_OnDestroy(HWND hwnd)
 
 	SaveListColumns(list, g_config.LogColumns);
 
+	g_config.Save();
+
 	TRACEV("[LogProc] [Log_OnDestroy]    setting filter action-function to nothing");
 	g_filter->setactionfunc();
 	TRACEV("[LogProc] [Log_OnInitDialog]    setting g_log to empty LogFilterAction");
