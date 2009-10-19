@@ -62,11 +62,11 @@ static void HistoryFind_FillSearchInfo(HWND hwnd, HFM_SEARCHINFO &hf) {
 			case 0: hf.iProtocol=IPPROTO_ICMP; break;
 			case 1: hf.iProtocol=IPPROTO_IGMP; break;
 			case 2: hf.iProtocol=IPPROTO_GGP; break;
-			case 4: hf.iProtocol=IPPROTO_TCP; break;
-			case 5: hf.iProtocol=IPPROTO_PUP; break;
-			case 6: hf.iProtocol=IPPROTO_UDP; break;
-			case 7: hf.iProtocol=IPPROTO_IDP; break;
-			case 10: hf.iProtocol=IPPROTO_ND; break;
+			case 3: hf.iProtocol=IPPROTO_TCP; break;
+			case 4: hf.iProtocol=IPPROTO_PUP; break;
+			case 5: hf.iProtocol=IPPROTO_UDP; break;
+			case 6: hf.iProtocol=IPPROTO_IDP; break;
+			case 7: hf.iProtocol=IPPROTO_ND; break;
 			default: __assume(0);
 		}
 	}
@@ -136,7 +136,7 @@ static BOOL HistoryFind_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	HWND protocol=GetDlgItem(hwnd, IDC_PROTOCOLLIST);
 	for(size_t i=0; i<g_numprotocols; i++)
 		ComboBox_AddString(protocol, g_protocols[i]);
-	ComboBox_SetCurSel(protocol, 4);
+	ComboBox_SetCurSel(protocol, 3);
 
 	HWND action=GetDlgItem(hwnd, IDC_ACTIONLIST);
 	ComboBox_AddString(action, LoadString(IDS_BLOCKED).c_str());
