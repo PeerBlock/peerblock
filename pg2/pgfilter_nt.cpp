@@ -34,27 +34,44 @@ static const LPCTSTR IPFILTER_PATH=_T("System32\\Drivers\\IpFltDrv.sys");
 static const wchar_t* PGFILTER_NAME = L"pbfilter";
 static const wchar_t* PGFILTER_PATH = L"pbfilter.sys";
 
-pgfilter::pgfilter() {
+pgfilter::pgfilter() 
+{
+	TRACEI("[pgfilter_nt] [pgfilter]  > Entering routine.");
 	m_ipfltdrv.removable = false;
+
+	TRACEI("[pgfilter_nt] [pgfilter]    loading microsoft IpFilterDriver");
 	m_ipfltdrv.load(IPFILTER_NAME, IPFILTER_PATH);
+	TRACEI("[pgfilter_nt] [pgfilter]    starting IpFilterDriver");
 	m_ipfltdrv.start(false);
 	
 	wstring p = L"\\??\\" + (path::base_dir() / PGFILTER_PATH).file_str();
 
 	m_filter.removable = true; // so it can be removed if there's a path mismatch.
+	TRACEI("[pgfilter_nt] [pgfilter]    loading pbfilter.sys");
 	m_filter.load(PGFILTER_NAME);
-	if(m_filter.isrunning()) {
+	if(m_filter.isrunning()) 
+	{
+		TRACEI("[pgfilter_nt] [pgfilter]    pbfilter.sys already running, now stopping it");
 		m_filter.stop();
+		TRACEI("[pgfilter_nt] [pgfilter]    stopped pbfilter.sys");
 	}
+
+	TRACEI("[pgfilter_nt] [pgfilter]    starting pbfilter.sys");
 	m_filter.start();
 	m_filter.removable = false; // don't remove it afterward though.
 
+	TRACEI("[pgfilter_nt] [pgfilter]    starting thread");
 	start_thread();
+
+	TRACEI("[pgfilter_nt] [pgfilter]  < Leaving routine.");
 }
 
 pgfilter::~pgfilter() {
 	stop_thread();
 	
 	m_filter.close();
-	m_ipfltdrv.close();
+
+	// Don't close the Microsoft IpFilterDriver, because 1) we never acquired a handle to it in 
+	// the first place, and it's been known to hang in a STOP_PENDING state if we try to stop
+//	m_ipfltdrv.close();
 }
