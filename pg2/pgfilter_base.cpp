@@ -88,24 +88,34 @@ void pgfilter_base::stop_thread()
 void pgfilter_base::setblock(bool block) 
 {
 	TRACEV("[pgfilter_base] [setblock]  > Entering routine.");
-	TRACEV("[pgfilter_base] [setblock]    acquiring lock");
+	TRACEI("[pgfilter_base] [setblock]    acquiring lock");
 	mutex::scoped_lock lock(m_blocklock);
 
 	if(block != m_block) 
 	{
 		if (block) 
-			TRACEV("[pgfilter_base] [setblock]    resetting m_block to: [true]")
+			TRACEI("[pgfilter_base] [setblock]    resetting m_block to: [true]")
 		else 
-			TRACEV("[pgfilter_base] [setblock]    resetting m_block to: [false]");
+			TRACEI("[pgfilter_base] [setblock]    resetting m_block to: [false]");
 
 		m_block = block;
 		int data = block ? 1 : 0;
 
+		TRACEI("[pgfilter_base] [setblock]    sending block request to driver...")
 		DWORD ret = m_filter.write(IOCTL_PEERGUARDIAN_HOOK, &data, sizeof(data));
-		if(ret != ERROR_SUCCESS) throw win32_error("DeviceIoControl", ret);
+		TRACEI("[pgfilter_base] [setblock]    ...block request sent")
+		if(ret != ERROR_SUCCESS) 
+		{
+			TRACEERR("[pgfilter_base] [setblock]", L"sending block request to driver", ret);
+			throw win32_error("DeviceIoControl", ret);
+		}
+	}
+	else
+	{
+		TRACEI("[pgfilter_base] [setblock]    block already set to that requested, ignoring request")
 	}
 
-	TRACEV("[pgfilter_base] [setblock]    mutex leaving scope; releasing lock");
+	TRACEI("[pgfilter_base] [setblock]    mutex leaving scope; releasing lock");
 	TRACEV("[pgfilter_base] [setblock]  < Leaving routine");
 
 } // End of setblock()

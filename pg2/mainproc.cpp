@@ -50,7 +50,15 @@ TabData g_tabs[]={
 };
 static const size_t g_tabcount=sizeof(g_tabs)/sizeof(TabData);
 
-void SetBlock(bool block) {
+
+
+void SetBlock(bool block) 
+{
+	TRACEV("[mainproc] [SetBlock]  > Entering routine.");
+
+	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlock]   setting PeerBlock blocking from [%1%] to [%2%]")) 
+		% g_config.Block % block);
+	TRACEBUFI(strBuf);
 	g_config.Block=block;
 	g_filter->setblock(block);
 	
@@ -61,9 +69,18 @@ void SetBlock(bool block) {
 	SendMessage(g_main, WM_SETICON, ICON_SMALL, (LPARAM)g_nid.hIcon);
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
+	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
 }
 
-void SetBlockHttp(bool block) {
+
+
+void SetBlockHttp(bool block) 
+{
+	TRACEV("[mainproc] [SetBlockHttp]  > Entering routine.");
+
+	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]   setting PeerBlock HTTP blocking from [%1%] to [%2%]")) 
+		% g_config.BlockHttp % block);
+	TRACEBUFI(strBuf);
 	g_config.BlockHttp=block;
 	g_filter->setblockhttp(block);
 
@@ -77,6 +94,7 @@ void SetBlockHttp(bool block) {
 	}
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
+	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
 }
 
 
