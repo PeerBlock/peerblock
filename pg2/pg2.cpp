@@ -243,16 +243,10 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		UncaughtExceptionBox(NULL, __FILE__, __LINE__);
 	}
 
-	if(g_filter) 
-	{
-		TRACES("Resetting filter driver on exit");
-		g_filter.reset();
-	}
 
-	TRACES("Shutting down winsock");
-	WSACleanup();
+	Shutdown();
 
-	TRACES("PeerBlock has finished shutting down.  Have a nice day!");
+	TRACES("PeerBlock is now exiting, due to user request.  Have a nice day!");
 	return 0;
 
 } // End of _tWinMain()

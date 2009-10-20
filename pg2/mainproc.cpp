@@ -18,10 +18,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/07/12 02:20:35 $
-		$Revision: 1.50 $
 */
 
 #include "stdafx.h"
@@ -82,6 +78,36 @@ void SetBlockHttp(bool block) {
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 }
+
+
+
+//================================================================================================
+//
+//  Shutdown()
+//
+//    - Called by ???
+//
+/// <summary>
+///   Performs final cleanup operations prior to letting the program terminate.  Saves config,
+///   resets driver(s), closes WinSock, etc.
+/// </summary>
+//
+void Shutdown()
+{
+	TRACES("[mainproc] [Shutdown]    Shutting down PeerBlock.");
+
+	if(g_filter) 
+	{
+		TRACES("[mainproc] [Shutdown]    Resetting filter driver on exit");
+		g_filter.reset();
+	}
+
+	TRACES("[mainproc] [Shutdown]    Shutting down winsock");
+	WSACleanup();
+
+	TRACES("[mainproc] [Shutdown]    Finished shutting down PeerBlock.");
+
+} // End of Shutdown()
 
 
 
@@ -276,19 +302,24 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	}
 }
 
-static void Main_OnDestroy(HWND hwnd) {
+static void Main_OnDestroy(HWND hwnd) 
+{
+	TRACEI("[mainproc] [Main_OnDestroy]    destroying main window");
 	{
+		TRACEI("[mainproc] [Main_OnDestroy]    writing config out to disk");
 		try {
 			g_config.Save();
 		}
 		catch(exception &ex) {
 			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		}
+		TRACEI("[mainproc] [Main_OnDestroy]    finished saving config to peerblock.conf");
 	}
 
 	if(g_trayactive) Shell_NotifyIcon(NIM_DELETE, &g_nid);
 
 	{
+		TRACEI("[mainproc] [Main_OnDestroy]    deleting tray icons");
 		try {
 			for(size_t i=0; i<g_tabcount; i++)
 				DestroyWindow(g_tabs[i].Tab);
@@ -296,13 +327,27 @@ static void Main_OnDestroy(HWND hwnd) {
 		catch(exception &ex) {
 			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		}
+		TRACEI("[mainproc] [Main_OnDestroy]    tray icons destroyed");
 	}
 
+	TRACEW("[mainproc] [Main_OnDestroy]    Terminating program...");
 	PostQuitMessage(0);
+	TRACEW("[mainproc] [Main_OnDestroy]    post quit message");
 }
 
-static void Main_OnEndSession(HWND hwnd, BOOL fEnding) {
-	if(fEnding) Main_OnDestroy(hwnd);
+static void Main_OnEndSession(HWND hwnd, BOOL fEnding) 
+{
+	if(fEnding) 
+	{
+		TRACEW("[mainproc] [Main_OnEndSession]    System requires immediate termination, due to shutdown/logoff.");
+		Main_OnDestroy(hwnd);
+		Shutdown();
+		TRACES("PeerBlock is now exiting, due to Windows shutdown/logoff.  Have a nice day!");
+	}
+	else
+	{
+		TRACEI("[mainproc] [Main_OnEndSession]    not shutting down");
+	}
 }
 
 static void Main_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {

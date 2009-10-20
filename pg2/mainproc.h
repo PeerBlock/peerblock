@@ -51,6 +51,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void SetBlock(bool block);
 void SetBlockHttp(bool block);
+void Shutdown();
 
 extern TabData g_tabs[];
 extern boost::shared_ptr<pgfilter> g_filter;
