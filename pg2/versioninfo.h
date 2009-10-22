@@ -26,7 +26,7 @@
 
 // only one of these should be uncommented at any given time
 //#define PB_RELTYPE_PUBLIC
-/#define PB_RELTYPE_INTERIM
+#define PB_RELTYPE_INTERIM
 //#define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
 
