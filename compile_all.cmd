@@ -3,59 +3,36 @@ SETLOCAL && CLS
 TITLE Compiling PeerBlock...
 
 REM Check if Windows DDK 6.1 is present in PATH
-IF NOT EXIST %PB_DDK_DIR% (
+IF NOT DEFINED PB_DDK_DIR (
 ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO :END)
 )
 
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
- /t:Rebuild /p:Configuration=Release /p:Platform="Win32"
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
-ECHO.
-ECHO.
+REM Compile PeerBlock with Microsoft Visual Studio
+FOR %%A IN ("Win32" "x64"
+) DO "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
+ /t:Rebuild /p:Configuration=Release /p:Platform=%%A&&(
+ IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected)&&(
+ "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
+ /t:Rebuild /p:Configuration="Release (Vista)" /p:Platform=%%A&&(
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected))
 
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
- /t:Rebuild /p:Configuration="Release (Vista)" /p:Platform="Win32"
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
-ECHO.
-ECHO.
-
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
- /t:Rebuild /p:Configuration=Release /p:Platform="x64"
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
-ECHO.
-ECHO.
-
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
- /t:Rebuild /p:Configuration="Release (Vista)" /p:Platform="x64"
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 ECHO.
 ECHO.
 
 
 REM Sign drivers and programs
 IF NOT DEFINED PB_CERT (
-ECHO:Certificate not found!!&&(GOTO :BuildInstaller)
+ECHO:Certificate not found!! Driver and program will not be signed.&&(GOTO :BuildInstaller)
 )
 
-PUSHD "x64\Release (Vista)"
-CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
+FOR %%F IN (
+"Win32\Release" "Win32\Release (Vista)" "x64\Release" "x64\Release (Vista)"
+) DO (
+PUSHD %%F
+CALL ..\..\tools\sign_driver.cmd pbfilter.sys
 CALL ..\..\tools\sign_driver.cmd peerblock.exe
 POPD
-
-PUSHD "x64\Release"
-CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd peerblock.exe
-POPD
-
-PUSHD "Win32\Release (Vista)"
-CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd peerblock.exe
-POPD
-
-PUSHD "Win32\Release"
-CALL ..\..\tools\sign_driver.cmd pbfilter.sys 
-CALL ..\..\tools\sign_driver.cmd peerblock.exe
-POPD
+)
 
 
 :BuildInstaller
@@ -83,11 +60,11 @@ POPD
 
 REM Sign installer
 IF NOT DEFINED PB_CERT (
-ECHO:Certificate not found!!&&(GOTO :CreateZips)
+ECHO:Certificate not found!! Installer will not be signed.&&(GOTO :CreateZips)
 )
 
 PUSHD "Distribution"
-FOR %%A IN (*.exe) DO CALL ..\tools\sign_driver.cmd %%A 
+FOR %%J IN (*.exe) DO CALL ..\tools\sign_driver.cmd %%J
 POPD
 
 
@@ -98,9 +75,9 @@ DEL "tools\buildnum_parsed.txt" >NUL 2>&1
 ECHO.
 "tools\SubWCRev.exe" "." "tools\buildnum.txt" "tools\buildnum_parsed.txt"
 
-FOR /f "delims=" %%G IN (
+FOR /f "delims=" %%K IN (
 	'FINDSTR ".*" "tools\buildnum_parsed.txt"') DO (
-	SET "buildnum=%%G"&Call :Sub2 %%buildnum:*Z=%%)
+	SET "buildnum=%%K"&Call :Sub2 %%buildnum:*Z=%%)
 
 ECHO.
 MD "temp_zip" >NUL 2>&1
