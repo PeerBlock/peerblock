@@ -210,9 +210,10 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 			// now delete the service.
 			ret = DeleteService(service);
+			err = GetLastError();
 			CloseServiceHandle(service);
 
-			if(!ret && (err = GetLastError()) != ERROR_SERVICE_MARKED_FOR_DELETE) 
+			if(!ret && err != ERROR_SERVICE_MARKED_FOR_DELETE) 
 			{
 				TRACEERR("[driver] [load(3)]", L"ERROR deleting driver-service", err);
 				CloseServiceHandle(manager);
