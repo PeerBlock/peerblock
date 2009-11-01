@@ -60,5 +60,5 @@ private:
 
 	HANDLE m_dev;
 	std::wstring m_name, m_file, m_devfile;
-	bool m_loaded, m_started;
+	bool m_loaded, m_started, m_stoppable;
 };

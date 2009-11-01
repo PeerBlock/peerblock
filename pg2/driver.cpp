@@ -46,7 +46,7 @@ void driver::load(const std::wstring &name)
 	wchar_t path[MAX_PATH + 1], *pathend;
 
 	{
-		tstring strBuf = boost::str(tformat(_T("[driver] [load(1)]   preparing to load driver - name: [%1%]")) % name.c_str() );
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(1)]    preparing to load driver - name: [%1%]")) % name.c_str() );
 		TRACEBUFI(strBuf);
 	}
 
@@ -59,7 +59,7 @@ void driver::load(const std::wstring &name)
 void driver::load(const std::wstring &name, const std::wstring &file) 
 {
 	{
-		tstring strBuf = boost::str(tformat(_T("[driver] [load(2)]   preparing to load driver - name: [%1%], file: [%2%]")) 
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(2)]    preparing to load driver - name: [%1%], file: [%2%]")) 
 			% name.c_str() % file.c_str() );
 		TRACEBUFI(strBuf);
 	}
@@ -73,7 +73,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 	if(m_loaded) throw std::exception("driver already loaded", 0);
 
 	{
-		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]   loading driver - name: [%1%], file: [%2%], devfile: [%3%]")) 
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    loading driver - name: [%1%], file: [%2%], devfile: [%3%]")) 
 			% name.c_str() % file.c_str() % devfile.c_str() );
 		TRACEBUFI(strBuf);
 	}
@@ -249,7 +249,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 				throw win32_error("CreateService", err);
 			}
 
-			TRACEI("[driver] [load(3)]    finished re-creating driver-service, now starting it");
+			TRACEI("[driver] [load(3)]    finished re-creating driver-service");
 		}
 	}
 
@@ -267,7 +267,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		}
 		else
 		{
-			TRACEW("[driver] [load(3)]    Driver-service NOT running!");
+			TRACEI("[driver] [load(3)]    driver-service not running");
 			TCHAR buf[128];
 			swprintf_s(buf, sizeof(buf)/2, L"[driver] [load(3)]    - service state: [%d]", status.dwCurrentState);
 			TRACEBUFW(buf);
@@ -285,14 +285,18 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 void driver::close() 
 {
-	TRACEV("[driver] [close]  > Entering routine.");
+	TRACEI("[driver] [close]  > Entering routine.");
+
+	tstring strBuf = boost::str(tformat(_T("[driver] [close]   closing driver - name: [%1%]")) % m_name.c_str() );
+	TRACEBUFI(strBuf);
+
 	if(!m_loaded) 
 	{
 		TRACEW("[driver] [close]    Tried to close driver, but it wasn't loaded.");
+		TRACEI("[driver] [close]  < Leaving routine (without doing anything).");
 		return;
 	}
 
-	TRACEI("[driver] [close]    closing driver");
 	stop();
 
 	if(this->removable) 
@@ -318,7 +322,7 @@ void driver::close()
 	TRACEI("[driver] [close]    unloaded driver");
 	m_loaded = false;
 
-	TRACEV("[driver] [close]  < Leaving routine.");
+	TRACEI("[driver] [close]  < Leaving routine.");
 
 } // End of close()
 
@@ -440,7 +444,7 @@ void driver::start(bool _gethandle)
 
 	if (_gethandle)
 	{
-		tstring strBuf = boost::str(tformat(_T("[driver] [start]   getting handle to driver - devfile: [%1%]")) % m_devfile.c_str() );
+		tstring strBuf = boost::str(tformat(_T("[driver] [start]    getting handle to driver - devfile: [%1%]")) % m_devfile.c_str() );
 		TRACEBUFI(strBuf);
 
 		m_dev = CreateFile(m_devfile.c_str(), GENERIC_READ | GENERIC_WRITE,
@@ -451,6 +455,13 @@ void driver::start(bool _gethandle)
 			TRACEERR("[driver] [start]", L"ERROR: CreateFile", err = GetLastError());
 			throw win32_error("CreateFile");
 		}
+
+		m_stoppable = true;
+	}
+	else
+	{
+		m_stoppable = false;	// should only be false for MS IpFilterDriver
+		TRACEI("[driver] [start]    flagging driver as not stoppable");
 	}
 
 	TRACEI("[driver] [start]    started driver");
@@ -464,10 +475,18 @@ void driver::start(bool _gethandle)
 
 void driver::stop() 
 {
-	TRACEV("[driver] [stop]  > Entering routine.");
+	TRACEI("[driver] [stop]  > Entering routine.");
+
 	if(!m_started) 
 	{
 		TRACEW("[driver] [stop]    Tried to stop driver, but it is not started");
+		TRACEI("[driver] [stop]  < Leaving routine (without doing anything).");
+		return;
+	}
+	else if (!m_stoppable)
+	{
+		TRACEW("[driver] [stop]    Tried to stop driver, but it is not flagged as a stoppable driver");
+		TRACEI("[driver] [stop]  < Leaving routine (without doing anything).");
 		return;
 	}
 
@@ -520,7 +539,7 @@ void driver::stop()
 	TRACEI("[driver] [stop]    driver has been stopped");
 	m_started = false;
 
-	TRACEV("[driver] [stop]  < Leaving routine.");
+	TRACEI("[driver] [stop]  < Leaving routine.");
 
 } // End of stop()
 
