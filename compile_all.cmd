@@ -9,12 +9,10 @@ ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO :END)
 
 REM Compile PeerBlock with Microsoft Visual Studio
 FOR %%A IN ("Win32" "x64"
-) DO "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
- /t:Rebuild /p:Configuration=Release /p:Platform=%%A&&(
- IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected)&&(
- "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
- /t:Rebuild /p:Configuration="Release (Vista)" /p:Platform=%%A&&(
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected))
+) DO (
+CALL :SubMSVS "Release" %%A
+CALL :SubMSVS "Release (Vista)" %%A
+)
 
 ECHO.
 ECHO.
@@ -22,7 +20,7 @@ ECHO.
 
 REM Sign drivers and programs
 IF NOT DEFINED PB_CERT (
-ECHO:Certificate not found!! Driver and program will not be signed.&&(GOTO :BuildInstaller)
+ECHO:Certificate not found!!! Driver and program will not be signed.&&(GOTO :BuildInstaller)
 )
 
 FOR %%F IN (
@@ -48,7 +46,7 @@ SET "A_=%I_% 5"
 SET "M_=Inno Setup IS NOT INSTALLED!!!"
 FOR /f "delims=" %%a IN (
 	'REG QUERY "%U_%\%A_%_is1" /v "%I_%: App Path"2^>Nul^|FIND "REG_"') DO (
-	SET "InnoSetupPath=%%a"&Call :Sub %%InnoSetupPath:*Z=%%)
+	SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
 
 PUSHD setup
 ECHO:Compiling installer...
@@ -60,7 +58,7 @@ POPD
 
 REM Sign installer
 IF NOT DEFINED PB_CERT (
-ECHO:Certificate not found!! Installer will not be signed.&&(GOTO :CreateZips)
+ECHO:Certificate not found!!! Installer will not be signed.&&(GOTO :CreateZips)
 )
 
 PUSHD "Distribution"
@@ -77,86 +75,62 @@ ECHO.
 
 FOR /f "delims=" %%K IN (
 	'FINDSTR ".*" "tools\buildnum_parsed.txt"') DO (
-	SET "buildnum=%%K"&Call :Sub2 %%buildnum:*Z=%%)
-
+	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO.
-MD "temp_zip" >NUL 2>&1
-COPY "Win32\Release\peerblock.exe" "temp_zip\" /Y
-COPY "Win32\Release\pbfilter.sys" "temp_zip\" /Y
-COPY "license.txt" "temp_zip\" /Y
-COPY "setup\readme.rtf" "temp_zip\" /Y
-PUSHD "temp_zip"
-START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
- "PeerBlock_r%buildnum%__Win32_Release.zip" "peerblock.exe" "pbfilter.sys"^
- "license.txt" "readme.rtf">NUL&&(
-	ECHO:PeerBlock_r%buildnum%__Win32_Release.zip created successfully!)
-MOVE /Y "PeerBlock_r%buildnum%__Win32_Release.zip" "..\Distribution" >NUL 2>&1
-POPD
-RD /S /Q "temp_zip" >NUL 2>&1
 
-
-ECHO.
-MD "temp_zip" >NUL 2>&1
-COPY "Win32\Release (Vista)\peerblock.exe" "temp_zip\" /Y
-COPY "Win32\Release (Vista)\pbfilter.sys" "temp_zip\" /Y
-COPY "license.txt" "temp_zip\" /Y
-COPY "setup\readme.rtf" "temp_zip\" /Y
-PUSHD "temp_zip"
-START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
- "PeerBlock_r%buildnum%__Win32_Release_(Vista).zip" "peerblock.exe" "pbfilter.sys"^
- "license.txt" "readme.rtf">NUL&&(
-	ECHO:PeerBlock_r%buildnum%__Win32_Release_Vista.zip created successfully!)
-MOVE /Y "PeerBlock_r%buildnum%__Win32_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
-POPD
-RD /S /Q "temp_zip" >NUL 2>&1
-
-
-ECHO.
-MD "temp_zip" >NUL 2>&1
-COPY "x64\Release\peerblock.exe" "temp_zip\" /Y
-COPY "x64\Release\pbfilter.sys" "temp_zip\" /Y
-COPY "license.txt" "temp_zip\" /Y
-COPY "setup\readme.rtf" "temp_zip\" /Y
-PUSHD "temp_zip"
-START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
- "PeerBlock_r%buildnum%__x64_Release.zip" "peerblock.exe" "pbfilter.sys"^
- "license.txt" "readme.rtf">NUL&&(
-	ECHO:PeerBlock_r%buildnum%__x64_Release.zip created successfully!)
-MOVE /Y "PeerBlock_r%buildnum%__x64_Release.zip" "..\Distribution" >NUL 2>&1
-POPD
-RD /S /Q "temp_zip" >NUL 2>&1
-
-
-ECHO.
-MD "temp_zip" >NUL 2>&1
-COPY "x64\Release (Vista)\peerblock.exe" "temp_zip\" /Y
-COPY "x64\Release (Vista)\pbfilter.sys" "temp_zip\" /Y
-COPY "license.txt" "temp_zip\" /Y
-COPY "setup\readme.rtf" "temp_zip\" /Y
-PUSHD "temp_zip"
-START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
- "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "peerblock.exe" "pbfilter.sys"^
- "license.txt" "readme.rtf">NUL&&(
-	ECHO:PeerBlock_r%buildnum%__x64_Release_Vista.zip created successfully!)
-MOVE /Y "PeerBlock_r%buildnum%__x64_Release_(Vista).zip" "..\Distribution" >NUL 2>&1
-POPD
-RD /S /Q "temp_zip" >NUL 2>&1
-
+FOR %%L IN (
+"Release" "Release (Vista)"
+) DO (
+CALL :SubZipFiles Win32 %%L
+CALL :SubZipFiles x64 %%L
+)
 
 GOTO :AllOK
 
-:ErrorDetected
-ECHO: ERROR:  Failed to build PeerBlock!
-
 :AllOK
+REN "Distribution\PeerBlock_r*_Release (Vista).zip"^
+ "PeerBlock_r*_Release_(Vista).zip" >NUL 2>&1
+GOTO :END
+
+:ErrorDetected
+ECHO:Compilation FAILED!!!
+GOTO :END
+
+:SubMSVS
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
+ /t:Rebuild /p:Configuration=%1 /p:Platform=%2
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
+GOTO :EOF
+
+:SubZipFiles
+MD "temp_zip" >NUL 2>&1
+COPY "%1\%~2\peerblock.exe" "temp_zip\" /Y
+COPY "%1\%~2\pbfilter.sys" "temp_zip\" /Y
+COPY "license.txt" "temp_zip\" /Y
+COPY "setup\readme.rtf" "temp_zip\" /Y
+
+PUSHD "temp_zip"
+START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
+ "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
+ "license.txt" "readme.rtf" >NUL
+
+ECHO:PeerBlock_r%buildnum%__%1_^%~2.zip created successfully!
+MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\Distribution" >NUL 2>&1
+POPD
+RD /S /Q "temp_zip" >NUL 2>&1
+ECHO.
+GOTO :EOF
+
+:SubISPath
+SET InnoSetupPath=%*
+GOTO :EOF
+
+:SubRevNumber
+SET buildnum=%*
+GOTO :EOF
 
 :END
 ECHO.
 ECHO.
 ENDLOCAL && PAUSE
-
-:Sub
-SET InnoSetupPath=%*
-
-:Sub2
-SET buildnum=%*
+EXIT
