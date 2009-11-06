@@ -459,10 +459,6 @@ static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wPara
 				if(g_config.AlwaysOnTop) CheckDlgButton(hwnd, IDC_ONTOP, BST_CHECKED);
 				if(g_config.UpdateAtStartup) CheckDlgButton(hwnd, IDC_UPDATE_AT_STARTUP, BST_CHECKED);
 
-				// Disable UpdateAtStartup button due to {Bug#22}
-				HWND hButton = GetDlgItem(hwnd, IDC_UPDATE_AT_STARTUP);
-				EnableWindow(hButton, FALSE); // to disable
-
 				if(g_config.UpdateInterval>0) {
 					CheckDlgButton(hwnd, IDC_AUTOUPDATE, BST_CHECKED);
 					SetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, g_config.UpdateInterval, FALSE);
