@@ -97,7 +97,7 @@ ECHO:Compilation FAILED!!!
 GOTO :END
 
 :SubMSVS
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerGuardian2.sln^
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerBlock.sln^
  /t:Rebuild /p:Configuration=%1 /p:Platform=%2
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 GOTO :EOF

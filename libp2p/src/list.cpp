@@ -27,7 +27,7 @@
 #include "stdafx.h"
 using namespace std;
 
-//#include "../pg2/tracelog.h"
+//#include "../pb/tracelog.h"
 //extern TraceLog g_tlog;
 
 namespace p2p {

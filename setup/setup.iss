@@ -6,7 +6,7 @@
 ; *Inno Setup QuickStart Pack
 ;   http://www.jrsoftware.org/isdl.php#qsp
 
-#include "../pg2/versioninfo_setup.h"
+#include "../pb/versioninfo_setup.h"
 #define app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C) + "." + str(PB_BLDNUM)
 #define simple_app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C)
 #define installer_build_date GetDateTimeString('dd/mm/yyyy', '.', '')
