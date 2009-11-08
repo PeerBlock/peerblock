@@ -18,11 +18,7 @@
 	2. Altered source versions must be plainly marked as such, and must not be
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
-	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/02/26 05:31:35 $
-		$Revision: 1.2 $
+
 */
 
 #include "stdafx.h"
@@ -179,9 +175,9 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 		iter->second = (&labelsbuf.front()) + (std::vector<wchar_t>::size_type)iter->second;
 	}
 
-	DWORD pgrsize = (DWORD)offsetof(PBRANGES, ranges[ranges.size()]);
+	DWORD pbrsize = (DWORD)offsetof(PBRANGES, ranges[ranges.size()]);
 
-	PBRANGES *pbr = (PBRANGES*)malloc(pgrsize);
+	PBRANGES *pbr = (PBRANGES*)malloc(pbrsize);
 	if(!pbr) throw std::bad_alloc("unable to allocate memory for IP ranges");
 
 	pbr->block = block ? 1 : 0;
@@ -207,7 +203,7 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 		
 		pbr->labelsid = block ? (m_blocklabelsid + 1) : (m_allowlabelsid + 1);
 
-		ret = m_filter.write(IOCTL_PEERBLOCK_SETRANGES, pbr, pgrsize);
+		ret = m_filter.write(IOCTL_PEERBLOCK_SETRANGES, pbr, pbrsize);
 		if(ret == ERROR_SUCCESS) {
 			if(block) {
 				++m_blocklabelsid;

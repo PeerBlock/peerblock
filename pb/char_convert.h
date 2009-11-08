@@ -16,11 +16,7 @@
 	2. Altered source versions must be plainly marked as such, and must not be
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
-	
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/05/09 23:14:42 $
-		$Revision: 1.5 $
+
 */
 
 #pragma once

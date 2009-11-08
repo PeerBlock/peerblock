@@ -18,10 +18,6 @@
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 
-	CVS Info :
-		$Author: phrostbyte $
-		$Date: 2005/05/22 04:18:59 $
-		$Revision: 1.4 $
 */
 
 #pragma once
