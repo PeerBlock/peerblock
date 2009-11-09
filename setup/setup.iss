@@ -8,8 +8,16 @@
 
 #include "../pb/versioninfo_setup.h"
 #define app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C) + "." + str(PB_BLDNUM)
-#define simple_app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C)
-#define installer_build_date GetDateTimeString('dd/mm/yyyy', '.', '')
+
+; Uncomment one of the #define simple_app_version and comment all other
+; E.g. 1.0+
+#define simple_app_version str(PB_VER_A) + "." + str(PB_VER_B) + "+"
+; E.g. 1.0.1
+;#define simple_app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C)
+; E.g. 1.0.1+
+;#define simple_app_version str(PB_VER_A) + "." + str(PB_VER_B) + "." + str(PB_VER_C) + "+"
+
+#define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 
 
 [Setup]
@@ -35,10 +43,10 @@ DefaultGroupName=PeerBlock
 LicenseFile=..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=..\Distribution
-OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}.r{#= PB_BLDNUM}
+OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_BLDNUM}
 Compression=lzma/ultra64
 InternalCompressLevel=ultra64
-SolidCompression=True
+SolidCompression=yes
 MinVersion=0,5.0.2195
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_BLDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
@@ -47,15 +55,15 @@ WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
 SetupIconFile=pg2.ico
 DirExistsWarning=No
-EnableDirDoesntExistWarning=False
-AllowNoIcons=True
-ShowTasksTreeLines=True
-AlwaysShowDirOnReadyPage=True
-AlwaysShowGroupOnReadyPage=True
-WizardImageStretch=False
-PrivilegesRequired=Admin
-DisableDirPage=Auto
-DisableProgramGroupPage=Auto
+EnableDirDoesntExistWarning=no
+AllowNoIcons=yes
+ShowTasksTreeLines=yes
+AlwaysShowDirOnReadyPage=yes
+AlwaysShowGroupOnReadyPage=yes
+WizardImageStretch=no
+PrivilegesRequired=admin
+DisableDirPage=auto
+DisableProgramGroupPage=auto
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
 AppMutex=Global\PeerBlock
@@ -80,6 +88,7 @@ en.tsk_reset_settings=Reset PeerBlock's settings
 en.tsk_startup_descr=Start PeerBlock on system startup
 en.tsk_startup=Startup options:
 en.tsk_use_PG2_settings=Use PeerGuardian2 settings and custom lists
+en.tsk_uninstall_pg2=Uninstall PeerGuardian2 after PeerBlock's installation
 en.run_visit_website=Visit PeerBlock's Website
 
 
@@ -91,6 +100,7 @@ Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:t
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: unchecked
 Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: unchecked
 Name: use_pg2_settings; Description: {cm:tsk_use_PG2_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPG2Path}\pg2.conf')) AND NOT SettingsExist()
+Name: uninstall_pg2; Description: {cm:tsk_uninstall_pg2}; GroupDescription: {cm:tsk_other}; Check: IsPG2Installed(); Flags: unchecked
 
 
 [Files]
@@ -142,11 +152,12 @@ Filename: http://www.peerblock.com/; Description: {cm:run_visit_website}; Flags:
 
 
 [InstallDelete]
-// During installation, delete older files in install folder:
+; During installation, delete old files in install folder
 Name: {app}\peerblock.url; Type: files
 Name: {app}\readme.rtf; Type: files
 Name: {app}\license.txt; Type: files
 
+; During installation delete Manual files
 Name: {app}\manual\index.htm; Type: files
 Name: {app}\manual\FAQ\index.htm; Type: files
 Name: {app}\manual\FAQ; Type: dirifempty
@@ -169,10 +180,10 @@ Name: {app}\history.db; Type: files; Tasks: reset_settings
 Name: {app}\peerblock.log; Type: files; Tasks: reset_settings
 Name: {app}\peerblock.dmp; Type: files; Tasks: reset_settings
 
-Name: {userdesktop}\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('desktopicon')
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon')
+Name: {userdesktop}\PeerBlock.lnk; Type: files; Tasks: NOT desktopicon
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Tasks: NOT quicklaunchicon
 
-// During installation, delete older start menu entries:
+; During installation, delete old start menu entries
 Name: {group}\License.lnk; Type: files
 Name: {group}\PeerBlock on the Web.url; Type: files
 Name: {group}\Help and Support\License.lnk; Type: files
@@ -182,16 +193,16 @@ Name: {group}\Uninstall.lnk; Type: files
 
 
 [Code]
+// Global variables
 var
-  PG2PathKeyName, PG2Path, PG2PathValueName: String;
-
+  PG2PathKeyName, PG2Path: String;
 
 // Create a mutex for the installer
 const installer_mutex_name = 'peerblock_setup_mutex';
 
 
-// Check if PeerBlock is configured to run on startup, in order to control
-// startup choice within the installer
+// Check if PeerBlock is configured to run on startup,
+// in order to control startup choice within the installer
 function StartupCheck(): Boolean;
 begin
   Result := True;
@@ -208,7 +219,7 @@ var
 begin
   Result := False;
   if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian', svalue) then begin
-	if svalue = (ExpandConstant('{app}\peerblock.exe')) then
+    if svalue = (ExpandConstant('{app}\peerblock.exe')) then
     Result := True;
   end;
 end;
@@ -225,14 +236,58 @@ end;
 
 // Get PeerGuardian's installation path
 function GetPG2Path(S: String): String;
+var
+  PG2PathValueName: String;
 begin
-	PG2Path := '';
+    PG2Path := '';
     PG2PathKeyName := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
     PG2PathValueName := 'Inno Setup: App Path';
 
     if not RegQueryStringValue(HKLM, PG2PathKeyName, PG2PathValueName, PG2Path) then
     RegQueryStringValue(HKCU, PG2PathKeyName, PG2PathValueName, PG2Path);
 	Result := PG2Path;
+end;
+
+
+// Check if PeerGuardian is installed
+function IsPG2Installed(): Boolean;
+begin
+  Result := False;
+  if RegKeyExists(HKLM, PG2PathKeyName) or RegKeyExists(HKCU, PG2PathKeyName) then
+  Result := True;
+end;
+
+
+// Function to uninstall PeerGuardian
+function UninstallPG(): Integer;
+var
+   sUnInstallString: String;
+   iResultCode: Integer;
+begin
+// Return Values:
+// 0 - no idea
+// 1 - can't find the registry key (probably no previous version installed)
+// 2 - uninstall string is empty
+// 3 - error executing the UnInstallString
+// 4 - successfully executed the UnInstallString
+
+    // default return value
+    Result := 0;
+
+    sUnInstallString := '';
+
+    // get the uninstall string of the old app
+    if RegQueryStringValue(HKLM, PG2PathKeyName, 'UninstallString', sUnInstallString) then begin
+        if sUnInstallString <> '' then begin
+            sUnInstallString := RemoveQuotes(sUnInstallString);
+            if Exec(sUnInstallString, '/SILENT /VERYSILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+                Result := 4
+            else
+                Result := 3;
+            end else
+                Result := 2;
+    end else
+        Result := 1;
 end;
 
 
@@ -273,12 +328,21 @@ begin
 end;
 
 
-// Delete old startup registry entry while installing
 procedure CurStepChanged(CurStep: TSetupStep);
+var
+  Wnd: HWND;
 begin
   if CurStep = ssPostInstall then begin
+  // Delete old PeerBlock's startup registry entry and uninstall PeerGuardian if the task is selected
     if StartupCheckOld then begin
-	  RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
+      RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
+    end;
+    // Find PeerGuardian's WindowName and kill the process before uninstalling it
+    if IsTaskSelected('uninstall_pg2') then begin
+      Wnd := FindWindowByWindowName('PeerGuardian 2');
+      if Wnd <> 0 then
+      PostMessage(Wnd, 18, 0, 0); // WM_QUIT
+      UninstallPG;
     end;
   end;
 end;
@@ -286,52 +350,52 @@ end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  // When uninstalling, ask user if they want to delete PeerBlock's logs and settings
-   if CurUninstallStep = usUninstall then begin
-   if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-    if MsgBox(ExpandConstant('{cm:msg_DeleteListsSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
-      DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
-      DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
-      DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
-      RemoveDir(ExpandConstant('{app}\lists\'))
-      DeleteFile(ExpandConstant('{app}\peerblock.conf'));
+// When uninstalling, ask user if they want to delete PeerBlock's logs and settings
+  if CurUninstallStep = usUninstall then begin
+    if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
+      if MsgBox(ExpandConstant('{cm:msg_DeleteListsSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
+        DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
+        DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
+        DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
+        RemoveDir(ExpandConstant('{app}\lists\'))
+        DeleteFile(ExpandConstant('{app}\peerblock.conf'));
+      end;
     end;
-   end;
-   DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
-   RemoveDir(ExpandConstant('{app}\archives\'))
-   DeleteFile(ExpandConstant('{app}\cache.p2b'));
-   DeleteFile(ExpandConstant('{app}\history.db'));
-   DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
-   DeleteFile(ExpandConstant('{app}\peerblock.log'));
+    DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
+    RemoveDir(ExpandConstant('{app}\archives\'))
+    DeleteFile(ExpandConstant('{app}\cache.p2b'));
+    DeleteFile(ExpandConstant('{app}\history.db'));
+    DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
+    DeleteFile(ExpandConstant('{app}\peerblock.log'));
   end;
 end;
 
 
 function InitializeSetup(): Boolean;
 begin
-	// Create a mutex for the installer.
-	// If it's already running display a message and stop installation
-	Result := True;
-	if CheckForMutexes(installer_mutex_name) then begin
-		if not WizardSilent() then
-			MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
-			Result := False;
-		end
-		else begin
-		CreateMutex(installer_mutex_name);
-	end;
+  // Create a mutex for the installer.
+  // If it's already running display a message and stop installation
+  Result := True;
+  if CheckForMutexes(installer_mutex_name) then begin
+    if not WizardSilent() then
+      MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
+      Result := False;
+  end
+  else begin
+    CreateMutex(installer_mutex_name);
+  end;
 end;
 
 
 function InitializeUninstall(): Boolean;
 begin
-	Result := True;
-	if CheckForMutexes(installer_mutex_name) then begin
-		if not WizardSilent() then
-			MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
-		Result := False;
-		end
-		else begin
-		CreateMutex(installer_mutex_name);
-	end;
+  Result := True;
+  if CheckForMutexes(installer_mutex_name) then begin
+    if not WizardSilent() then
+      MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
+    Result := False;
+  end
+  else begin
+    CreateMutex(installer_mutex_name);
+  end;
 end;

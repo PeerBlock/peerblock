@@ -8,6 +8,7 @@ ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO :END)
 )
 
 REM Compile PeerBlock with Microsoft Visual Studio
+TITLE Compiling PeerBlock with Microsoft Visual Studio...
 FOR %%A IN ("Win32" "x64"
 ) DO (
 CALL :SubMSVS "Release" %%A
@@ -49,6 +50,7 @@ FOR /f "delims=" %%a IN (
 	SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
 
 PUSHD setup
+TITLE Compiling installer...
 ECHO:Compiling installer...
 ECHO.
 IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /Q "setup.iss"&&(
@@ -68,6 +70,7 @@ POPD
 
 REM Create all the zip files ready for distribution
 :CreateZips
+TITLE Creating ZIP files...
 MD "Distribution" >NUL 2>&1
 DEL "tools\buildnum_parsed.txt" >NUL 2>&1
 ECHO.
@@ -130,6 +133,7 @@ SET buildnum=%*
 GOTO :EOF
 
 :END
+TITLE Compiling PeerBlock - Finished!
 ECHO.
 ECHO.
 ENDLOCAL && PAUSE
