@@ -121,6 +121,9 @@ struct Configuration {
 	CleanType CleanupType;
 	tstring UpdateProxy;
 	long UpdateProxyType;
+	// 0 = never cleanup
+	// >0 = size in bytes
+	__int64 MaxHistorySize;
 
 	bool TracelogEnabled;
 	int TracelogLevel;

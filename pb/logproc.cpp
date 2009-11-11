@@ -70,6 +70,16 @@ private:
 		return buf;
 	}
 
+	// should really put this in a utility class instead of copy/paste
+	static string format_ipport(unsigned int ip, unsigned short port) {
+		const unsigned char *bytes=reinterpret_cast<const unsigned char*>(&ip);
+
+		char buf[24];
+		StringCbPrintfA(buf, sizeof(buf), port?"%u.%u.%u.%u:%u":"%u.%u.%u.%u", bytes[3], bytes[2], bytes[1], bytes[0], port);
+
+		return buf;
+	}
+
 	static tstring current_time() {
 		TRACEV("[LogFilterAction] [current_time]  > Entering routine.");
 		time_t t=time(NULL);
@@ -275,6 +285,8 @@ public:
 private:
 	void _Commit(bool force) {
 		mutex::scoped_lock lock(this->mutex);
+		static __int64 currentinserted = 99;
+		bool needvacuum = false;
 
 		if(!this->dbqueue.empty()) {
 			sqlite3_try_lock lock(g_con, true);
@@ -316,6 +328,8 @@ private:
 						cmd_history.bind(7, a.Protocol);
 						cmd_history.bind(8, a.Blocked?1:0);
 						cmd_history.executenonquery();
+
+						currentinserted++;
 					}
 					catch(exception &ex) {
 						ExceptionBox(NULL, ex, __FILE__, __LINE__);
@@ -323,7 +337,159 @@ private:
 					}
 				}
 
+				// limit the historydb size
+				if ((g_config.LogBlocked || g_config.LogAllowed) && g_config.CleanupType != None && g_config.MaxHistorySize > 0)
+				{
+					if (currentinserted >= 100)
+					{
+						TRACEI("checking _tstat64");
+
+						// http://msdn.microsoft.com/en-us/library/14h5k7ff(VS.71).aspx
+						struct _stat64 fileStat;
+						int ret = _tstat64( (path::base_dir()/_T("history.db")).c_str(), &fileStat );
+
+						if (ret == 0)
+						{
+							TRACEI("checking filesize against user");
+
+							if (fileStat.st_size > g_config.MaxHistorySize)
+							{
+								TRACEI("filesize is bigger than user specified");
+
+								// centre record to start truncating from
+								__int64 midrowid = 0;
+								{
+									ostringstream s;
+									s << "select max(ROWID) - ((max(ROWID) - min(ROWID)) / 2) from t_history;";
+									sqlite3_command cmd(g_con, s.str());
+									sqlite3_reader reader = cmd.executereader();
+
+									if (reader.read())
+									{
+										midrowid = reader.getint64(0);
+									}
+								}
+
+								if (g_config.CleanupType == ArchiveDelete)
+								{
+									try 
+									{
+										queue<string> dates;
+
+										{
+											ostringstream ss;
+											ss << "select distinct date(time, 'localtime') from t_history where ROWID < " << midrowid << ";";
+
+											sqlite3_command cmd(g_con, ss.str());
+											sqlite3_reader reader=cmd.executereader();
+											while(reader.read())
+												dates.push(reader.getstring(0));
+										}
+
+										for(; !dates.empty(); dates.pop()) 
+										{
+											TRACEI("getting dates");
+											path p=g_config.ArchivePath;
+
+											if(!p.has_root()) p=path::base_dir()/p;
+											if(!path::exists(p)) path::create_directory(p);
+
+											p/=(UTF8_TSTRING(dates.front())+_T(".log"));
+
+											FILE *fp=_tfopen(p.file_str().c_str(), _T("a"));
+
+											if(fp) {
+												boost::shared_ptr<FILE> safefp(fp, fclose);
+
+												ostringstream sel;
+												sel << "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where time>=julianday('"+dates.front()+"', 'utc') and time<julianday('"+dates.front()+"', '+1 days', 'utc') and t_history.ROWID<" << midrowid << " and t_names.id=nameid;";
+												sqlite3_command cmd(g_con, sel.str());
+
+												sqlite3_reader reader=cmd.executereader();
+												while(reader.read()) {
+													const string time=reader.getstring(0);
+													string name=reader.getstring(1);
+
+													const char *protocol;
+													switch(reader.getint(6)) {
+														case IPPROTO_ICMP: protocol="ICMP"; break;
+														case IPPROTO_IGMP: protocol="IGMP"; break;
+														case IPPROTO_GGP: protocol="Gateway^2"; break;
+														case IPPROTO_TCP: protocol="TCP"; break;
+														case IPPROTO_PUP: protocol="PUP"; break;
+														case IPPROTO_UDP: protocol="UDP"; break;
+														case IPPROTO_IDP: protocol="XNS IDP"; break;
+														case IPPROTO_ND: protocol="NetDisk"; break;
+														default: protocol="Unknown"; break;
+													}
+
+													fprintf(fp, "%s; %s; %s; %s; %s; %s\n",
+														time.c_str(), name.c_str(),
+														format_ipport((unsigned int)reader.getint(2), (unsigned short)reader.getint(3)).c_str(),
+														format_ipport((unsigned int)reader.getint(4), (unsigned short)reader.getint(5)).c_str(),
+														protocol, reader.getint(7)?"Blocked":"Allowed");
+												}
+											}
+										} // for(!dates.empty())
+
+										TRACEI("Cleaned up db");
+									}
+									catch(exception &ex) {
+										ExceptionBox(NULL, ex, __FILE__, __LINE__);
+									}
+								} // g_config.CleanupType == ArchiveDelete
+
+								if (g_config.CleanupType == Delete || g_config.CleanupType == ArchiveDelete)
+								{
+									try 
+									{
+										ostringstream ss;
+
+										ss << "delete from t_history where ROWID < " << midrowid << ";";
+										g_con.executenonquery(ss.str());
+
+										TRACEI("removed from history");
+
+										// stop it growing over computing size
+										// normal is 1000 = 1k
+										// computing is 1024 = 1k
+										if (fileStat.st_size > g_config.MaxHistorySize * 1.024)
+										{
+											TRACEI("need vacuum");
+											needvacuum = true;
+										}
+									}
+									catch(database_error &ex) 
+									{
+										TRACEE("[LogFilterAction] [_Commit]  * ERROR:  Caught database_error exception while deleting files!!");
+										ExceptionBox(NULL, ex, __FILE__, __LINE__);
+									}
+									catch(exception &ex) {
+										TRACEE("[LogFilterAction] [_Commit]  * ERROR:  Caught exception while deleting files!!");
+										ExceptionBox(NULL, ex, __FILE__, __LINE__);
+									}
+								} // g_config.CleanupType == Delete || g_config.CleanupType == ArchiveDelete
+							} // fileStat.st_size > g_config.MaxHistoryDBSize
+						}
+						else
+						{
+							TCHAR buf[255];
+							swprintf_s(buf, sizeof(buf), L"_tstat64 failed: %d", GetLastError());
+							TRACEBUFI(buf);
+						}
+
+						currentinserted = 0;
+					} // currentinserted >= 100
+				}
+
 				lock.commit();
+
+				// crashes at the place where needvacuum = true; is called with or without g_con.commit() so put down here
+				if (needvacuum)
+				{
+					g_con.executenonquery(_T("vacuum;"));
+					TRACEI("vacuumed history.db as it was too big");
+				}
 			}
 		}
 	}

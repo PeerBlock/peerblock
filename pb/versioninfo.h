@@ -25,7 +25,7 @@
 #define MAKE_STR(x) DO_MAKE_STR(x)
 
 // only one of these should be uncommented at any given time
-//#define PB_RELTYPE_PUBLIC
+//#define PB_RELTYPE_STABLE
 #define PB_RELTYPE_BETA
 //#define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
@@ -39,7 +39,7 @@
 #define PB_VER_MINOR 0
 #define PB_VER_BUGFIX 0
 
-#ifdef PB_RELTYPE_PUBLIC
+#ifdef PB_RELTYPE_STABLE
 //#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) 
 #define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR)
 #endif

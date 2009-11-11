@@ -80,6 +80,8 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 							EnableWindow(GetDlgItem(hwnd, IDC_CLEANUPTIME), e);
 							EnableWindow(GetDlgItem(hwnd, IDC_ARCHIVETO), e2);
 							EnableWindow(GetDlgItem(hwnd, IDC_BROWSE), e2);
+							EnableWindow(GetDlgItem(hwnd, IDC_MAXHISTORYSIZE), e);
+							EnableWindow(GetDlgItem(hwnd, IDC_MAXHISTORYSIZESPIN), e);
 
 							if(i==0) g_config.CleanupType=None;
 							else if(i==1) g_config.CleanupType=Delete;
@@ -111,6 +113,9 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 							ILFree(id);
 						}
 					} break;
+					case IDC_MAXHISTORYSIZE:
+						g_config.MaxHistorySize=((unsigned short)GetDlgItemInt(hwnd, IDC_MAXHISTORYSIZE, NULL, FALSE)) * 1000000;
+						break;
 					case IDC_NOTIFY: {
 						BOOL e=(IsDlgButtonChecked(hwnd, IDC_NOTIFY)==BST_CHECKED);
 
@@ -172,6 +177,10 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 				SendDlgItemMessage(hwnd, IDC_CLEANUPTIMESPIN, UDM_SETBUDDY, (WPARAM)GetDlgItem(hwnd, IDC_CLEANUPTIME), 0);
 				SendDlgItemMessage(hwnd, IDC_CLEANUPTIMESPIN, UDM_SETRANGE, 0, (LPARAM)MAKELONG(9999, 1));
 
+				SendDlgItemMessage(hwnd, IDC_MAXHISTORYSIZE, EM_SETLIMITTEXT, 4, 0);
+				SendDlgItemMessage(hwnd, IDC_MAXHISTORYSIZESPIN, UDM_SETBUDDY, (WPARAM)GetDlgItem(hwnd, IDC_MAXHISTORYSIZE), 0);
+				SendDlgItemMessage(hwnd, IDC_MAXHISTORYSIZESPIN, UDM_SETRANGE, 0, (LPARAM)MAKELONG(9999, 0));
+
 				HWND logallowed = GetDlgItem(hwnd, IDC_LOGALLOWED);
 				
 				tstring str = LoadString(IDS_LOGNONE);
@@ -218,6 +227,8 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 				if(g_config.CleanupType!=None) {
 					EnableWindow(GetDlgItem(hwnd, IDC_CLEANUPTIMESPIN), TRUE);
 					EnableWindow(GetDlgItem(hwnd, IDC_CLEANUPTIME), TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_MAXHISTORYSIZE), TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_MAXHISTORYSIZESPIN), TRUE);
 
 					if(g_config.CleanupType==ArchiveDelete) {
 						EnableWindow(GetDlgItem(hwnd, IDC_ARCHIVETO), TRUE);
@@ -260,6 +271,8 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 					if(g_config.NotifyOnBlock!=Never)
 						CheckDlgButton(hwnd, IDC_NOTIFYWINDOW, BST_CHECKED);
 				}
+
+				SetDlgItemInt(hwnd, IDC_MAXHISTORYSIZE, (UINT)(g_config.MaxHistorySize / 1000000), FALSE);
 
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_ATEXT), g_config.AllowedColor.Text);
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_ABG), g_config.AllowedColor.Background);

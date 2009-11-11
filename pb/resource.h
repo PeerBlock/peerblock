@@ -338,6 +338,8 @@
 #define IDC_OPENSPY						1191
 #define IDC_OPENADS						1192
 #define IDC_OPENEDU						1193
+#define IDC_MAXHISTORYSIZE              1194
+#define IDC_MAXHISTORYSIZESPIN          1195
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
