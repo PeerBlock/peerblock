@@ -153,8 +153,8 @@ static void SaveListColumns(HWND list, int (&dest)[len]) {
 }
 
 // saves a window position to a RECT
-// hwnd - the handle to te window
-// rect - the RECT to save the values to. usually g_config.*WindowPos.
+// hwnd - the handle to the window
+// rect - the RECT to save the values to. Usually g_config.*WindowPos.
 static void SaveWindowPosition(HWND hwnd, RECT &rect)
 {
 	RECT rc;

@@ -244,7 +244,7 @@ static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem)
 //
 static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 {
-	if(g_subctrl) // havn't found a better way to avoid the default push button :/
+	if(g_subctrl) // haven't found a better way to avoid the default push button :/
 	{
 		TRACEV("[listproc] [List_OnCommand]    global subctrl");
 		SetFocus(hwnd);

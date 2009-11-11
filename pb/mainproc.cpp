@@ -144,10 +144,10 @@ void PerformPrevRelUpdates()
 {
 	int prevRelease = g_config.LastVersionRun;
 
-	if (prevRelease == PB_BLDNUM)
+	if (prevRelease == PB_VER_BUILDNUM)
 		return;
 
-	if (prevRelease > PB_BLDNUM)
+	if (prevRelease > PB_VER_BUILDNUM)
 	{
 		TRACEW("[mainproc] [PerformPrevRelUpdates]    WARNING:  Downgrade detected!");
 		return;

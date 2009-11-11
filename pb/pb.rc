@@ -618,8 +618,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION PB_VER_A,PB_VER_B,PB_VER_C,PB_BLDNUM
- PRODUCTVERSION PB_VER_A,PB_VER_B,PB_VER_C,PB_BLDNUM
+ FILEVERSION PB_VER_MAJOR,PB_VER_MINOR,PB_VER_BUGFIX,PB_VER_BUILDNUM
+ PRODUCTVERSION PB_VER_MAJOR,PB_VER_MINOR,PB_VER_BUGFIX,PB_VER_BUILDNUM
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -637,12 +637,12 @@ BEGIN
             VALUE "Comments", "http://www.peerblock.com"
             VALUE "CompanyName", "PeerBlock, LLC"
             VALUE "FileDescription", "PeerBlock"
-            VALUE "FileVersion", MAKE_STR(PB_VER_A) ", " MAKE_STR(PB_VER_B) ", " MAKE_STR(PB_VER_C) ", " MAKE_STR(PB_BLDNUM)
+            VALUE "FileVersion", MAKE_STR(PB_VER_MAJOR) ", " MAKE_STR(PB_VER_MINOR) ", " MAKE_STR(PB_VER_BUGFIX) ", " MAKE_STR(PB_VER_BUILDNUM)
             VALUE "InternalName", "PeerBlock"
             VALUE "LegalCopyright", "Copyright (C) 2009 PeerBlock, LLC"
             VALUE "OriginalFilename", "peerblock.exe"
             VALUE "ProductName", "PeerBlock"
-            VALUE "ProductVersion", MAKE_STR(PB_VER_A) ", " MAKE_STR(PB_VER_B) ", " MAKE_STR(PB_VER_C) ", " MAKE_STR(PB_BLDNUM)
+            VALUE "ProductVersion", MAKE_STR(PB_VER_MAJOR) ", " MAKE_STR(PB_VER_MINOR) ", " MAKE_STR(PB_VER_BUGFIX) ", " MAKE_STR(PB_VER_BUILDNUM)
         END
     END
     BLOCK "VarFileInfo"

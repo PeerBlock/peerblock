@@ -52,15 +52,15 @@ extern TraceLog g_tlog;
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE)
 
 // TODO:  make a special page to display for update-found purposes; pass in build-string?
-static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_A) "." MAKE_STR(PB_VER_B) "." MAKE_STR(PB_VER_C) "." MAKE_STR(PB_BLDNUM);
+static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) "." MAKE_STR(PB_VER_BUILDNUM);
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
 const unsigned long long g_build=BUILDNUM;
 
-#ifdef PB_RELTYPE_PUBLIC
+#ifdef PB_RELTYPE_STABLE
 static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;
 static const LPCTSTR g_homepage=_T("http://update.peerblock.com/latest-release");		// displayed in web-browser if new program version is found
 #endif
-#ifdef PB_RELTYPE_INTERIM
+#ifdef PB_RELTYPE_BETA
 static const char *g_updateurl="http://update.peerblock.com/pb_update_ir.php?build="BUILDSTR;
 static const LPCTSTR g_homepage=_T("http://update.peerblock.com/latest-interim-release");
 #endif
@@ -195,7 +195,7 @@ private:
 
 	void UpdateProgress() 
 	{
-		// TODO:  Remove, or at least reduce severity of, these tracelog statements, as they're for INTERIM DEBUG PURPOSES ONLY!
+		// TODO:  Remove, or at least reduce severity of, these tracelog statements, as they're for BETA DEBUG PURPOSES ONLY!
 
 		TRACED("[UpdateThread] [UpdateProgress]  > Entering routine.");
 
