@@ -806,7 +806,7 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
 		CheckMenuItem(submenu, ID_TRAY_ALWAYSONTOP, MF_BYCOMMAND|(g_config.AlwaysOnTop?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_ENABLED, MF_BYCOMMAND|(g_config.Block?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_DISABLED, MF_BYCOMMAND|(g_config.Block?MF_UNCHECKED:MF_CHECKED));
-		CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|(g_config.BlockHttp?MF_CHECKED:MF_UNCHECKED));
+		CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|(g_config.BlockHttp?MF_UNCHECKED:MF_CHECKED));
 
 		SetForegroundWindow(hwnd);
 		TrackPopupMenuEx(submenu, TPM_BOTTOMALIGN, pt.x, pt.y, hwnd, NULL);

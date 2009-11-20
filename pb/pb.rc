@@ -681,7 +681,7 @@ BEGIN
         MENUITEM "&Enabled",                    ID_TRAY_ENABLED, CHECKED
         MENUITEM "&Disabled",                   ID_TRAY_DISABLED
         MENUITEM SEPARATOR
-        MENUITEM "&Block HTTP",                 ID_TRAY_BLOCKHTTP, CHECKED
+        MENUITEM "&Allow HTTP",                 ID_TRAY_BLOCKHTTP
         MENUITEM SEPARATOR
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
         MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
