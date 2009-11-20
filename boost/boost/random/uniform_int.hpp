@@ -7,7 +7,7 @@
  *
  * See http://www.boost.org for most recent version including documentation.
  *
- * $Id: uniform_int.hpp 53871 2009-06-13 17:54:06Z steven_watanabe $
+ * $Id: uniform_int.hpp 56814 2009-10-14 04:54:01Z steven_watanabe $
  *
  * Revision history
  *  2001-04-08  added min<max assertion (N. Becker)
@@ -156,7 +156,7 @@ private:
           //           mult+mult*brange                  by (2), (3)         (4)
           // Therefore result+(eng()-bmin)*mult <
           //           mult*(brange+1)                   by (4)
-          result += random::detail::subtract<base_result>()(eng(), bmin) * mult;
+          result += static_cast<range_type>(random::detail::subtract<base_result>()(eng(), bmin) * mult);
 
           // equivalent to (mult * (brange+1)) == range+1, but avoids overflow.
           if(mult * range_type(brange) == range - mult + 1) {
