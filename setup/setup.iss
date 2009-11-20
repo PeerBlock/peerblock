@@ -1,6 +1,8 @@
-; Inno Setup v5.3.5
 ;
 ; PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+;
+;
+; Inno Setup v5.3.6+
 ;
 ; Requirements:
 ; *Inno Setup QuickStart Pack
@@ -188,6 +190,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 [Code]
 // Include custom installer code
 #include 'setup_custom_code.iss'
+#include 'setup_services.iss'
 
 ///////////////////////////////////////////
 //  Inno Setup functions and procedures  //
@@ -234,6 +237,12 @@ end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
+  if CurStep = ssInstall then begin
+    if IsServiceRunning('pbfilter') then begin
+      StopService('pbfilter');
+    end;
+    RemoveService('pbfilter');
+  end;
   if CurStep = ssPostInstall then begin
     // Delete the old PeerBlock's startup registry value
     if OldStartupCheck then begin
@@ -259,6 +268,8 @@ begin
         RemoveUserFiles;
       end;
     end;
+    StopService('pbfilter');
+    RemoveService('pbfilter');
     // Always delete the rest of PeerBlock's files
     RemoveMiscFiles;
     RemoveDir(ExpandConstant('{app}'));
