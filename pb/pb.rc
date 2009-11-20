@@ -838,7 +838,7 @@ BEGIN
     IDS_NEEDADMIN           "Administrator privileges required"
     IDS_INVALIDURL          "Invalid URL"
     IDS_INVALIDURLTEXT      "The given URL is not valid.  Did you forget a http:// ?"
-    IDS_UNCAUGHTTEXT        "An uncaught exception occured!\r\nThis problem has been automatically reported to Phoenix Labs.  The report contains the following information:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%\r\n\r\nThankyou for helping us improve PeerGuardian!"
+    IDS_UNCAUGHTTEXT        "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
     IDS_UNCAUGHT            "Uncaught exception"
     IDS_PBUPDATE            "Update Available"
     IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
@@ -901,10 +901,10 @@ BEGIN
     IDS_RESTOREBACKUP       "Restore Backup"
     IDS_RESTORING           "Restoring Backup..."
     IDS_BACKINGUP           "Backing up..."
-    IDS_EXCEPTIONTEXT       "An exception occured!\r\nThis problem has been automatically reported to Phoenix Labs.  The report contains the following information:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%\r\n\r\nThankyou for helping us improve PeerGuardian!"
+    IDS_EXCEPTIONTEXT       "An exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
     IDS_SEARCH              "Search"
     IDS_CALENDAR            "Calendar"
-    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occured!\r\nThis problem has been automatically reported to Phoenix Labs.  The report contains the following information:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\n\r\nThankyou for helping us improve PeerGuardian!"
+    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
 END
 
 STRINGTABLE 
@@ -931,9 +931,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occured!\r\nThis problem has been automatically reported to Phoenix Labs.  The report contains the following information:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%\r\n\r\nThankyou for helping us improve PeerGuardian!"
-    IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pbfilter.sys can't be found.\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
-	IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows\r\ndriver-signing checking.\r\n\r\nTo resolve this problem you need to press F8 while your machine is\r\nbooting and disable driver-signing.  Alternatively, you can run a tool\r\nsuch as ReadyDriver Plus (on Vista), or use a tool such as Driver Signature Enforcement Overrider to 'test-sign' the driver.\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
+    IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%"
+    IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
+    IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
 END
 
 #endif    // English (U.S.) resources
