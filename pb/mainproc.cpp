@@ -551,15 +551,18 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
 	#endif
 
-
-	//night_stalker_z: Update lists at startup so it blocks
-	// needs internet conenction
 	if (g_config.UpdateAtStartup)
 	{
-		UpdateLists(hwnd);
+		UpdateLists(hwnd);	// needs internet connection
 		LoadLists(hwnd);
 	}
-	//BlockWithoutUpdate(hwnd);
+	else if(g_filter)	// HACK: This should allow us to block at startup, even if we don't update
+	{
+		p2p::list allow;
+		allow.insert(p2p::range(L"Auto-allow hack", 0, 0));
+		allow.optimize(true);
+		g_filter->setranges(allow, false);
+	}
 
 	return FALSE;
 }
