@@ -1,0 +1,478 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,0,0,1
+ PRODUCTVERSION 3,0,0,1
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "http://peerguardian.sf.net"
+            VALUE "CompanyName", "Phoenix Labs"
+            VALUE "FileDescription", "PeerGuardian 3"
+            VALUE "FileVersion", "3, 0, 0, 1"
+            VALUE "InternalName", "pg3"
+            VALUE "LegalCopyright", "Copyright © 2007 Cory Nelson"
+            VALUE "OriginalFilename", "pg3.exe"
+            VALUE "ProductName", "PeerGuardian 3"
+            VALUE "ProductVersion", "3, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_ENABLE MENU 
+BEGIN
+    POPUP "Context"
+    BEGIN
+        MENUITEM "&Enable PeerGuardian",        ID_CONTEXT_ENABLE
+        MENUITEM "Enable PeerGuardian (&HTTP allowed)", ID_CONTEXT_ENABLEHTTP
+        MENUITEM "&Disable PeerGuardian",       ID_CONTEXT_DISABLE
+    END
+END
+
+IDR_ABOUT MENU 
+BEGIN
+    POPUP "Context"
+    BEGIN
+        MENUITEM "&About PeerGuardian",         ID_HELP_ABOUTPEERGUARDIAN
+        MENUITEM SEPARATOR
+        MENUITEM "PeerGuardian &Homepage",      ID_HELP_PEERGUARDIANHOMEPAGE
+        MENUITEM "&Phoenix Labs Homepage",      ID_HELP_PHOENIXLABSHOMEPAGE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ADDLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 280
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 249
+    END
+
+    IDD_LISTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 215
+    END
+
+    IDD_QUICKLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 215
+    END
+
+    IDD_ADDTEMP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 271
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 184
+    END
+
+    IDD_APPLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 215
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_ADDAPP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 280
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 249
+    END
+
+    IDD_GRAPHS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 371
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 252
+    END
+
+    IDD_ADDPROFILE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 77
+    END
+
+    IDD_EDITPROFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 200
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 123
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ADDLIST DIALOGEX 0, 0, 287, 256
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add List"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "&Add",IDOK,176,235,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,230,235,50,14
+    GROUPBOX        "Location",IDC_STATIC,7,63,273,53
+    EDITTEXT        IDC_LOCATION,13,95,202,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse",IDC_BROWSE,221,95,50,14
+    LTEXT           "A list can be located at a URL or in a file.  Lists at a URL will be periodically updated.  PeerGuardian supports lists compressed as a .zip, .7z, or .gz.",IDC_STATIC,13,74,257,17,SS_NOPREFIX
+    GROUPBOX        "Proxy",IDC_STATIC,7,122,273,57
+    LTEXT           "A proxy can be used to get through firewalls, or download lists anonymously.",IDC_STATIC,13,132,257,10
+    EDITTEXT        IDC_PROXY,13,159,257,14,ES_AUTOHSCROLL
+    CONTROL         "HTTP",IDC_PROXY_HTTP,"Button",BS_AUTORADIOBUTTON,67,145,35,10
+    CONTROL         "SOCKS4",IDC_PROXY_SOCKS4,"Button",BS_AUTORADIOBUTTON,105,145,40,10
+    CONTROL         "SOCKS5",IDC_PROXY_SOCKS5,"Button",BS_AUTORADIOBUTTON,149,145,41,10
+    CONTROL         "Use default",IDC_PROXY_DEFAULT,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,13,145,50,10
+    GROUPBOX        "List type",IDC_STATIC,7,184,273,46
+    LTEXT           "Allowed lists will always have precedence over blocked ones.  That is, if an IP is in a block list and an allow list, it will always be allowed.",IDC_STATIC,13,195,257,17
+    CONTROL         "Allow list",IDC_ALLOW,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,13,215,43,10
+    CONTROL         "Block list",IDC_BLOCK,"Button",BS_AUTORADIOBUTTON,62,215,43,10
+    GROUPBOX        "Label",IDC_STATIC,7,7,273,51
+    EDITTEXT        IDC_DESCRIPTION,13,38,260,14,ES_AUTOHSCROLL
+    LTEXT           "The list can be labeled however you wantóthis is for your benefit.  It will not affect how PeerGuardian uses the list.",IDC_STATIC,13,18,260,17
+END
+
+IDD_LISTS DIALOGEX 0, 0, 295, 222
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Preset lists",IDC_STATIC,7,26,281,89
+    CONTROL         "",IDC_PRESETS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,13,37,268,71
+    GROUPBOX        "Custom lists",IDC_STATIC,7,121,281,94
+    CONTROL         "",IDC_LISTS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,13,132,268,58
+    PUSHBUTTON      "&Remove",IDC_REMOVE,231,194,50,14
+    PUSHBUTTON      "&Add",IDC_ADD,121,194,50,14
+    LTEXT           "Profile:",IDC_STATIC,7,7,22,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_PROFILES,33,7,111,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Edit",IDC_EDIT,176,194,50,14
+    PUSHBUTTON      "&Open",IDC_OPEN,13,194,50,14
+END
+
+IDD_QUICKLIST DIALOGEX 0, 0, 295, 222
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Segoe UI", 400, 0, 0xB2
+BEGIN
+    PUSHBUTTON      "&Remove",IDC_REMOVE,238,201,50,14
+    PUSHBUTTON      "&Edit",IDC_EDIT,184,201,50,14
+    PUSHBUTTON      "&Add",IDC_ADD,129,201,50,14
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,27,281,169
+    LTEXT           "The quick list lets you easily modify any temporary/permanent entries you have set from the log window.",IDC_STATIC,7,7,281,18
+END
+
+IDD_ADDTEMP DIALOGEX 0, 0, 278, 191
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Range"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "&Add",IDOK,167,170,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,221,170,50,14
+    GROUPBOX        "Address",IDC_STATIC,7,7,264,51
+    LTEXT           "Enter the internet address you want allowed/blocked, such as ""10.0.0.1"".  Ranges like ""10.0.0.1ñ10.0.0.255"", and ""2001::0/64"" may also be entered.",IDC_STATIC,13,18,251,18
+    EDITTEXT        IDC_ADDRESS,13,38,251,14,ES_AUTOHSCROLL
+    GROUPBOX        "Expiration",IDC_STATIC,7,62,264,53
+    LTEXT           "Enter when the range should automatically expire.  Expired ranges are not removed from the Quick List, and can be re-activated at any time.",IDC_STATIC,13,73,251,18
+    CONTROL         "",IDC_EXPIREDATE,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_SHOWNONE | WS_TABSTOP,33,93,84,15
+    GROUPBOX        "Type",IDC_STATIC,7,119,264,46
+    LTEXT           "Allowed ranges let connections pass through PeerGuardian without being checked, even if their are on another block list.",IDC_STATIC,13,130,251,18
+    CONTROL         "&Allow",IDC_ALLOW,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,13,150,33,10
+    CONTROL         "&Block",IDC_BLOCK,"Button",BS_AUTORADIOBUTTON,50,150,33,10
+    CONTROL         "",IDC_EXPIRETIME,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP | 0x8,144,93,69,15
+    LTEXT           "Date:",IDC_STATIC,13,93,16,15,SS_CENTERIMAGE
+    LTEXT           "Time:",IDC_STATIC,124,93,16,15,SS_CENTERIMAGE
+END
+
+IDD_APPLIST DIALOGEX 0, 0, 295, 222
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Segoe UI", 400, 0, 0xB2
+BEGIN
+    PUSHBUTTON      "&Remove",IDC_REMOVE,238,201,50,14
+    PUSHBUTTON      "&Edit",IDC_EDIT,184,201,50,14
+    PUSHBUTTON      "&Add",IDC_ADD,129,201,50,14
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,281,189
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 231, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About PeerGuardian"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Close",IDCLOSE,174,57,50,14
+    LTEXT           "[IDS_ABOUTCONTENT]",IDC_CONTENT,50,7,174,47
+    ICON            IDI_DOPEFISH,IDC_DOPE,7,7,21,20,SS_REALSIZEIMAGE
+END
+
+IDD_ADDAPP DIALOGEX 0, 0, 287, 256
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Application"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "&Add",IDOK,175,235,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,230,235,50,14
+    GROUPBOX        "Label",IDC_STATIC,7,7,273,51
+    EDITTEXT        IDC_LABEL,13,38,260,14,ES_AUTOHSCROLL
+    LTEXT           "The application can be labeled however you wantóthis is for your benefit.  It will not affect how PeerGuardian blocks the application.",IDC_STATIC,13,18,260,17
+    GROUPBOX        "Application",IDC_STATIC,7,63,273,124
+    LTEXT           "Select an application from the list, or enter a path to its executable.",IDC_STATIC,13,74,201,8
+    EDITTEXT        IDC_PATH,13,86,205,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse",IDC_BROWSE,223,86,50,14
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,13,105,260,75
+    GROUPBOX        "Type",IDC_STATIC,7,192,273,37
+    LTEXT           "Application-êwide allows/blocks will bypass any listsóblock or allowóin effect.",IDC_STATIC,13,203,260,10
+    CONTROL         "&Allow",IDC_ALLOW,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,13,214,33,10
+    CONTROL         "&Block",IDC_BLOCK,"Button",BS_AUTORADIOBUTTON,50,214,33,10
+END
+
+IDD_GRAPHS DIALOGEX 0, 0, 378, 259
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_LINEGRAPH,"LineGraph",0x0,7,7,132,132
+END
+
+IDD_ADDPROFILE DIALOGEX 0, 0, 187, 84
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Profile"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "&Add",IDOK,76,63,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,130,63,50,14
+    LTEXT           "Profile label:",IDC_STATIC,7,7,173,8
+    EDITTEXT        IDC_LABEL,7,16,173,14,ES_AUTOHSCROLL
+    LTEXT           "Copy settings from:",IDC_STATIC,7,34,173,8
+    COMBOBOX        IDC_PROFILES,7,44,173,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EDITPROFILES DIALOGEX 0, 0, 207, 130
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Profiles"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "Profiles:",IDC_STATIC,7,7,25,8
+    PUSHBUTTON      "&Close",IDCLOSE,150,109,50,14
+    PUSHBUTTON      "&Remove",IDC_REMOVE,150,16,50,14
+    PUSHBUTTON      "Ren&ame",IDC_RENAME,150,35,50,14
+    CONTROL         "",IDC_PROFILES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_EDITLABELS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,16,139,89
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_LISTCONFIG          ICON                    "lists.ico"
+IDI_REFRESH             ICON                    "refresh.ico"
+IDI_DOPEFISH            ICON                    "dopefish.ico"
+IDI_PREFS               ICON                    "prefs.ico"
+IDI_INFO                ICON                    "info.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_TIME                "Time"
+    IDS_ADDRESS             "Address"
+    IDS_COUNT               "Count"
+    IDS_LABEL               "Label"
+    IDS_ENABLED             "PeerGuardian is Enabled"
+    IDS_DISABLED            "PeerGuardian is Disabled"
+    IDS_ENABLEDHTTP         "PeerGuardian is Enabled (HTTP allowed)"
+    IDS_OFN_ALLTYPES        "All List Types (*.txt; *.p2p; *.dat; *.p2b)"
+    IDS_UNCAUGHTTITLE       "Uncaught Exception"
+    IDS_UNCAUGHTINSTRUCTION "Report error?"
+    IDS_UNCAUGHTCONTENT     "You just found a bug.  This is our faultónot yours!\r\nWould you like to report the error to Phoenix Labs?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SHOWREPORTINFO      "&Show report information"
+    IDS_HIDEREPORTINFO      "&Hide report information"
+    IDS_FINDSOLUTIONS       "<a href=""findsolutions"">Find solutions to this problem</a>"
+    IDS_REPORTINFO          "Exception: %1%\r\nFile: %2%:%3%\r\nMessage: %4%"
+    IDS_REPORTINFOWIN       "Exception: class win32_error\r\nFile: %1%:%2%\r\nFunction: %3%\r\nMessage: %4%\r\nError Code: 0x%5%"
+    IDS_REPORTERROR         "&Report error"
+    IDS_DONTREPORT          "&Don't report"
+    IDS_OFN_TEXTTYPES       "PeerGuardian Text Lists (*.txt; *.p2p)"
+    IDS_OFN_EMULETYPE       "eMule Text Lists (*.dat)"
+    IDS_OFN_BINARYTYPE      "PeerGuardian Binary Lists (*.p2b)"
+    IDS_OFN_ALLFILES        "All Files (*.*)"
+    IDS_COMMDLG_ERROR       "An error 0x%1% occured while opening a common dialog."
+    IDS_REPORTINFOCOMMDLG   "Exception: class commdlg_error\r\nFile: %1%:%2%\r\nFunction: %3%\r\nError Code: 0x%4%"
+    IDS_LISTMANAGER         "List Manager"
+    IDS_CHECKUPDATES        "Check Updates"
+    IDS_ABOUTPEERGUARDIAN   "About PeerGuardian"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTCONTENT        "PeerGuardian 3.0 RC1\r\nCopyright © 2007 Cory Nelson\r\n\r\nPeerGuardian makes use of Anti-Grain Geometry 2.4\r\nCopyright © 2002-2005 Maxim Shemanarev"
+    IDS_OPTIONS             "Options"
+    IDS_LISTS               "Lists"
+    IDS_QUICKLIST           "Quick list"
+    IDS_APPLICATIONS        "Applications"
+    IDS_TYPE                "Type"
+    IDS_EXPIRES             "Expires"
+    IDS_APPLICATION         "Application"
+    IDS_LOCATION            "Location"
+    IDS_STATUS              "Status"
+    IDS_NAME                "Name"
+    IDS_PATH                "Path"
+    IDS_NEWPROFILE          "<New...>"
+    IDS_EDITPROFILE         "<Edit...>"
+    IDS_DEFAULT             "Default"
+    IDS_ANTIP2P             "Anti-P2P and government organizations"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ADS                 "Advertising servers"
+    IDS_EDU                 "Educational institutions and universities"
+    IDS_SPYWARE             "Spyware/adware servers and malicious software distributors"
+    IDS_LEVEL1              "Anti-P2P and government organizations (level 1)"
+    IDS_LEVEL2              "Various corporations (level 2)"
+    IDS_LEVEL3              "Level 3"
+    IDS_GAMING              "Gaming servers"
+    IDS_PUBLISHER           "Publisher"
+    IDS_ALLOW               "Allow"
+    IDS_BLOCK               "Block"
+    IDS_BOGON               "Unallocated ranges (bogons)"
+    IDS_DSHIELD             "DShield recommended"
+    IDS_HIJACKED            "Zombied/hacked servers"
+    IDS_MULTICAST           "IANA multicast addresses"
+    IDS_PRIVATE             "IANA private addresses"
+    IDS_RESERVED            "IANA reserved addresses"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SPIDERS             "Web spiders"
+    IDS_TROJANS             "Trojans and portscanners"
+    IDS_LANRANGES           "LAN ranges"
+    IDS_BTALLOWS            "Recommended allows"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

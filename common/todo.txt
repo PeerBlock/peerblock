@@ -1,0 +1,6 @@
+common
+	-	Make access to config thread-safe.
+	-	Make config/lists auto-reload. (ReadDirectoryChangesW)
+	-	Tie log database into backend.
+	-	Make a service backend.
+	-	Support application-wide allow on Vista.
