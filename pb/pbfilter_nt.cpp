@@ -65,6 +65,7 @@ pbfilter::pbfilter()
 pbfilter::~pbfilter() {
 	stop_thread();
 	
+	m_filter.removable = true;	// let's delete the driver-service wrapper
 	m_filter.close();
 
 	// Don't close the Microsoft IpFilterDriver, because 1) we never acquired a handle to it in 
