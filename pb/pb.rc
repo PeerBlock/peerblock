@@ -187,7 +187,7 @@ BEGIN
     LTEXT           "Educational institutions and universities",IDC_STATIC,107,46,220,10,SS_CENTERIMAGE
     LTEXT           "Import or create your own custom lists",IDC_STATIC,107,59,220,10,SS_CENTERIMAGE
     CONTROL         "Always Allow HTTP",IDC_BLOCKHTTP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,92,90,10
-    LTEXT           "Always allows connections on port 80 and 443, even if they are in your blocklists.  While these ports are usually used for web browsing, programs oftentimes use them too.",IDC_STATIC,107,85,220,30
+    LTEXT           "Always allows connections on port 80 and 443, even if they are in your blocklists.  While these ports are usually used for web browsing, other programs often use them too.",IDC_STATIC,107,85,220,30
     GROUPBOX        "Recommendation",IDC_STATIC,7,131,328,48
     LTEXT           "Text too long, so -> IDS_STARTUP_LISTS",IDC_RECOMMEND,14,142,312,34
     LTEXT           "To continue, click Next.",IDC_STATIC,198,205,76,8
