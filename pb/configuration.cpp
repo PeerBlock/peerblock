@@ -712,7 +712,7 @@ void Configuration::Save() {
 		InsertChild(settings, "CacheCrc", this->CacheCrc);
 		InsertChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		InsertChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
-		InsertChild(settings, "LastVersionRun", this->LastVersionRun);
+		InsertChild(settings, "LastVersionRun", PB_VER_BUILDNUM);
 	}
 
 	{
