@@ -182,7 +182,7 @@ void PerformPrevRelUpdates()
 					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing ads.php list with bt_ads");
 					//list->Url = _T("http://list.iblocklist.com/?list=bt_ads");
 					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/?list=bt_ads");
+					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n");
 					tempList.push_back(newList);
 				}
 				else if (list->Url.find(_T("edu.php")) != string::npos)
@@ -191,7 +191,7 @@ void PerformPrevRelUpdates()
 					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing edu.php list with bt_edu");
 					//list->Url = _T("http://list.iblocklist.com/?list=bt_edu");
 					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/?list=bt_edu");
+					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/edu");
 					tempList.push_back(newList);
 				}
 				else if (list->Url.find(_T("p2p.php")) != string::npos)
@@ -200,7 +200,7 @@ void PerformPrevRelUpdates()
 					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing p2p.php list with bt_level1");
 					//list->Url = _T("http://list.iblocklist.com/?list=bt_level1");
 					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/?list=bt_level1");
+					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/level-1");
 					tempList.push_back(newList);
 				}
 				else if (list->Url.find(_T("spy.php")) != string::npos)
@@ -209,7 +209,7 @@ void PerformPrevRelUpdates()
 					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing spy.php list with bt_spyware");
 					//list->Url = _T("http://list.iblocklist.com/?list=bt_spyware");
 					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/?list=bt_spyware");
+					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/spyware");
 					tempList.push_back(newList);
 				}
 				else if (list->Url.find(_T("gov.php")) != string::npos)
@@ -422,6 +422,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		TRACEC("[mainproc] [Main_OnInitDialog]    Exception trying to load config!");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		DestroyWindow(hwnd);
+		PostQuitMessage(0);
 		return FALSE;
 	}
 
@@ -434,6 +435,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	{
 		PeerBlockExceptionBox(NULL, ex);
 		DestroyWindow(hwnd);
+		PostQuitMessage(0);
 		return FALSE;
 	}
 	catch(win32_error &ex) {
@@ -450,6 +452,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		}
 
 		DestroyWindow(hwnd);
+		PostQuitMessage(0);
 		return FALSE;
 	}
 	catch(exception &ex) {
@@ -457,6 +460,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
 
 		DestroyWindow(hwnd);
+		PostQuitMessage(0);
 		return FALSE;
 	}
 
@@ -917,10 +921,12 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	catch(exception &ex) {
 		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
+		PostQuitMessage(0);
 		return 0;
 	}
 	catch(...) {
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
+		PostQuitMessage(0);
 		return 0;
 	}
 }

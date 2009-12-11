@@ -23,25 +23,20 @@
 #include "stdafx.h"
 
 LPCTSTR const g_presets[]={
-	_T("http://list.iblocklist.com/?list=bt_ads"),
-	_T("http://list.iblocklist.com/?list=bt_edu"),
-	_T("http://list.iblocklist.com/?list=bt_level1"),
-	_T("http://list.iblocklist.com/?list=bt_spyware"),
-	_T("http://www.bluetack.co.uk/config/ads-trackers-and-bad-pr0n.gz"),
-	_T("http://www.bluetack.co.uk/config/level1.gz"),
-	_T("http://www.bluetack.co.uk/config/level2.gz"),
-	_T("http://www.bluetack.co.uk/config/bogon.zip"),
-	_T("http://www.bluetack.co.uk/config/dshield.zip"),
-	_T("http://www.bluetack.co.uk/config/edu.gz"),
-	_T("http://www.bluetack.co.uk/config/hijacked.zip"),
-	_T("http://www.bluetack.co.uk/config/iana-multicast.zip"),
-	_T("http://www.bluetack.co.uk/config/iana-private.zip"),
-	_T("http://www.bluetack.co.uk/config/iana-reserved.zip"),
-	_T("http://www.bluetack.co.uk/config/Microsoft.gz"),
-	_T("http://www.bluetack.co.uk/config/fornonlancomputers.zip"),
-	_T("http://www.bluetack.co.uk/config/spider.gz"),
-	_T("http://www.bluetack.co.uk/config/spyware.gz"),
-	_T("http://www.bluetack.co.uk/config/trojan.zip")
+	_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"),
+	_T("http://list.iblocklist.com/lists/bluetack/edu"),
+	_T("http://list.iblocklist.com/lists/bluetack/level-1"),
+	_T("http://list.iblocklist.com/lists/bluetack/spyware"),
+	_T("http://list.iblocklist.com/lists/bluetack/level-2"),
+	_T("http://list.iblocklist.com/lists/bluetack/level-3"),
+	_T("http://list.iblocklist.com/lists/bluetack/bogon"),
+	_T("http://list.iblocklist.com/lists/bluetack/dshield"),
+	_T("http://list.iblocklist.com/lists/bluetack/hijacked"),
+	_T("http://list.iblocklist.com/lists/bluetack/microsoft"),
+	_T("http://list.iblocklist.com/lists/bluetack/iana-multicast"),
+	_T("http://list.iblocklist.com/lists/bluetack/iana-private"),
+	_T("http://list.iblocklist.com/lists/bluetack/iana-reserved"),
+	_T("http://list.iblocklist.com/lists/bluetack/for-non-lan-computers"),
 };
 
 const size_t g_presetcount=sizeof(g_presets)/sizeof(LPCTSTR);

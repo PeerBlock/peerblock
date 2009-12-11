@@ -258,13 +258,13 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if (IsDlgButtonChecked(hwnd, IDC_P2PLIST)==BST_CHECKED)
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    P2P list now selected");
-				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_level1"), _T("Default P2P List"), List::Block);
+				AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/level-1"), _T("Default P2P List"), List::Block);
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENP2P), true);
 			}
 			else
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    P2P list now NOT selected");
-				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_level1"));
+				RemoveFromDefLists(_T("http://list.iblocklist.com/lists/bluetack/level-1"));
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENP2P), false);
 			}
 
@@ -277,13 +277,13 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if (IsDlgButtonChecked(hwnd, IDC_SPYLIST)==BST_CHECKED)
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    Spy list now selected");
-				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"), _T("Default Spy List"), List::Block);
+				AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/spyware"), _T("Default Spy List"), List::Block);
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENSPY), true);
 			}
 			else
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    Spy list now NOT selected");
-				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"));
+				RemoveFromDefLists(_T("http://list.iblocklist.com/lists/bluetack/spyware"));
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENSPY), false);
 			}
 
@@ -296,13 +296,13 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if (IsDlgButtonChecked(hwnd, IDC_ADSLIST)==BST_CHECKED)
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    Ads list now selected");
-				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_ads"), _T("Default Ads List"), List::Block);
+				AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"), _T("Default Ads List"), List::Block);
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENADS), true);
 			}
 			else
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    Ads list now NOT selected");
-				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_ads"));
+				RemoveFromDefLists(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"));
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENADS), false);
 			}
 
@@ -315,13 +315,13 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if (IsDlgButtonChecked(hwnd, IDC_EDULIST)==BST_CHECKED)
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    Edu list now selected");
-				AddToDefLists(_T("http://list.iblocklist.com/?list=bt_edu"), _T("Default Edu List"), List::Block);
+				AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/edu"), _T("Default Edu List"), List::Block);
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENEDU), true);
 			}
 			else
 			{
 				TRACEI("[listsproc] [Lists_OnCommand]    Edu list now NOT selected");
-				RemoveFromDefLists(_T("http://list.iblocklist.com/?list=bt_edu"));
+				RemoveFromDefLists(_T("http://list.iblocklist.com/lists/bluetack/edu"));
 				EnableWindow(GetDlgItem(hwnd, IDC_OPENEDU), false);
 			}
 
@@ -332,7 +332,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENP2P");
 
-			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/?list=bt_level1"));
+			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/lists/bluetack/level-1"));
 			if (i != -1)
 			{
 				TRACEV("[listsproc] [Lists_OnCommand]    found P2P list in def-lists");
@@ -351,7 +351,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENSPY");
 
-			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"));
+			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/lists/bluetack/spyware"));
 			if (i != -1)
 			{
 				TRACEV("[listsproc] [Lists_OnCommand]    found Spy list in def-lists");
@@ -370,7 +370,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENADS");
 
-			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/?list=bt_ads"));
+			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"));
 			if (i != -1)
 			{
 				TRACEV("[listsproc] [Lists_OnCommand]    found Ads list in def-lists");
@@ -389,7 +389,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENEDU");
 
-			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/?list=bt_edu"));
+			vector<DynamicList>::size_type i = FindInDefLists(_T("list.iblocklist.com/lists/bluetack/edu"));
 			if (i != -1)
 			{
 				TRACEV("[listsproc] [Lists_OnCommand]    found Edu list in def-lists");
@@ -417,10 +417,10 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 					s=sl->File.file_str();
 
 				// make sure this newly-added list isn't a dupe of one of the Default Lists
-				if (s.find(_T("http://list.iblocklist.com/?list=bt_level1")) != tstring::npos ||
-					s.find(_T("http://list.iblocklist.com/?list=bt_spyware")) != tstring::npos ||
-					s.find(_T("http://list.iblocklist.com/?list=bt_ads")) != tstring::npos ||
-					s.find(_T("http://list.iblocklist.com/?list=bt_edu")) != tstring::npos )
+				if (s.find(_T("http://list.iblocklist.com/lists/bluetack/level-1")) != tstring::npos ||
+					s.find(_T("http://list.iblocklist.com/lists/bluetack/spyware")) != tstring::npos ||
+					s.find(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n")) != tstring::npos ||
+					s.find(_T("http://list.iblocklist.com/lists/bluetack/edu")) != tstring::npos )
 				{
 					// found dupe
 					tstring strBuf = boost::str(tformat(_T("[listsproc] [Lists_OnCommand]    Newly-added url:[%1%] found in custom lists!")) % s );
@@ -436,27 +436,27 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 					{
 						// url not already enabled in def lists, so enable it
 						TRACEI("[listsproc] [Lists_OnCommand]    url NOT found in selected def-lists, enabling it");
-						if (s.find(_T("http://list.iblocklist.com/?list=bt_level1")) != tstring::npos)
+						if (s.find(_T("http://list.iblocklist.com/lists/bluetack/level-1")) != tstring::npos)
 						{
-							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_level1"), _T("Default P2P List"), List::Block);
+							AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/level-1"), _T("Default P2P List"), List::Block);
 							EnableWindow(GetDlgItem(hwnd, IDC_OPENP2P), true);
 							CheckDlgButton(hwnd, IDC_P2PLIST, BST_CHECKED);
 						}
-						else if (s.find(_T("http://list.iblocklist.com/?list=bt_spyware")) != tstring::npos)
+						else if (s.find(_T("http://list.iblocklist.com/lists/bluetack/spyware")) != tstring::npos)
 						{
-							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_spyware"), _T("Default Spy List"), List::Block);
+							AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/spyware"), _T("Default Spy List"), List::Block);
 							EnableWindow(GetDlgItem(hwnd, IDC_OPENSPY), true);
 							CheckDlgButton(hwnd, IDC_SPYLIST, BST_CHECKED);
 						}
-						else if (s.find(_T("http://list.iblocklist.com/?list=bt_ads")) != tstring::npos)
+						else if (s.find(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n")) != tstring::npos)
 						{
-							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_ads"), _T("Default Ads List"), List::Block);
+							AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"), _T("Default Ads List"), List::Block);
 							EnableWindow(GetDlgItem(hwnd, IDC_OPENADS), true);
 							CheckDlgButton(hwnd, IDC_ADSLIST, BST_CHECKED);
 						}
-						else if (s.find(_T("http://list.iblocklist.com/?list=bt_edu")) != tstring::npos)
+						else if (s.find(_T("http://list.iblocklist.com/lists/bluetack/edu")) != tstring::npos)
 						{
-							AddToDefLists(_T("http://list.iblocklist.com/?list=bt_edu"), _T("Default Edu List"), List::Block);
+							AddToDefLists(_T("http://list.iblocklist.com/lists/bluetack/edu"), _T("Default Edu List"), List::Block);
 							EnableWindow(GetDlgItem(hwnd, IDC_OPENEDU), true);
 							CheckDlgButton(hwnd, IDC_EDULIST, BST_CHECKED);
 						}
@@ -836,28 +836,28 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_deflists.clear();
 	for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++)
 	{
-		if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_level1")) != tstring::npos)
+		if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/lists/bluetack/level-1")) != tstring::npos)
 		{
 			TRACED("[listsproc] [Lists_OnInitDialog]    found bt_level1 list");
 			CheckDlgButton(hwnd, IDC_P2PLIST, BST_CHECKED);
 			EnableWindow(GetDlgItem(hwnd, IDC_OPENP2P), true);
 			g_deflists.push_back(g_config.DynamicLists[i]);
 		}
-		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_spyware")) != tstring::npos)
+		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/lists/bluetack/spyware")) != tstring::npos)
 		{
 			TRACED("[listsproc] [Lists_OnInitDialog]    found spy list");
 			CheckDlgButton(hwnd, IDC_SPYLIST, BST_CHECKED);
 			EnableWindow(GetDlgItem(hwnd, IDC_OPENSPY), true);
 			g_deflists.push_back(g_config.DynamicLists[i]);
 		}
-		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_ads")) != tstring::npos)
+		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n")) != tstring::npos)
 		{
 			TRACED("[listsproc] [Lists_OnInitDialog]    found ads list");
 			CheckDlgButton(hwnd, IDC_ADSLIST, BST_CHECKED);
 			EnableWindow(GetDlgItem(hwnd, IDC_OPENADS), true);
 			g_deflists.push_back(g_config.DynamicLists[i]);
 		}
-		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/?list=bt_edu")) != tstring::npos)
+		else if (g_config.DynamicLists[i].Url.find(_T("http://list.iblocklist.com/lists/bluetack/edu")) != tstring::npos)
 		{
 			TRACED("[listsproc] [Lists_OnInitDialog]    found edu list");
 			CheckDlgButton(hwnd, IDC_EDULIST, BST_CHECKED);
