@@ -321,10 +321,12 @@ static NTSTATUS NTAPI NullNotify(FWPS_CALLOUT_NOTIFY_TYPE notifyType, const GUID
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS InstallCallouts(PDEVICE_OBJECT device) {
+static NTSTATUS InstallCallouts(PDEVICE_OBJECT device) 
+{
 	FWPS_CALLOUT0 c = {0};
 	NTSTATUS ret;
 
+	DbgPrint("pbfilter:  > Entering InstallCallouts()\n");
 	c.notifyFn = NullNotify;
 
 	// IPv4 connect filter.
@@ -367,34 +369,47 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device) {
 
 	DbgPrint("Installed V6 accept callout: %d\n", ret);
 
+	DbgPrint("pbfilter:  < Leaving InstallCallouts()\n");
 	return ret;
 }
 
 
 
-static NTSTATUS Driver_OnCreate(PDEVICE_OBJECT device, PIRP irp) {
+static NTSTATUS Driver_OnCreate(PDEVICE_OBJECT device, PIRP irp) 
+{
+	DbgPrint("pbfilter:  > Entering Driver_OnCreate()\n");
 	irp->IoStatus.Status = STATUS_SUCCESS;
 	irp->IoStatus.Information = 0;
 
+	DbgPrint("pbfilter:    completing IRP\n");
 	IoCompleteRequest(irp, IO_NO_INCREMENT);
+	DbgPrint("pbfilter:  < Leaving Driver_OnCreate()\n");
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS Driver_OnCleanup(PDEVICE_OBJECT device, PIRP irp) {
+static NTSTATUS Driver_OnCleanup(PDEVICE_OBJECT device, PIRP irp) 
+{
+	DbgPrint("pbfilter:  > Entering Driver_OnCleanup()\n");
+
+	DbgPrint("pbfilter:    resetting internal block/allow lists\n");
 	g_internal->block = 0;
 	SetRanges(NULL, 0);
 	SetRanges(NULL, 1);
 
+	DbgPrint("pbfilter:    removing notificationqueue\n");
 	DestroyNotificationQueue(&g_internal->queue);
 
+	DbgPrint("pbfilter:    completing IRP\n");
 	irp->IoStatus.Status = STATUS_SUCCESS;
 	irp->IoStatus.Information = 0;
-
 	IoCompleteRequest(irp, IO_NO_INCREMENT);
+
+	DbgPrint("pbfilter:  < Leaving Driver_OnCleanup()\n");
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp) {
+static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp) 
+{
 	PIO_STACK_LOCATION irpstack;
 	ULONG controlcode;
 	NTSTATUS status;
@@ -405,37 +420,60 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp) {
 	irpstack = IoGetCurrentIrpStackLocation(irp);
 	controlcode = irpstack->Parameters.DeviceIoControl.IoControlCode;
 
-	switch(controlcode) {
+	switch(controlcode) 
+	{
 		case IOCTL_PEERBLOCK_HOOK:
-			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) {
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HOOK\n");
+			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) 
+			{
+				DbgPrint("pbfilter:    setting block\n");
 				g_internal->block = *(int*)irp->AssociatedIrp.SystemBuffer;
 			}
-			else {
+			else 
+			{
+				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
 			break;
+
 		case IOCTL_PEERBLOCK_HTTP:
-			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) {
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HTTP\n");
+			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) 
+			{
+				DbgPrint("pbfilter:    setting blockhttp\n");
 				g_internal->blockhttp = *(int*)irp->AssociatedIrp.SystemBuffer;
 			}
-			else  {
+			else  
+			{
+				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HTTP\n");
 			break;
-		case IOCTL_PEERBLOCK_SETRANGES: {
+
+		case IOCTL_PEERBLOCK_SETRANGES: 
+		{
 			PBRANGES *ranges;
 			ULONG inputlen;
 
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_SETRANGES\n");
 			ranges = irp->AssociatedIrp.SystemBuffer;
 			inputlen = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) {
+			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) 
+			{
+				DbgPrint("pbfilter:    setting ranges\n");
 				SetRanges(ranges, ranges->block);
 			}
-			else {
+			else 
+			{
+				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_SETRANGES\n");
 		} break;
+
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
 		default:
@@ -448,9 +486,14 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp) {
 	return status;
 }
 
-static void Driver_OnUnload(PDRIVER_OBJECT driver) {
+static void Driver_OnUnload(PDRIVER_OBJECT driver) 
+{
 	UNICODE_STRING devlink;
 	NTSTATUS status;
+
+	DbgPrint("pbfilter:  > Entering Driver_OnUnload()\n");
+
+	DbgPrint("pbfilter:    unregistering callouts\n");
 
 	if(g_internal->connect4) {
 		status = FwpsCalloutUnregisterById0(g_internal->connect4);
@@ -471,35 +514,46 @@ static void Driver_OnUnload(PDRIVER_OBJECT driver) {
 		status = FwpsCalloutUnregisterById0(g_internal->accept6);
 		DbgPrint("Unregistered V6 accept: %d\n", status);
 	}
-	
+
+	DbgPrint("pbfilter:    deleting devobj\n");
+
 	RtlInitUnicodeString(&devlink, DOS_DEVICE_NAME);
 	IoDeleteSymbolicLink(&devlink);
-
 	IoDeleteDevice(driver->DeviceObject);
+
+	DbgPrint("pbfilter:  < Leaving Driver_OnUnload()\n");
 }
 
-NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) {
+NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) 
+{
 	UNICODE_STRING devicename;
 	PDEVICE_OBJECT device = NULL;
 	NTSTATUS status;
 
 	//DbgBreakPoint();
 
+	DbgPrint("pbfilter:  > Entering DriverEntry()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_WARNING_LEVEL, "pbfilter:  > Entering DriverEntry()\n");
 	RtlInitUnicodeString(&devicename, NT_DEVICE_NAME);
 
 	status = IoCreateDevice(driver, sizeof(PBINTERNAL), &devicename, FILE_DEVICE_PEERBLOCK, 0, FALSE, &device);
 
-	if(NT_SUCCESS(status)) {
+	if(NT_SUCCESS(status)) 
+	{
 		UNICODE_STRING devicelink;
 
+		DbgPrint("pbfilter:    created driver\n");
 		RtlInitUnicodeString(&devicelink, DOS_DEVICE_NAME);
 		status=IoCreateSymbolicLink(&devicelink, &devicename);
 
+		DbgPrint("pbfilter:    setting up functions\n");
 		driver->MajorFunction[IRP_MJ_CREATE] =
 		driver->MajorFunction[IRP_MJ_CLOSE] = Driver_OnCreate;
 		driver->MajorFunction[IRP_MJ_CLEANUP] = Driver_OnCleanup;
 		driver->MajorFunction[IRP_MJ_DEVICE_CONTROL] = Driver_OnDeviceControl;
 		driver->DriverUnload = Driver_OnUnload;
+
+		DbgPrint("pbfilter:    initializing internal data\n");
 
 		device->Flags |= DO_BUFFERED_IO;
 
@@ -519,12 +573,17 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) {
 		g_internal->connect6 = 0;
 		g_internal->accept6 = 0;
 
+		DbgPrint("pbfilter:    installing callouts...\n");
 		status = InstallCallouts(device);
+		DbgPrint("pbfilter:    ...callouts installed\n");
 	}
 
-	if(!NT_SUCCESS(status)) {
+	if(!NT_SUCCESS(status)) 
+	{
+		DbgPrint("pbfilter:  * ERROR encountered - unloading driver\n");
 		Driver_OnUnload(driver);
 	}
 
+	DbgPrint("pbfilter:  < Leaving DriverEntry()\n");
 	return status;
 }
