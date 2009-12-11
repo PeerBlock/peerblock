@@ -45,12 +45,14 @@ static void setfilter(PacketFilterExtensionPtr fn)
 	RtlInitUnicodeString(&name, DD_IPFLTRDRVR_DEVICE_NAME);
 	status=IoGetDeviceObjectPointer(&name, STANDARD_RIGHTS_ALL, &file, &device);
 
-	if(NT_SUCCESS(status)) {
+	if(NT_SUCCESS(status)) 
+	{
 		KEVENT event;
 		IO_STATUS_BLOCK iostatus;
 		PF_SET_EXTENSION_HOOK_INFO hookinfo;
 		PIRP irp;
 
+		DbgPrint("pbfilter:    got devobj\n");
 		hookinfo.ExtensionPointer=fn;
 		KeInitializeEvent(&event, NotificationEvent, FALSE);
 
@@ -58,15 +60,32 @@ static void setfilter(PacketFilterExtensionPtr fn)
 			IOCTL_PF_SET_EXTENSION_POINTER, device, &hookinfo,
 			sizeof(PF_SET_EXTENSION_HOOK_INFO), NULL, 0, FALSE, &event, &iostatus);
 
+		DbgPrint("pbfilter:    calling into driver\n");
 		if(irp && IoCallDriver(device, irp)==STATUS_PENDING)
+		{
+			DbgPrint("pbfilter:    waiting for IRP to complete\n");
 			KeWaitForSingleObject(&event, Executive, KernelMode, FALSE, NULL);
+		}
+		else
+		{
+			DbgPrint("pbfilter:    IRP not pending (or no IRP?)\n");
+		}
 
-		if(file) ObDereferenceObject(file);
+		if(file) 
+		{
+			DbgPrint("pbfilter:    Dereferencing file\n");
+			ObDereferenceObject(file);
+		}
+		else
+		{
+			DbgPrint("pbfilter:    no file to dereference\n");
+		}
 	}
 	DbgPrint("pbfilter:  < Leaving setfilter()\n");
 }
 
-static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet, unsigned int len, unsigned int recvindex, unsigned int sendindex, IPAddr nextrecvhop, IPAddr nextsendhop) {
+static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet, unsigned int len, unsigned int recvindex, unsigned int sendindex, IPAddr nextrecvhop, IPAddr nextsendhop) 
+{
 	PBNOTIFICATION pbn={0};
 	const IP_HEADER *iph=(IP_HEADER*)header;
 	const PBIPRANGE *range=NULL;
@@ -174,7 +193,8 @@ static NTSTATUS drv_cleanup(PDEVICE_OBJECT device, PIRP irp)
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp) {
+static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp) 
+{
 	PIO_STACK_LOCATION irpstack;
 	ULONG controlcode;
 	NTSTATUS status;
@@ -185,37 +205,67 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp) {
 	irpstack=IoGetCurrentIrpStackLocation(irp);
 	controlcode=irpstack->Parameters.DeviceIoControl.IoControlCode;
 
-	switch(controlcode) {
+	switch(controlcode) 
+	{
 		case IOCTL_PEERBLOCK_HOOK:
-			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) {
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HOOK");
+			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) 
+			{
 				int *hook=(int*)irp->AssociatedIrp.SystemBuffer;
+				DbgPrint("pbfilter:    setting filter...");
 				setfilter((*hook)?filter_cb:NULL);
+				DbgPrint("pbfilter:    ...filter set");
 			}
-			else irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
+			else 
+			{
+				DbgPrint("pbfilter:  * ERROR: invalid parameter");
+				irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
+			}
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK");
 			break;
+
 		case IOCTL_PEERBLOCK_HTTP:
-			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) {
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HTTP");
+			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) 
+			{
+				DbgPrint("pbfilter:    setting blockhttp");
 				g_internal->blockhttp=*((int*)irp->AssociatedIrp.SystemBuffer);
 			}
-			else irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
+			else 
+			{
+				DbgPrint("pbfilter:  * ERROR: invalid parameter");
+				irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
+			}
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HTTP");
 			break;
-		case IOCTL_PEERBLOCK_SETRANGES: {
+
+		case IOCTL_PEERBLOCK_SETRANGES: 
+		{
 			PBRANGES *ranges;
 			ULONG inputlen;
 
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_SETRANGES");
 			ranges = irp->AssociatedIrp.SystemBuffer;
 			inputlen = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) {
+			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) 
+			{
+				DbgPrint("pbfilter:    calling SetRanges()");
 				SetRanges(ranges, ranges->block);
 			}
-			else {
+			else 
+			{
+				DbgPrint("pbfilter:  * Error: STATUS_INVALID_PARAMETER");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_SETRANGES");
 		} break;
+
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
+
 		default:
+			DbgPrint("pbfilter:  * ERROR: invalid parameter for IOCTL!");
 			irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 	}
 

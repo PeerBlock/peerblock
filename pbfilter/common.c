@@ -37,33 +37,48 @@ const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip) {
 	return (iter >= ranges && iter->start <= ip && ip <= iter->end) ? iter : NULL;
 }
 
-void SetRanges(const PBRANGES *ranges, int block) {
+void SetRanges(const PBRANGES *ranges, int block) 
+{
 	PBIPRANGE *nranges, *oldranges;
 	ULONG ncount, labelsid;
 	KIRQL irq;
 
-	if(ranges && ranges->count > 0) {
+	DbgPrint("pbfilter:  > SetRanges");
+	if(ranges && ranges->count > 0) 
+	{
+		DbgPrint("pbfilter:    found some ranges");
 		ncount = ranges->count;
 		labelsid = ranges->labelsid;
+		DbgPrint("pbfilter:    allocating memory from nonpaged pool");
 		nranges = ExAllocatePoolWithTag(NonPagedPool, ranges->count * sizeof(PBIPRANGE), '02GP');
+		DbgPrint("pbfilter:    copying ranges into driver");
 		RtlCopyMemory(nranges, ranges->ranges, ranges->count * sizeof(PBIPRANGE));
+		DbgPrint("pbfilter:    done setting up new ranges");
 	}
-	else {
+	else 
+	{
+		DbgPrint("pbfilter:    no ranges specified");
 		ncount = 0;
 		labelsid = 0xFFFFFFFF;
 		nranges = NULL;
 	}
 
+	DbgPrint("pbfilter:    acquiring rangeslock...");
 	KeAcquireSpinLock(&g_internal->rangeslock, &irq);
+	DbgPrint("pbfilter:    ...rangeslock acquired");
 
-	if(block) {
+	if(block) 
+	{
+		DbgPrint("pbfilter:    block list");
 		oldranges = g_internal->blockedcount ? g_internal->blockedranges : NULL;
 
 		g_internal->blockedcount = ncount;
 		g_internal->blockedranges = nranges;
 		g_internal->blockedlabelsid = labelsid;
 	}
-	else {
+	else 
+	{
+		DbgPrint("pbfilter:    allow list");
 		oldranges = g_internal->allowedcount ? g_internal->allowedranges : NULL;
 
 		g_internal->allowedcount = ncount;
@@ -71,9 +86,13 @@ void SetRanges(const PBRANGES *ranges, int block) {
 		g_internal->allowedlabelsid = labelsid;
 	}
 
+	DbgPrint("pbfilter:    releasing rangeslock...");
 	KeReleaseSpinLock(&g_internal->rangeslock, irq);
+	DbgPrint("pbfilter:    ...rangeslock released");
 
 	if(oldranges) {
+		DbgPrint("pbfilter:    freeing oldranges");
 		ExFreePoolWithTag(oldranges, '02GP');
 	}
+	DbgPrint("pbfilter:  < SetRanges");
 }
