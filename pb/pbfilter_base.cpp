@@ -231,6 +231,33 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 
 
 
+void pbfilter_base::setports(const std::set<ULONG> ports)
+{
+	ULONG *nports = (ULONG*) malloc(sizeof(ULONG) * ports.size());
+	ULONG pcount = 0;
+
+	TRACEI("[pbfilter_base] [setports]  > Entering routine.");
+	for (set<ULONG>::const_iterator it = ports.begin(); it != ports.end(); it++)
+	{
+		nports[pcount++] = *it;
+		TRACEI("[pbfilter_base] [setports]    ...iter...");
+	}
+
+	TRACEI("[pbfilter_base] [setports]    finished parsing ports");
+	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETPORTS, nports, (sizeof(ULONG) * ports.size()));
+
+	if (ret != ERROR_SUCCESS)
+	{
+		TRACEERR("[pbfilter_base] [setports]", L"Problems talking to driver", ret);
+		throw win32_error("DeviceIoControl", ret);
+	}
+
+	TRACEI("[pbfilter_base] [setports]  < Leaving Routine.");
+
+} // End of setports()
+
+
+
 void pbfilter_base::setactionfunc(const action_function &func) 
 {
 	TRACEV("[pbfilter_base] [setactionfunc]  > Entering routine.");

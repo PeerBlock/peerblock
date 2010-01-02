@@ -263,7 +263,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ntoskrnl.lib hal.lib $(NOINHERIT)"
+				AdditionalDependencies="ntoskrnl.lib hal.lib libcntpr.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).sys"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(PB_DDK_DIR)\lib\w2k\i386;$(NOINHERIT)"
@@ -362,7 +362,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ntoskrnl.lib hal.lib $(NOINHERIT)"
+				AdditionalDependencies="ntoskrnl.lib hal.lib libcntpr.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).sys"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wnet\amd64;$(NOINHERIT)"

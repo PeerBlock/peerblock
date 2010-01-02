@@ -34,8 +34,8 @@ Configuration::Configuration() :
 	LogSize(12), LastUpdate(0), LastArchived(0), CleanupInterval(2), LogAllowed(true), LogBlocked(true),
 	ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
-	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), HideOnClose(true),
-	AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
+	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
+	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
 	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(0) {
@@ -481,6 +481,7 @@ bool Configuration::Load()
 		GetChild(windowing, "ListManager", this->ListManagerWindowPos);
 		GetChild(windowing, "ListEditor", this->ListEditorWindowPos);
 		GetChild(windowing, "History", this->HistoryWindowPos);
+		GetChild(windowing, "PortEditor", this->PortSetWindowPos);
 		
 		GetChild(windowing, "StartMinimized", this->StartMinimized);
 		GetChild(windowing, "ShowSplash", this->ShowSplash);
@@ -592,32 +593,39 @@ bool Configuration::Load()
 		GetChild(messages, "FirstHide", this->FirstHide);
 	}
 
-	//night_stalker_z: read ports to allow/block
 	TRACEI("[Configuration] [Load]    parsing config ports element");
-	if (const TiXmlElement *ports = root->FirstChildElement("Ports")) {
-		string port;
+	if (const TiXmlElement *portset = root->FirstChildElement("PortSet")) {
+		GetChild(portset, "AllowHttp", this->PortSet.AllowHttp);
+		GetChild(portset, "AllowFtp", this->PortSet.AllowFtp);
+		GetChild(portset, "AllowSmtp", this->PortSet.AllowSmtp);
+		GetChild(portset, "AllowPop3", this->PortSet.AllowPop3);
 
-		if (const TiXmlElement *allowed = ports->FirstChildElement("Allowed")) {
-			for (const TiXmlElement *po = allowed->FirstChildElement("Port"); po != NULL; po = po->NextSiblingElement("Port")) {
-				GetChild(po, "Port", port);
+		if (const TiXmlElement *profiles = portset->FirstChildElement("Profiles")) {
+			for (const TiXmlElement *profile = profiles->FirstChildElement("Profile"); profile != NULL; profile = profile->NextSiblingElement("Profile")) {
+				PortProfile pf;
+				GetChild(profile, "Name", pf.Name);
+				GetChild(profile, "Enabled", pf.Enabled);
 
-				if (port.length() > 0)
-				{
-					try {
-						int p = boost::lexical_cast<int>(port);
-						this->Ports.Allowed.push_back(p);
-					}
-					catch (...) {
+				if (const TiXmlElement *ports = profile->FirstChildElement("Ports")) {
+					for (const TiXmlElement *port = ports->FirstChildElement("Port"); port != NULL; port = port->NextSiblingElement("Port")) {
+						const char *txtport = port->GetText();
+
+						if (txtport) {
+							try {
+								int p = boost::lexical_cast<int>(txtport);
+
+								if (p > 0)
+									pf.Ports.insert((ULONG) p);
+							}
+							catch (...) {
+							}
+						}
 					}
 				}
+
+				this->PortSet.Profiles.push_back(pf);
 			}
 		}
-
-
-		/*
-		for (const TiXmlElement *blocked = ports->FirstChildElement("Blocked"); blocked != NULL; blocked = blocked->NextSiblingElement("Port")) {
-		}
-		*/
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config lists element");
@@ -767,6 +775,9 @@ void Configuration::Save() {
 		if(RectValid(this->HistoryWindowPos))
 			InsertChild(windowing, "History", this->HistoryWindowPos);
 
+		if(RectValid(this->PortSetWindowPos))
+			InsertChild(windowing, "PortEditor", this->PortSetWindowPos);
+
 		InsertChild(windowing, "StartMinimized", this->StartMinimized);
 		InsertChild(windowing, "ShowSplash", this->ShowSplash);
 		InsertChild(windowing, "StayHidden", this->StayHidden);
@@ -859,17 +870,26 @@ void Configuration::Save() {
 	}
 
 	{
-		//night_stalker_z: write allowed/blocked ports
-		TiXmlElement *ports = InsertChild(root, "Ports");
+		TiXmlElement *portset = InsertChild(root, "PortSet");
 
-		TiXmlElement *allowed = InsertChild(ports, "Allowed");
+		InsertChild(portset, "AllowHttp", this->PortSet.AllowHttp);
+		InsertChild(portset, "AllowFtp", this->PortSet.AllowFtp);
+		InsertChild(portset, "AllowSmtp", this->PortSet.AllowSmtp);
+		InsertChild(portset, "AllowPop3", this->PortSet.AllowPop3);
 
-		//for (vector<PortList>::size_type i = 0; i < 10; i++) {//this->Ports.Allowed.size(); i++) {
-		//	InsertChild(allowed, "Port", i * 10);
-		//}
+		TiXmlElement *profiles = InsertChild(portset, "Profiles");
+		for (vector<PortProfile>::const_iterator pfit = this->PortSet.Profiles.begin(); pfit != this->PortSet.Profiles.end(); pfit++) {
+			TiXmlElement *profile = InsertChild(profiles, "Profile");
 
-		for (vector<int>::size_type i = 0; i < this->Ports.Allowed.size(); i++)  {
-			InsertChild(allowed, "Port", this->Ports.Allowed[i]);
+			PortProfile pf = (PortProfile) *pfit;
+
+			InsertChild(profile, "Name", pf.Name);
+			InsertChild(profile, "Enabled", pf.Enabled);
+
+			TiXmlElement *ports = InsertChild(profile, "Ports");
+			for (set<ULONG>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
+				InsertChild(ports, "Port", (int) *pit);
+			}
 		}
 	}
 

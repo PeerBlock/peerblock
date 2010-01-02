@@ -84,6 +84,11 @@ void SetBlockHttp(bool block)
 	g_config.BlockHttp=block;
 	g_filter->setblockhttp(block);
 
+	g_config.PortSet.AllowHttp = !block;
+	g_config.PortSet.Merge();
+
+	g_filter->setports(g_config.PortSet.Ports);
+
 	if (g_config.Block)
 	{
 		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
@@ -567,6 +572,11 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		allow.optimize(true);
 		g_filter->setranges(allow, false);
 	}
+
+	//TODO: clean up ports
+	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
+	g_config.PortSet.Merge();
+	g_filter->setports(g_config.PortSet.Ports);
 
 	return FALSE;
 }

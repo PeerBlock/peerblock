@@ -166,6 +166,10 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 						}
 						else g_config.NotifyOnBlock=Never;
 						break;
+					case IDC_EDITPORTS:
+						TRACEI("[settingsproc] [SettingsFirst_DlgProc]    user clicked 'Edit Ports' button");
+						INT_PTR ret	= DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_EDITPORTS), hwnd, EditPorts_DlgProc);
+						break;
 				}
 				break;
 			case WM_INITDIALOG: {

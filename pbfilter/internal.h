@@ -107,6 +107,11 @@ typedef struct __pb_internal {
 	PBIPRANGE *allowedranges;
 	ULONG allowedcount, allowedlabelsid;
 
+	KSPIN_LOCK portslock;
+
+	ULONG *ports;
+	ULONG portcount;
+
 	int block;
 	int blockhttp;
 	
@@ -120,3 +125,5 @@ extern PBINTERNAL *g_internal;
 
 const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip);
 void SetRanges(const PBRANGES *ranges, int block);
+void SetPorts(const ULONG *ports, ULONG count);
+int PortAllowed(ULONG port);  // 0 = blocked, 1 = allowed

@@ -340,6 +340,17 @@
 #define IDC_OPENEDU						1193
 #define IDC_MAXHISTORYSIZE              1194
 #define IDC_MAXHISTORYSIZESPIN          1195
+#define IDD_EDITPORTS                   1196
+#define IDD_PORTPROFILE                 1197
+#define IDC_EDITPORTS                   1198
+#define IDC_ADDPORTPROFILE              1199
+#define IDC_PORTS                       1200
+#define IDC_HTTPPORT                    1201
+#define IDC_FTPPORT                     1202
+#define IDC_SMTPPORT                    1203
+#define IDC_POP3PORT                    1204
+#define IDC_PORTNAME                    1205
+#define IDC_PORTPORTS                   1206
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002

@@ -154,3 +154,5 @@ extern "C" {
 #include "updatelists.h"
 #include "startupwizard.h"
 #include "colorpicker.h"
+#include "editportsproc.h"
+#include "portprofileproc.h"

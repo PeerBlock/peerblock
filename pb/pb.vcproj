@@ -787,6 +787,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\editportsproc.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\exceptionfilter.cpp"
 				>
 			</File>
@@ -987,6 +991,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\portprofileproc.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\preseturls.cpp"
 				>
 			</File>
@@ -1121,6 +1129,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\editportsproc.h"
+				>
+			</File>
+			<File
 				RelativePath=".\exceptionfilter.h"
 				>
 			</File>
@@ -1194,6 +1206,10 @@
 			</File>
 			<File
 				RelativePath=".\pbfilter_wfp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\portprofileproc.h"
 				>
 			</File>
 			<File

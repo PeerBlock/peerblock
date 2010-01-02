@@ -84,17 +84,62 @@ struct DynamicList : List {
 	}
 };
 
-
-// contains allowed/blocked ports
-struct PortList {
-	std::vector<int> Allowed;
-	std::vector<int> Blocked;
-};
-
 struct Color { COLORREF Text, Background; };
 
 enum NotifyType { Never, OnBlock, OnHttpBlock };
 enum CleanType { None, Delete, ArchiveDelete };
+
+struct PortProfile 
+{
+	tstring Name;	// name of profile
+	bool Enabled;	// true to use this profile
+	std::set<ULONG> Ports;	// ports in profile
+};
+
+struct PortSet 
+{
+	// allow common protocols
+	bool AllowHttp;    // 80, 443
+	bool AllowFtp;     // 21
+	bool AllowSmtp;    // 25
+	bool AllowPop3;    // 110
+
+	// all ports combined
+	std::set<ULONG> Ports;	// will use all profiles marked as enabled
+
+	std::vector<PortProfile> Profiles;	// list of profiles
+
+	// merges all the enabled profiles
+	void Merge() 
+	{
+		Ports.clear();
+
+		{
+			if (AllowHttp) {
+				Ports.insert(80);
+				Ports.insert(443);
+			}
+			if (AllowFtp)
+				Ports.insert(21);
+			if (AllowFtp)
+				Ports.insert(25);
+			if (AllowFtp)
+				Ports.insert(110);
+		}
+
+		for (vector<PortProfile>::const_iterator iter = Profiles.begin(); iter != Profiles.end(); iter++) {
+			PortProfile pp = (PortProfile) *iter;
+
+			if (pp.Enabled) {
+				for (set<ULONG>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
+					Ports.insert((ULONG) *iter2);
+				}
+			}
+		}
+
+	} // End of PortSet::Merge()
+
+}; // End of PortSet struct
 
 struct Configuration {
 	path ArchivePath;
@@ -105,7 +150,7 @@ struct Configuration {
 	int UpdateColumns[3];
 	std::vector<StaticList> StaticLists;
 	std::vector<DynamicList> DynamicLists;
-	PortList Ports;
+	PortSet PortSet;
 	bool ColorCode;
 	Color BlockedColor, AllowedColor, HttpColor;
 	time_t LastUpdate, LastArchived;
@@ -129,7 +174,7 @@ struct Configuration {
 	int TracelogLevel;
 	int LastVersionRun;
 
-	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos;
+	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos, PortSetWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
 
 	Configuration();

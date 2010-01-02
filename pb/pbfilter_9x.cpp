@@ -55,7 +55,7 @@ void pbfilter::thread_func() {
 
 			for(DWORD i = 0; m_runthread && i < table->dwNumEntries; ++i) {
 				unsigned short remoteport = (unsigned short)ntohs((unsigned short)table->table[i].dwRemotePort);
-				if(!m_blockhttp && (remoteport == 80 || remoteport == 443)) continue;
+				if(!m_blockhttp && PortAllowed(remoteport)) continue;
 
 				unsigned int remote = ntohl(table->table[i].dwRemoteAddr);
 

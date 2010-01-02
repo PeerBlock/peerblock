@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
 	This software is provided 'as-is', without any express or implied
@@ -99,7 +100,7 @@ static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAdd
 static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, ULONG localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, ULONG remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if(protocol == IPPROTO_TCP && (remotePort == 80 || remotePort == 443) && !g_internal->blockhttp) {
+	if(protocol == IPPROTO_TCP && PortAllowed(remotePort) && !g_internal->blockhttp) {
 		pbn.action = 2;
 	}
 	else {
@@ -476,6 +477,21 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
+
+		case IOCTL_PEERBLOCK_SETPORTS: 
+		{
+			ULONG *ports;
+			ULONG count;
+
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETPORTS\n");
+			ports = irp->AssociatedIrp.SystemBuffer;
+			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+
+			SetPorts(ports, count / sizeof(ULONG));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETPORTS\n");
+
+		} break;
+
 		default:
 			irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 	}
@@ -560,10 +576,13 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		g_internal = device->DeviceExtension;
 
 		KeInitializeSpinLock(&g_internal->rangeslock);
+		KeInitializeSpinLock(&g_internal->portslock);
 		InitNotificationQueue(&g_internal->queue);
 
 		g_internal->blockedcount = 0;
 		g_internal->allowedcount = 0;
+
+		g_internal->portcount = 0;
 
 		g_internal->block = 0;
 		g_internal->blockhttp = 1;
