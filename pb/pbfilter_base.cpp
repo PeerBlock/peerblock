@@ -244,7 +244,7 @@ void pbfilter_base::setports(const std::set<ULONG> ports)
 	}
 
 	TRACEI("[pbfilter_base] [setports]    finished parsing ports");
-	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETPORTS, nports, (sizeof(ULONG) * ports.size()));
+	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETPORTS, nports, (DWORD)(sizeof(ULONG) * ports.size()));
 
 	if (ret != ERROR_SUCCESS)
 	{

@@ -6,6 +6,8 @@
 #include <ntddk.h>
 #include "internal.h"
 
+#include <stdlib.h>
+
 PBINTERNAL *g_internal;
 
 const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip) {
@@ -95,4 +97,41 @@ void SetRanges(const PBRANGES *ranges, int block)
 		ExFreePoolWithTag(oldranges, '02GP');
 	}
 	DbgPrint("pbfilter:  < SetRanges");
+}
+
+void SetPorts(const ULONG *ports, ULONG count) 
+{
+	ULONG *oldports = NULL;
+	ULONG *nports;
+	KIRQL irq;
+
+	if (ports && count > 0) {
+		oldports = g_internal->ports;
+
+		nports = (ULONG*) ExAllocatePoolWithTag(PagedPool, sizeof(ULONG) * count, 'tPBP');
+		RtlCopyMemory(nports, ports, sizeof(ULONG) * count);
+	}
+	else {
+		nports = NULL;
+		g_internal->portcount = 0;
+	}
+
+	KeAcquireSpinLock(&g_internal->portslock, &irq);
+
+	g_internal->ports = nports;
+	g_internal->portcount = count;
+
+	KeReleaseSpinLock(&g_internal->portslock, irq);
+
+	if (oldports) {
+		ExFreePoolWithTag(oldports, 'tPBP');
+	}
+}
+
+int __cdecl CompareULong(const void * a, const void * b) {
+	return ( *(ULONG*)a - *(ULONG*)b );
+}
+
+int PortAllowed(ULONG port) {
+	return (int) bsearch(&port, g_internal->ports, g_internal->portcount, sizeof(ULONG), CompareULong);
 }
