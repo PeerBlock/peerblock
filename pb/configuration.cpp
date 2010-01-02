@@ -282,44 +282,6 @@ static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, CleanType 
 	return InsertChild(root, node, v);
 }
 
-class UpgradeUrlPred {
-private:
-	vector<DynamicList> &newlists;
-
-public:
-	UpgradeUrlPred(vector<DynamicList> &nl) : newlists(nl) {}
-
-	bool operator()(DynamicList &l) const {
-		if(l.Url.find(_T("http://blocklist.org/p2b.php?cats="))!=tstring::npos) {
-			set<tstring> cats;
-			boost::split(cats, l.Url.substr(34), bind1st(equal_to<TCHAR>(), _T(',')));
-
-			for(set<tstring>::const_iterator iter=cats.begin(); iter!=cats.end(); iter++) {
-				DynamicList nl;
-				nl.Description=*iter;
-				nl.Type=l.Type;
-				nl.Url=_T("http://peerguardian.sourceforge.net/lists/")+(*iter)+_T(".php");
-				nl.Enabled=l.Enabled;
-
-				this->newlists.push_back(nl);
-			}
-
-			return true;
-		}
-		else if(l.Url.find(_T("http://blocklist.org"))!=tstring::npos) {
-			boost::replace_first(l.Url, _T("http://blocklist.org"), _T("http://peerguardian.sourceforge.net/lists"));
-			boost::replace_last(l.Url, _T(".p2b.gz"), _T(".php"));
-		}
-		else if(l.Url.find(_T("http://lists.blocklist.org"))!=tstring::npos) {
-			boost::replace_first(l.Url, _T("http://lists.blocklist.org"), _T("http://peerguardian.sourceforge.net/lists"));
-			boost::replace_last(l.Url, _T(".p2b.gz"), _T(".php"));
-			boost::replace_last(l.Url, _T(".7z"), _T(".php"));
-		}
-
-		return false;
-	}
-};
-
 
 
 //================================================================================================
@@ -675,12 +637,6 @@ bool Configuration::Load()
 			}	
 		}
 	}
-
-	vector<DynamicList> nl;
-	vector<DynamicList>::iterator new_end=remove_if(this->DynamicLists.begin(), this->DynamicLists.end(), UpgradeUrlPred(nl));
-
-	this->DynamicLists.erase(new_end, this->DynamicLists.end());
-	this->DynamicLists.insert(this->DynamicLists.end(), nl.begin(), nl.end());
 
 	TRACEI("[Configuration] [Load]  < Leaving routine.");
 	return true;

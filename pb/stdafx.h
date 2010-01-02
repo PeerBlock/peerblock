@@ -121,8 +121,6 @@ extern "C" {
 #else
 #include "pbfilter_nt.h"
 #endif
-#else
-#include "pbfilter_9x.h"
 #endif
 
 #include "loadstring.h"

@@ -33,8 +33,6 @@
 #else
 #include "pbfilter_nt.h"
 #endif
-#else
-#include "pbfilter_9x.h"
 #endif
 
 #define WM_LOG_HOOK		(WM_APP+1)

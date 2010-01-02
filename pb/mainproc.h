@@ -30,8 +30,6 @@
 #else
 #include "pbfilter_nt.h"
 #endif
-#else
-#include "pbfilter_9x.h"
 #endif
 
 #define WM_MAIN_VISIBLE	(WM_APP+1)
