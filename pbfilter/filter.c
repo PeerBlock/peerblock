@@ -96,6 +96,7 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 	int opening=1;
 	int http = 0;
 
+	// TCP = 6, UDP = 17 (http://www.iana.org/assignments/protocol-numbers/)
 	if(iph->ipProtocol==6 || iph->ipProtocol==17) {
 		const TCP_HEADER *tcp=(TCP_HEADER*)packet;
 		srcport=NTOHS(tcp->sourcePort);
