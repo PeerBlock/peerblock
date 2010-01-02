@@ -105,7 +105,7 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 		if(iph->ipProtocol==6) {
 			opening=(tcp->ack==0);
 
-			if(!g_internal->blockhttp && (srcport==80 || srcport==443 || destport==80 || destport==443)) {
+			if(!g_internal->blockhttp &&  (PortAllowed(srcport) || PortAllowed(destport))) {
 				http = 1;
 			}
 		}
@@ -265,6 +265,20 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
 
+		case IOCTL_PEERBLOCK_SETPORTS: 
+		{
+			ULONG *ports;
+			ULONG count;
+
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETPORTS\n");
+			ports = irp->AssociatedIrp.SystemBuffer;
+			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+
+			SetPorts(ports, count / sizeof(ULONG));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETPORTS\n");
+
+		} break;
+
 		default:
 			DbgPrint("pbfilter:  * ERROR: invalid parameter for IOCTL!");
 			irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
@@ -325,13 +339,15 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 		DbgPrint("pbfilter:    ... initializing lock and queue\n");
 		KeInitializeSpinLock(&g_internal->rangeslock);
+		KeInitializeSpinLock(&g_internal->portslock);
 		InitNotificationQueue(&g_internal->queue);
 
 		DbgPrint("pbfilter:    ... resetting counters\n");
 		g_internal->blockedcount = 0;
 		g_internal->allowedcount = 0;
-
+		g_internal->portcount = 0;
 		g_internal->blockhttp=1;
+
 		DbgPrint("pbfilter:    internal data initted\n");
 	}
 
