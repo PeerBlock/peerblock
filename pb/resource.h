@@ -197,6 +197,8 @@
 #define IDS_DNLISTFAILEDVERIFY          246
 #define IDS_PGALREADYRUNNING			247
 #define IDS_PGALREADYRUNNINGTEXT		248
+#define IDS_PREVREL						249
+#define IDS_PREVREL237TEXT				250
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003

@@ -23,6 +23,8 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "tracelog.h"
+#include "prevrel.h"
+
 using namespace std;
 using namespace sqlite3x;
 
@@ -131,122 +133,6 @@ void Shutdown()
 	TRACES("[mainproc] [Shutdown]    Finished shutting down PeerBlock.");
 
 } // End of Shutdown()
-
-
-
-//================================================================================================
-//
-//  PerformPrevRelUpdates()
-//
-//    - Called by Main_OnInitDialog()
-//
-/// <summary>
-///   Checks the version of the last time we ran, and if that number falls within certain ranges
-///	  we'll do some release-specific cleanup.
-/// </summary>
-//
-void PerformPrevRelUpdates()
-{
-	int prevRelease = g_config.LastVersionRun;
-
-	if (prevRelease == PB_VER_BUILDNUM)
-		return;
-
-	if (prevRelease > PB_VER_BUILDNUM)
-	{
-		TRACEW("[mainproc] [PerformPrevRelUpdates]    WARNING:  Downgrade detected!");
-		return;
-	}
-
-
-	//--------------------------------------------------
-	// Update PG hosted lists to iblocklist
-
-	if (prevRelease < 134)
-	{
-		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for old peerguardian-hosted lists, and updating any found to iblocklist.com-hosted ones");
-
-		bool bOldUrlFound = false;
-		vector<DynamicList> tempList;
-
-		// check each list in configured lists
-		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
-		{
-			// if it's a peerguardian list
-			DynamicList *list = &(g_config.DynamicLists[i]);	
-			if (list->Url.find(_T("http://peerguardian.sourceforge.net/lists/")) != string::npos)
-			{
-				// swap it out
-				tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    found old URL: [%1%]")) % list->Url );
-				TRACEBUFW(strBuf);
-				bOldUrlFound = true;
-
-				if (list->Url.find(_T("ads.php")) != string::npos)
-				{
-					// http://list.iblocklist.com/?list=bt_ads
-					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing ads.php list with bt_ads");
-					//list->Url = _T("http://list.iblocklist.com/?list=bt_ads");
-					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n");
-					tempList.push_back(newList);
-				}
-				else if (list->Url.find(_T("edu.php")) != string::npos)
-				{
-					// http://list.iblocklist.com/?list=bt_edu
-					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing edu.php list with bt_edu");
-					//list->Url = _T("http://list.iblocklist.com/?list=bt_edu");
-					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/edu");
-					tempList.push_back(newList);
-				}
-				else if (list->Url.find(_T("p2p.php")) != string::npos)
-				{
-					// http://list.iblocklist.com/?list=bt_level1
-					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing p2p.php list with bt_level1");
-					//list->Url = _T("http://list.iblocklist.com/?list=bt_level1");
-					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/level-1");
-					tempList.push_back(newList);
-				}
-				else if (list->Url.find(_T("spy.php")) != string::npos)
-				{
-					// http://list.iblocklist.com/?list=bt_spyware
-					TRACEW("[mainproc] [PerformPrevRelUpdates]    - replacing spy.php list with bt_spyware");
-					//list->Url = _T("http://list.iblocklist.com/?list=bt_spyware");
-					DynamicList newList = *list;
-					newList.Url = _T("http://list.iblocklist.com/lists/bluetack/spyware");
-					tempList.push_back(newList);
-				}
-				else if (list->Url.find(_T("gov.php")) != string::npos)
-				{
-					// remove list
-					TRACEW("[mainproc] [PerformPrevRelUpdates]    - removing gov list");
-				}
-				else
-				{
-					TRACEE("[mainproc] [PerformPrevRelUpdates]    ERROR:  Unknown PG2 list!!");
-				}
-			}
-			else
-			{
-				TRACED("[mainproc] [PerformPrevRelUpdates]    found non-PG2 URL");
-				DynamicList newList = *list;
-				tempList.push_back(newList);
-			}
-		}
-
-		// Rebuild list if we need to remove Gov list.  Also, check for duplicates.
-		g_config.DynamicLists.clear();
-		for(vector<DynamicList>::size_type i = 0; i < tempList.size(); ++i)
-		{
-			if (std::find(g_config.DynamicLists.begin(), g_config.DynamicLists.end(), tempList[i]) == g_config.DynamicLists.end())
-			{
-				g_config.DynamicLists.push_back(tempList[i]);
-			}
-		}
-	}
-
-}; // End of PerformPrevRelUpdates()
 
 
 
@@ -411,7 +297,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		{
 			TRACES("[mainproc] [Main_OnInitDialog]    Config loaded.");
 			TRACEI("[mainproc] [Main_OnInitDialog]    checking if previous-release updates are required");
-			PerformPrevRelUpdates();
+			PerformPrevRelUpdates(hwnd);
 		}
 
 		// Setup tracelogging

@@ -931,6 +931,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\prevrel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\settingsproc.cpp"
 				>
 			</File>
@@ -1142,6 +1146,10 @@
 			</File>
 			<File
 				RelativePath=".\preseturls.h"
+				>
+			</File>
+			<File
+				RelativePath=".\prevrel.h"
 				>
 			</File>
 			<File
