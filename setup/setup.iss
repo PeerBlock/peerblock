@@ -84,6 +84,8 @@ BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM}) built on 
 ; English
 en.msg_DeleteListsSettings=Do you also want to delete PeerBlock's settings and lists?%nIf you plan on reinstalling PeerBlock you might not want to delete them.
 en.msg_SetupIsRunningWarning=PeerBlock Setup is already running!
+en.msg_servicemanager=The service manager is not available
+en.msg_servicemanager2=Only NT based systems support services
 en.run_visit_website=Visit PeerBlock's Website
 en.tsk_other=Other tasks:
 en.tsk_remove_startup=Remove PeerBlock from Windows startup
