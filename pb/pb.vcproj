@@ -1223,22 +1223,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\logo1.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\logo2.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\logo3.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\logo4.jpg"
-				>
-			</File>
-			<File
 				RelativePath=".\pb.ico"
 				>
 			</File>
@@ -1252,6 +1236,10 @@
 			</File>
 			<File
 				RelativePath=".\pb_httpdisabled.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\splash_logo.jpg"
 				>
 			</File>
 		</Filter>
