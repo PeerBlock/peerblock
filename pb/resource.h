@@ -30,6 +30,7 @@
 #define IDS_LISTSNOTUPDATED             114
 #define IDS_DONEUPDATING                115
 #define IDR_BINARY2                     115
+#define IDD_SPLASH                      116
 #define IDS_STARTUPWIZ                  116
 #define IDD_STARTUP_FIRST               117
 #define IDS_SELECTLISTS                 117
