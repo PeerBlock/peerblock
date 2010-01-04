@@ -61,21 +61,13 @@ static void Splash_OnDestroy(HWND hwnd) {
 	g_img->Release();
 }
 
-static const LPCTSTR g_images[]={
-	MAKEINTRESOURCE(IDR_SPLASH1),
-	MAKEINTRESOURCE(IDR_SPLASH2),
-	MAKEINTRESOURCE(IDR_SPLASH3),
-	MAKEINTRESOURCE(IDR_SPLASH4)
-};
-static const size_t g_imagecount=sizeof(g_images)/sizeof(LPCTSTR);
-
 static const int HIMETRIC_PER_INCH=2540;
 
 static BOOL Splash_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	boost::mt19937 rgen;
 	rgen.seed((boost::uint32_t)time(NULL));
 
-	g_img=LoadImage(MAKEINTRESOURCE(g_images[rgen()%g_imagecount]));
+	g_img=LoadImage(MAKEINTRESOURCE(IDR_SPLASH));
 
 	HDC dc=GetDC(NULL);
 	int ppix = GetDeviceCaps(dc, LOGPIXELSX);

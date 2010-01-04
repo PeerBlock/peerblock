@@ -763,10 +763,7 @@ END
 // BINARY
 //
 
-IDR_SPLASH1             BINARY                  "logo1.jpg"
-IDR_SPLASH2             BINARY                  "logo2.jpg"
-IDR_SPLASH3             BINARY                  "logo3.jpg"
-IDR_SPLASH4             BINARY                  "logo4.jpg"
+IDR_SPLASH              BINARY                  "splash_logo.jpg"
 
 /////////////////////////////////////////////////////////////////////////////
 //

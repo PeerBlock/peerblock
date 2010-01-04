@@ -26,11 +26,10 @@
 #define IDS_DESCRIPTION                 113
 #define IDR_TRAYMENU                    113
 #define IDS_UPDATING                    114
-#define IDR_SPLASH1                     114
+#define IDR_SPLASH                      114
 #define IDS_LISTSNOTUPDATED             114
 #define IDS_DONEUPDATING                115
 #define IDR_BINARY2                     115
-#define IDR_SPLASH2                     115
 #define IDD_SPLASH                      116
 #define IDS_STARTUPWIZ                  116
 #define IDD_STARTUP_FIRST               117
@@ -50,13 +49,10 @@
 #define IDS_PBDISABLED                  124
 #define IDD_LOADING                     124
 #define IDS_UPDATINGPB                  125
-#define IDR_SPLASH3                     125
 #define IDS_UPDATEPB                    125
 #define IDS_UPDATINGLISTS               126
-#define IDR_SPLASH4                     126
 #define IDS_LISTSUPTODATE               127
 #define IDR_BINARY4                     127
-#define IDR_SPLASH5                     127
 #define IDS_LISTSNOTUPTODATE            128
 #define IDR_LISTSCONTEXT                129
 #define IDS_ALLOWXFOR15MIN              129
@@ -67,7 +63,6 @@
 #define IDD_FOO                         132
 #define IDD_ADDLIST                     132
 #define IDS_CLOSE                       133
-#define IDR_SPLASH                      133
 #define IDS_PBOPEN                      134
 #define IDD_HISTORY                     134
 #define IDS_PBOPENTEXT                  135
