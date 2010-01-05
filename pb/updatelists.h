@@ -26,7 +26,4 @@
 
 int UpdateLists(HWND parent);
 
-// Blocks without updating lists
-void BlockWithoutUpdate(HWND hwnd);
-
 extern const unsigned long long g_build;

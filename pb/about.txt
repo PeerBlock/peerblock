@@ -14,7 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 PeerBlock Credits:
 Mark Bulas (MarkSide) - Lead Developer
-Night_stalker_z - Developer
+night_stalker_z - Developer
 A. Jesse Harper (DarC / DisCoStu) - Installer
 XhmikosR - Installer
 

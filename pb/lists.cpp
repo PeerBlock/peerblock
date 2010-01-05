@@ -533,7 +533,6 @@ void LoadLists(HWND parent) {
 	p2p::list block;
 
 	TRACEI("[LoadLists]    generating cache");
-	//night_stalker_z: Load lists always
 	if(!GenCache(parent, block))
 	{
 		TRACEI("[LoadLists]    loading lists");
