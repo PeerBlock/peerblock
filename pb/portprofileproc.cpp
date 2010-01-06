@@ -99,6 +99,7 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			tstring name = GetDlgItemText(hwnd, IDC_PORTNAME);
 			pp->Name = name;
 			pp->Enabled = true;
+			pp->Ports.clear();
 
 			std::vector<tstring> ports;
 			tstring txtports = GetDlgItemText(hwnd, IDC_PORTPORTS);
