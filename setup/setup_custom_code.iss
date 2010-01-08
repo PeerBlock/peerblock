@@ -5,7 +5,6 @@
 
 var
   PGPath: String;
-  SetResetTask: Boolean;
   WinVer: TWindowsVersion;
 const
   installer_mutex_name = 'peerblock_setup_mutex';
@@ -101,28 +100,6 @@ begin
               Result := 2;
   end else
       Result := 1;
-end;
-
-
-// Bypass Inno Setup UsePreviousTasks directive only for the "reset_settings",
-// "uninstall_pg" and "startup_task" tasks
-procedure CheckUncheckTasks();
-var
-  i, j, k: Integer;
-begin
-  i := WizardForm.TasksList.Items.IndexOf(ExpandConstant('{cm:tsk_reset_settings}'));
-  j := WizardForm.TasksList.Items.IndexOf(ExpandConstant('{cm:tsk_uninstall_pg}'));
-  k := WizardForm.TasksList.Items.IndexOf(ExpandConstant('{cm:tsk_startup_descr}'));
-
-  if(i <> -1) then begin
-    WizardForm.TasksList.Checked[i] := False;
-  end;
-  if(j <> -1) then begin
-    WizardForm.TasksList.Checked[j] := False;
-  end;
-  if(k <> -1) and OldStartupCheck then begin
-    WizardForm.TasksList.Checked[k] := True;
-  end;
 end;
 
 

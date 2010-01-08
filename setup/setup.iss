@@ -1,8 +1,8 @@
 ;
-; PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+; PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 ;
 ;
-; Inno Setup v5.3.6+
+; Inno Setup v5.3.7+
 ;
 ; Requirements:
 ; *Inno Setup QuickStart Pack
@@ -28,13 +28,13 @@ AppName=PeerBlock
 AppVersion={#= app_version}
 AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 AppPublisher=PeerBlock, LLC
-AppCopyright=Copyright © 2009, PeerBlock, LLC
+AppCopyright=Copyright © 2009-2010, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/
 AppUpdatesURL=http://www.peerblock.com/
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
-VersionInfoCopyright=Copyright © 2009, PeerBlock, LLC
+VersionInfoCopyright=Copyright © 2009-2010, PeerBlock, LLC
 VersionInfoProductName=PeerBlock
 VersionInfoProductVersion={#= app_version}
 VersionInfoVersion={#= app_version}
@@ -99,10 +99,10 @@ en.tsk_use_PG_settings=Use PeerGuardian's settings and custom lists
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; OnlyBelowVersion: 0,6.01; Flags: unchecked
-Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: unchecked
-Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck(); Flags: unchecked
-Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: unchecked
-Name: uninstall_pg; Description: {cm:tsk_uninstall_pg}; GroupDescription: {cm:tsk_other}; Check: IsPGInstalled(); Flags: unchecked
+Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
+Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck(); Flags: checkedonce unchecked
+Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: checkedonce unchecked
+Name: uninstall_pg; Description: {cm:tsk_uninstall_pg}; GroupDescription: {cm:tsk_other}; Check: IsPGInstalled(); Flags: checkedonce unchecked
 Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT SettingsExist()
 
 
@@ -224,15 +224,6 @@ begin
       Result := False;
   end else begin
     CreateMutex(installer_mutex_name);
-  end;
-end;
-
-
-procedure CurPageChanged(CurPageID: Integer);
-begin
-  if not SetResetTask and (CurPageID = wpSelectTasks) then begin
-    CheckUncheckTasks();
-    SetResetTask := True;
   end;
 end;
 
