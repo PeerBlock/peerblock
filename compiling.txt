@@ -12,8 +12,7 @@ Building
 ---------
 Project files are included for Visual C++ 2008 Express Edition and the Vista
 /Server 2008 SDK.  To build the driver you will need the Windows Vista 6.1 DDK.
-To build the installer you will need Inno Setup Quick Start Pack 5.3.4 
-or newer.
+To build the installer you will need Inno Setup Quick Start Pack 5.3.7 or newer.
 
 See (http://code.google.com/p/peerblock/wiki/BuildingPeerBlock) for 
 more details.

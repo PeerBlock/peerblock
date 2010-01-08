@@ -674,7 +674,7 @@ BEGIN
             VALUE "FileDescription", "PeerBlock"
             VALUE "FileVersion", MAKE_STR(PB_VER_MAJOR) ", " MAKE_STR(PB_VER_MINOR) ", " MAKE_STR(PB_VER_BUGFIX) ", " MAKE_STR(PB_VER_BUILDNUM)
             VALUE "InternalName", "PeerBlock"
-            VALUE "LegalCopyright", "Copyright (C) 2009 PeerBlock, LLC"
+            VALUE "LegalCopyright", "Copyright (C) 2009-2010 PeerBlock, LLC"
             VALUE "OriginalFilename", "peerblock.exe"
             VALUE "ProductName", "PeerBlock"
             VALUE "ProductVersion", MAKE_STR(PB_VER_MAJOR) ", " MAKE_STR(PB_VER_MINOR) ", " MAKE_STR(PB_VER_BUGFIX) ", " MAKE_STR(PB_VER_BUILDNUM)
@@ -809,7 +809,7 @@ BEGIN
     IDS_UPDATEPB            "PeerBlock Update"
     IDS_UPDATINGLISTS       "Updating Lists..."
     IDS_LISTSUPTODATE       "Last Updated %1%"
-    IDS_PGALREADYRUNNING    "PeerGuardian2 already running!"
+    IDS_PGALREADYRUNNING    "PeerGuardian2 is already running!"
     IDS_PGALREADYRUNNINGTEXT	"PeerGuardian2 is currently running on your system.  Running both PG2 and PeerBlock at the same time is not supported, and is really just a bad idea in general.  Please close PeerGuardian2 and run PeerBlock again."
 END
 
