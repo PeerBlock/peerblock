@@ -303,21 +303,49 @@ bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const v
 		*fp=CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 		if(*fp==INVALID_HANDLE_VALUE) 
 		{
-			TRACEW("[Configuration] [LoadFile]    WARNING:  Can't load file, INVALID_HANDLE_VALUE");
+			TRACEERR("[Configuration] [LoadFile]", L"Can't open file", GetLastError());
 			return false;
 		}
+
+		// Attempting to access a 0-byte file causes "The volume for a file has been externally 
+		// altered so that the opened file is no longer valid." errors, both here and when trying
+		// to save the .conf file later on.
+		DWORD size=0;
+		size=GetFileSize(*fp, NULL);
+		if (size == 0)
+		{
+			TRACEW("[Configuration] [LoadFile]    0 byte conf file");
+			CloseHandle(*fp);
+			*fp = 0;
+			return false;
+		}
+		else if (size == INVALID_FILE_SIZE)
+		{
+			TRACEERR("[Configuration] [LoadFile]", L"Can't get file size", GetLastError());
+			CloseHandle(*fp);
+			*fp = 0;
+			return false;
+		}
+		else
+		{
+			tstring strBuf = boost::str(tformat(_T("[Configuration] [LoadFile]    about to memory-map file - size: [%1%]")) % size );
+			TRACEBUFI(strBuf);
+		}
+
 		*map=CreateFileMapping(*fp, NULL, PAGE_READONLY, 0, 0, NULL);
 		if(*map==NULL) 
 		{
-			TRACEE("[Configuration] [LoadFile]    ERROR:  Can't create file map");
-			throw win32_error("CreateFileMapping");
+			TRACEERR("[Configuration] [LoadFile]", L"Can't create file map", GetLastError());
+			return false;
 		}
+
 		*view=MapViewOfFile(*map, FILE_MAP_READ, 0, 0, 0);
 		if(*view==NULL) 
 		{
-			TRACEE("[Configuration] [LoadFile]    ERROR:  Can't map view of file");
-			throw win32_error("MapViewOfFile");
+			TRACEERR("[Configuration] [LoadFile]", L"Can't map view of file", GetLastError());
+			return false;
 		}
+
 		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Configuration] [LoadFile]    Successfully loaded file:[%s]"), file);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
 
@@ -881,7 +909,7 @@ void Configuration::Save() {
 	FILE *fp=_tfopen((path::base_dir()/_T("peerblock.conf")).file_str().c_str(), _T("w"));
 	if(!fp) 
 	{
-		TRACEE("[Configuration] [Save]    ERROR:  Can't open peerblock.conf file!!");
+		TRACEERR("[Configuration] [Save]", L"Can't open file", GetLastError());
 		throw runtime_error("unable to save configuration");
 	}
 
