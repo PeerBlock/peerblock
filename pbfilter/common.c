@@ -131,7 +131,7 @@ void SetPorts(const ULONG *ports, ULONG count)
 	if (ports && count > 0) {
 		oldports = g_internal->ports;
 
-		nports = (ULONG*) ExAllocatePoolWithTag(PagedPool, sizeof(ULONG) * count, 'tPBP');
+		nports = (ULONG*) ExAllocatePoolWithTag(NonPagedPool, sizeof(ULONG) * count, 'tPBP');
 		RtlCopyMemory(nports, ports, sizeof(ULONG) * count);
 	}
 	else {
