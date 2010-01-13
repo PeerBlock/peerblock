@@ -33,22 +33,22 @@ extern TraceLog g_tlog;
 #ifdef _WIN32_WINNT
 #ifdef _WIN64
 // nt x64 build
-#define BUILDTYPE 40
+#define BUILDTYPE 4
 #else
 // nt build
-#define BUILDTYPE 30
+#define BUILDTYPE 3
 #endif
 #else
 #ifdef _WIN64
 // 9x x64 build
-#define BUILDTYPE 20
+#define BUILDTYPE 2
 #else
 // 9x build
-#define BUILDTYPE 10
+#define BUILDTYPE 1
 #endif
 #endif
 
-#define BUILDNUM (BUILDTYPE*(unsigned long long)1000000000+BUILDDATE)
+#define BUILDNUM (BUILDTYPE*(unsigned long long)10000000000+BUILDDATE)
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE)
 
 // TODO:  make a special page to display for update-found purposes; pass in build-string?

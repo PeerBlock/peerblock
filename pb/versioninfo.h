@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009 PeerBlock, LLC
+	Copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -31,7 +31,7 @@
 //#define PB_RELTYPE_DEV
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 911210$WCREV$	// PB_REV
+#define BUILDDATE 1001130$WCREV$	// PB_REV
 
 #define PB_VER_BUILDNUM $WCREV$
 
