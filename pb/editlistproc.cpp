@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -25,18 +25,14 @@
 using namespace std;
 
 static INT_PTR g_ret;
+HWND g_hEditListDlg = NULL;
 
 static void EditList_OnClose(HWND hwnd) {
 	EndDialog(hwnd, IDCANCEL);
 }
 
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) {
-	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
-
-	int len=GetWindowTextLength(ctrl)+1;
-	boost::scoped_array<TCHAR> buf(new TCHAR[len]);
-
-	return tstring(buf.get(), GetWindowText(ctrl, buf.get(), len));
+static void EditList_OnDestroy(HWND hwnd) {
+	g_hEditListDlg = NULL;
 }
 
 static void EditList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
@@ -144,6 +140,8 @@ static void EditList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 }
 
 static BOOL EditList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hEditListDlg = hwnd;
+
 	List **list=(List**)lParam;
 
 #pragma warning(disable:4244)
@@ -180,15 +178,22 @@ static BOOL EditList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	g_ret=0;
 
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
+
 	return TRUE;
 }
 
 INT_PTR CALLBACK EditList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, EditList_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, EditList_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, EditList_OnInitDialog);
+			HANDLE_MSG(hwnd, WM_CLOSE, EditList_OnClose);
+			HANDLE_MSG(hwnd, WM_DESTROY, EditList_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;	
 			default: return 0;
 		}
 	}

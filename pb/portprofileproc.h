@@ -33,3 +33,5 @@
 #include <windows.h>
 
 INT_PTR CALLBACK PortProfile_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+extern HWND g_hPortProfileDlg;

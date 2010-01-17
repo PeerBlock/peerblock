@@ -22,6 +22,8 @@
 #include "stdafx.h"
 #include "resource.h"
 
+HWND g_hEditPortsDlg = NULL;
+
 static void EditPorts_OnClose(HWND hwnd)
 {
 	HWND list = GetDlgItem(hwnd, IDC_PORTS);
@@ -34,6 +36,9 @@ static void EditPorts_OnClose(HWND hwnd)
 	EndDialog(hwnd, NULL);
 }
 
+static void About_OnDestroy(HWND hwnd) {
+	g_hEditPortsDlg = NULL;
+}
 
 static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
@@ -145,6 +150,8 @@ static void EditPorts_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
+	g_hEditPortsDlg = hwnd;
+
 	CheckDlgButton(hwnd, IDC_HTTPPORT, g_config.PortSet.AllowHttp);
 	CheckDlgButton(hwnd, IDC_FTPPORT, g_config.PortSet.AllowFtp);
 	CheckDlgButton(hwnd, IDC_SMTPPORT, g_config.PortSet.AllowSmtp);
@@ -198,6 +205,9 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 	EditPorts_OnSize(hwnd, 0, rc.right, rc.bottom);
+
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
 
 	return TRUE;
 }
@@ -263,13 +273,16 @@ INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 	{
 		switch(msg) 
 		{
-			HANDLE_MSG(hwnd, WM_CLOSE, EditPorts_OnClose);
-			HANDLE_MSG(hwnd, WM_COMMAND, EditPorts_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, EditPorts_OnDestroy);
 			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, EditPorts_OnGetMinMaxInfo);
+			HANDLE_MSG(hwnd, WM_COMMAND, EditPorts_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, EditPorts_OnInitDialog);
 			HANDLE_MSG(hwnd, WM_NOTIFY, EditPorts_OnNotify);
 			HANDLE_MSG(hwnd, WM_SIZE, EditPorts_OnSize);
+			HANDLE_MSG(hwnd, WM_CLOSE, EditPorts_OnClose);
+			HANDLE_MSG(hwnd, WM_DESTROY, EditPorts_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -24,10 +24,14 @@
 #include "resource.h"
 using namespace std;
 
-HWND g_about=NULL;
+HWND g_hAboutDlg = NULL;
 
 static void About_OnClose(HWND hwnd) {
 	DestroyWindow(hwnd);
+}
+
+static void About_OnDestroy(HWND hwnd) {
+	g_hAboutDlg = NULL;
 }
 
 static void About_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
@@ -44,11 +48,9 @@ static void About_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	}
 }
 
-static void About_OnDestroy(HWND hwnd) {
-	g_about=NULL;
-}
-
 static BOOL About_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hAboutDlg = hwnd;
+
 	HMODULE mod=GetModuleHandle(NULL);
 	HRSRC res=FindResource(mod, MAKEINTRESOURCE(IDR_LICENSE), _T("TEXT"));
 	DWORD ressize=SizeofResource(mod, res);
@@ -60,6 +62,9 @@ static BOOL About_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	SetDlgItemTextA(hwnd, IDC_LICENSE, s.c_str());
 
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
+
 	return TRUE;
 }
 
@@ -70,6 +75,9 @@ INT_PTR CALLBACK About_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 			HANDLE_MSG(hwnd, WM_COMMAND, About_OnCommand);
 			HANDLE_MSG(hwnd, WM_DESTROY, About_OnDestroy);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, About_OnInitDialog);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

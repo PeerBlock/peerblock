@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -55,6 +55,12 @@ static tstring g_allowed, g_blocked;
 
 static boost::shared_array<HistoryRow> g_rows;
 static size_t g_rowcount;
+
+HWND g_hHistoryDlg = NULL;
+
+static void History_OnClose(HWND hwnd) {
+	EndDialog(hwnd, 0);
+}
 
 static tstring FormatIp(unsigned int ip, unsigned short port) {
 	const unsigned char *bytes=reinterpret_cast<const unsigned char*>(&ip);
@@ -248,10 +254,6 @@ static ostream& operator<<(ostream &os, const SYSTEMTIME &st) {
 	return os;
 }
 
-static void History_OnClose(HWND hwnd) {
-	EndDialog(hwnd, 0);
-}
-
 static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh);
 
 static void History_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
@@ -314,6 +316,8 @@ static void History_OnDestroy(HWND hwnd) {
 	g_rows=boost::shared_array<HistoryRow>();
 	SaveListColumns(g_list, g_config.HistoryColumns);
 	SaveWindowPosition(hwnd, g_config.HistoryWindowPos);
+
+	g_hHistoryDlg = NULL;
 }
 
 static void History_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {
@@ -343,6 +347,8 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 
 static void History_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hHistoryDlg = hwnd;
+
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
 #pragma warning(disable:4244)
@@ -412,6 +418,9 @@ static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 	History_OnSize(hwnd, 0, rc.right-rc.left, rc.bottom-rc.top);
+
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
 
 	return TRUE;
 }
@@ -908,6 +917,9 @@ INT_PTR CALLBACK History_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 			HANDLE_MSG(hwnd, WM_INITDIALOG, History_OnInitDialog);
 			HANDLE_MSG(hwnd, WM_NOTIFY, History_OnNotify);
 			HANDLE_MSG(hwnd, WM_SIZE, History_OnSize);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

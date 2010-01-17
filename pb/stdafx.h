@@ -134,6 +134,7 @@ extern "C" {
 #include "preseturls.h"
 #include "threaded_sqlite3x.hpp"
 
+#include "BaseDialog.h"
 #include "mainproc.h"
 #include "logproc.h"
 #include "settingsproc.h"

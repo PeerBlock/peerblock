@@ -75,7 +75,9 @@ static const LPCTSTR g_homepage=_T("http://www.peerblock.com");
 
 static const UINT TIMER_COUNTDOWN=1;
 static unsigned short g_countdown;
+
 static HWND g_updater=NULL;
+HWND g_hUpdateListsDlg = NULL;
 
 class UpdateThread {
 private:
@@ -1579,6 +1581,9 @@ static void UpdateLists_OnDestroy(HWND hwnd)
 	SaveWindowPosition(hwnd, g_config.UpdateWindowPos);
 
 	g_updater=NULL;
+
+	g_hUpdateListsDlg = NULL;
+
 	TRACEI("[UpdateLists_OnDestroy]  < Leaving routine.");
 
 } // End of UpdateLists_OnDestroy()
@@ -1615,6 +1620,8 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
 {
+	g_hUpdateListsDlg = hwnd;
+
 	TRACEI("[UpdateLists_OnInitDialog]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
@@ -1643,6 +1650,9 @@ static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	TRACEI("[UpdateLists_OnInitDialog]    spawning updatethread");
 	g_ut=UpdateThread(hwnd, list, GetDlgItem(hwnd, IDC_PROGRESS), false);
 	g_updatethread=boost::shared_ptr<thread>(new thread(boost::ref(g_ut)));
+
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
 
 	TRACEI("[UpdateLists_OnInitDialog]  < Leaving routine.");
 	return TRUE;
@@ -1710,6 +1720,9 @@ static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, 
 			HANDLE_MSG(hwnd, WM_INITDIALOG, UpdateLists_OnInitDialog);
 			HANDLE_MSG(hwnd, WM_SIZE, UpdateLists_OnSize);
 			HANDLE_MSG(hwnd, WM_TIMER, UpdateLists_OnTimer);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

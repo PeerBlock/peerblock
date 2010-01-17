@@ -31,21 +31,7 @@
 #include "resource.h"
 using namespace std;
 
-
-
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) 
-{
-	TRACEI("[portprofileproc] [GetDlgItemText]  > Entering routine.");
-	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
-
-	int len=GetWindowTextLength(ctrl)+1;
-	boost::scoped_array<TCHAR> buf(new TCHAR[len]);
-
-	TRACEI("[portprofileproc] [GetDlgItemText]  < Leaving routine.");
-	return tstring(buf.get(), GetWindowText(ctrl, buf.get(), len));
-
-} // End of GetDlgItemText()
-
+HWND g_hPortProfileDlg = NULL;
 
 
 static void PortProfile_OnClose(HWND hwnd) 
@@ -56,11 +42,16 @@ static void PortProfile_OnClose(HWND hwnd)
 
 } // End of PortProfile_OnClose()
 
-
+static void PortProfile_OnDestroy(HWND hwnd) {
+	g_hPortProfileDlg = NULL;
+}
 
 static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
 {
 	TRACEI("[portprofileproc] [PortProfile_OnInitDialog]  > Entering routine.");
+
+	g_hPortProfileDlg = hwnd;
+
 	PortProfile *profile = (PortProfile*) lParam;
 
 #pragma warning(disable:4244)
@@ -79,6 +70,9 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	HWND hports = GetDlgItem(hwnd, IDC_PORTPORTS);
 	Edit_SetText(hports, ports.str().c_str());
+
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
 
 	TRACEI("[portprofileproc] [PortProfile_OnInitDialog]  < Leaving routine.");
 	return TRUE;
@@ -148,6 +142,10 @@ INT_PTR CALLBACK PortProfile_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 			HANDLE_MSG(hwnd, WM_CLOSE, PortProfile_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, PortProfile_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, PortProfile_OnInitDialog);
+			HANDLE_MSG(hwnd, WM_DESTROY, PortProfile_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 		return 0;

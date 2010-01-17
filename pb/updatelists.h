@@ -27,3 +27,5 @@
 int UpdateLists(HWND parent);
 
 extern const unsigned long long g_build;
+
+extern HWND g_hUpdateListsDlg;

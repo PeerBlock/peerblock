@@ -66,6 +66,7 @@ static int g_item, g_subitem;
 static bool g_cansub=false;
 static vector<ListRow> g_rows;
 
+HWND g_hListDlg = NULL;
 
 
 //================================================================================================
@@ -206,29 +207,6 @@ static void List_OnClose(HWND hwnd)
 	EndDialog(hwnd, IDCANCEL);
 
 } // End of List_OnClose()
-
-
-
-//================================================================================================
-//
-//  GetDlgItemText()
-//
-//    - Called by ???
-//
-/// <summary>
-///   Returns the text entered into a particular field on the window.
-/// </summary>
-//
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) 
-{
-	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
-
-	int len=GetWindowTextLength(ctrl)+1;
-	boost::scoped_array<TCHAR> buf(new TCHAR[len]);
-
-	return tstring(buf.get(), GetWindowText(ctrl, buf.get(), len));
-
-} // End of GetDlgItemText()
 
 
 
@@ -435,6 +413,9 @@ static void List_OnDestroy(HWND hwnd)
 
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	SaveListColumns(list, g_config.ListEditorColumns);
+
+	g_hListDlg = NULL;
+
 	TRACEV("[listproc] [List_OnDestroy]  < Leaving routine.");
 
 } // End of List_OnDestroy()
@@ -512,6 +493,8 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	TRACEI("[listproc] [List_OnInitDialog]  > Entering routine.");
 
+	g_hListDlg = hwnd;
+
 #pragma warning(disable:4244)
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
 #pragma warning(default:4244)
@@ -570,6 +553,9 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 	List_OnSize(hwnd, 0, rc.right, rc.bottom);
+
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
 
 	TRACEI("[listproc] [List_OnInitDialog]  < Leaving routine.");
 	return TRUE;
@@ -977,6 +963,9 @@ INT_PTR CALLBACK List_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			HANDLE_MSG(hwnd, WM_INITDIALOG, List_OnInitDialog);
 			HANDLE_MSG(hwnd, WM_NOTIFY, List_OnNotify);
 			HANDLE_MSG(hwnd, WM_SIZE, List_OnSize);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

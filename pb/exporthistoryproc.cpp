@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -24,8 +25,14 @@
 using namespace std;
 using namespace sqlite3x;
 
+HWND g_hExportHistoryDlg = NULL;
+
 static void ExportHistory_OnClose(HWND hwnd) {
 	EndDialog(hwnd, IDCANCEL);
+}
+
+static void ExportHistory_OnDestroy(HWND hwnd) {
+	g_hExportHistoryDlg = NULL;
 }
 
 static ostream& operator<<(ostream &os, const SYSTEMTIME &st) {
@@ -35,15 +42,6 @@ static ostream& operator<<(ostream &os, const SYSTEMTIME &st) {
 		<< setw(2) << st.wDay;
 
 	return os;
-}
-
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) {
-	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
-
-	int len=GetWindowTextLength(ctrl)+1;
-	boost::scoped_array<TCHAR> buf(new TCHAR[len]);
-
-	return tstring(buf.get(), GetWindowText(ctrl, buf.get(), len));
 }
 
 class ExportFuncs {
@@ -303,6 +301,8 @@ static LPCTSTR const g_protocols[]={
 static const size_t g_numprotocols=sizeof(g_protocols)/sizeof(LPCTSTR);
 
 static BOOL ExportHistory_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hExportHistoryDlg = hwnd;
+
 	HWND protocol=GetDlgItem(hwnd, IDC_PROTOCOLLIST);
 	for(size_t i=0; i<g_numprotocols; i++)
 		ComboBox_AddString(protocol, g_protocols[i]);
@@ -313,15 +313,22 @@ static BOOL ExportHistory_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	ComboBox_AddString(action, LoadString(IDS_ALLOWED).c_str());
 	ComboBox_SetCurSel(action, 0);
 
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
+
 	return TRUE;
 }
 
 INT_PTR CALLBACK ExportHistory_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, ExportHistory_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, ExportHistory_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, ExportHistory_OnInitDialog);
+			HANDLE_MSG(hwnd, WM_CLOSE, ExportHistory_OnClose);
+			HANDLE_MSG(hwnd, WM_DESTROY, ExportHistory_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

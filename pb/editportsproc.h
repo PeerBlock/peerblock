@@ -22,3 +22,5 @@
 #pragma once
 
 INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+extern HWND g_hEditPortsDlg;

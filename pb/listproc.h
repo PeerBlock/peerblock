@@ -24,3 +24,5 @@
 #include <windows.h>
 
 INT_PTR CALLBACK List_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+extern HWND g_hListDlg;

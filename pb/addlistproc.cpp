@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -24,17 +24,14 @@
 #include "resource.h"
 using namespace std;
 
+HWND g_hAddListDlg = NULL;
+
 static void AddList_OnClose(HWND hwnd) {
 	EndDialog(hwnd, IDCANCEL);
 }
 
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) {
-	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
-
-	int len=GetWindowTextLength(ctrl)+1;
-	boost::scoped_array<TCHAR> buf(new TCHAR[len]);
-
-	return tstring(buf.get(), GetWindowText(ctrl, buf.get(), len));
+static void AddList_OnDestroy(HWND hwnd) {
+	g_hAddListDlg = NULL;
 }
 
 static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
@@ -114,6 +111,8 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 }
 
 static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hAddListDlg = hwnd;
+
 #pragma warning(disable:4244) //not my fault!
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
 #pragma warning(default:4244)
@@ -127,6 +126,9 @@ static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	CheckDlgButton(hwnd, IDC_ADDFILE, BST_CHECKED);
 	CheckDlgButton(hwnd, IDC_BLOCK, BST_CHECKED);
 
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(g_hAddListDlg);
+
 	return TRUE;
 }
 
@@ -136,6 +138,10 @@ INT_PTR CALLBACK AddList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 			HANDLE_MSG(hwnd, WM_CLOSE, AddList_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, AddList_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, AddList_OnInitDialog);
+			HANDLE_MSG(hwnd, WM_DESTROY, AddList_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(g_hAddListDlg);
+				return 1;	
 			default: return 0;
 		}
 	}

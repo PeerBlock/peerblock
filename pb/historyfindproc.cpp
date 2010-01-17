@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +23,16 @@
 #include "stdafx.h"
 #include "resource.h"
 using namespace std;
+
+HWND g_hHistoryFindDlg = NULL;
+
+static void HistoryFind_OnClose(HWND hwnd) {
+	DestroyWindow(hwnd);
+}
+
+static void HistoryFind_OnDestroy(HWND hwnd) {
+	g_hHistoryFindDlg = NULL;
+}
 
 static void HistoryFind_FillSearchInfo(HWND hwnd, HFM_SEARCHINFO &hf) {
 	hf.iMask=0;
@@ -129,6 +140,8 @@ static LPCTSTR const g_protocols[]={
 static const size_t g_numprotocols=sizeof(g_protocols)/sizeof(LPCTSTR);
 
 static BOOL HistoryFind_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hHistoryFindDlg = hwnd;
+
 	HWND protocol=GetDlgItem(hwnd, IDC_PROTOCOLLIST);
 	for(size_t i=0; i<g_numprotocols; i++)
 		ComboBox_AddString(protocol, g_protocols[i]);
@@ -148,6 +161,9 @@ static BOOL HistoryFind_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	EnableWindow(destip, FALSE);
 	InvalidateRect(destip, NULL, TRUE);
 
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
+
 	return TRUE;
 }
 
@@ -156,6 +172,11 @@ INT_PTR CALLBACK HistoryFind_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 		switch(msg) {
 			HANDLE_MSG(hwnd, WM_COMMAND, HistoryFind_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, HistoryFind_OnInitDialog);
+			HANDLE_MSG(hwnd, WM_CLOSE, HistoryFind_OnClose);
+			HANDLE_MSG(hwnd, WM_DESTROY, HistoryFind_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			case HFM_GETSEARCH: HistoryFind_FillSearchInfo(hwnd, *((HFM_SEARCHINFO*)lParam));
 			default: return 0;
 		}

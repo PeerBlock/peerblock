@@ -6,7 +6,7 @@
 
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -35,6 +35,7 @@ static INT_PTR g_ret;
 static const UINT ID_CONTEXT_MAKESTATIC=200;
 static vector<DynamicList> g_deflists;	// temporary storage of default lists
 
+HWND g_hListsDlg = NULL;
 
 //------------------------------------------------------------
 // Internal routines.  If this were a class, these routines would be marked as Private.
@@ -767,6 +768,8 @@ static void Lists_OnDestroy(HWND hwnd)
 
 	std::sort(g_config.DynamicLists.begin(), g_config.DynamicLists.end());
 
+	g_hListsDlg = NULL;
+
 } // End of Lists_OnDestroy()
 
 
@@ -814,6 +817,8 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
 {
 	TRACEI("[listsproc] [Lists_OnInitDialog]  > Entering routine.");
+
+	g_hListsDlg = hwnd;
 
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_CHECKBOXES|LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
@@ -886,6 +891,9 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	RECT rc;
 	GetClientRect(hwnd, &rc);
 	Lists_OnSize(hwnd, 0, rc.right, rc.bottom);
+
+	// Load peerblock icon in the windows titlebar
+	RefreshDialogIcon(hwnd);
 
 	TRACEI("[listsproc] [Lists_OnInitDialog]  < Exiting routine.");
 	return TRUE;
@@ -1070,6 +1078,9 @@ INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 			HANDLE_MSG(hwnd, WM_INITDIALOG, Lists_OnInitDialog);
 			HANDLE_MSG(hwnd, WM_NOTIFY, Lists_OnNotify);
 			HANDLE_MSG(hwnd, WM_SIZE, Lists_OnSize);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(hwnd);
+				return 1;
 			default: return 0;
 		}
 	}

@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -24,17 +24,14 @@
 #include "resource.h"
 using namespace std;
 
+HWND g_hCreateListDlg = NULL;
+
 static void CreateList_OnClose(HWND hwnd) {
 	EndDialog(hwnd, IDCANCEL);
 }
 
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) {
-	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
-
-	int len=GetWindowTextLength(ctrl)+1;
-	boost::scoped_array<TCHAR> buf(new TCHAR[len]);
-
-	return tstring(buf.get(), GetWindowText(ctrl, buf.get(), len));
+static void CreateList_OnDestroy(HWND hwnd) {
+	g_hCreateListDlg = NULL;
 }
 
 static void CreateList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
@@ -77,11 +74,16 @@ static void CreateList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotif
 }
 
 static BOOL CreateList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+	g_hCreateListDlg = hwnd;
+
 #pragma warning(disable:4244) //not my fault!
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
 #pragma warning(default:4244)
 
 	CheckDlgButton(hwnd, IDC_BLOCK, BST_CHECKED);
+
+	// Load peerblock icon in the dialogs titlebar
+	RefreshDialogIcon(g_hCreateListDlg);
 
 	return TRUE;
 }
@@ -89,9 +91,13 @@ static BOOL CreateList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 INT_PTR CALLBACK CreateList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, CreateList_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, CreateList_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, CreateList_OnInitDialog);
+			HANDLE_MSG(hwnd, WM_CLOSE, CreateList_OnClose);
+			HANDLE_MSG(hwnd, WM_DESTROY, CreateList_OnDestroy);
+			case WM_DIALOG_ICON_REFRESH:
+				RefreshDialogIcon(g_hCreateListDlg);
+				return 1;	
 			default: return 0;
 		}
 	}

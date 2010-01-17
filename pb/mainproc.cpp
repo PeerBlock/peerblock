@@ -44,6 +44,7 @@ DWORD g_blinkstart=0;
 extern TraceLog g_tlog;
 
 HWND g_main;
+
 boost::shared_ptr<pbfilter> g_filter;
 
 TabData g_tabs[]={
@@ -52,7 +53,21 @@ TabData g_tabs[]={
 };
 static const size_t g_tabcount=sizeof(g_tabs)/sizeof(TabData);
 
-
+void SendDialogIconRefreshMessage()
+{
+	SendMessage(g_hAboutDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hAddListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hCreateListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hEditListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hEditPortsDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hExportHistoryDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hHistoryFindDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hHistoryDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hListsDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hPortProfileDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+	SendMessage(g_hUpdateListsDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
+}
 
 void SetBlock(bool block) 
 {
@@ -69,6 +84,8 @@ void SetBlock(bool block)
 
 	SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
 	SendMessage(g_main, WM_SETICON, ICON_SMALL, (LPARAM)g_nid.hIcon);
+
+	SendDialogIconRefreshMessage();
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
@@ -99,6 +116,8 @@ void SetBlockHttp(bool block)
 		SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
 		SendMessage(g_main, WM_SETICON, ICON_SMALL, (LPARAM)g_nid.hIcon);
 	}
+
+	SendDialogIconRefreshMessage();
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
@@ -200,8 +219,8 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case ID_TRAY_ABOUT:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'About' item");
-			if(!g_about) g_about=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ABOUT), hwnd, About_DlgProc);
-			else SetForegroundWindow(g_about);
+			if(!g_hAboutDlg) g_hAboutDlg=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ABOUT), hwnd, About_DlgProc);
+			else SetForegroundWindow(g_hAboutDlg);
 			break;
 
 		case ID_TRAY_EXIT:

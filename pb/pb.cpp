@@ -37,6 +37,8 @@ static const LPCTSTR g_pbmutex_name=_T("PeerBlock");
 #include "TraceLog.h"
 TraceLog g_tlog;
 
+HINSTANCE hPeerBlockInstance = 0;
+
 // blocks ips without updating for vista
 //void BlockWithoutUpdating(HWND hwnd);
 
@@ -128,6 +130,8 @@ static bool CheckOS() {
 //
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) 
 {
+	hPeerBlockInstance = hInstance;
+
 	// If PeerBlock is already running, bring it to the forefront and exit this new instance.
 	HANDLE pbmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
 	if(pbmutex) 

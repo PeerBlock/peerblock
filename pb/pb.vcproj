@@ -1047,6 +1047,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\basedialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\char_convert.h"
 				>
 			</File>

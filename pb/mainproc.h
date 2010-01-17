@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -44,8 +45,10 @@ struct TabData {
 INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void SetBlock(bool block);
+void SendDialogIconRefreshMessage();
 void SetBlockHttp(bool block);
 void Shutdown();
+
 
 extern TabData g_tabs[];
 extern boost::shared_ptr<pbfilter> g_filter;
