@@ -21,6 +21,7 @@
 */
 
 #include "stdafx.h"
+#include "resource.h"
 using namespace std;
 
 #include "tracelog.h"
@@ -380,11 +381,17 @@ bool Configuration::Load()
 		const void *view = NULL;
 
 		const path pb=path::base_dir()/_T("peerblock.conf");
+		const path oldpb=path::base_dir()/_T("peerblock.conf.bak");
 		const path pg2=path::base_dir()/_T("pg2.conf");
 
 		if (LoadFile(pb.file_str().c_str(), &fp, &map, &view))	// first try to find a PeerBlock file
 		{
 			TRACEI("[Configuration] [Load]    found peerblock configuration file");
+		}
+		else if (LoadFile(oldpb.file_str().c_str(), &fp, &map, &view))	// try the last-known-good one
+		{
+			TRACEW("[Configuration] [Load]    using last-known-good configuration file");
+			MessageBox(NULL, IDS_CONFERRTEXT, IDS_CONFERR, MB_ICONWARNING|MB_OK);
 		}
 		else if (LoadFile(pg2.file_str().c_str(), &fp, &map, &view))	// fall back to old PG2 version
 		{
@@ -689,7 +696,10 @@ static bool RectValid(const RECT &rc) {
 ///   Writes out currently-set config to peerblock.conf file.
 /// </summary>
 //
-void Configuration::Save() {
+void Configuration::Save(const TCHAR * _filename) 
+{
+	TRACEI("[Configuration] [Save]  > Entering routine.");
+
 	TiXmlDocument doc;
 	doc.InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 
@@ -906,15 +916,23 @@ void Configuration::Save() {
 		}
 	}
 
-	FILE *fp=_tfopen((path::base_dir()/_T("peerblock.conf")).file_str().c_str(), _T("w"));
+	// First save to a temp-file
+	std::wstring tempfile = _filename;
+	tempfile += L".tmp";
+	FILE *fp=_tfopen((path::base_dir()/tempfile.c_str()).file_str().c_str(), _T("w"));
 	if(!fp) 
 	{
 		TRACEERR("[Configuration] [Save]", L"Can't open file", GetLastError());
 		throw runtime_error("unable to save configuration");
 	}
+	{
+		boost::shared_ptr<void> ptr(fp, fclose);
+		doc.Print(fp);
+	}
 
-	boost::shared_ptr<void> ptr(fp, fclose);
+	// Now, only after that's done should we overwrite the original
+	path::move((path::base_dir()/tempfile.c_str()), (path::base_dir()/_filename), true);
 
-	doc.Print(fp);
+	TRACEI("[Configuration] [Save]  < Leaving routine.");
 
 } // End of Save()

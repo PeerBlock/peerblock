@@ -194,6 +194,8 @@
 #define IDS_PGALREADYRUNNINGTEXT		248
 #define IDS_PREVREL						249
 #define IDS_PREVREL237TEXT				250
+#define IDS_CONFERR                     251
+#define IDS_CONFERRTEXT                 252
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003

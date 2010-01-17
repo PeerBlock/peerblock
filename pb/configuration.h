@@ -166,9 +166,7 @@ struct Configuration {
 	CleanType CleanupType;
 	tstring UpdateProxy;
 	long UpdateProxyType;
-	// 0 = never cleanup
-	// >0 = size in bytes
-	__int64 MaxHistorySize;
+	__int64 MaxHistorySize;	// 0 = never cleanup, >0 = size in bytes
 
 	bool TracelogEnabled;
 	int TracelogLevel;
@@ -180,7 +178,7 @@ struct Configuration {
 	Configuration();
 
 	bool Load();
-	void Save();
+	void Save(const TCHAR *filename = _T("peerblock.conf"));
 	bool LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view);
 };
 

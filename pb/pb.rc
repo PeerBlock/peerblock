@@ -951,6 +951,8 @@ BEGIN
     IDS_FILEOPENERRTEXT     "Unable to open the file at:\r\n%1%\r\n\r\nCheck to make sure you have permissions to write to that location."
     IDS_NEEDSVCSERR         "Required services not running"
 	IDS_NEEDSVCSERRTEXT     "One or more of the following Windows Services are not running:\r\n\r\nBase Filtering Engine\r\nIPsec Policy Agent\r\nIKE and AuthIP IPsec Keyring Modules\r\n\r\nPlease verify that these Windows Services have not been disabled, and are running.\r\n\r\nSee http://www.peerblock.com/required-services for more information."
+    IDS_CONFERR             "Configuration File Error"
+    IDS_CONFERRTEXT         "The PeerBlock configuration file is missing or corrupt.\r\n\r\nPeerBlock will use the last known good configuration file, but any recent changes you made may be lost.  You should check the settings panel to make sure they are correct."
     IDS_LOGALLOWED          "Log Allowed"
     IDS_LOGBLOCKED          "Log Blocked"
     IDS_LOGBOTH             "Log Allowed & Blocked"
