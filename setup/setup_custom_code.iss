@@ -113,7 +113,7 @@ begin
   DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
   RemoveDir(ExpandConstant('{app}\lists\'));
   DeleteFile(ExpandConstant('{app}\peerblock.conf'));
-  DelTree(ExpandConstant('{app}\*.bak'), False, True, False);
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak'));
 end;
 
 
@@ -123,7 +123,7 @@ begin
   DeleteFile(ExpandConstant('{app}\history.db'));
   DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
   DeleteFile(ExpandConstant('{app}\peerblock.log'));
-  DelTree(ExpandConstant('{app}\*.tmp'), False, True, False);
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.tmp'));
 end;
 
 

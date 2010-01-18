@@ -108,20 +108,20 @@ Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: 
 
 [Files]
 ; Win2K files
-Source: ..\win32\release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is2K()
-Source: ..\win32\release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is2K()
+Source: ..\Win32\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is2K()
+Source: ..\Win32\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is2K()
 
 ; WinXP x64 files
-Source: ..\x64\release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsXP64()
-Source: ..\x64\release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsXP64()
+Source: ..\x64\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsXP64()
+Source: ..\x64\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsXP64()
 
 ; Vista files
-Source: ..\win32\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista()
-Source: ..\win32\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista()
+Source: ..\Win32\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista()
+Source: ..\Win32\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista()
 
 ; Vista x64 files
-Source: ..\x64\release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista64()
-Source: ..\x64\release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64()
+Source: ..\x64\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista64()
+Source: ..\x64\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64()
 
 ; Copy PG settings and custom lists only if PG is installed and the user has choosed to do so
 Source: {code:GetPGPath}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
@@ -147,6 +147,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset_settings remove_startup_task; Flags: deletevalue uninsdeletevalue
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Flags: uninsdeletevalue
 
 
 [Run]
