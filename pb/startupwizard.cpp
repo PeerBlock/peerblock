@@ -272,9 +272,10 @@ void DisplayStartupWizard(HWND parent) {
 
 	PROPSHEETHEADER psh={0};
 	psh.dwSize=sizeof(PROPSHEETHEADER);
-	psh.dwFlags=PSH_WIZARD97;
+	psh.dwFlags=PSH_WIZARD97 | PSH_USEHICON;
 	psh.hInstance=GetModuleHandle(NULL);
-	psh.phpage=hpsp;
+	psh.hIcon = LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_MAIN)); // Loaded main icon since this scren is only seen if the config file could not be loaded
+	psh.phpage=hpsp;                                                       // This implies that there is no way to retrieve the state of the system tray icon
 	psh.nStartPage=0;
 	psh.nPages=sizeof(hpsp)/sizeof(HPROPSHEETPAGE);
 	psh.hwndParent=parent;
