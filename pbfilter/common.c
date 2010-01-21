@@ -74,8 +74,15 @@ void SetRanges(const PBRANGES *ranges, int block)
 		DbgPrint("pbfilter:    found some ranges");
 		ncount = ranges->count;
 		labelsid = ranges->labelsid;
+
 		DbgPrint("pbfilter:    allocating memory from nonpaged pool");
 		nranges = ExAllocatePoolWithTag(NonPagedPool, ranges->count * sizeof(PBIPRANGE), '02GP');
+		if (nranges == NULL)
+		{
+			DbgPrint("pbfilter:    ERROR: SetRanges() can't allocate nranges memory from NonPagedPool!!");
+			return;
+		}
+
 		DbgPrint("pbfilter:    copying ranges into driver");
 		RtlCopyMemory(nranges, ranges->ranges, ranges->count * sizeof(PBIPRANGE));
 		DbgPrint("pbfilter:    done setting up new ranges");
@@ -125,13 +132,18 @@ void SetRanges(const PBRANGES *ranges, int block)
 void SetPorts(const ULONG *ports, ULONG count) 
 {
 	ULONG *oldports = NULL;
-	ULONG *nports;
+	ULONG *nports = NULL;
 	KIRQL irq;
 
 	if (ports && count > 0) {
 		oldports = g_internal->ports;
 
 		nports = (ULONG*) ExAllocatePoolWithTag(NonPagedPool, sizeof(ULONG) * count, 'tPBP');
+		if (nports == NULL)
+		{
+			DbgPrint("pbfilter:    ERROR: SetPorts() can't allocate nports memory from NonPagedPool!!");
+			return;
+		}
 		RtlCopyMemory(nports, ports, sizeof(ULONG) * count);
 	}
 	else {
