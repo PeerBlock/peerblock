@@ -44,6 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;_WIN32_WINNT=0x0500"
@@ -112,6 +113,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="_DEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;WIN64;_WIN32_WINNT=0x0502"
@@ -181,6 +183,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -253,6 +256,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -325,6 +329,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -397,6 +402,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"

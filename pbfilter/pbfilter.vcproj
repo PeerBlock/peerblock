@@ -44,6 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk"
 				PreprocessorDefinitions="WIN32;_DEBUG;_X86_;_WIN2K_COMPAT_SLIST_USAGE"
@@ -138,6 +139,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk"
 				PreprocessorDefinitions="_DEBUG;_AMD64_;WIN64"
@@ -230,6 +232,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -330,6 +333,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -427,6 +431,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -527,6 +532,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -623,6 +629,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk"
 				PreprocessorDefinitions="WIN32;_DEBUG;_X86_;_WIN2K_COMPAT_SLIST_USAGE"
@@ -717,6 +724,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk"
 				PreprocessorDefinitions="_DEBUG;_AMD64_;WIN64"
