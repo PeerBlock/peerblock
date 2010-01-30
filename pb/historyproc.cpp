@@ -38,6 +38,8 @@ static const UINT ID_LIST_BLOCKFORONEHOUR=205;
 static const UINT ID_LIST_BLOCKPERM=206;
 static const UINT ID_LIST_COPYIP=207;
 
+static const int MAX_SIZE_IP = 32;
+
 struct HistoryRow {
 	long long id;
 	bool full;
@@ -57,6 +59,11 @@ static boost::shared_array<HistoryRow> g_rows;
 static size_t g_rowcount;
 
 HWND g_hHistoryDlg = NULL;
+
+// Function Prototypes
+static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh);
+static void History_OnSize(HWND hwnd, UINT state, int cx, int cy);
+UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia);
 
 static void History_OnClose(HWND hwnd) {
 	EndDialog(hwnd, 0);
@@ -254,8 +261,6 @@ static ostream& operator<<(ostream &os, const SYSTEMTIME &st) {
 	return os;
 }
 
-static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh);
-
 static void History_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	switch(id) {
 		case IDC_TODAY: {
@@ -345,7 +350,6 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	ListView_InsertColumn(hList, iSubItem, &lvc);
 }
 
-static void History_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_hHistoryDlg = hwnd;
 
@@ -380,7 +384,7 @@ static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	tci.pszText=(LPTSTR)name.c_str();
 	TabCtrl_InsertItem(caltabs, 1, &tci);
 
-	g_list=CreateWindow(WC_LISTVIEW, NULL, WS_CHILD|WS_VISIBLE|LVS_REPORT|LVS_NOSORTHEADER|LVS_SINGLESEL|LVS_OWNERDATA,
+	g_list=CreateWindow(WC_LISTVIEW, NULL, WS_CHILD|WS_VISIBLE|LVS_REPORT|LVS_NOSORTHEADER|LVS_OWNERDATA,
 		0, 0, 0, 0, tabs, (HMENU)IDC_LIST, GetModuleHandle(NULL), NULL);
 	ListView_SetExtendedListViewStyle(g_list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
 
@@ -685,175 +689,172 @@ static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 			set<unsigned int> ips;
 			GetLocalIps(ips, LOCALIP_ADAPTER);
 
-			TCHAR text[32], name[256];
-			ListView_GetItemText(nmh->hwndFrom, nmia->iItem, 2, text, 32);
+			UINT ret = CreateListViewPopUpMenu(hwnd, nmh, nmia);
+			if(ret != 0)
+			{
+				tstring sClipBoardData;
+				int nListItemsProcessedCounter = 0;
 
-			TCHAR *end=_tcschr(text, _T(':'));
-			if(end) *end=_T('\0');
+				int nListViewItemPosition = ListView_GetNextItem(nmh->hwndFrom, -1, LVNI_SELECTED);
+				while(nListViewItemPosition != -1) 
+				{
+					TCHAR text[MAX_SIZE_IP], name[256];
 
-			unsigned int allowip=ParseIp(text);
-			if(ips.find(allowip)!=ips.end()) {
-				ListView_GetItemText(nmh->hwndFrom, nmia->iItem, 3, text, 32);
+					ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 2, text, MAX_SIZE_IP);
 
-				end=_tcschr(text, _T(':'));
-				if(end) *end=_T('\0');
+					TCHAR *end=_tcschr(text, _T(':'));
+					if(end) *end=_T('\0');
 
-				allowip=ParseIp(text);
-			}
+					unsigned int allowip=ParseIp(text);
 
-			ListView_GetItemText(nmh->hwndFrom, nmia->iItem, 1, name, 256);
+					if(ips.find(allowip)!=ips.end()) {
+						ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 3, text, MAX_SIZE_IP);
 
-			HMENU menu=CreatePopupMenu();
+						end=_tcschr(text, _T(':'));
+						if(end) *end=_T('\0');
 
-			tstring str=boost::str(tformat(LoadString(IDS_ALLOWXFOR15MIN))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_ALLOWFOR15MIN, str.c_str());
+						allowip=ParseIp(text);
+					}
 
-			str=boost::str(tformat(LoadString(IDS_ALLOWXFORONEHOUR))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_ALLOWFORONEHOUR, str.c_str());
+					ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 1, name, 256);
 
-			str=boost::str(tformat(LoadString(IDS_ALLOWXPERM))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_ALLOWPERM, str.c_str());
+					wstring name_wchar=TSTRING_WCHAR(name);
+					p2p::range r(name_wchar, allowip, allowip);
 
-			AppendMenu(menu, MF_SEPARATOR, 0, NULL);
-
-			str=boost::str(tformat(LoadString(IDS_BLOCKXFOR15MIN))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_BLOCKFOR15MIN, str.c_str());
-
-			str=boost::str(tformat(LoadString(IDS_BLOCKXFORONEHOUR))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_BLOCKFORONEHOUR, str.c_str());
-
-			str=boost::str(tformat(LoadString(IDS_BLOCKXPERM))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_BLOCKPERM, str.c_str());
-
-			AppendMenu(menu, MF_SEPARATOR, 0, NULL);
-
-			str=boost::str(tformat(LoadString(IDS_COPYXTOCLIPBOARD))%text);
-			AppendMenu(menu, MF_STRING, ID_LIST_COPYIP, str.c_str());
-
-			RECT rect;
-			GetWindowRect(nmh->hwndFrom, &rect);
-
-			SetForegroundWindow(hwnd);
-			UINT ret=TrackPopupMenuEx(menu, TPM_TOPALIGN|TPM_RETURNCMD, rect.left+nmia->ptAction.x, rect.top+nmia->ptAction.y, hwnd, NULL);
-
-			DestroyMenu(menu);
-
-			wstring name_wchar=TSTRING_WCHAR(name);
-			p2p::range r(name_wchar, allowip, allowip);
-
-			switch(ret) {
-				case ID_LIST_ALLOWFOR15MIN:
-					g_tempallow.insert(r);
-					g_allowlist.push_back(make_pair(time(NULL)+900, r));
-					LoadLists(hwnd);
-					break;
-				case ID_LIST_ALLOWFORONEHOUR:
-					g_tempallow.insert(r);
-					g_allowlist.push_back(make_pair(time(NULL)+3600, r));
-					LoadLists(hwnd);
-					break;
-				case ID_LIST_ALLOWPERM: {
-					path dir=path::base_dir()/_T("lists");
-
-					if(!path::exists(dir))
-						path::create_directory(dir);
-
-					path file=dir/_T("permallow.p2b");
-
-					p2p::list list;
-					LoadList(file, list);
-
-					list.insert(p2p::range(name_wchar, allowip, allowip));
-					list.optimize();
-
-					list.save(TSTRING_MBS(file.file_str()), p2p::list::file_p2b);
-
-					bool found=false;
-
-					for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++) {
-						if(g_config.StaticLists[i].File==_T("lists\\permallow.p2b")) {
-							found=true;
+					++nListItemsProcessedCounter;
+		
+					// The appropriate action will be taken depending on which menu item was selected
+					switch(ret) {
+						case ID_LIST_ALLOWFOR15MIN:
+							g_tempallow.insert(r);
+							g_allowlist.push_back(make_pair(time(NULL)+900, r));
 							break;
-						}
-					}
-
-					if(!found) {
-						StaticList list;
-						list.Type=List::Allow;
-						list.Description=LoadString(IDS_PERMALLOWS);
-						list.File=_T("lists\\permallow.p2b");
-
-						g_config.StaticLists.push_back(list);
-					}
-
-					LoadLists(hwnd);
-				} break;
-				case ID_LIST_BLOCKFOR15MIN:
-					g_tempblock.insert(r);
-					g_blocklist.push_back(make_pair(time(NULL)+900, r));
-					LoadLists(hwnd);
-					break;
-				case ID_LIST_BLOCKFORONEHOUR:
-					g_tempblock.insert(r);
-					g_blocklist.push_back(make_pair(time(NULL)+3600, r));
-					LoadLists(hwnd);
-					break;
-				case ID_LIST_BLOCKPERM: {
-					path dir=path::base_dir()/_T("lists");
-
-					if(!path::exists(dir))
-						path::create_directory(dir);
-
-					path file=dir/_T("permblock.p2b");
-
-					p2p::list list;
-					LoadList(file, list);
-
-					list.insert(p2p::range(name_wchar, allowip, allowip));
-					list.optimize();
-
-					list.save(TSTRING_MBS(file.file_str()), p2p::list::file_p2b);
-
-					bool found=false;
-
-					for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++) {
-						if(g_config.StaticLists[i].File==_T("lists\\permblock.p2b")) {
-							found=true;
+						case ID_LIST_ALLOWFORONEHOUR:
+							g_tempallow.insert(r);
+							g_allowlist.push_back(make_pair(time(NULL)+3600, r));
 							break;
-						}
-					}
+						case ID_LIST_ALLOWPERM: {
+							path dir=path::base_dir()/_T("lists");
 
-					if(!found) {
-						StaticList list;
-						list.Type=List::Block;
-						list.Description=LoadString(IDS_PERMBLOCKS);
-						list.File=_T("lists\\permblock.p2b");
+							if(!path::exists(dir))
+								path::create_directory(dir);
 
-						g_config.StaticLists.push_back(list);
-					}
+							path file=dir/_T("permallow.p2b");
 
-					LoadLists(hwnd);
-				} break;
-				case ID_LIST_COPYIP:
-					if(OpenClipboard(hwnd)) {
-						EmptyClipboard();
+							p2p::list list;
+							LoadList(file, list);
 
-						size_t len=(_tcslen(text)+1)*sizeof(TCHAR);
+							list.insert(p2p::range(name_wchar, allowip, allowip));
+							list.optimize();
 
-						HGLOBAL buf=GlobalAlloc(GMEM_MOVEABLE, len);
+							list.save(TSTRING_MBS(file.file_str()), p2p::list::file_p2b);
 
-						CopyMemory(GlobalLock(buf), text, len);
-						GlobalUnlock(buf);
+							bool found=false;
 
-#ifdef _UNICODE
-						SetClipboardData(CF_UNICODETEXT, buf);
-#else
-						SetClipboardData(CF_TEXT, buf);
-#endif
-						CloseClipboard();
-					}
-					break;
-			}
+							for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++) {
+								if(g_config.StaticLists[i].File==_T("lists\\permallow.p2b")) {
+									found=true;
+									break;
+								}
+							}
+
+							if(!found) {
+								StaticList list;
+								list.Type=List::Allow;
+								list.Description=LoadString(IDS_PERMALLOWS);
+								list.File=_T("lists\\permallow.p2b");
+
+								g_config.StaticLists.push_back(list);
+							}
+
+						} break;
+						case ID_LIST_BLOCKFOR15MIN:
+							g_tempblock.insert(r);
+							g_blocklist.push_back(make_pair(time(NULL)+900, r));
+							break;
+						case ID_LIST_BLOCKFORONEHOUR:
+							g_tempblock.insert(r);
+							g_blocklist.push_back(make_pair(time(NULL)+3600, r));
+							break;
+						case ID_LIST_BLOCKPERM: {
+							path dir=path::base_dir()/_T("lists");
+
+							if(!path::exists(dir))
+								path::create_directory(dir);
+
+							path file=dir/_T("permblock.p2b");
+
+							p2p::list list;
+							LoadList(file, list);
+
+							list.insert(p2p::range(name_wchar, allowip, allowip));
+							list.optimize();
+
+							list.save(TSTRING_MBS(file.file_str()), p2p::list::file_p2b);
+
+							bool found=false;
+
+							for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++) {
+								if(g_config.StaticLists[i].File==_T("lists\\permblock.p2b")) {
+									found=true;
+									break;
+								}
+							}
+
+							if(!found) {
+								StaticList list;
+								list.Type=List::Block;
+								list.Description=LoadString(IDS_PERMBLOCKS);
+								list.File=_T("lists\\permblock.p2b");
+
+								g_config.StaticLists.push_back(list);
+							}
+						} break;
+						case ID_LIST_COPYIP:
+							if(OpenClipboard(hwnd)) {
+
+								tstring sTempClipboardData(text);
+								sTempClipboardData += _T("\r\n");
+
+								if(nListItemsProcessedCounter < (int)ListView_GetSelectedCount(nmh->hwndFrom))
+								{
+									sClipBoardData += sTempClipboardData;
+								}
+								else
+								{
+									sClipBoardData += sTempClipboardData;
+
+									size_t len = sClipBoardData.size()*sizeof(TCHAR);
+
+									HGLOBAL buf=GlobalAlloc(GMEM_MOVEABLE, len);
+
+									CopyMemory(GlobalLock(buf), sClipBoardData.c_str(), len);
+									GlobalUnlock(buf);
+
+									EmptyClipboard();
+
+									#ifdef _UNICODE
+										SetClipboardData(CF_UNICODETEXT, buf);
+									#else
+										SetClipboardData(CF_TEXT, buf);
+									#endif
+								}
+
+								CloseClipboard();
+							}
+							break;
+					} // End Switch
+
+					// Obtain next selected item in list
+					nListViewItemPosition = ListView_GetNextItem(nmh->hwndFrom, nListViewItemPosition, LVNI_SELECTED);
+
+				} // End While
+			} // End If which checks if a menu item was selected
+
+			// Optimize refreshing of list (only do it once at the end)
+			UINT menuItemSelected = ID_LIST_COPYIP;
+			if(ret != 0 && ret != ID_LIST_COPYIP)
+				LoadLists(hwnd);
 		}
 	}
 
@@ -905,6 +906,98 @@ static void History_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 	if(state==SIZE_RESTORED) {
 		SaveWindowPosition(hwnd, g_config.HistoryWindowPos);
 	}
+}
+
+//================================================================================================
+//
+//  CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia))
+//
+//    - Creates a popup menu to display Allow/Block options
+//
+/// <summary>
+///   Out = Obtain id of selected menu item
+/// </summary>
+//
+UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia)
+{
+	UINT ret = 0;
+
+	// Obtain current ip
+	set<unsigned int> ips;
+	GetLocalIps(ips, LOCALIP_ADAPTER);
+
+	// Obtain currently selected Cell
+	int nListViewItemPosition = ListView_GetNextItem(nmh->hwndFrom, -1, LVNI_SELECTED);
+
+	if(nListViewItemPosition != -1)
+	{
+		// Obtain the correct selected list item ip
+		TCHAR text[MAX_SIZE_IP];
+
+		// Display custom message if multiple items are selected
+		if(ListView_GetSelectedCount(nmh->hwndFrom) == 1)
+		{
+			ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 2, text, MAX_SIZE_IP);
+
+			TCHAR *end=_tcschr(text, _T(':'));
+			if(end) *end=_T('\0');
+
+			unsigned int allowip=ParseIp(text);
+			if(ips.find(allowip)!=ips.end()) {
+				ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 3, text, MAX_SIZE_IP);
+
+				end=_tcschr(text, _T(':'));
+				if(end) *end=_T('\0');
+
+				allowip=ParseIp(text);
+			}
+		}
+		else
+		{
+			TCHAR *pText = text;
+			_tcscpy_s(pText, MAX_SIZE_IP, _T("multiple IPs\0"));
+		}
+
+		// Create Menu
+		HMENU menu=CreatePopupMenu();
+
+		tstring str=boost::str(tformat(LoadString(IDS_ALLOWXFOR15MIN))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_ALLOWFOR15MIN, str.c_str());
+
+		str=boost::str(tformat(LoadString(IDS_ALLOWXFORONEHOUR))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_ALLOWFORONEHOUR, str.c_str());
+
+		str=boost::str(tformat(LoadString(IDS_ALLOWXPERM))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_ALLOWPERM, str.c_str());
+
+		AppendMenu(menu, MF_SEPARATOR, 0, NULL);
+
+		str=boost::str(tformat(LoadString(IDS_BLOCKXFOR15MIN))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_BLOCKFOR15MIN, str.c_str());
+
+		str=boost::str(tformat(LoadString(IDS_BLOCKXFORONEHOUR))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_BLOCKFORONEHOUR, str.c_str());
+
+		str=boost::str(tformat(LoadString(IDS_BLOCKXPERM))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_BLOCKPERM, str.c_str());
+
+		AppendMenu(menu, MF_SEPARATOR, 0, NULL);
+
+		str=boost::str(tformat(LoadString(IDS_COPYXTOCLIPBOARD))%text);
+		AppendMenu(menu, MF_STRING, ID_LIST_COPYIP, str.c_str());
+
+		RECT rect;
+		GetWindowRect(nmh->hwndFrom, &rect);
+
+		SetForegroundWindow(hwnd);
+
+		// Obtain menu item which was selected
+		ret=TrackPopupMenuEx(menu, TPM_TOPALIGN|TPM_RETURNCMD, rect.left+nmia->ptAction.x, rect.top+nmia->ptAction.y, hwnd, NULL);
+
+		DestroyMenu(menu);
+	}
+
+	return ret;
 }
 
 INT_PTR CALLBACK History_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
