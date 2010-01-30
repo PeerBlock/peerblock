@@ -841,6 +841,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\listurls.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\loadingproc.cpp"
 				>
 			</File>
@@ -1120,6 +1124,10 @@
 			</File>
 			<File
 				RelativePath=".\listsproc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\listurls.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,9 @@
+//================================================================================================
+//  addlistproc.cpp
+//
+//  Implements the window that pops up when you click the Add button in the List Manager.
+//================================================================================================
+
 /*
 	Copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
@@ -20,11 +26,24 @@
 
 */
 
+
+//////////---------------------------------------------------------------------
+// Includes
+
 #include "stdafx.h"
 #include "resource.h"
+
+#include "listurls.h"
+
 using namespace std;
 
+
+//////////---------------------------------------------------------------------
+// Globals
+
 HWND g_hAddListDlg = NULL;
+ListUrls * g_pListUrls = NULL;
+
 
 static void AddList_OnClose(HWND hwnd) {
 	EndDialog(hwnd, IDCANCEL);
@@ -32,6 +51,7 @@ static void AddList_OnClose(HWND hwnd) {
 
 static void AddList_OnDestroy(HWND hwnd) {
 	g_hAddListDlg = NULL;
+	delete g_pListUrls;
 }
 
 static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
@@ -69,13 +89,19 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				SetDlgItemText(hwnd, IDC_FILE, p.c_str());
 			}
 		} break;
-		case IDOK: {
-			List **list=(List**)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
 
-			if(IsDlgButtonChecked(hwnd, IDC_ADDFILE)==BST_CHECKED) {
+		case IDOK: 
+		{
+			List **list=(List**)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
+			bool destroyWindow = true;
+
+			if(IsDlgButtonChecked(hwnd, IDC_ADDFILE)==BST_CHECKED) 
+			{
+				// File-based list
 				const path file=GetDlgItemText(hwnd, IDC_FILE);
 
-				if(!path::exists(file.has_root()?file:path::base_dir()/file)) {
+				if(!path::exists(file.has_root()?file:path::base_dir()/file)) 
+				{
 					MessageBox(hwnd, IDS_INVALIDFILETEXT, IDS_INVALIDFILE, MB_ICONERROR|MB_OK);
 					break;
 				}
@@ -85,33 +111,237 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				
 				*list=l;
 			}
-			else {
+			else 
+			{
+				TRACEI("[addlistproc] [AddList_OnCommand]    sanity-checking URL-based list");
+
+				// URL-based list
 				tstring url=GetDlgItemText(hwnd, IDC_URL);
 
-				if(!(path(url).is_url())) {
+				if(!(path(url).is_url())) 
+				{
+					TRACEE("[addlistproc] [AddList_OnCommand]  * ERROR:  Not a valid URL!");
 					MessageBox(hwnd, IDS_INVALIDURLTEXT, IDS_INVALIDURL, MB_ICONERROR|MB_OK);
 					break;
 				}
 
-				DynamicList *l=new DynamicList;
-				l->Url=url;
+				// get list-name num
+				LISTNAME listId = g_pListUrls->FindListNum(url);
 
-				*list=l;
+				// sanity-check url
+				LISTFLAGS listFlags = g_pListUrls->CheckUrl(url, listId);
+
+				int result = 0;
+
+
+				// Handle sanity-checking results
+
+				// User entered a URL that's one of the Default Lists
+				if (listFlags.test(LISTFLAG_DEFAULT) && !listFlags.test(LISTFLAG_DIFFDUPE) && !listFlags.test(LISTFLAG_EXACTDUPE))
+				{
+					if (listFlags.test(LISTFLAG_NOT_IBL))
+					{
+						TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & !DUPE & LISTFLAG_NOT_IBL");
+						tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT_NIBL))%g_pListUrls->GetListDesc(listId));
+						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+						if (result == IDYES)
+						{
+							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+							url = g_pListUrls->GetBestUrl(listId);
+						}
+						else if (result == IDNO)
+						{
+							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+						}
+						else if (result == IDCANCEL)
+						{
+							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+							destroyWindow = false;
+						}
+					}
+					else
+					{
+						TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & !DUPE & !LISTFLAG_NOT_IBL");
+						tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT))%g_pListUrls->GetListDesc(listId));
+						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OKCANCEL);
+						if (result == IDOK)
+						{
+							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
+							url = g_pListUrls->GetBestUrl(listId);
+						}
+						else if (result == IDCANCEL)
+						{
+							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+							destroyWindow = false;
+						}
+					}
+				}
+
+				// User entered a URL that's a Default List URL, but not one previously configured
+				else if (listFlags.test(LISTFLAG_DIFFDUPE) && listFlags.test(LISTFLAG_DEFAULT))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & LISTFLAG_DIFFDUPE");
+					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFDUPE))%g_pListUrls->GetListDesc(listId));
+					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					if (result == IDYES)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+						url = g_pListUrls->GetBestUrl(listId);
+					}
+					else if (result == IDNO)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				// User entered an "unfriendly URL", for instance one of the ones iblocklist.com 
+				// publicly displays such as http://list.iblocklist.com/lists/bluetack/level-2
+				else if (listFlags.test(LISTFLAG_UNFRIENDLY))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_UNFRIENDLY");
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_UNFRIENDLY, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					if (result == IDYES)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+						url = g_pListUrls->GetBestUrl(listId);
+					}
+					else if (result == IDNO)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				// User entered a non-iblocklist.com URL even though one exists, such as the 
+				// bluetack.co.uk-hosted version of Level2
+				else if (listFlags.test(LISTFLAG_NOT_IBL))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_NOT_IBL");
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_NOTIBL, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					if (result == IDYES)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+						url = g_pListUrls->GetBestUrl(listId);
+					}
+					else if (result == IDNO)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				// User entered a "known wrong" URL, such as a list-description URL from 
+				// iblocklist.com instead of a list-update URL
+				else if (listFlags.test(LISTFLAG_WRONG))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_WRONG");
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_WRONG, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					if (result == IDYES)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+						url = g_pListUrls->GetBestUrl(listId);
+					}
+					else if (result == IDNO)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				// User entered a URL that's an *exact* match for a URL that's already been added
+				else if (listFlags.test(LISTFLAG_EXACTDUPE))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_EXACTDUPE");
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OKCANCEL);
+					if (result == IDOK)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				// User entered a URL that's for a list that's already been added, but with a different URL.
+				// For example, adding http://list.iblocklist.com/?list=bt_level2 when we already have
+				// http://list.iblocklist.com/lists/bluetack/level-2 added.
+				else if (listFlags.test(LISTFLAG_DIFFDUPE))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DIFFDUPE");
+					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DIFFDUPE))%g_pListUrls->GetListDesc(listId));
+					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					if (result == IDYES)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+						url = g_pListUrls->GetBestUrl(listId);
+					}
+					else if (result == IDNO)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				if (destroyWindow)
+				{
+					// Finally, add this new list!
+					TRACEI("[addlistproc] [AddList_OnCommand]    closing list-add window");
+					DynamicList *l=new DynamicList;
+					l->Url=url;
+
+					*list=l;
+				}
 			}
 
-			(*list)->Type=(IsDlgButtonChecked(hwnd, IDC_BLOCK)==BST_CHECKED)?List::Block:List::Allow;
-			(*list)->Description=GetDlgItemText(hwnd, IDC_DESCRIPTION);
+			if (destroyWindow)
+			{
+				TRACEI("[addlistproc] [AddList_OnCommand]    adding list");
+				(*list)->Type=(IsDlgButtonChecked(hwnd, IDC_BLOCK)==BST_CHECKED)?List::Block:List::Allow;
+				(*list)->Description=GetDlgItemText(hwnd, IDC_DESCRIPTION);
 
-			EndDialog(hwnd, IDOK);
-		} break;
+				EndDialog(hwnd, IDOK);
+			}
+
+		} break; // End of IDOK
+
+
 		case IDCANCEL:
 			EndDialog(hwnd, IDCANCEL);
 			break;
 	}
-}
 
-static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+} // End of AddList_OnCommand()
+
+
+
+static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+{
 	g_hAddListDlg = hwnd;
+	g_pListUrls = new ListUrls();
+	g_pListUrls->Init();
 
 #pragma warning(disable:4244) //not my fault!
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);

@@ -196,6 +196,15 @@
 #define IDS_PREVREL237TEXT				250
 #define IDS_CONFERR                     251
 #define IDS_CONFERRTEXT                 252
+#define IDS_LISTSAN_TITLE				253
+#define IDS_LISTSAN_UNFRIENDLY			254
+#define IDS_LISTSAN_NOTIBL				255
+#define IDS_LISTSAN_WRONG				256
+#define IDS_LISTSAN_DEFAULT				257
+#define IDS_LISTSAN_DEFAULT_NIBL		258
+#define IDS_LISTSAN_EXACTDUPE			259
+#define IDS_LISTSAN_DEFDUPE				260
+#define IDS_LISTSAN_DIFFDUPE			261
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003
