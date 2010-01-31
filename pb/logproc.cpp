@@ -839,14 +839,14 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 				while(nListViewItemPosition != -1) 
 				{
 					TCHAR text[MAX_SIZE_IP], name[256];
-					ListView_GetItemText(nmh->hwndFrom, nmia->iItem, 2, text, MAX_SIZE_IP);
+					ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 2, text, MAX_SIZE_IP);
 
 					TCHAR *end=_tcschr(text, _T(':'));
 					if(end) *end=_T('\0');
 
 					unsigned int allowip=ParseIp(text);
 					if(ips.find(allowip)!=ips.end()) {
-						ListView_GetItemText(nmh->hwndFrom, nmia->iItem, 3, text, MAX_SIZE_IP);
+						ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 3, text, MAX_SIZE_IP);
 
 						end=_tcschr(text, _T(':'));
 						if(end) *end=_T('\0');
@@ -854,7 +854,7 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						allowip=ParseIp(text);
 					}
 
-					ListView_GetItemText(nmh->hwndFrom, nmia->iItem, 1, name, 256);
+					ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 1, name, 256);
 
 					wstring name_wchar=TSTRING_WCHAR(name);
 					p2p::range r(name_wchar, allowip, allowip);
