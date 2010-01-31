@@ -353,8 +353,12 @@ static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		ComboBox_AddString(url, g_presets[i]);
 	ComboBox_SetCurSel(url, 2);
 
-	CheckDlgButton(hwnd, IDC_ADDFILE, BST_CHECKED);
+	CheckDlgButton(hwnd, IDC_ADDURL, BST_CHECKED);
 	CheckDlgButton(hwnd, IDC_BLOCK, BST_CHECKED);
+	EnableWindow(GetDlgItem(hwnd, IDC_FILE), FALSE);
+	EnableWindow(GetDlgItem(hwnd, IDC_BROWSE), FALSE);
+	EnableWindow(GetDlgItem(hwnd, IDC_URL), TRUE);
+	EnableWindow(GetDlgItem(hwnd, IDOK), GetWindowTextLength(GetDlgItem(hwnd, IDC_URL))>0);
 
 	// Load peerblock icon in the windows titlebar
 	RefreshDialogIcon(g_hAddListDlg);
