@@ -179,7 +179,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				{
 					// check against each url for this list-name 
 					LISTNAME existingListId = FindListNum(l->Url);
-					for (int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+					for (unsigned int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
 					{
 						if (Lists[existingListId][j].Url.find(_url) != string::npos)
 						{
@@ -206,7 +206,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 			{
 				// check against each url for this list-name 
 				existingListId = FindListNum(g_deflists[i].Url);
-				for (int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+				for (unsigned int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
 				{
 					if (Lists[existingListId][j].Url.find(_url) != string::npos)
 					{
@@ -235,7 +235,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 			{
 				// check against each url for this list-name 
 				existingListId = FindListNum(g_config.DynamicLists[i].Url);
-				for (int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+				for (unsigned int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
 				{
 					if (Lists[existingListId][j].Url.find(_url) != string::npos)
 					{
