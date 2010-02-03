@@ -392,6 +392,7 @@ bool Configuration::Load()
 		{
 			TRACEW("[Configuration] [Load]    using last-known-good configuration file");
 			MessageBox(NULL, IDS_CONFERRTEXT, IDS_CONFERR, MB_ICONWARNING|MB_OK);
+			g_config.Save(_T("peerblock.conf"));	// save restored config to regular file
 		}
 		else if (LoadFile(pg2.file_str().c_str(), &fp, &map, &view))	// fall back to old PG2 version
 		{
