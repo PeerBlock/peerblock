@@ -983,7 +983,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_PREVREL				"Updating PeerBlock"
-    IDS_PREVREL237TEXT		"PeerBlock has updated your list URLs to the new 'friendly' iblocklist naming convention, and changed bluetack.co.uk list URLs over to the faster and more reliable iblocklist.com ones.\r\n\r\nThis is a one-time change.  If you change those URLs back we'll leave them alone."
+    IDS_PREVREL268TEXT		"PeerBlock now makes use of new 'friendly' names for iblocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
 END
 
 #endif    // English (U.S.) resources

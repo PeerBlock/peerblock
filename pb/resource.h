@@ -193,7 +193,7 @@
 #define IDS_PGALREADYRUNNING			247
 #define IDS_PGALREADYRUNNINGTEXT		248
 #define IDS_PREVREL						249
-#define IDS_PREVREL237TEXT				250
+#define IDS_PREVREL268TEXT				250
 #define IDS_CONFERR                     251
 #define IDS_CONFERRTEXT                 252
 #define IDS_LISTSAN_TITLE				253
