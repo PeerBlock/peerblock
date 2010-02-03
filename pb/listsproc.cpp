@@ -33,7 +33,7 @@ using namespace std;
 
 static INT_PTR g_ret;
 static const UINT ID_CONTEXT_MAKESTATIC=200;
-static vector<DynamicList> g_deflists;	// temporary storage of default lists
+vector<DynamicList> g_deflists;	// temporary storage of default lists
 
 HWND g_hListsDlg = NULL;
 

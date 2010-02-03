@@ -129,7 +129,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				LISTNAME listId = g_pListUrls->FindListNum(url);
 
 				// sanity-check url
-				LISTFLAGS listFlags = g_pListUrls->CheckUrl(url, listId);
+				LISTFLAGS listFlags = g_pListUrls->CheckUrl(url, listId, GetParent(hwnd));
 
 				int result = 0;
 
@@ -199,6 +199,46 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					}
 				}
 
+				// User entered a URL that's an *exact* match for a URL that's already been added
+				else if (listFlags.test(LISTFLAG_EXACTDUPE))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_EXACTDUPE");
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OKCANCEL);
+					if (result == IDOK)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
+				// User entered a URL that's for a list that's already been added, but with a different URL.
+				// For example, adding http://list.iblocklist.com/?list=bt_level2 when we already have
+				// http://list.iblocklist.com/lists/bluetack/level-2 added.
+				else if (listFlags.test(LISTFLAG_DIFFDUPE))
+				{
+					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DIFFDUPE");
+					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DIFFDUPE))%g_pListUrls->GetListDesc(listId));
+					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					if (result == IDYES)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
+						url = g_pListUrls->GetBestUrl(listId);
+					}
+					else if (result == IDNO)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
+					}
+					else if (result == IDCANCEL)
+					{
+						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
+						destroyWindow = false;
+					}
+				}
+
 				// User entered an "unfriendly URL", for instance one of the ones iblocklist.com 
 				// publicly displays such as http://list.iblocklist.com/lists/bluetack/level-2
 				else if (listFlags.test(LISTFLAG_UNFRIENDLY))
@@ -249,46 +289,6 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_WRONG");
 					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_WRONG, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
-					if (result == IDYES)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-						url = g_pListUrls->GetBestUrl(listId);
-					}
-					else if (result == IDNO)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
-					}
-				}
-
-				// User entered a URL that's an *exact* match for a URL that's already been added
-				else if (listFlags.test(LISTFLAG_EXACTDUPE))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_EXACTDUPE");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OKCANCEL);
-					if (result == IDOK)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
-					}
-				}
-
-				// User entered a URL that's for a list that's already been added, but with a different URL.
-				// For example, adding http://list.iblocklist.com/?list=bt_level2 when we already have
-				// http://list.iblocklist.com/lists/bluetack/level-2 added.
-				else if (listFlags.test(LISTFLAG_DIFFDUPE))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DIFFDUPE");
-					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DIFFDUPE))%g_pListUrls->GetListDesc(listId));
-					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
 					if (result == IDYES)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");

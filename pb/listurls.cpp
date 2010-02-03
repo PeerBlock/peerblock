@@ -41,10 +41,10 @@
 //
 LISTNAME ListUrls::FindListNum(wstring _url) 
 { 
-	TRACEI("[ListUrls] [FindListNum]  > Entering routine.");
+	//TRACEV("[ListUrls] [FindListNum]  > Entering routine.");
 
-	tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   looking for url: [%1%]")) % _url.c_str() );
-	TRACEBUFI(strBuf);
+	//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   looking for url: [%1%]")) % _url.c_str() );
+	//TRACEBUFI(strBuf);
 
 	int listName;
 	bool foundUrl = false;
@@ -58,16 +58,16 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 			// check for specified URL
 			if (Lists[listName][listUrl].Url.find(_url) != string::npos)
 			{
-				tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   found url at: [%1%][%2%]")) 
-					% listName % listUrl );
-				TRACEBUFI(strBuf);
+				//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   found url at: [%1%][%2%]")) 
+				//	% listName % listUrl );
+				//TRACEBUFI(strBuf);
 				foundUrl = true;	// found it!
 				break;
 			}
 		}
 	}
 
-	TRACEI("[ListUrls] [FindListNum]  < Leaving routine.");
+	//TRACEI("[ListUrls] [FindListNum]  < Leaving routine.");
 	return (LISTNAME)(listName - 1);	// we're incrementing listName one extra time, after finding a match
 
 }; // End of FindListNum()
@@ -78,15 +78,30 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 //
 //  CheckUrl()
 //
-//    - Called by ?
+//    - Called by AddList_OnCommand(), when processing IDOK
 //
 /// <summary>
 ///   Returns the set of flags corresponding to the specified list, for use in sanity-checking.
 ///   If returns 0, then this is either the "best" URL or else we couldn't find it in our list
 ///   of lists.
 /// </summary>
+/// <param name="url">
+///   The URL which the callers wants to sanity-check.
+/// </param>
+/// <param name="num">
+///   A "hint" as to which row of our internal Lists array the specified URL belongs.  This 
+///   parameter should have been discovered by the caller via a previous call to FindListNum().
+///   If the caller wants to explicitly give no hint, this parameter should be set to
+///   LISTNAME_COUNT.
+/// </param>
+/// <param name="listman">
+///   If called from within the ListManager, this should be the HWND of the ListManager window.  
+///   We're using this instead of g_config.dynamiclists[] because it will be updated as soon as 
+///   lists are added, instead of only updated after the ListManager is closed.  If this 
+///   parameter is NULL, we will instead check against g_config.
+/// </param>
 //
-LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num)
+LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 {
 	TRACEI("[ListUrls] [CheckUrl]  > Entering routine.");
 
@@ -128,25 +143,106 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num)
 
 	// Check to see if this is a Default List
 	if (_num <= LISTNAME_MAX_DEFAULT)
-		urlFlags.set(LISTFLAG_DEFAULT);
-
-	// Check for duplicate list
-	LISTNAME existingListId = LISTNAME_COUNT;
-	for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
 	{
-		// check against user-entered url
-		if (g_config.DynamicLists[i].Url.find(_url) != string::npos)
+		TRACEI("[ListUrls] [CheckUrl]    url is one of the default lists");
+		urlFlags.set(LISTFLAG_DEFAULT);
+	}
+
+	// Check for duplicates
+	if (_listman != NULL)
+	{
+		TRACEI("[ListUrls] [CheckUrl]    non-null listman handle");
+
+		// Check ListManager's ListView
+		HWND listman_list = GetDlgItem(_listman, IDC_LIST);
+		int count=ListView_GetItemCount(listman_list);
+
+		for(int i=0; i<count; i++) 
 		{
-			urlFlags.set(LISTFLAG_EXACTDUPE);
+			LVITEM lvi={0};
+			lvi.iItem=i;
+			lvi.mask=LVIF_PARAM;
+			ListView_GetItem(listman_list, &lvi);
+			List *plist=(List*)lvi.lParam;
+
+			if(DynamicList *l=dynamic_cast<DynamicList*>(plist))
+			{
+				// TODO:  Should probably refactor this stuff into its own subroutine...
+
+				// check against user-entered url
+				if (l->Url.find(_url) != string::npos)
+				{
+					TRACEI("[ListUrls] [CheckUrl]    found exact url in listman listview");
+					urlFlags.set(LISTFLAG_EXACTDUPE);
+				}
+				else
+				{
+					// check against each url for this list-name 
+					LISTNAME existingListId = FindListNum(l->Url);
+					for (int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+					{
+						if (Lists[existingListId][j].Url.find(_url) != string::npos)
+						{
+							TRACEI("[ListUrls] [CheckUrl]    found similar url in listman listview");
+							urlFlags.set(LISTFLAG_DIFFDUPE);
+						}
+					}
+				}
+			}
 		}
 
-		// check against each url for this list-name 
-		existingListId = FindListNum(g_config.DynamicLists[i].Url);
-		for (int j=0; j<LISTNAME_COUNT; ++j)
+		// Check for already-configured similar-URLs in default lists
+		extern vector<DynamicList> g_deflists;	// defined in listsproc.cpp
+		LISTNAME existingListId = LISTNAME_COUNT;
+		for(vector<DynamicList>::size_type i=0; i<g_deflists.size(); i++)
 		{
+			// check against user-entered url
+			if (g_deflists[i].Url.find(_url) != string::npos)
+			{
+				TRACEI("[ListUrls] [CheckUrl]    found exact url in g_config dynamic lists");
+				urlFlags.set(LISTFLAG_EXACTDUPE);
+			}
+			else
+			{
+				// check against each url for this list-name 
+				existingListId = FindListNum(g_deflists[i].Url);
+				for (int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+				{
+					if (Lists[existingListId][j].Url.find(_url) != string::npos)
+					{
+						TRACEI("[ListUrls] [CheckUrl]    found similar url in g_config dynamic lists");
+						urlFlags.set(LISTFLAG_DIFFDUPE);
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		TRACEI("[ListUrls] [CheckUrl]    null listman");
+
+		// Check g_config.DynamicLists[]
+		LISTNAME existingListId = LISTNAME_COUNT;
+		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
+		{
+			// check against user-entered url
 			if (g_config.DynamicLists[i].Url.find(_url) != string::npos)
 			{
-				urlFlags.set(LISTFLAG_DIFFDUPE);
+				TRACEI("[ListUrls] [CheckUrl]    found exact url in g_config dynamic lists");
+				urlFlags.set(LISTFLAG_EXACTDUPE);
+			}
+			else
+			{
+				// check against each url for this list-name 
+				existingListId = FindListNum(g_config.DynamicLists[i].Url);
+				for (int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+				{
+					if (Lists[existingListId][j].Url.find(_url) != string::npos)
+					{
+						TRACEI("[ListUrls] [CheckUrl]    found similar url in g_config dynamic lists");
+						urlFlags.set(LISTFLAG_DIFFDUPE);
+					}
+				}
 			}
 		}
 	}

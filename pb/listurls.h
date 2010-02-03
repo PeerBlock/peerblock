@@ -174,7 +174,7 @@ public:
 	bool Init();
 	wstring GetBestUrl(LISTNAME url_num) { return(Lists[url_num][LISTS_FIELD_BESTURL].Url); }; 
 	LISTNAME FindListNum(wstring url);
-	LISTFLAGS CheckUrl(wstring url, LISTNAME num=LISTNAME_COUNT);
+	LISTFLAGS CheckUrl(wstring url, LISTNAME num=LISTNAME_COUNT, HWND listman=NULL);
 	wstring GetListDesc(LISTNAME url_num);
 	
 };
