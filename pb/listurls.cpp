@@ -108,25 +108,25 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 {
 	TRACEI("[ListUrls] [CheckUrl]  > Entering routine.");
 
-	tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]   checking url: [%1%]")) % _url.c_str() );
+	tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    checking url: [%1%]")) % _url.c_str() );
 	TRACEBUFI(strBuf);
 
 	if (_num == LISTNAME_COUNT)
 		_num = FindListNum(_url);
 
-	strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]   looking in row: [%1%]")) % _num );
+	strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    looking in row: [%1%]")) % _num );
 	TRACEBUFI(strBuf);
 
 	// search through all URLs associated with this ListName, to find the index into the row
 	unsigned int idx;
 	bool found = false;
 	LISTFLAGS urlFlags = 0;
-	for (idx=LISTS_FIELD_BESTURL; idx<Lists[_num].size(); ++idx)
+	for (idx=LISTS_FIELD_BESTURL; _num!=LISTNAME_COUNT && idx<Lists[_num].size(); ++idx)
 	{
 		if (Lists[_num][idx].Url.find(_url) != string::npos)
 		{
 			// found it!
-			tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]   found url at: [%1%][%2%]")) 
+			tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    found url at: [%1%][%2%]")) 
 				% _num % idx );
 			TRACEBUFI(strBuf);
 			found = true;
@@ -182,7 +182,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				{
 					// check against each url for this list-name 
 					LISTNAME existingListId = FindListNum(l->Url);
-					for (unsigned int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+					for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 					{
 						if (Lists[existingListId][j].Url.find(_url) != string::npos)
 						{
@@ -209,7 +209,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 			{
 				// check against each url for this list-name 
 				existingListId = FindListNum(g_deflists[i].Url);
-				for (unsigned int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
 					if (Lists[existingListId][j].Url.find(_url) != string::npos)
 					{
@@ -238,7 +238,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 			{
 				// check against each url for this list-name 
 				existingListId = FindListNum(g_config.DynamicLists[i].Url);
-				for (unsigned int j=LISTS_FIELD_BESTURL; j<Lists[existingListId].size(); ++j)
+				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
 					if (Lists[existingListId][j].Url.find(_url) != string::npos)
 					{
