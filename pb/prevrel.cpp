@@ -196,7 +196,9 @@ void PerformPrevRelUpdates(HWND _hwnd)
 				}
 				else
 				{
-					TRACEW("[mainproc] [PerformPrevRelUpdates]    - found unknown list url, copying over as-is");
+					tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - found unknown list url [%1%], copying over as-is")) 
+						% list->Url.c_str() );
+					TRACEBUFW(strBuf);
 					DynamicList newList = *list;
 					tempList.push_back(newList);
 				}

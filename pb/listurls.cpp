@@ -67,8 +67,11 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 		}
 	}
 
+	if (foundUrl)
+		listName -= 1;	// we're incrementing listName one extra time, after finding a match
+
 	//TRACEI("[ListUrls] [FindListNum]  < Leaving routine.");
-	return (LISTNAME)(listName - 1);	// we're incrementing listName one extra time, after finding a match
+	return (LISTNAME)(listName);	
 
 }; // End of FindListNum()
 
@@ -413,27 +416,27 @@ bool ListUrls::Init()
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://list.iblocklist.com/?list=bimsvyvtgxeelunveyal", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://iblocklist.com/list.php?list=bimsvyvtgxeelunveyal", LISTFLAG_WRONG));
 
-		// DHCA Lists
+		// DCHA Lists
 
-		Lists[LISTNAME_DHCA_FAKER].push_back(ListData(L"Faker (DHCA)"));
-		Lists[LISTNAME_DHCA_FAKER].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/faker"));
-		Lists[LISTNAME_DHCA_FAKER].push_back(ListData(L"http://list.iblocklist.com/?list=dhca_faker", LISTFLAG_UNFRIENDLY));
-		Lists[LISTNAME_DHCA_FAKER].push_back(ListData(L"http://iblocklist.com/list.php?list=dhca_faker", LISTFLAG_WRONG));
+		Lists[LISTNAME_DCHA_FAKER].push_back(ListData(L"Faker (DHCA)"));
+		Lists[LISTNAME_DCHA_FAKER].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/faker"));
+		Lists[LISTNAME_DCHA_FAKER].push_back(ListData(L"http://list.iblocklist.com/?list=dcha_faker", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_DCHA_FAKER].push_back(ListData(L"http://iblocklist.com/list.php?list=dcha_faker", LISTFLAG_WRONG));
 
-		Lists[LISTNAME_DHCA_HACKER].push_back(ListData(L"Hacker (DHCA)"));
-		Lists[LISTNAME_DHCA_HACKER].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/hacker"));
-		Lists[LISTNAME_DHCA_HACKER].push_back(ListData(L"http://list.iblocklist.com/?list=dhca_hacker", LISTFLAG_UNFRIENDLY));
-		Lists[LISTNAME_DHCA_HACKER].push_back(ListData(L"http://iblocklist.com/list.php?list=dhca_hacker", LISTFLAG_WRONG));
+		Lists[LISTNAME_DCHA_HACKER].push_back(ListData(L"Hacker (DHCA)"));
+		Lists[LISTNAME_DCHA_HACKER].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/hacker"));
+		Lists[LISTNAME_DCHA_HACKER].push_back(ListData(L"http://list.iblocklist.com/?list=dcha_hacker", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_DCHA_HACKER].push_back(ListData(L"http://iblocklist.com/list.php?list=dcha_hacker", LISTFLAG_WRONG));
 
-		Lists[LISTNAME_DHCA_PEDO].push_back(ListData(L"Pedophiles (DHCA)"));
-		Lists[LISTNAME_DHCA_PEDO].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/pedophiles"));
-		Lists[LISTNAME_DHCA_PEDO].push_back(ListData(L"http://list.iblocklist.com/?list=dhca_pedophiles", LISTFLAG_UNFRIENDLY));
-		Lists[LISTNAME_DHCA_PEDO].push_back(ListData(L"http://iblocklist.com/list.php?list=dhca_pedophiles", LISTFLAG_WRONG));
+		Lists[LISTNAME_DCHA_PEDO].push_back(ListData(L"Pedophiles (DHCA)"));
+		Lists[LISTNAME_DCHA_PEDO].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/pedophiles"));
+		Lists[LISTNAME_DCHA_PEDO].push_back(ListData(L"http://list.iblocklist.com/?list=dcha_pedophiles", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_DCHA_PEDO].push_back(ListData(L"http://iblocklist.com/list.php?list=dcha_pedophiles", LISTFLAG_WRONG));
 
-		Lists[LISTNAME_DHCA_SPAMMER].push_back(ListData(L"Spammer (DHCA)"));
-		Lists[LISTNAME_DHCA_SPAMMER].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/spammer"));
-		Lists[LISTNAME_DHCA_SPAMMER].push_back(ListData(L"http://list.iblocklist.com/?list=dhca_spammer", LISTFLAG_UNFRIENDLY));
-		Lists[LISTNAME_DHCA_SPAMMER].push_back(ListData(L"http://iblocklist.com/list.php?list=dhca_spammer", LISTFLAG_WRONG));
+		Lists[LISTNAME_DCHA_SPAMMER].push_back(ListData(L"Spammer (DHCA)"));
+		Lists[LISTNAME_DCHA_SPAMMER].push_back(ListData(L"http://list.iblocklist.com/lists/dchubad/spammer"));
+		Lists[LISTNAME_DCHA_SPAMMER].push_back(ListData(L"http://list.iblocklist.com/?list=dcha_spammer", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_DCHA_SPAMMER].push_back(ListData(L"http://iblocklist.com/list.php?list=dcha_spammer", LISTFLAG_WRONG));
 
 		// TBG Lists
 
