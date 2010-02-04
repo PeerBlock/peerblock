@@ -143,7 +143,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					{
 						TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & !DUPE & LISTFLAG_NOT_IBL");
 						tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT_NIBL))%g_pListUrls->GetListDesc(listId));
-						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
 						if (result == IDYES)
 						{
 							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
@@ -153,26 +153,16 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 						{
 							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
 						}
-						else if (result == IDCANCEL)
-						{
-							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-							destroyWindow = false;
-						}
 					}
 					else
 					{
 						TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & !DUPE & !LISTFLAG_NOT_IBL");
 						tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT))%g_pListUrls->GetListDesc(listId));
-						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OKCANCEL);
+						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
 						if (result == IDOK)
 						{
 							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
 							url = g_pListUrls->GetBestUrl(listId);
-						}
-						else if (result == IDCANCEL)
-						{
-							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-							destroyWindow = false;
 						}
 					}
 				}
@@ -182,7 +172,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & LISTFLAG_DIFFDUPE");
 					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFDUPE))%g_pListUrls->GetListDesc(listId));
-					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
 					if (result == IDYES)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
@@ -192,26 +182,16 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
 					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
-					}
 				}
 
 				// User entered a URL that's an *exact* match for a URL that's already been added
 				else if (listFlags.test(LISTFLAG_EXACTDUPE))
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_EXACTDUPE");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OKCANCEL);
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
 					if (result == IDOK)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
 					}
 				}
 
@@ -222,7 +202,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DIFFDUPE");
 					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DIFFDUPE))%g_pListUrls->GetListDesc(listId));
-					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
 					if (result == IDYES)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
@@ -231,11 +211,6 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					else if (result == IDNO)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
 					}
 				}
 
@@ -244,7 +219,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				else if (listFlags.test(LISTFLAG_UNFRIENDLY))
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_UNFRIENDLY");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_UNFRIENDLY, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_UNFRIENDLY, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
 					if (result == IDYES)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
@@ -253,11 +228,6 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					else if (result == IDNO)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
 					}
 				}
 
@@ -266,7 +236,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				else if (listFlags.test(LISTFLAG_NOT_IBL))
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_NOT_IBL");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_NOTIBL, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_NOTIBL, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
 					if (result == IDYES)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
@@ -275,11 +245,6 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					else if (result == IDNO)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
 					}
 				}
 
@@ -288,7 +253,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				else if (listFlags.test(LISTFLAG_WRONG))
 				{
 					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_WRONG");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_WRONG, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNOCANCEL);
+					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_WRONG, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
 					if (result == IDYES)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
@@ -297,11 +262,6 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					else if (result == IDNO)
 					{
 						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-					else if (result == IDCANCEL)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Cancel");
-						destroyWindow = false;
 					}
 				}
 
