@@ -417,6 +417,13 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				else if(StaticList *sl=dynamic_cast<StaticList*>(l))
 					s=sl->File.file_str();
 
+				if (s.empty())
+				{
+					TRACEW("[listsproc] [Lists_OnCommand]    no list to add");
+					delete l;
+					break;
+				}
+
 				// make sure this newly-added list isn't a dupe of one of the Default Lists
 				if (s.find(_T("http://list.iblocklist.com/lists/bluetack/level-1")) != tstring::npos ||
 					s.find(_T("http://list.iblocklist.com/lists/bluetack/spyware")) != tstring::npos ||

@@ -54,6 +54,166 @@ static void AddList_OnDestroy(HWND hwnd) {
 	delete g_pListUrls;
 }
 
+
+
+//================================================================================================
+//
+//  AddList_SanityCheckUrl()
+//
+//    - Called by AddList_OnCommand(), when processing IDOK
+//
+/// <summary>
+///   Returns a to-be-added URL, or empty string if none is to be.
+/// </summary>
+/// <param name="url">
+///   The URL which the caller wants to sanity-check.
+/// </param>
+//
+static tstring AddList_SanityCheckUrl(tstring _url) 
+{
+	tstring url = _url;
+	int result = 0;
+
+	LISTNAME listId = g_pListUrls->FindListNum(_url);	// get list-name num
+	LISTFLAGS listFlags = g_pListUrls->CheckUrl(_url, listId, GetParent(g_hAddListDlg));	// sanity-check url
+
+
+	// Handle sanity-checking results
+
+	// User entered a "known wrong" URL, such as a list-description URL from iblocklist.com instead of a 
+	// list-update URL
+	if (listFlags.test(LISTFLAG_WRONG))
+	{
+		TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_WRONG");
+		result = MessageBox(g_hAddListDlg, IDS_LISTSAN_WRONG, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
+		TRACEI("[addlistproc] [AddList_SanityCheckUrl]    changing url to friendly-named url, and re-running sanity check");
+		if (result == IDOK)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked OK");
+			url = g_pListUrls->GetBestUrl(listId);
+			url = AddList_SanityCheckUrl(url);
+		}
+	}
+
+	// User entered a URL that's one of the Default Lists
+	else if (listFlags.test(LISTFLAG_DEFAULT) && !listFlags.test(LISTFLAG_DIFFDUPE) && !listFlags.test(LISTFLAG_EXACTDUPE))
+	{
+		if (listFlags.test(LISTFLAG_NOT_IBL))
+		{
+			TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_DEFAULT & !DUPE & LISTFLAG_NOT_IBL");
+			tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT_NIBL))%g_pListUrls->GetListDesc(listId));
+			result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
+			if (result == IDYES)
+			{
+				TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked Yes");
+				url = g_pListUrls->GetBestUrl(listId);
+			}
+			else if (result == IDNO)
+			{
+				TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked No");
+			}
+		}
+		else
+		{
+			TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_DEFAULT & !DUPE & !LISTFLAG_NOT_IBL");
+			tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT))%g_pListUrls->GetListDesc(listId));
+			result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
+			if (result == IDOK)
+			{
+				TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked OK");
+				url = g_pListUrls->GetBestUrl(listId);
+			}
+		}
+	}
+
+	// User entered a URL that's a Default List URL, but not one previously configured
+	else if (listFlags.test(LISTFLAG_DIFFDUPE) && listFlags.test(LISTFLAG_DEFAULT))
+	{
+		TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_DEFAULT & LISTFLAG_DIFFDUPE");
+		tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFDUPE))%g_pListUrls->GetListDesc(listId));
+		result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
+		if (result == IDYES)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked Yes");
+			url = g_pListUrls->GetBestUrl(listId);
+		}
+		else if (result == IDNO)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked No");
+		}
+	}
+
+	// User entered a URL that's an *exact* match for a URL that's already been added
+	else if (listFlags.test(LISTFLAG_EXACTDUPE))
+	{
+		TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_EXACTDUPE");
+		result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
+		if (result == IDOK)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked OK");
+		}
+	}
+
+	// User entered a URL that's for a list that's already been added, but with a different URL.
+	// For example, adding http://list.iblocklist.com/?list=bt_level2 when we already have
+	// http://list.iblocklist.com/lists/bluetack/level-2 added.
+	else if (listFlags.test(LISTFLAG_DIFFDUPE))
+	{
+		TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_DIFFDUPE");
+		tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DIFFDUPE))%g_pListUrls->GetListDesc(listId));
+		result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
+		if (result == IDYES)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked Yes");
+			url = tstring(_T(""));
+			//url = g_pListUrls->GetBestUrl(listId);
+		}
+		else if (result == IDNO)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked No");
+		}
+	}
+
+	// User entered an "unfriendly URL", for instance one of the ones iblocklist.com 
+	// publicly displays such as http://list.iblocklist.com/lists/bluetack/level-2
+	else if (listFlags.test(LISTFLAG_UNFRIENDLY))
+	{
+		TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_UNFRIENDLY");
+		result = MessageBox(g_hAddListDlg, IDS_LISTSAN_UNFRIENDLY, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
+		if (result == IDYES)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked Yes");
+			url = g_pListUrls->GetBestUrl(listId);
+		}
+		else if (result == IDNO)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked No");
+		}
+	}
+
+	// User entered a non-iblocklist.com URL even though one exists, such as the 
+	// bluetack.co.uk-hosted version of Level2
+	else if (listFlags.test(LISTFLAG_NOT_IBL))
+	{
+		TRACEW("[addlistproc] [AddList_SanityCheckUrl]    LISTFLAG_NOT_IBL");
+		result = MessageBox(g_hAddListDlg, IDS_LISTSAN_NOTIBL, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
+		if (result == IDYES)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked Yes");
+			url = g_pListUrls->GetBestUrl(listId);
+		}
+		else if (result == IDNO)
+		{
+			TRACEI("[addlistproc] [AddList_SanityCheckUrl]    user clicked No");
+		}
+	}
+
+	return url;
+
+} // End of AddList_SanityCheckUrl()
+
+
+
 static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 	switch(id) {
 		case IDC_FILE:
@@ -93,7 +253,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 		case IDOK: 
 		{
 			List **list=(List**)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
-			bool destroyWindow = true;
+			bool addedList = false;
 
 			if(IsDlgButtonChecked(hwnd, IDC_ADDFILE)==BST_CHECKED) 
 			{
@@ -110,6 +270,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				l->File=file;
 				
 				*list=l;
+				addedList = true;
 			}
 			else 
 			{
@@ -125,150 +286,22 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 					break;
 				}
 
-				// get list-name num
-				LISTNAME listId = g_pListUrls->FindListNum(url);
+				// sanity-check
+				url = AddList_SanityCheckUrl(url);
 
-				// sanity-check url
-				LISTFLAGS listFlags = g_pListUrls->CheckUrl(url, listId, GetParent(hwnd));
-
-				int result = 0;
-
-
-				// Handle sanity-checking results
-
-				// User entered a URL that's one of the Default Lists
-				if (listFlags.test(LISTFLAG_DEFAULT) && !listFlags.test(LISTFLAG_DIFFDUPE) && !listFlags.test(LISTFLAG_EXACTDUPE))
-				{
-					if (listFlags.test(LISTFLAG_NOT_IBL))
-					{
-						TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & !DUPE & LISTFLAG_NOT_IBL");
-						tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT_NIBL))%g_pListUrls->GetListDesc(listId));
-						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
-						if (result == IDYES)
-						{
-							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-							url = g_pListUrls->GetBestUrl(listId);
-						}
-						else if (result == IDNO)
-						{
-							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-						}
-					}
-					else
-					{
-						TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & !DUPE & !LISTFLAG_NOT_IBL");
-						tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFAULT))%g_pListUrls->GetListDesc(listId));
-						result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
-						if (result == IDOK)
-						{
-							TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
-							url = g_pListUrls->GetBestUrl(listId);
-						}
-					}
-				}
-
-				// User entered a URL that's a Default List URL, but not one previously configured
-				else if (listFlags.test(LISTFLAG_DIFFDUPE) && listFlags.test(LISTFLAG_DEFAULT))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DEFAULT & LISTFLAG_DIFFDUPE");
-					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DEFDUPE))%g_pListUrls->GetListDesc(listId));
-					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
-					if (result == IDYES)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-						url = g_pListUrls->GetBestUrl(listId);
-					}
-					else if (result == IDNO)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-				}
-
-				// User entered a URL that's an *exact* match for a URL that's already been added
-				else if (listFlags.test(LISTFLAG_EXACTDUPE))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_EXACTDUPE");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_EXACTDUPE, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_OK);
-					if (result == IDOK)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked OK");
-					}
-				}
-
-				// User entered a URL that's for a list that's already been added, but with a different URL.
-				// For example, adding http://list.iblocklist.com/?list=bt_level2 when we already have
-				// http://list.iblocklist.com/lists/bluetack/level-2 added.
-				else if (listFlags.test(LISTFLAG_DIFFDUPE))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_DIFFDUPE");
-					tstring text=boost::str(tformat(LoadString(IDS_LISTSAN_DIFFDUPE))%g_pListUrls->GetListDesc(listId));
-					result = MessageBox(g_hAddListDlg, text, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
-					if (result == IDYES)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-						url = g_pListUrls->GetBestUrl(listId);
-					}
-					else if (result == IDNO)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-				}
-
-				// User entered an "unfriendly URL", for instance one of the ones iblocklist.com 
-				// publicly displays such as http://list.iblocklist.com/lists/bluetack/level-2
-				else if (listFlags.test(LISTFLAG_UNFRIENDLY))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_UNFRIENDLY");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_UNFRIENDLY, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
-					if (result == IDYES)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-						url = g_pListUrls->GetBestUrl(listId);
-					}
-					else if (result == IDNO)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-				}
-
-				// User entered a non-iblocklist.com URL even though one exists, such as the 
-				// bluetack.co.uk-hosted version of Level2
-				else if (listFlags.test(LISTFLAG_NOT_IBL))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_NOT_IBL");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_NOTIBL, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
-					if (result == IDYES)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-						url = g_pListUrls->GetBestUrl(listId);
-					}
-					else if (result == IDNO)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-				}
-
-				// User entered a "known wrong" URL, such as a list-description URL from 
-				// iblocklist.com instead of a list-update URL
-				else if (listFlags.test(LISTFLAG_WRONG))
-				{
-					TRACEW("[addlistproc] [AddList_OnCommand]    LISTFLAG_WRONG");
-					result = MessageBox(g_hAddListDlg, IDS_LISTSAN_WRONG, IDS_LISTSAN_TITLE, MB_ICONWARNING|MB_YESNO);
-					if (result == IDYES)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked Yes");
-						url = g_pListUrls->GetBestUrl(listId);
-					}
-					else if (result == IDNO)
-					{
-						TRACEI("[addlistproc] [AddList_OnCommand]    user clicked No");
-					}
-				}
-
-				if (destroyWindow)
+				if (!url.empty())
 				{
 					// Finally, add this new list!
-					TRACEI("[addlistproc] [AddList_OnCommand]    closing list-add window");
+					TRACEI("[addlistproc] [AddList_OnCommand]    adding new list");
+					DynamicList *l=new DynamicList;
+					l->Url=url;
+
+					*list=l;
+					addedList = true;
+				}
+				else
+				{
+					TRACEI("[addlistproc] [AddList_OnCommand]    not adding new list");
 					DynamicList *l=new DynamicList;
 					l->Url=url;
 
@@ -276,14 +309,13 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				}
 			}
 
-			if (destroyWindow)
+			if (addedList)
 			{
-				TRACEI("[addlistproc] [AddList_OnCommand]    adding list");
+				TRACEI("[addlistproc] [AddList_OnCommand]    finishing list-add");
 				(*list)->Type=(IsDlgButtonChecked(hwnd, IDC_BLOCK)==BST_CHECKED)?List::Block:List::Allow;
 				(*list)->Description=GetDlgItemText(hwnd, IDC_DESCRIPTION);
-
-				EndDialog(hwnd, IDOK);
 			}
+			EndDialog(hwnd, IDOK);
 
 		} break; // End of IDOK
 

@@ -81,7 +81,7 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 //
 //  CheckUrl()
 //
-//    - Called by AddList_OnCommand(), when processing IDOK
+//    - Called by AddList_SanityCheckUrl(), when processing IDOK
 //
 /// <summary>
 ///   Returns the set of flags corresponding to the specified list, for use in sanity-checking.
