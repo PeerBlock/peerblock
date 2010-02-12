@@ -927,7 +927,6 @@ public:
 
 					curl_easy_cleanup(handles[i]);
 				}
-
 				TRACES("[UpdateThread] [_Process]    Done updating.");
 			}
 
@@ -935,6 +934,7 @@ public:
 
 			curl_multi_cleanup(multi);
 			curl_global_cleanup();
+			delete (g_curllock);
 
 			if(!aborted && updatepb && MessageBox(hwnd, IDS_PBUPDATETEXT, IDS_PBUPDATE, MB_ICONQUESTION|MB_YESNO)==IDYES)
 			{
