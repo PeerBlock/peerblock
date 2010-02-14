@@ -491,6 +491,9 @@ bool ListUrls::Init()
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://list.iblocklist.com/lists/atma/atma"));
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://list.iblocklist.com/?list=tzmtqbbsgbtfxainogvm", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://iblocklist.com/list.php?list=tzmtqbbsgbtfxainogvm", LISTFLAG_WRONG));
+		Lists[LISTNAME_ATMA].push_back(ListData(L"http://www.atma.es/atma.p2p", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_ATMA].push_back(ListData(L"http://www.ataca.me/atma.p2p", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_ATMA].push_back(ListData(L"http://galinux.myftp.org/blacklist.p2p", LISTFLAG_NOT_IBL));
 
 		Lists[LISTNAME_PB_RAPIDSHARE].push_back(ListData(L"RapidShare (PB)"));
 		Lists[LISTNAME_PB_RAPIDSHARE].push_back(ListData(L"http://list.iblocklist.com/lists/peerblock/rapidshare"));
