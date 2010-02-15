@@ -1,6 +1,7 @@
 This file describes ways to interface external applications with PeerBlock.
 It may provide documentation for creating plugins later on.
 
+
 Hide/Unhide PeerBlock
 -------------------------------
 To bring PeerBlock out of the tray or send it back, you can do the following:
@@ -8,10 +9,11 @@ To bring PeerBlock out of the tray or send it back, you can do the following:
 UINT msg=RegisterWindowMessage(_T("PeerBlockSetVisible"));
 SendMessage(HWND_BROADCAST, msg, 0, TRUE); // TRUE to show, FALSE to hide.
 
+
 Force PeerBlock to reload its lists:
 -------------------------------
 PeerBlock allows external list editors to force a list
 reload and possibly cache regeneration.  This can be done like so:
 
-+UINT msg=RegisterWindowMessage(_T("PeerBlockLoadLists"));
+UINT msg=RegisterWindowMessage(_T("PeerBlockLoadLists"));
 SendMessage(HWND_BROADCAST, msg, 0, 0);
