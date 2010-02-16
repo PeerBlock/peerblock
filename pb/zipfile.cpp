@@ -94,12 +94,12 @@ pair<boost::shared_array<char>,size_t> ZipFile::ReadCurrentFile() {
 string zip_error::errmsg(int e) {
 	switch(e) {
 		case UNZ_END_OF_LIST_OF_FILE:		return "end of file list reached";
-		case UNZ_EOF:							return "end of file reached";
-		case UNZ_PARAMERROR:					return "invalid parameter given";
-		case UNZ_BADZIPFILE:					return "bad zip file";
+		case UNZ_EOF:						return "end of file reached";
+		case UNZ_PARAMERROR:				return "invalid parameter given";
+		case UNZ_BADZIPFILE:				return "bad zip file";
 		case UNZ_INTERNALERROR:				return "internal error";
 		case UNZ_CRCERROR:					return "crc error, file is corrupt";
 		case UNZ_ERRNO:						return strerror(errno);
-		default:									return "unknown error ("+boost::lexical_cast<string>(e)+")";
+		default:							return "unknown error ("+boost::lexical_cast<string>(e)+")";
 	}
 }

@@ -25,6 +25,7 @@
 
 #define LOCALIP_ADAPTER		1
 #define LOCALIP_GATEWAY		2
-#define LOCALIP_DHCP			4
+#define LOCALIP_DHCP		4
 #define LOCALIP_DNS			8
+
 void GetLocalIps(std::set<unsigned int> &ips, unsigned int types);

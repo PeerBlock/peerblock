@@ -69,7 +69,7 @@ protected:
 
 	void start_thread();
 	void stop_thread();
-	
+
 
 private:
 	void thread_func();
