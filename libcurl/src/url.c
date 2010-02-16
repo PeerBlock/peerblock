@@ -2440,6 +2440,15 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
     /* Set the user defined RTP write function */
     data->set.fwrite_rtp = va_arg(param, curl_write_callback);
     break;
+
+  case CURLOPT_PRECONNECT:
+	data->set.preconnect = va_arg(param, curl_preconnect_callback);
+	break;
+
+  case CURLOPT_PRECONNECTDATA:
+	 data->set.preconnect_client = va_arg(param, void *);
+	 break;
+
   default:
     /* unknown tag and its companion, just ignore: */
     result = CURLE_FAILED_INIT; /* correct this */

@@ -790,6 +790,10 @@ singleipconnect(struct connectdata *conn,
     }
   }
 
+  if(data->set.preconnect) {
+    data->set.preconnect(data->set.preconnect_client, ai->ai_addr, ai->ai_addrlen);
+  }
+
   if(data->set.tcp_nodelay)
     tcpnodelay(conn, sockfd);
 

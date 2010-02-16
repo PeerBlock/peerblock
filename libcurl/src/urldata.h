@@ -1231,6 +1231,7 @@ struct UserDefined {
   unsigned short localport; /* local port number to bind to */
   int localportrange; /* number of additional port numbers to test in case the
                          'localport' one can't be bind()ed */
+  curl_preconnect_callback preconnect; /* function that is called before any connect() */
   curl_write_callback fwrite_func;   /* function that stores the output */
   curl_write_callback fwrite_header; /* function that stores headers */
   curl_write_callback fwrite_rtp;    /* function that stores interleaved RTP */
@@ -1253,6 +1254,7 @@ struct UserDefined {
   /* function to convert from UTF-8 encoding: */
   curl_conv_callback convfromutf8;
 
+  void *preconnect_client; /* pointer to pass to the preconnect callback */
   void *progress_client; /* pointer to pass to the progress callback */
   void *ioctl_client;   /* pointer to pass to the ioctl callback */
   long timeout;         /* in milliseconds, 0 means no timeout */

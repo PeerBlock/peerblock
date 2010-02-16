@@ -167,6 +167,10 @@ struct curl_httppost {
                                        HTTPPOST_CALLBACK posts */
 };
 
+typedef void (*curl_preconnect_callback)(void *clientp,
+                                         struct sockaddr *addr,
+                                         int addrlen);
+
 typedef int (*curl_progress_callback)(void *clientp,
                                       double dltotal,
                                       double dlnow,
@@ -1314,6 +1318,10 @@ typedef enum {
 
   /* Let the application define a custom write method for RTP data */
   CINIT(INTERLEAVEFUNCTION, FUNCTIONPOINT, 196),
+
+  /* Called before any connect() happens. */
+  CINIT(PRECONNECT, FUNCTIONPOINT, 197),
+  CINIT(PRECONNECTDATA, OBJECTPOINT, 198),
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
