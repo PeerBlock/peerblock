@@ -49,6 +49,7 @@ OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM
 Compression=lzma/ultra64
 InternalCompressLevel=ultra64
 SolidCompression=yes
+CompressionThreads=2
 MinVersion=0,5.0.2195
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
