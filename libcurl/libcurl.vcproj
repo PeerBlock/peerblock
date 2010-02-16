@@ -483,7 +483,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\curl_memrchr.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\curl_rand.c"
+				>
+			</File>
+			<File
 				RelativePath=".\src\curl_sspi.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\curl_threads.c"
 				>
 			</File>
 			<File
@@ -579,6 +591,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\imap.c"
+				>
+			</File>
+			<File
 				RelativePath=".\src\inet_ntop.c"
 				>
 			</File>
@@ -623,6 +639,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\nonblock.c"
+				>
+			</File>
+			<File
 				RelativePath=".\src\nss.c"
 				>
 			</File>
@@ -639,6 +659,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\pingpong.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\pop3.c"
+				>
+			</File>
+			<File
 				RelativePath=".\src\progress.c"
 				>
 			</File>
@@ -648,6 +676,10 @@
 			</File>
 			<File
 				RelativePath=".\src\rawstr.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\rtsp.c"
 				>
 			</File>
 			<File
@@ -668,6 +700,10 @@
 			</File>
 			<File
 				RelativePath=".\src\slist.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\smtp.c"
 				>
 			</File>
 			<File
@@ -761,14 +797,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\base64.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ca-bundle.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\config-amigaos.h"
 				>
 			</File>
@@ -793,7 +821,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-vms.h"
+				RelativePath=".\src\config-vxworks.h"
 				>
 			</File>
 			<File
@@ -802,10 +830,6 @@
 			</File>
 			<File
 				RelativePath=".\src\config-win32ce.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\config.h"
 				>
 			</File>
 			<File
@@ -842,6 +866,14 @@
 			</File>
 			<File
 				RelativePath=".\src\curl_memory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\curl_memrchr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\curl_rand.h"
 				>
 			</File>
 			<File
@@ -933,7 +965,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\inet_ntoa_r.h"
+				RelativePath=".\src\imap.h"
 				>
 			</File>
 			<File
@@ -949,23 +981,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ldap.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\llist.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\md5.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\memdebug.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\memory.h"
 				>
 			</File>
 			<File
@@ -985,11 +1005,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\nonblock.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\nssg.h"
 				>
 			</File>
 			<File
 				RelativePath=".\src\parsedate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\pingpong.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\pop3.h"
 				>
 			</File>
 			<File
@@ -1033,7 +1065,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\smtp.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\sockaddr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\socks.h"
 				>
 			</File>
 			<File

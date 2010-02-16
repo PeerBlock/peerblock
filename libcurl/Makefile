@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.dist,v 1.48 2009-01-13 23:29:56 bagder Exp $
+# $Id: Makefile.dist,v 1.50 2009-11-23 16:48:32 yangtse Exp $
 ###########################################################################
 
 VC=vc6
@@ -130,9 +130,9 @@ vc:
 
 vc-x64:
 	cd lib
-	MACHINE=x64 nmake /f Makefile.$(VC) cfg=release
+	nmake /f Makefile.$(VC) MACHINE=x64 cfg=release
 	cd ..\src
-	MACHINE=x64 nmake /f Makefile.$(VC)
+	nmake /f Makefile.$(VC) MACHINE=x64 cfg=release
 
 vc-zlib:
 	cd lib
@@ -151,6 +151,12 @@ vc-ssl-zlib:
 	nmake /f Makefile.$(VC) cfg=release-ssl-zlib
 	cd ..\src
 	nmake /f Makefile.$(VC) cfg=release-ssl-zlib
+
+vc-x64-ssl-zlib:
+	cd lib
+	nmake /f Makefile.$(VC) MACHINE=x64 cfg=release-ssl-zlib
+	cd ..\src
+	nmake /f Makefile.$(VC) MACHINE=x64 cfg=release-ssl-zlib
 
 vc-ssl-dll:
 	cd lib
@@ -257,15 +263,25 @@ linux: all
 linux-ssl: ssl
 
 
-vc8:
-	@echo "generate VC8 makefiles"
+vc8: lib/Makefile.vc8 src/Makefile.vc8
+
+lib/Makefile.vc8: lib/Makefile.vc6
+	@echo "generate $@"
 	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/wsock32.lib bufferoverflowu.lib/g" -e "s/VC6/VC8/g" lib/Makefile.vc6 > lib/Makefile.vc8
+
+src/Makefile.vc8: src/Makefile.vc6
+	@echo "generate $@"
 	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/wsock32.lib bufferoverflowu.lib/g" -e "s/VC6/VC8/g" src/Makefile.vc6 > src/Makefile.vc8
 
 # VC9 makefiles are for use with VS2008
-vc9:
-	@echo "generate VC9 makefiles"
+vc9: lib/Makefile.vc9 src/Makefile.vc9
+
+lib/Makefile.vc9: lib/Makefile.vc6
+	@echo "generate $@"
 	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/ws2_32.lib/g" -e "s/vc6/vc9/g" -e "s/VC6/VC9/g" lib/Makefile.vc6 > lib/Makefile.vc9
+
+src/Makefile.vc9: src/Makefile.vc6
+	@echo "generate $@"
 	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/ws2_32.lib/g" -e "s/vc6/vc9/g" -e "s/VC6/VC9/g" src/Makefile.vc6 > src/Makefile.vc9
 
 ca-bundle: lib/mk-ca-bundle.pl

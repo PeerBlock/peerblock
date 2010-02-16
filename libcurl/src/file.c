@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: file.c,v 1.120 2009-04-21 11:46:16 yangtse Exp $
+ * $Id: file.c,v 1.122 2009-11-18 10:33:54 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -93,6 +93,12 @@
 
 #if defined(WIN32) || defined(MSDOS) || defined(__EMX__) || defined(__SYMBIAN32__)
 #define DOS_FILESYSTEM 1
+#endif
+
+#ifdef OPEN_NEEDS_ARG3
+#  define open_readonly(p,f) open((p),(f),(0))
+#else
+#  define open_readonly(p,f) open((p),(f))
 #endif
 
 /*
@@ -204,7 +210,7 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
   Curl_reset_reqproto(conn);
 
   if(!data->state.proto.file) {
-    file = calloc(sizeof(struct FILEPROTO), 1);
+    file = calloc(1, sizeof(struct FILEPROTO));
     if(!file) {
       free(real_path);
       return CURLE_OUT_OF_MEMORY;
@@ -251,10 +257,10 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
     if(actual_path[i] == '/')
       actual_path[i] = '\\';
 
-  fd = open(actual_path, O_RDONLY | O_BINARY);  /* no CR/LF translation! */
+  fd = open_readonly(actual_path, O_RDONLY|O_BINARY); /* no CR/LF translation */
   file->path = actual_path;
 #else
-  fd = open(real_path, O_RDONLY);
+  fd = open_readonly(real_path, O_RDONLY);
   file->path = real_path;
 #endif
   file->freepath = real_path; /* free this when done */

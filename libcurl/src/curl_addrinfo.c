@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curl_addrinfo.c,v 1.17 2009-05-10 10:24:53 yangtse Exp $
+ * $Id: curl_addrinfo.c,v 1.19 2010-01-18 20:22:04 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -38,7 +38,7 @@
 #  include <arpa/inet.h>
 #endif
 
-#ifdef  VMS
+#ifdef __VMS
 #  include <in.h>
 #  include <inet.h>
 #  include <stdlib.h>
@@ -365,7 +365,7 @@ Curl_ip2addr(int af, const void *inaddr, const char *hostname, int port)
 {
   Curl_addrinfo *ai;
 
-#if defined(VMS) && \
+#if defined(__VMS) && \
     defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
 #pragma pointer_size save
 #pragma pointer_size short
@@ -418,7 +418,7 @@ Curl_ip2addr(int af, const void *inaddr, const char *hostname, int port)
   h->h_addr_list[0] = addrentry;
   h->h_addr_list[1] = NULL; /* terminate list of entries */
 
-#if defined(VMS) && \
+#if defined(__VMS) && \
     defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
 #pragma pointer_size restore
 #pragma message enable PTRMISMATCH
@@ -447,9 +447,8 @@ curl_dofreeaddrinfo(struct addrinfo *freethis,
                     int line, const char *source)
 {
   (freeaddrinfo)(freethis);
-  if(logfile)
-    fprintf(logfile, "ADDR %s:%d freeaddrinfo(%p)\n",
-            source, line, (void *)freethis);
+  curl_memlog("ADDR %s:%d freeaddrinfo(%p)\n",
+              source, line, (void *)freethis);
 }
 #endif /* defined(CURLDEBUG) && defined(HAVE_FREEADDRINFO) */
 
@@ -471,17 +470,13 @@ curl_dogetaddrinfo(const char *hostname,
                    int line, const char *source)
 {
   int res=(getaddrinfo)(hostname, service, hints, result);
-  if(0 == res) {
+  if(0 == res)
     /* success */
-    if(logfile)
-      fprintf(logfile, "ADDR %s:%d getaddrinfo() = %p\n",
-              source, line, (void *)*result);
-  }
-  else {
-    if(logfile)
-      fprintf(logfile, "ADDR %s:%d getaddrinfo() failed\n",
-              source, line);
-  }
+    curl_memlog("ADDR %s:%d getaddrinfo() = %p\n",
+                source, line, (void *)*result);
+  else
+    curl_memlog("ADDR %s:%d getaddrinfo() failed\n",
+                source, line);
   return res;
 }
 #endif /* defined(CURLDEBUG) && defined(HAVE_GETADDRINFO) */

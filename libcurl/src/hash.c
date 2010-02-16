@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hash.c,v 1.40 2009-04-21 11:46:16 yangtse Exp $
+ * $Id: hash.c,v 1.42 2009-11-11 09:31:37 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -140,8 +140,8 @@ mk_hash_element(const void *key, size_t key_len, const void *p)
 
 #define FETCH_LIST(x,y,z) x->table[x->hash_func(y, z, x->slots)]
 
-/* Return the data in the hash. If there already was a match in the hash,
-   that data is returned. */
+/* Insert the data in the hash. If there already was a match in the hash,
+   that data is replaced. */
 void *
 Curl_hash_add(struct curl_hash *h, void *key, size_t key_len, void *p)
 {
@@ -152,29 +152,14 @@ Curl_hash_add(struct curl_hash *h, void *key, size_t key_len, void *p)
   for (le = l->head; le; le = le->next) {
     he = (struct curl_hash_element *) le->ptr;
     if(h->comp_func(he->key, he->key_len, key, key_len)) {
-      h->dtor(p);     /* remove the NEW entry */
-      return he->ptr; /* return the EXISTING entry */
+      Curl_llist_remove(l, le, (void *)h);
+      --h->size;
+      break;
     }
   }
 
   he = mk_hash_element(key, key_len, p);
   if(he) {
-    /* fix tail-pointer if it's null; works around rare bug on Windows */
-    if(!l->tail && l->size != 0) {
-      struct curl_llist_element *te = l->head;
-      size_t l_size = 0;
-      while (te) {
-        ++l_size;
-        if (te->next) {
-          te = te->next;
-        }
-        else {
-          break;
-        }
-      }
-      l->tail = te;
-      l->size = l_size;
-    }
     if(Curl_llist_insert_next(l, l->tail, he)) {
       ++h->size;
       return p; /* return the new entry */
@@ -226,7 +211,7 @@ Curl_hash_pick(struct curl_hash *h, void *key, size_t key_len)
   return NULL;
 }
 
-#if defined(CURLDEBUG) && defined(AGGRESIVE_TEST)
+#if defined(DEBUGBUILD) && defined(AGGRESIVE_TEST)
 void
 Curl_hash_apply(curl_hash *h, void *user,
                 void (*cb)(void *user, void *ptr))

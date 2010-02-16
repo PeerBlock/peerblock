@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.c,v 1.158 2009-05-11 07:53:38 bagder Exp $
+ * $Id: sendf.c,v 1.163 2010-02-04 19:44:31 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -43,6 +43,7 @@
 #include "sslgen.h"
 #include "ssh.h"
 #include "multiif.h"
+#include "rtsp.h"
 
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
@@ -133,12 +134,11 @@ static size_t convert_lineends(struct SessionHandle *data,
         *outPtr = *inPtr;
       }
       outPtr++;
-      inPtr++;
     }
-    if(outPtr < startPtr+size) {
+    if(outPtr < startPtr+size)
       /* tidy up by null terminating the now shorter data */
       *outPtr = '\0';
-    }
+
     return(outPtr - startPtr);
   }
   return(size);
@@ -210,7 +210,7 @@ CURLcode Curl_sendf(curl_socket_t sockfd, struct connectdata *conn,
   write_len = strlen(s);
   sptr = s;
 
-  while(1) {
+  for(;;) {
     /* Write the buffer to the socket */
     res = Curl_write(conn, sockfd, sptr, write_len, &bytes_written);
 
@@ -343,8 +343,8 @@ static CURLcode pausewrite(struct SessionHandle *data,
   /* mark the connection as RECV paused */
   k->keepon |= KEEP_RECV_PAUSE;
 
-  DEBUGF(infof(data, "Pausing with %d bytes in buffer for type %02x\n",
-               (int)len, type));
+  DEBUGF(infof(data, "Pausing with %zu bytes in buffer for type %02x\n",
+               len, type));
 
   return CURLE_OK;
 }
@@ -426,7 +426,7 @@ CURLcode Curl_client_write(struct connectdata *conn,
       return pausewrite(data, type, ptr, len);
 
     if(wrote != len) {
-      failf(data, "Failed writing body (%d != %d)", (int)wrote, (int)len);
+      failf(data, "Failed writing body (%zu != %zu)", wrote, len);
       return CURLE_WRITE_ERROR;
     }
   }
@@ -511,7 +511,8 @@ int Curl_read(struct connectdata *conn, /* connection data */
 
   /* If session can pipeline, check connection buffer  */
   if(pipelining) {
-    size_t bytestocopy = CURLMIN(conn->buf_len - conn->read_pos, sizerequested);
+    size_t bytestocopy = CURLMIN(conn->buf_len - conn->read_pos,
+                                 sizerequested);
 
     /* Copy from our master buffer first if we have some unread data there*/
     if(bytestocopy > 0) {
@@ -528,8 +529,9 @@ int Curl_read(struct connectdata *conn, /* connection data */
     buffertofill = conn->master_buffer;
   }
   else {
-    bytesfromsocket = CURLMIN((long)sizerequested, conn->data->set.buffer_size ?
-                          conn->data->set.buffer_size : BUFSIZE);
+    bytesfromsocket = CURLMIN((long)sizerequested,
+                              conn->data->set.buffer_size ?
+                              conn->data->set.buffer_size : BUFSIZE);
     buffertofill = buf;
   }
 

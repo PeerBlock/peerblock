@@ -1,4 +1,4 @@
-/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+/* curl_config.h.in.  Generated automatically from configure.in by autoheader.  */
 /* Name of this package! */
 #undef PACKAGE
 
@@ -49,9 +49,6 @@
 
 /* Define this to your Entropy Gathering Daemon socket pathname */
 #undef EGD_SOCKET
-
-/* Set to explicitly specify we don't want to use thread-safe functions */
-#define DISABLED_THREADSAFE
 
 /* Define if you want to enable IPv6 support */
 #undef ENABLE_IPV6

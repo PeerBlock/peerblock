@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: telnet.c,v 1.114 2009-04-21 11:46:17 yangtse Exp $
+ * $Id: telnet.c,v 1.116 2010-02-04 19:44:31 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -729,7 +729,7 @@ static void printsub(struct SessionHandle *data,
           else if(CURL_TELCMD_OK(i))
             infof(data, "%s ", CURL_TELCMD(i));
           else
-            infof(data, "%d ", i);
+            infof(data, "%u ", i);
           if(CURL_TELOPT_OK(j))
             infof(data, "%s", CURL_TELOPT(j));
           else if(CURL_TELCMD_OK(j))
@@ -1325,7 +1325,7 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
     switch(waitret) {
     case WAIT_TIMEOUT:
     {
-      while(1) {
+      for(;;) {
         if(!PeekNamedPipe(stdin_handle, NULL, 0, NULL, &readfile_read, NULL)) {
           keepon = FALSE;
           code = CURLE_READ_ERROR;

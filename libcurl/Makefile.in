@@ -34,7 +34,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.76 2009-04-27 12:26:41 bagder Exp $
+# $Id: Makefile.am,v 1.80 2009-11-04 12:34:48 bagder Exp $
 ###########################################################################
 
 
@@ -63,8 +63,8 @@ host_triplet = @host@
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/curl-config.in \
 	$(srcdir)/libcurl.pc.in $(top_srcdir)/configure COPYING \
-	ChangeLog compile config.guess config.sub depcomp install-sh \
-	ltmain.sh missing mkinstalldirs
+	compile config.guess config.sub depcomp install-sh ltmain.sh \
+	missing mkinstalldirs
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/curl-compilers.m4 \
@@ -81,8 +81,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/lib/config.h \
-	$(top_builddir)/src/config.h \
+CONFIG_HEADER = $(top_builddir)/lib/curl_config.h \
+	$(top_builddir)/src/curl_config.h \
 	$(top_builddir)/include/curl/curlbuild.h
 CONFIG_CLEAN_FILES = curl-config libcurl.pc
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgconfigdir)"
@@ -130,18 +130,25 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONFIGURE_OPTIONS = @CONFIGURE_OPTIONS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CROSSCOMPILING_FALSE = @CROSSCOMPILING_FALSE@
 CROSSCOMPILING_TRUE = @CROSSCOMPILING_TRUE@
+CURLDEBUG_FALSE = @CURLDEBUG_FALSE@
+CURLDEBUG_TRUE = @CURLDEBUG_TRUE@
 CURL_CA_BUNDLE = @CURL_CA_BUNDLE@
 CURL_DISABLE_DICT = @CURL_DISABLE_DICT@
 CURL_DISABLE_FILE = @CURL_DISABLE_FILE@
 CURL_DISABLE_FTP = @CURL_DISABLE_FTP@
 CURL_DISABLE_HTTP = @CURL_DISABLE_HTTP@
+CURL_DISABLE_IMAP = @CURL_DISABLE_IMAP@
 CURL_DISABLE_LDAP = @CURL_DISABLE_LDAP@
 CURL_DISABLE_LDAPS = @CURL_DISABLE_LDAPS@
+CURL_DISABLE_POP3 = @CURL_DISABLE_POP3@
 CURL_DISABLE_PROXY = @CURL_DISABLE_PROXY@
+CURL_DISABLE_RTSP = @CURL_DISABLE_RTSP@
+CURL_DISABLE_SMTP = @CURL_DISABLE_SMTP@
 CURL_DISABLE_TELNET = @CURL_DISABLE_TELNET@
 CURL_DISABLE_TFTP = @CURL_DISABLE_TFTP@
 CURL_LIBS = @CURL_LIBS@
@@ -158,7 +165,6 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
-HAVE_ARES = @HAVE_ARES@
 HAVE_LIBZ = @HAVE_LIBZ@
 HAVE_LIBZ_FALSE = @HAVE_LIBZ_FALSE@
 HAVE_LIBZ_TRUE = @HAVE_LIBZ_TRUE@
@@ -200,6 +206,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH = @PATH@
 PATH_SEPARATOR = @PATH_SEPARATOR@
@@ -223,6 +230,9 @@ STRIP = @STRIP@
 SUPPORT_FEATURES = @SUPPORT_FEATURES@
 SUPPORT_PROTOCOLS = @SUPPORT_PROTOCOLS@
 TEST_SERVER_LIBS = @TEST_SERVER_LIBS@
+USE_ARES = @USE_ARES@
+USE_EMBEDDED_ARES_FALSE = @USE_EMBEDDED_ARES_FALSE@
+USE_EMBEDDED_ARES_TRUE = @USE_EMBEDDED_ARES_TRUE@
 USE_GNUTLS = @USE_GNUTLS@
 USE_LIBSSH2 = @USE_LIBSSH2@
 USE_MANUAL_FALSE = @USE_MANUAL_FALSE@
@@ -288,8 +298,8 @@ CMake/FindZLIB.cmake CMake/OtherTests.cmake CMake/Platforms/WindowsCache.cmake \
 CMake/Utilities.cmake include/curl/curlbuild.h.cmake
 
 EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in	\
- curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat	\
- libcurl.pc.in vc6curl.dsw MacOSX-Framework $(CMAKE_DIST)
+ curl-style.el sample.emacs RELEASE-NOTES buildconf 	\
+ libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST)
 
 bin_SCRIPTS = curl-config
 SUBDIRS = lib src
@@ -767,7 +777,7 @@ uninstall-info: uninstall-info-recursive
 dist-hook:
 	rm -rf $(top_builddir)/tests/log
 	find $(distdir) -name "*.dist" -exec rm {} \;
-	(distit=`find $(srcdir) -name "*.dist"`; \
+	(distit=`find $(srcdir) -name "*.dist" | grep -v ./ares/`; \
 	for file in $$distit; do \
 	  strip=`echo $$file | sed -e s/^$(srcdir)// -e s/\.dist//`; \
 	  cp $$file $(distdir)$$strip; \

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ldap.c,v 1.98 2009-04-21 11:46:17 yangtse Exp $
+ * $Id: ldap.c,v 1.107 2010-02-04 19:44:31 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -66,6 +66,7 @@
 #include <curl/curl.h>
 #include "sendf.h"
 #include "escape.h"
+#include "progress.h"
 #include "transfer.h"
 #include "strequal.h"
 #include "strtok.h"
@@ -177,6 +178,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   int ldap_ssl = 0;
   char *val_b64;
   size_t val_b64_sz;
+  curl_off_t dlsize=0;
 #ifdef LDAP_OPT_NETWORK_TIMEOUT
   struct timeval ldap_timeout = {10,0}; /* 10 sec connection/search timeout */
 #endif
@@ -198,7 +200,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   }
 
   /* Get the URL scheme ( either ldap or ldaps ) */
-  if(Curl_raw_equal(conn->protostr, "LDAPS"))
+  if(conn->protocol & PROT_SSL)
     ldap_ssl = 1;
   infof(data, "LDAP local: trying to establish %s connection\n",
           ldap_ssl ? "encrypted" : "cleartext");
@@ -260,7 +262,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
     }
     server = ldapssl_init(conn->host.name, (int)conn->port, 1);
     if(server == NULL) {
-      failf(data, "LDAP local: Cannot connect to %s:%d",
+      failf(data, "LDAP local: Cannot connect to %s:%hu",
               conn->host.name, conn->port);
       status = CURLE_COULDNT_CONNECT;
       goto quit;
@@ -300,7 +302,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
     }
     server = ldap_init(conn->host.name, (int)conn->port);
     if(server == NULL) {
-      failf(data, "LDAP local: Cannot connect to %s:%d",
+      failf(data, "LDAP local: Cannot connect to %s:%hu",
               conn->host.name, conn->port);
       status = CURLE_COULDNT_CONNECT;
       goto quit;
@@ -335,7 +337,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   } else {
     server = ldap_init(conn->host.name, (int)conn->port);
     if(server == NULL) {
-      failf(data, "LDAP local: Cannot connect to %s:%d",
+      failf(data, "LDAP local: Cannot connect to %s:%hu",
               conn->host.name, conn->port);
       status = CURLE_COULDNT_CONNECT;
       goto quit;
@@ -383,6 +385,8 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
     Curl_client_write(conn, CLIENTWRITE_BODY, (char *)dn, 0);
     Curl_client_write(conn, CLIENTWRITE_BODY, (char *)"\n", 1);
 
+    dlsize += strlen(dn)+5;
+
     for (attribute = ldap_first_attribute(server, entryIterator, &ber);
          attribute;
          attribute = ldap_next_attribute(server, entryIterator, ber))
@@ -396,30 +400,38 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
           Curl_client_write(conn, CLIENTWRITE_BODY, (char *)"\t", 1);
           Curl_client_write(conn, CLIENTWRITE_BODY, (char *) attribute, 0);
           Curl_client_write(conn, CLIENTWRITE_BODY, (char *)": ", 2);
+          dlsize += strlen(attribute)+3;
+
           if((strlen(attribute) > 7) &&
               (strcmp(";binary",
                       (char *)attribute +
                       (strlen((char *)attribute) - 7)) == 0)) {
             /* Binary attribute, encode to base64. */
-            val_b64_sz = Curl_base64_encode(conn->data,
+            val_b64_sz = Curl_base64_encode(data,
                                             vals[i]->bv_val,
                                             vals[i]->bv_len,
                                             &val_b64);
             if(val_b64_sz > 0) {
               Curl_client_write(conn, CLIENTWRITE_BODY, val_b64, val_b64_sz);
               free(val_b64);
+              dlsize += val_b64_sz;
             }
-          } else
+          }
+          else {
             Curl_client_write(conn, CLIENTWRITE_BODY, vals[i]->bv_val,
                               vals[i]->bv_len);
+            dlsize += vals[i]->bv_len;
+          }
           Curl_client_write(conn, CLIENTWRITE_BODY, (char *)"\n", 0);
+          dlsize++;
         }
 
         /* Free memory used to store values */
         ldap_value_free_len(vals);
       }
       Curl_client_write(conn, CLIENTWRITE_BODY, (char *)"\n", 1);
-
+      dlsize++;
+      Curl_pgrsSetDownloadCounter(data, dlsize);
       ldap_memfree(attribute);
     }
     ldap_memfree(dn);
@@ -476,15 +488,15 @@ static void _ldap_trace (const char *fmt, ...)
  */
 static int str2scope (const char *p)
 {
-  if(!stricmp(p, "one"))
+  if(strequal(p, "one"))
      return LDAP_SCOPE_ONELEVEL;
-  if(!stricmp(p, "onetree"))
+  if(strequal(p, "onetree"))
      return LDAP_SCOPE_ONELEVEL;
-  if(!stricmp(p, "base"))
+  if(strequal(p, "base"))
      return LDAP_SCOPE_BASE;
-  if(!stricmp(p, "sub"))
+  if(strequal(p, "sub"))
      return LDAP_SCOPE_SUBTREE;
-  if(!stricmp( p, "subtree"))
+  if(strequal( p, "subtree"))
      return LDAP_SCOPE_SUBTREE;
   return (-1);
 }
@@ -560,7 +572,7 @@ static bool unescape_elements (void *data, LDAPURLDesc *ludp)
  *   ldap://<hostname>:<port>/?<attributes>?<scope>?<filter>
  * yields ludp->lud_dn = "".
  *
- * Ref. http://developer.netscape.com/docs/manuals/dirsdk/csdk30/url.htm#2831915
+ * Defined in RFC4516 section 2.
  */
 static int _ldap_url_parse2 (const struct connectdata *conn, LDAPURLDesc *ludp)
 {
@@ -570,7 +582,7 @@ static int _ldap_url_parse2 (const struct connectdata *conn, LDAPURLDesc *ludp)
   if(!conn->data ||
       !conn->data->state.path ||
       conn->data->state.path[0] != '/' ||
-      !checkprefix(conn->protostr, conn->data->change.url))
+      !checkprefix("LDAP", conn->data->change.url))
     return LDAP_INVALID_SYNTAX;
 
   ludp->lud_scope = LDAP_SCOPE_BASE;
@@ -661,7 +673,7 @@ static int _ldap_url_parse2 (const struct connectdata *conn, LDAPURLDesc *ludp)
 static int _ldap_url_parse (const struct connectdata *conn,
                             LDAPURLDesc **ludpp)
 {
-  LDAPURLDesc *ludp = calloc(sizeof(*ludp), 1);
+  LDAPURLDesc *ludp = calloc(1, sizeof(*ludp));
   int rc;
 
   *ludpp = NULL;

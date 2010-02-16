@@ -212,7 +212,7 @@ p.roffit {
  </pre>
 
 <p class="level0">
-<p class="level0">While the simple examples above cover the majority of all cases where HTTP POST operations are required, they don't do multi-part formposts. Multi-part formposts were introduced as a better way to post (possibly large) binary data and were first documented in the RFC1867. They're called multi-part because they're built by a chain of parts, each being a single unit. Each part has its own name and contents. You can in fact create and post a multi-part formpost with the regular libcurl POST support described above, but that would require that you build a formpost yourself and provide to libcurl. To make that easier, libcurl provides <a class="emphasis" href="./curl_formadd.html">curl_formadd(3)</a>. Using this function, you add parts to the form. When you're done adding parts, you post the whole form. 
+<p class="level0">While the simple examples above cover the majority of all cases where HTTP POST operations are required, they don't do multi-part formposts. Multi-part formposts were introduced as a better way to post (possibly large) binary data and were first documented in the RFC1867 (updated in RFC2388). They're called multi-part because they're built by a chain of parts, each part being a single unit of data. Each part has its own name and contents. You can in fact create and post a multi-part formpost with the regular libcurl POST support described above, but that would require that you build a formpost yourself and provide to libcurl. To make that easier, libcurl provides <a class="emphasis" href="./curl_formadd.html">curl_formadd(3)</a>. Using this function, you add parts to the form. When you're done adding parts, you post the whole form. 
 <p class="level0">The following example sets two simple text parts with plain textual contents, and then a file with binary contents and uploads the whole thing. 
 <p class="level0"><pre>
 <p class="level0">&nbsp;struct curl_httppost *post=NULL;
@@ -329,7 +329,7 @@ p.roffit {
 <p class="level1">libcurl has no means to interpret or evaluate Javascript and thus it doesn't support this. If you get yourself in a position where you face this nasty invention, the following advice have been mentioned and used in the past: 
 <p class="level1">- Depending on the Javascript complexity, write up a script that translates it to another language and execute that. 
 <p class="level1">- Read the Javascript code and rewrite the same logic in another language. 
-<p class="level1">- Implement a Javascript interpreted, people have successfully used the Mozilla Javascript engine in the past. 
+<p class="level1">- Implement a Javascript interpreter; people have successfully used the Mozilla Javascript engine in the past. 
 <p class="level1">- Ask your admins to stop this, for a static proxy setup or similar. 
 <p class="level1"><a name="Persistence"></a><h2 class="nroffsh">Persistence Is The Way to Happiness</h2>
 <p class="level0">

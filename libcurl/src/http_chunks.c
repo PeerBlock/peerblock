@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_chunks.c,v 1.48 2009-04-21 11:46:17 yangtse Exp $
+ * $Id: http_chunks.c,v 1.49 2009-06-10 21:26:11 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -345,7 +345,6 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
         conn->trailer[conn->trlPos]=0;
         if(conn->trlPos==2) {
           ch->state = CHUNK_STOP;
-          datap++;
           length--;
 
           /*
@@ -400,7 +399,6 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
 
     case CHUNK_STOP:
       if(*datap == 0x0a) {
-        datap++;
         length--;
 
         /* Record the length of any data left in the end of the buffer

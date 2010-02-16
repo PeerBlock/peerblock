@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.c,v 1.59 2009-05-05 08:33:29 bagder Exp $
+ * $Id: gtls.c,v 1.63 2009-10-19 18:10:47 gknauf Exp $
  ***************************************************************************/
 
 /*
@@ -58,6 +58,17 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+/*
+ Some hackish cast macros based on:
+ http://library.gnome.org/devel/glib/unstable/glib-Type-Conversion-Macros.html
+*/
+#ifndef GNUTLS_POINTER_TO_INT_CAST
+#define GNUTLS_POINTER_TO_INT_CAST(p) ((int) (long) (p))
+#endif
+#ifndef GNUTLS_INT_TO_POINTER_CAST
+#define GNUTLS_INT_TO_POINTER_CAST(i) ((void*) (long) (i))
+#endif
+
 /* Enable GnuTLS debugging by defining GTLSDEBUG */
 /*#define GTLSDEBUG */
 
@@ -78,12 +89,12 @@ static bool gtls_inited = FALSE;
  */
 static ssize_t Curl_gtls_push(void *s, const void *buf, size_t len)
 {
-  return swrite(s, buf, len);
+  return swrite(GNUTLS_POINTER_TO_INT_CAST(s), buf, len);
 }
 
 static ssize_t Curl_gtls_pull(void *s, void *buf, size_t len)
 {
-  return sread(s, buf, len);
+  return sread(GNUTLS_POINTER_TO_INT_CAST(s), buf, len);
 }
 
 /* Curl_gtls_init()
@@ -148,17 +159,22 @@ static gnutls_datum load_file (const char *file)
   long filelen;
   void *ptr;
 
-  if (!(f = fopen(file, "r"))
-      || fseek(f, 0, SEEK_END) != 0
+  if (!(f = fopen(file, "r")))
+    return loaded_file;
+  if (fseek(f, 0, SEEK_END) != 0
       || (filelen = ftell(f)) < 0
       || fseek(f, 0, SEEK_SET) != 0
-      || !(ptr = malloc((size_t)filelen))
-      || fread(ptr, 1, (size_t)filelen, f) < (size_t)filelen) {
-    return loaded_file;
+      || !(ptr = malloc((size_t)filelen)))
+    goto out;
+  if (fread(ptr, 1, (size_t)filelen, f) < (size_t)filelen) {
+    free(ptr);
+    goto out;
   }
 
   loaded_file.data = ptr;
   loaded_file.size = (unsigned int)filelen;
+out:
+  fclose(f);
   return loaded_file;
 }
 
@@ -255,6 +271,7 @@ Curl_gtls_connect(struct connectdata *conn,
   const char *ptr;
   void *ssl_sessionid;
   size_t ssl_idsize;
+  bool sni = TRUE; /* default is SNI enabled */
 #ifdef ENABLE_IPV6
   struct in6_addr addr;
 #else
@@ -274,6 +291,8 @@ Curl_gtls_connect(struct connectdata *conn,
     failf(data, "GnuTLS does not support SSLv2");
     return CURLE_SSL_CONNECT_ERROR;
   }
+  else if(data->set.ssl.version == CURL_SSLVERSION_SSLv3)
+    sni = FALSE; /* SSLv3 has no SNI */
 
   /* allocate a cred struct */
   rc = gnutls_certificate_allocate_credentials(&conn->ssl[sockindex].cred);
@@ -330,6 +349,7 @@ Curl_gtls_connect(struct connectdata *conn,
 #ifdef ENABLE_IPV6
       (0 == Curl_inet_pton(AF_INET6, conn->host.name, &addr)) &&
 #endif
+      sni &&
       (gnutls_server_name_set(session, GNUTLS_NAME_DNS, conn->host.name,
                               strlen(conn->host.name)) < 0))
     infof(data, "WARNING: failed to configure server name indication (SNI) "
@@ -372,7 +392,7 @@ Curl_gtls_connect(struct connectdata *conn,
 
   /* set the connection handle (file descriptor for the socket) */
   gnutls_transport_set_ptr(session,
-                           (gnutls_transport_ptr)conn->sock[sockindex]);
+                           GNUTLS_INT_TO_POINTER_CAST(conn->sock[sockindex]));
 
   /* register callback functions to send and receive data. */
   gnutls_transport_set_push_function(session, Curl_gtls_push);
@@ -667,7 +687,7 @@ void Curl_gtls_close(struct connectdata *conn, int sockindex)
  */
 int Curl_gtls_shutdown(struct connectdata *conn, int sockindex)
 {
-  int result;
+  ssize_t result;
   int retval = 0;
   struct SessionHandle *data = conn->data;
   int done = 0;
@@ -767,7 +787,7 @@ ssize_t Curl_gtls_recv(struct connectdata *conn, /* connection data */
 
   if(ret < 0) {
     failf(conn->data, "GnuTLS recv error (%d): %s",
-          (int)ret, gnutls_strerror(ret));
+          (int)ret, gnutls_strerror((int)ret));
     return -1;
   }
 

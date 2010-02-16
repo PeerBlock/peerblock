@@ -170,7 +170,19 @@ SOURCE=.\curl_addrinfo.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\curl_memrchr.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_rand.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\curl_sspi.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_threads.c
 # End Source File
 # Begin Source File
 
@@ -266,6 +278,10 @@ SOURCE=.\if2ip.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\imap.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\inet_ntop.c
 # End Source File
 # Begin Source File
@@ -310,11 +326,23 @@ SOURCE=.\netrc.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\nonblock.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\nss.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\parsedate.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\pingpong.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\pop3.c
 # End Source File
 # Begin Source File
 
@@ -327,6 +355,10 @@ SOURCE=.\qssl.c
 # Begin Source File
 
 SOURCE=.\rawstr.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\rtsp.c
 # End Source File
 # Begin Source File
 
@@ -347,6 +379,10 @@ SOURCE=.\share.c
 # Begin Source File
 
 SOURCE=.\slist.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\smtp.c
 # End Source File
 # Begin Source File
 
@@ -470,7 +506,19 @@ SOURCE=.\curl_memory.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\curl_memrchr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_rand.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\curl_sspi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_threads.h
 # End Source File
 # Begin Source File
 
@@ -542,6 +590,10 @@ SOURCE=.\if2ip.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\imap.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\inet_ntop.h
 # End Source File
 # Begin Source File
@@ -570,11 +622,23 @@ SOURCE=.\netrc.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\nonblock.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\nssg.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\parsedate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\pingpong.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\pop3.h
 # End Source File
 # Begin Source File
 
@@ -587,6 +651,10 @@ SOURCE=.\qssl.h
 # Begin Source File
 
 SOURCE=.\rawstr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\rtsp.h
 # End Source File
 # Begin Source File
 
@@ -611,6 +679,10 @@ SOURCE=.\share.h
 # Begin Source File
 
 SOURCE=.\slist.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\smtp.h
 # End Source File
 # Begin Source File
 
@@ -685,14 +757,14 @@ SOURCE=.\urldata.h
 SOURCE=.\url.h
 # End Source File
 # End Group
-
-# Begin Group "Resource Files"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\libcurl.rc
-# End Source File
-# End Group
-# End Target
-# End Project
+
+# Begin Group "Resource Files"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\libcurl.rc
+# End Source File
+# End Group
+# End Target
+# End Project

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.219 2009-05-07 20:02:51 bagder Exp $
+ * $Id: connect.c,v 1.229 2010-02-04 19:44:31 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -64,7 +64,7 @@
 #undef in_addr_t
 #define in_addr_t unsigned long
 #endif
-#ifdef VMS
+#ifdef __VMS
 #include <in.h>
 #include <inet.h>
 #endif
@@ -89,6 +89,7 @@
 #include "inet_ntop.h"
 #include "inet_pton.h"
 #include "sslgen.h" /* for Curl_ssl_check_cxn() */
+#include "progress.h"
 
 /* The last #include file should be: */
 #include "memdebug.h"
@@ -177,59 +178,6 @@ long Curl_timeleft(struct connectdata *conn,
   return timeout_ms;
 }
 
-
-/*
- * Curl_nonblock() set the given socket to either blocking or non-blocking
- * mode based on the 'nonblock' boolean argument. This function is highly
- * portable.
- */
-int Curl_nonblock(curl_socket_t sockfd,    /* operate on this */
-                  int nonblock   /* TRUE or FALSE */)
-{
-#if defined(USE_BLOCKING_SOCKETS)
-
-  return 0; /* returns success */
-
-#elif defined(HAVE_FCNTL_O_NONBLOCK)
-
-  /* most recent unix versions */
-  int flags;
-  flags = fcntl(sockfd, F_GETFL, 0);
-  if(FALSE != nonblock)
-    return fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
-  else
-    return fcntl(sockfd, F_SETFL, flags & (~O_NONBLOCK));
-
-#elif defined(HAVE_IOCTL_FIONBIO)
-
-  /* older unix versions */
-  int flags;
-  flags = nonblock;
-  return ioctl(sockfd, FIONBIO, &flags);
-
-#elif defined(HAVE_IOCTLSOCKET_FIONBIO)
-
-  /* Windows */
-  unsigned long flags;
-  flags = nonblock;
-  return ioctlsocket(sockfd, FIONBIO, &flags);
-
-#elif defined(HAVE_IOCTLSOCKET_CAMEL_FIONBIO)
-
-  /* Amiga */
-  return IoctlSocket(sockfd, FIONBIO, (long)nonblock);
-
-#elif defined(HAVE_SETSOCKOPT_SO_NONBLOCK)
-
-  /* BeOS */
-  long b = nonblock ? 1 : 0;
-  return setsockopt(sockfd, SOL_SOCKET, SO_NONBLOCK, &b, sizeof(b));
-
-#else
-#  error "no non-blocking method was found/used/set"
-#endif
-}
-
 /*
  * waitconnect() waits for a TCP connect on the given socket for the specified
  * number if milliseconds. It returns:
@@ -245,7 +193,8 @@ int Curl_nonblock(curl_socket_t sockfd,    /* operate on this */
 #define WAITCONN_FDSET_ERROR   2
 
 static
-int waitconnect(curl_socket_t sockfd, /* socket */
+int waitconnect(struct connectdata *conn,
+                curl_socket_t sockfd, /* socket */
                 long timeout_msec)
 {
   int rc;
@@ -256,21 +205,34 @@ int waitconnect(curl_socket_t sockfd, /* socket */
   (void)verifyconnect(sockfd, NULL);
 #endif
 
-  /* now select() until we get connect or timeout */
-  rc = Curl_socket_ready(CURL_SOCKET_BAD, sockfd, (int)timeout_msec);
-  if(-1 == rc)
-    /* error, no connect here, try next */
-    return WAITCONN_SELECT_ERROR;
+  for(;;) {
 
-  else if(0 == rc)
-    /* timeout, no connect today */
-    return WAITCONN_TIMEOUT;
+    /* now select() until we get connect or timeout */
+    rc = Curl_socket_ready(CURL_SOCKET_BAD, sockfd, (int)(timeout_msec>1000?
+                                                          1000:timeout_msec));
 
-  if(rc & CURL_CSELECT_ERR)
-    /* error condition caught */
-    return WAITCONN_FDSET_ERROR;
+    if(Curl_pgrsUpdate(conn))
+      return CURLE_ABORTED_BY_CALLBACK;
 
-  /* we have a connect! */
+    if(-1 == rc)
+      /* error, no connect here, try next */
+      return WAITCONN_SELECT_ERROR;
+
+    else if(0 == rc) {
+      /* timeout */
+      timeout_msec -= 1000;
+      if(timeout_msec <= 0)
+        return WAITCONN_TIMEOUT;
+
+      continue;
+    }
+
+    if(rc & CURL_CSELECT_ERR)
+      /* error condition caught */
+      return WAITCONN_FDSET_ERROR;
+
+    break;
+  }
   return WAITCONN_CONNECTED;
 }
 
@@ -330,7 +292,7 @@ static CURLcode bindlocal(struct connectdata *conn,
        * hostname or ip address.
        */
       if(setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE,
-                    dev, strlen(dev)+1) != 0) {
+                    dev, (curl_socklen_t)strlen(dev)+1) != 0) {
         error = SOCKERRNO;
         infof(data, "SO_BINDTODEVICE %s failed with errno %d: %s;"
               " will do regular bind\n",
@@ -423,7 +385,7 @@ static CURLcode bindlocal(struct connectdata *conn,
     }
   }
 
-  do {
+  for(;;) {
     if( bind(sockfd, sock, sizeof_sa) >= 0) {
     /* we succeeded to bind */
       struct Curl_sockaddr_storage add;
@@ -435,13 +397,13 @@ static CURLcode bindlocal(struct connectdata *conn,
               error, Curl_strerror(conn, error));
         return CURLE_INTERFACE_FAILED;
       }
-      infof(data, "Local port: %d\n", port);
+      infof(data, "Local port: %hu\n", port);
       conn->bits.bound = TRUE;
       return CURLE_OK;
     }
 
     if(--portnum > 0) {
-      infof(data, "Bind to local port %d failed, trying next\n", port);
+      infof(data, "Bind to local port %hu failed, trying next\n", port);
       port++; /* try next port */
       /* We re-use/clobber the port variable here below */
       if(sock->sa_family == AF_INET)
@@ -453,7 +415,7 @@ static CURLcode bindlocal(struct connectdata *conn,
     }
     else
       break;
-  } while(1);
+  }
 
   data->state.os_errno = error = SOCKERRNO;
   failf(data, "bind failed with errno %d: %s",
@@ -555,7 +517,7 @@ static bool trynextip(struct connectdata *conn,
       /* store the new socket descriptor */
       conn->sock[sockindex] = sockfd;
       conn->ip_addr = ai;
-      break;
+      return FALSE;
     }
     ai = ai->ai_next;
   }
@@ -606,7 +568,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
   Curl_expire(data, allow);
 
   /* check for connect without timeout as we want to return immediately */
-  rc = waitconnect(sockfd, 0);
+  rc = waitconnect(conn, sockfd, 0);
 
   if(WAITCONN_CONNECTED == rc) {
     int error;
@@ -619,7 +581,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
     data->state.os_errno = error;
     infof(data, "Connection failed\n");
     if(trynextip(conn, sockindex, connected)) {
-      failf(data, "Failed connect to %s:%d; %s",
+      failf(data, "Failed connect to %s:%ld; %s",
             conn->host.name, conn->port, Curl_strerror(conn, error));
       code = CURLE_COULDNT_CONNECT;
     }
@@ -639,7 +601,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
     if(trynextip(conn, sockindex, connected)) {
       error = SOCKERRNO;
       data->state.os_errno = error;
-      failf(data, "Failed connect to %s:%d; %s",
+      failf(data, "Failed connect to %s:%ld; %s",
             conn->host.name, conn->port, Curl_strerror(conn, error));
       code = CURLE_COULDNT_CONNECT;
     }
@@ -717,6 +679,13 @@ static void nosigpipe(struct connectdata *conn,
 void Curl_sndbufset(curl_socket_t sockfd)
 {
   int val = CURL_MAX_WRITE_SIZE + 32;
+  int curval = 0;
+  int curlen = sizeof(curval);
+
+  if (getsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (char *)&curval, &curlen) == 0)
+    if (curval > val)
+      return;
+
   setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (const char *)&val, sizeof(val));
 }
 #endif
@@ -765,12 +734,13 @@ singleipconnect(struct connectdata *conn,
 
   if(data->set.fopensocket)
    /*
-    * If the opensocket callback is set, all the destination address information
-    * is passed to the callback. Depending on this information the callback may
-    * opt to abort the connection, this is indicated returning CURL_SOCKET_BAD;
-    * otherwise it will return a not-connected socket. When the callback returns
-    * a valid socket the destination address information might have been changed
-    * and this 'new' address will actually be used here to connect.
+    * If the opensocket callback is set, all the destination address
+    * information is passed to the callback. Depending on this information the
+    * callback may opt to abort the connection, this is indicated returning
+    * CURL_SOCKET_BAD; otherwise it will return a not-connected socket. When
+    * the callback returns a valid socket the destination address information
+    * might have been changed and this 'new' address will actually be used
+    * here to connect.
     */
     sockfd = data->set.fopensocket(data->set.opensocket_client,
                                    CURLSOCKTYPE_IPCXN,
@@ -820,10 +790,6 @@ singleipconnect(struct connectdata *conn,
     }
   }
 
-  if(data->set.preconnect) {
-    data->set.preconnect(data->set.preconnect_client, ai->ai_addr, ai->ai_addrlen);
-  }
-
   if(data->set.tcp_nodelay)
     tcpnodelay(conn, sockfd);
 
@@ -850,7 +816,7 @@ singleipconnect(struct connectdata *conn,
   }
 
   /* set socket non-blocking */
-  Curl_nonblock(sockfd, TRUE);
+  curlx_nonblock(sockfd, TRUE);
 
   /* Connect TCP sockets, bind UDP */
   if(conn->socktype == SOCK_STREAM)
@@ -873,7 +839,7 @@ singleipconnect(struct connectdata *conn,
     case EAGAIN:
 #endif
 #endif
-      rc = waitconnect(sockfd, timeout_ms);
+      rc = waitconnect(conn, sockfd, timeout_ms);
       break;
     default:
       /* unknown error, fallthrough and try another address! */

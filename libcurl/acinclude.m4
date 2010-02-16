@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: acinclude.m4,v 1.234 2009-05-15 01:08:17 yangtse Exp $
+# $Id: acinclude.m4,v 1.240 2010-01-14 01:37:55 kdudka Exp $
 #***************************************************************************
 
 
@@ -1852,7 +1852,7 @@ AC_DEFUN([CURL_CHECK_STRUCT_TIMEVAL], [
   AC_REQUIRE([AC_HEADER_TIME])dnl
   AC_REQUIRE([CURL_CHECK_HEADER_WINSOCK])dnl
   AC_REQUIRE([CURL_CHECK_HEADER_WINSOCK2])dnl
-  AC_CHECK_HEADERS(sys/types.h sys/time.h time.h)
+  AC_CHECK_HEADERS(sys/types.h sys/time.h time.h sys/socket.h)
   AC_CACHE_CHECK([for struct timeval], [ac_cv_struct_timeval], [
     AC_COMPILE_IFELSE([
       AC_LANG_PROGRAM([[
@@ -1882,6 +1882,9 @@ AC_DEFUN([CURL_CHECK_STRUCT_TIMEVAL], [
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
 #endif
       ]],[[
         struct timeval ts;
@@ -2196,6 +2199,52 @@ AC_DEFUN([CURL_CHECK_LIBS_CLOCK_GETTIME_MONOTONIC], [
     #
   fi
   #
+])
+
+
+dnl CURL_CHECK_LIBS_CONNECT
+dnl -------------------------------------------------
+dnl Verify if network connect function is already available
+dnl using current libraries or if another one is required.
+
+AC_DEFUN([CURL_CHECK_LIBS_CONNECT], [
+  AC_REQUIRE([CURL_INCLUDES_WINSOCK2])dnl
+  AC_MSG_CHECKING([for connect in libraries])
+  tst_connect_save_LIBS="$LIBS"
+  tst_connect_need_LIBS="unknown"
+  for tst_lib in '' '-lsocket' ; do
+    if test "$tst_connect_need_LIBS" = "unknown"; then
+      LIBS="$tst_lib $tst_connect_save_LIBS"
+      AC_LINK_IFELSE([
+        AC_LANG_PROGRAM([[
+          $curl_includes_winsock2
+          #ifndef HAVE_WINDOWS_H
+            int connect(int, void*, int);
+          #endif
+        ]],[[
+          if(0 != connect(0, 0, 0))
+            return 1;
+        ]])
+      ],[
+        tst_connect_need_LIBS="$tst_lib"
+      ])
+    fi
+  done
+  LIBS="$tst_connect_save_LIBS"
+  #
+  case X-"$tst_connect_need_LIBS" in
+    X-unknown)
+      AC_MSG_RESULT([cannot find connect])
+      AC_MSG_ERROR([cannot find connect function in libraries.])
+      ;;
+    X-)
+      AC_MSG_RESULT([yes])
+      ;;
+    *)
+      AC_MSG_RESULT([$tst_connect_need_LIBS])
+      LIBS="$tst_connect_need_LIBS $tst_connect_save_LIBS"
+      ;;
+  esac
 ])
 
 
@@ -3141,25 +3190,53 @@ AC_DEFUN([CURL_CHECK_WIN32_LARGEFILE], [
   esac
 ])
 
-dnl CURL_CHECK_PKGCONFIG ($module)
+dnl CURL_EXPORT_PCDIR ($pcdir)
+dnl ------------------------
+dnl if $pcdir is not empty, set PKG_CONFIG_LIBDIR to $pcdir and export
+dnl
+dnl we need this macro since pkg-config distinguishes among empty and unset
+dnl variable while checking PKG_CONFIG_LIBDIR
+dnl
+
+AC_DEFUN([CURL_EXPORT_PCDIR], [
+    if test -n "$1"; then
+      PKG_CONFIG_LIBDIR="$1"
+      export PKG_CONFIG_LIBDIR
+    fi
+])
+
+dnl CURL_CHECK_PKGCONFIG ($module, [$pcdir])
 dnl ------------------------
 dnl search for the pkg-config tool (if not cross-compiling). Set the PKGCONFIG
 dnl variable to hold the path to it, or 'no' if not found/present.
 dnl
-dnl If pkg-config is present, check that it has info about the $module or return
-dnl "no" anyway!
+dnl If pkg-config is present, check that it has info about the $module or
+dnl return "no" anyway!
+dnl
+dnl Optionally PKG_CONFIG_LIBDIR may be given as $pcdir.
 dnl
 
 AC_DEFUN([CURL_CHECK_PKGCONFIG], [
-  if test x$cross_compiling != xyes; then
-    dnl only do pkg-config magic when not cross-compiling
-    AC_PATH_PROG( PKGCONFIG, pkg-config, no, $PATH:/usr/bin:/usr/local/bin)
+
+    PKGCONFIG="no"
+
+    if test x$cross_compiling = xyes; then
+      dnl see if there's a pkg-specific for this host setup
+      AC_PATH_PROG( PKGCONFIG, ${host}-pkg-config, no,
+                    $PATH:/usr/bin:/usr/local/bin)
+    fi
+
+    if test x$PKGCONFIG = xno; then
+      AC_PATH_PROG( PKGCONFIG, pkg-config, no, $PATH:/usr/bin:/usr/local/bin)
+    fi
 
     if test x$PKGCONFIG != xno; then
       AC_MSG_CHECKING([for $1 options with pkg-config])
       dnl ask pkg-config about $1
-      $PKGCONFIG --exists $1
-      if test "$?" -ne "0"; then
+      itexists=`CURL_EXPORT_PCDIR([$2]) dnl
+        $PKGCONFIG --exists $1 >/dev/null 2>&1 && echo 1`
+
+      if test -z "$itexists"; then
         dnl pkg-config does not have info about the given module! set the
         dnl variable to 'no'
         PKGCONFIG="no"
@@ -3168,8 +3245,4 @@ AC_DEFUN([CURL_CHECK_PKGCONFIG], [
         AC_MSG_RESULT([found])
       fi
     fi
-
-  else
-    PKGCONFIG="no"
-  fi
 ])

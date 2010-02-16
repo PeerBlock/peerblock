@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curl_addrinfo.h,v 1.4 2009-05-02 02:37:34 yangtse Exp $
+ * $Id: curl_addrinfo.h,v 1.5 2009-12-30 17:59:56 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -38,7 +38,7 @@
 #  include <arpa/inet.h>
 #endif
 
-#ifdef  VMS
+#ifdef __VMS
 #  include <in.h>
 #  include <inet.h>
 #  include <stdlib.h>
