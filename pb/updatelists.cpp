@@ -54,7 +54,6 @@ extern TraceLog g_tlog;
 static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) "." MAKE_STR(PB_VER_BUILDNUM);
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
 const unsigned long long g_build=BUILDNUM;
-mutex * g_curllock;		// used for Curl share
 
 #ifdef PB_RELTYPE_STABLE
 static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;
@@ -260,42 +259,6 @@ public:
 
 	//============================================================================================
 	//
-	//  locker()
-	//
-	//    - Called by libcurl in various TIDs while resolving DNS
-	//
-	/// <summary>
-	///   Locks the our global share-lock, to hopefully prevent Issue #24.
-	/// </summary>
-	//
-	void locker(CURL *handle, curl_lock_data data, curl_lock_access access, void *useptr)
-	{
-		g_curllock->enter();
-
-	} // End of locker()
-
-
-
-	//============================================================================================
-	//
-	//  unlocker()
-	//
-	//    - Called by libcurl in various TIDs while resolving DNS
-	//
-	/// <summary>
-	///   Unlocks the our global share-lock, to hopefully prevent Issue #24.
-	/// </summary>
-	//
-	void unlocker(CURL *handle, curl_lock_data data, void *useptr )
-	{
-		g_curllock->leave();
-
-	} // End of unlocker()
-
-
-
-	//============================================================================================
-	//
 	//  _Process()
 	//
 	//    - Called by this thread's threadproc
@@ -324,34 +287,6 @@ public:
 
 		if(total>0) 
 		{
-			TRACEI("[UpdateThread] [_Process]    setting up curl share");
-			g_curllock = new mutex();
-			CURLSH * share = NULL;
-			CURLSHcode shareError;
-
-			share = curl_share_init(); 
-
-			shareError = curl_share_setopt(share, CURLSHOPT_LOCKFUNC, &UpdateThread::locker);
-			if (shareError)
-			{
-				tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    ERROR: [%1%] while setting curl lockfunc")) % shareError );
-				TRACEBUFE(strBuf);
-			}
-
-			shareError = curl_share_setopt(share, CURLSHOPT_UNLOCKFUNC, &UpdateThread::unlocker);
-			if (shareError)
-			{
-				tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    ERROR: [%1%] while setting curl unlockfunc")) % shareError );
-				TRACEBUFE(strBuf);
-			}
-
-			shareError = curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
-			if (shareError)
-			{
-				tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    ERROR: [%1%] while setting curl share")) % shareError );
-				TRACEBUFE(strBuf);
-			}
-
 			const string proxy=TSTRING_UTF8(g_config.UpdateProxy);
 
 			string build;
@@ -404,7 +339,6 @@ public:
 					curl_easy_setopt(site, CURLOPT_FAILONERROR, 1);
 					curl_easy_setopt(site, CURLOPT_PRIVATE, data);
 					curl_easy_setopt(site, CURLOPT_ERRORBUFFER, data->errbuf);
-					curl_easy_setopt(site, CURLOPT_SHARE, share);
 					if(proxy.length()>0) 
 					{
 						curl_easy_setopt(site, CURLOPT_PROXY, proxy.c_str());
@@ -517,7 +451,6 @@ public:
 								curl_easy_setopt(site, CURLOPT_WRITEDATA, data->fp);
 								curl_easy_setopt(site, CURLOPT_PRIVATE, data);
 								curl_easy_setopt(site, CURLOPT_ERRORBUFFER, data->errbuf);
-								curl_easy_setopt(site, CURLOPT_SHARE, share);
 
 								if(proxy.length()>0) 
 								{
@@ -934,7 +867,6 @@ public:
 
 			curl_multi_cleanup(multi);
 			curl_global_cleanup();
-			delete (g_curllock);
 
 			if(!aborted && updatepb && MessageBox(hwnd, IDS_PBUPDATETEXT, IDS_PBUPDATE, MB_ICONQUESTION|MB_YESNO)==IDYES)
 			{
