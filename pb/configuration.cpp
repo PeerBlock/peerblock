@@ -201,6 +201,18 @@ static bool GetChild(const TiXmlElement *root, const string &node, CleanType &nt
 	return true;
 }
 
+static bool GetChild(const TiXmlElement *root, const string &node, PortType &pt) {
+	string v;
+	if(!GetChild(root, node, v)) return false;
+
+	if(v=="Destination") pt=Destination;
+	else if(v=="Source") pt=Source;
+	else if(v=="Both") pt=Both;
+	else return false;
+
+	return true;
+}
+
 static TiXmlElement *InsertChild(TiXmlNode *root, const string &node) {
 	return root->InsertEndChild(TiXmlElement(node))->ToElement();
 }
@@ -277,6 +289,19 @@ static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, CleanType 
 		case None: v="None"; break;
 		case Delete: v="Delete"; break;
 		case ArchiveDelete: v="ArchiveDelete"; break;
+		default: __assume(0);
+	}
+
+	return InsertChild(root, node, v);
+}
+
+static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, PortType pt) {
+	const char *v;
+
+	switch(pt) {
+		case Destination: v="Destination"; break;
+		case Source: v="Source"; break;
+		case Both: v="Both"; break;
 		default: __assume(0);
 	}
 
@@ -603,6 +628,7 @@ bool Configuration::Load()
 				PortProfile pf;
 				GetChild(profile, "Name", pf.Name);
 				GetChild(profile, "Enabled", pf.Enabled);
+				GetChild(profile, "Type", pf.Type);
 
 				if (const TiXmlElement *ports = profile->FirstChildElement("Ports")) {
 					for (const TiXmlElement *port = ports->FirstChildElement("Port"); port != NULL; port = port->NextSiblingElement("Port")) {
@@ -610,12 +636,12 @@ bool Configuration::Load()
 
 						if (txtport) {
 							try {
-								int p = boost::lexical_cast<int>(txtport);
+								USHORT p = boost::lexical_cast<USHORT>(txtport);
 
-								if (p > 0)
-									pf.Ports.insert((ULONG) p);
+								pf.Ports.insert((USHORT) p);
 							}
-							catch (...) {
+							catch (boost::bad_lexical_cast &) {
+								// not valid number
 							}
 						}
 					}
@@ -880,10 +906,11 @@ void Configuration::Save(const TCHAR * _filename)
 
 			InsertChild(profile, "Name", pf.Name);
 			InsertChild(profile, "Enabled", pf.Enabled);
+			InsertChild(profile, "Type", pf.Type);
 
 			TiXmlElement *ports = InsertChild(profile, "Ports");
-			for (set<ULONG>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
-				InsertChild(ports, "Port", (int) *pit);
+			for (set<USHORT>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
+				InsertChild(ports, "Port", (USHORT) *pit);
 			}
 		}
 	}

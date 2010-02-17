@@ -56,7 +56,8 @@ public:
 
 	void setranges(const p2p::list &ranges, bool block);
 
-	void setports(const std::set<ULONG> ports);
+	void setdestinationports(const std::set<USHORT> ports);
+	void setsourceports(const std::set<USHORT> ports);
 
 	void setactionfunc(const action_function &func = action_function());
 

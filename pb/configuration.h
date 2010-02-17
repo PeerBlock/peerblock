@@ -88,51 +88,62 @@ struct Color { COLORREF Text, Background; };
 
 enum NotifyType { Never, OnBlock, OnHttpBlock };
 enum CleanType { None, Delete, ArchiveDelete };
+enum PortType { Destination, Source, Both };
 
 struct PortProfile 
 {
-	tstring Name;	// name of profile
-	bool Enabled;	// true to use this profile
-	std::set<ULONG> Ports;	// ports in profile
+	tstring Name;           // name of profile
+	bool Enabled;           // true to use this profile
+	PortType Type;          // source/destination port check
+	std::set<USHORT> Ports;	// ports in profile
 };
 
 struct PortSet 
 {
-	// allow common protocols
+	// allow common protocols for destination
 	bool AllowHttp;    // 80, 443
 	bool AllowFtp;     // 21
 	bool AllowSmtp;    // 25
 	bool AllowPop3;    // 110
 
-	// all ports combined
-	std::set<ULONG> Ports;	// will use all profiles marked as enabled
+	std::set<USHORT> DestinationPorts;
+	std::set<USHORT> SourcePorts;
 
 	std::vector<PortProfile> Profiles;	// list of profiles
 
 	// merges all the enabled profiles
 	void Merge() 
 	{
-		Ports.clear();
+		DestinationPorts.clear();
+		SourcePorts.clear();
 
 		{
 			if (AllowHttp) {
-				Ports.insert(80);
-				Ports.insert(443);
+				DestinationPorts.insert(80);
+				DestinationPorts.insert(443);
 			}
 			if (AllowFtp)
-				Ports.insert(21);
-			if (AllowFtp)
-				Ports.insert(25);
-			if (AllowFtp)
-				Ports.insert(110);
+				DestinationPorts.insert(21);
+			if (AllowSmtp)
+				DestinationPorts.insert(25);
+			if (AllowPop3)
+				DestinationPorts.insert(110);
 		}
 
 		for (vector<PortProfile>::const_iterator iter = Profiles.begin(); iter != Profiles.end(); iter++) {
 			PortProfile pp = (PortProfile) *iter;
 
 			if (pp.Enabled) {
-				for (set<ULONG>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
-					Ports.insert((ULONG) *iter2);
+				if (pp.Type == Destination || pp.Type == Both) {
+					for (set<USHORT>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
+						DestinationPorts.insert((USHORT) *iter2);
+					}
+				}
+				
+				if (pp.Type == Source || pp.Type == Both) {
+					for (set<USHORT>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
+						SourcePorts.insert((USHORT) *iter2);
+					}
 				}
 			}
 		}
