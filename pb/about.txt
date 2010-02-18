@@ -15,18 +15,22 @@ Permission is granted to anyone to use this software for any purpose, including 
 PeerBlock Credits:
 Mark Bulas (MarkSide) - Lead Developer
 night_stalker_z - Developer
+Jason Casimir - Developer
 A. Jesse Harper (DarC / DisCoStu) - Installer
 XhmikosR - Installer
 
 Test Team:
 2Ceedz
-Gjp
+brandonjm8
+gjp
 Petri Nurmi (Keefa)
 LANsquared
-Opus
+opus
 Praeses (PraesesZA)
 RavenSoft
+Tran Dinh Thien (Tippy / Thikku)
 Userrr
+zerocoolxp
 
 Documentation:
 Nathan van der Velden (hoodadilly) - Documentation
@@ -39,16 +43,4 @@ Jesse Hall (Jessay) - Web Design
 LANsquared - Hosting
 
 PeerGuardian 2 Credits:
-Cory Nelson - Programming        (http://int64.org)
-Cyril Van Der Haegen - UI Design (http://www.tegehel.org)
-DVDeviant - Graphic Design
-Eric Mayuk - Tech Support
-Fox - Documentation
-James Shanelec - Documentation
-Joseph Farthing - Documentation
-Ken McClelland - Documentation
-Sergio Lo Presti - Testing
-Steffen Tuzar - Tech Support
-
-Special Thanks:
-Erwin Bovendeur for initial Vista code and debugging help.
+PeerBlock is based upon the earlier PeerGuardian 2 work.  Many thanks to Cory Nelson and his Phoenix Labs crew (http://www.phoenixlabs.org) for creating  PG2, and for making it open-source so that after they abandoned it we could pick it up and resurrect it! 
