@@ -38,6 +38,8 @@ const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip) {
 	const PBIPRANGE *last = ranges + count;
 
 	while(0 < count) {
+		//night_stalker_z: bit shifting
+		//int count2 = count / 2;
 		int count2 = count >> 1;
 		const PBIPRANGE *mid = iter + count2;
 		
@@ -127,32 +129,32 @@ void SetRanges(const PBRANGES *ranges, int block)
 	DbgPrint("pbfilter:  < SetRanges");
 }
 
-void SetDestinationPorts(const USHORT *ports, USHORT count) 
+void SetPorts(const ULONG *ports, ULONG count) 
 {
-	USHORT *oldports = NULL;
-	USHORT *nports = NULL;
+	ULONG *oldports = NULL;
+	ULONG *nports = NULL;
 	KIRQL irq;
 
 	if (ports && count > 0) {
-		oldports = g_internal->destinationports;
+		oldports = g_internal->ports;
 
-		nports = (USHORT*) ExAllocatePoolWithTag(NonPagedPool, sizeof(USHORT) * count, 'PDBP');
+		nports = (ULONG*) ExAllocatePoolWithTag(NonPagedPool, sizeof(ULONG) * count, 'tPBP');
 		if (nports == NULL)
 		{
-			DbgPrint("pbfilter:    ERROR: SetDestinationPorts() can't allocate nports memory from NonPagedPool!!");
+			DbgPrint("pbfilter:    ERROR: SetPorts() can't allocate nports memory from NonPagedPool!!");
 			return;
 		}
-		RtlCopyMemory(nports, ports, sizeof(USHORT) * count);
+		RtlCopyMemory(nports, ports, sizeof(ULONG) * count);
 	}
 	else {
 		nports = NULL;
-		g_internal->destinationportcount = 0;
+		g_internal->portcount = 0;
 	}
 
 	KeAcquireSpinLock(&g_internal->portslock, &irq);
 
-	g_internal->destinationports = nports;
-	g_internal->destinationportcount = count;
+	g_internal->ports = nports;
+	g_internal->portcount = count;
 
 	KeReleaseSpinLock(&g_internal->portslock, irq);
 
@@ -161,48 +163,10 @@ void SetDestinationPorts(const USHORT *ports, USHORT count)
 	}
 }
 
-void SetSourcePorts(const USHORT *ports, USHORT count) 
-{
-	USHORT *oldports = NULL;
-	USHORT *nports = NULL;
-	KIRQL irq;
-
-	if (ports && count > 0) {
-		oldports = g_internal->sourceports;
-
-		nports = (USHORT*) ExAllocatePoolWithTag(NonPagedPool, sizeof(USHORT) * count, 'PSBP');
-		if (nports == NULL)
-		{
-			DbgPrint("pbfilter:    ERROR: SetSourcePorts() can't allocate nports memory from NonPagedPool!!");
-			return;
-		}
-		RtlCopyMemory(nports, ports, sizeof(USHORT) * count);
-	}
-	else {
-		nports = NULL;
-		g_internal->sourceportcount = 0;
-	}
-
-	KeAcquireSpinLock(&g_internal->portslock, &irq);
-
-	g_internal->sourceports = nports;
-	g_internal->sourceportcount = count;
-
-	KeReleaseSpinLock(&g_internal->portslock, irq);
-
-	if (oldports) {
-		ExFreePoolWithTag(oldports, 'tPBP');
-	}
+int __cdecl CompareULong(const void * a, const void * b) {
+	return ( *(ULONG*)a - *(ULONG*)b );
 }
 
-int __cdecl CompareUShort(const void * a, const void * b) {
-	return ( *(USHORT*)a - *(USHORT*)b );
-}
-
-int SourcePortAllowed(USHORT port) {
-	return (int) bsearch(&port, g_internal->sourceports, g_internal->sourceportcount, sizeof(USHORT), CompareUShort);
-}
-
-int DestinationPortAllowed(USHORT port) {
-	return (int) bsearch(&port, g_internal->destinationports, g_internal->destinationportcount, sizeof(USHORT), CompareUShort);
+int PortAllowed(ULONG port) {
+	return (int) bsearch(&port, g_internal->ports, g_internal->portcount, sizeof(ULONG), CompareULong);
 }

@@ -105,7 +105,7 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 		if(iph->ipProtocol==6) {
 			opening=(tcp->ack==0);
 
-			if(!g_internal->blockhttp &&  (DestinationPortAllowed(destport) || SourcePortAllowed(srcport))) {
+			if(!g_internal->blockhttp &&  (PortAllowed(srcport) || PortAllowed(destport))) {
 				http = 1;
 			}
 		}
@@ -265,31 +265,17 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
 
-		case IOCTL_PEERBLOCK_SETDESTINATIONPORTS: 
+		case IOCTL_PEERBLOCK_SETPORTS: 
 		{
-			USHORT *ports;
+			ULONG *ports;
 			ULONG count;
 
-			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETPORTS\n");
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			SetDestinationPorts(ports, (USHORT) count / sizeof(ULONG));
-			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
-
-		} break;
-
-		case IOCTL_PEERBLOCK_SETSOURCEPORTS: 
-		{
-			USHORT *ports;
-			ULONG count;
-
-			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
-			ports = irp->AssociatedIrp.SystemBuffer;
-			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
-
-			SetSourcePorts(ports, (USHORT) count / sizeof(ULONG));
-			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+			SetPorts(ports, count / sizeof(ULONG));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETPORTS\n");
 
 		} break;
 
@@ -359,8 +345,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		DbgPrint("pbfilter:    ... resetting counters\n");
 		g_internal->blockedcount = 0;
 		g_internal->allowedcount = 0;
-		g_internal->destinationportcount = 0;
-		g_internal->sourceportcount = 0;
+		g_internal->portcount = 0;
 		g_internal->blockhttp=1;
 
 		DbgPrint("pbfilter:    internal data initted\n");

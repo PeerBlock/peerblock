@@ -32,9 +32,7 @@ static void EditPorts_OnClose(HWND hwnd)
 	}
 
 	g_config.PortSet.Merge();
-	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
-	g_filter->setsourceports(g_config.PortSet.SourcePorts);
-
+	g_filter->setports(g_config.PortSet.Ports);
 	EndDialog(hwnd, NULL);
 }
 

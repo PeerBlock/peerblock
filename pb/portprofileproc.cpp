@@ -38,7 +38,7 @@ static void PortProfile_OnClose(HWND hwnd)
 {
 	TRACEI("[portprofileproc] [PortProfile_OnClose]  > Entering routine.");
 	EndDialog(hwnd, IDCANCEL);
-	TRACEI("[portprofileproc] [PortProfile_OnClose]  < Leaving routine.");
+	TRACEI("[portprofileproc] [PortProfile_OnClose]  < Leavingroutine.");
 
 } // End of PortProfile_OnClose()
 
@@ -61,18 +61,8 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	HWND hname = GetDlgItem(hwnd, IDC_PORTNAME);
 	Edit_SetText(hname, profile->Name.c_str());
 
-	if (profile->Type == Source) {
-		CheckDlgButton(hwnd, IDC_SOURCEPORT, BST_CHECKED);
-	}
-	else if (profile->Type == Both){
-		CheckDlgButton(hwnd, IDC_BOTHPORT, BST_CHECKED);
-	}
-	else {
-		CheckDlgButton(hwnd, IDC_DESTINATIONPORT, BST_CHECKED);
-	}
-
 	tstringstream ports;
-	for (set<USHORT>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
+	for (set<ULONG>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
 	{
 		ports << *iter;
 		ports << _T("\r\n");
@@ -105,16 +95,6 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			pp->Enabled = true;
 			pp->Ports.clear();
 
-			if (IsDlgButtonChecked(hwnd, IDC_SOURCEPORT) == BST_CHECKED) {
-				pp->Type = Source;
-			}
-			else if (IsDlgButtonChecked(hwnd, IDC_BOTHPORT) == BST_CHECKED){
-				pp->Type = Both;
-			}
-			else {
-				pp->Type = Destination;
-			}
-
 			std::vector<tstring> ports;
 			tstring txtports = GetDlgItemText(hwnd, IDC_PORTPORTS);
 
@@ -125,11 +105,12 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			{
 				try 
 				{
-					USHORT p = boost::lexical_cast<USHORT>(ports[i]);
+					int p = boost::lexical_cast<int>(ports[i]);
 
-					pp->Ports.insert((USHORT) p);
+					if (p > 0 && p <= 65535)
+						pp->Ports.insert((ULONG) p);
 				}
-				catch (boost::bad_lexical_cast &) 
+				catch (...) 
 				{
 					TRACEW("[portprofileproc] [PortProfile_OnCommand]  * EXCEPTION caught (and ignored) while processing IDOK");
 				}

@@ -359,9 +359,6 @@
 #define IDC_POP3PORT                    1204
 #define IDC_PORTNAME                    1205
 #define IDC_PORTPORTS                   1206
-#define IDC_DESTINATIONPORT             1207
-#define IDC_SOURCEPORT                  1208
-#define IDC_BOTHPORT                    1209
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
