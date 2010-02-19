@@ -130,6 +130,7 @@ begin
   RemoveDir(ExpandConstant('{app}\archives\'));
   DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.list.tmp'), False, True, False);
+  DelTree(ExpandConstant('{app}\lists\*.list.failed'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
   RemoveDir(ExpandConstant('{app}\lists\'));

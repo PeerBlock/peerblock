@@ -640,6 +640,15 @@ public:
 													// Failed to verify!
 													TRACEW("[UpdateThread] [_Process]    Newly downloaded list failed verification: has 0 elements!!");
 
+													// copy over to .failed
+													path failedFile;
+													failedFile = data->tempfile.file_str();
+													failedFile = failedFile.file_str().substr(0, failedFile.file_str().find_last_of(L"."));
+													failedFile = failedFile.file_str() + L".failed";
+													path::move(data->tempfile, failedFile, true);
+													tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    Copied failed-verify list to: [%1%]")) % failedFile.file_str() );
+													TRACEBUFW(strBuf);
+
 													if (list)
 													{
 														const tstring str = LoadString(IDS_DNLISTFAILEDVERIFY);
