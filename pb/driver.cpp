@@ -128,6 +128,27 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		}
 
 		bool del = _wcsicmp(qsc->lpBinaryPathName, m_file.c_str()) != 0;
+		if (del)
+		{
+			// check for e.g. \??\C:\WINDOWS\System32\DRIVERS\ipfltdrv.sys
+			wchar_t * descr = _wgetenv(L"WINDIR");
+			if (descr)
+			{
+				wstring strFullPath(L"\\??\\");
+				strFullPath += descr;
+				strFullPath += L"\\";
+				strFullPath += m_file;
+
+				tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    comparing against driver full-path:[%1%]")) % strFullPath );
+				TRACEBUFI(strBuf);
+
+				del = _wcsicmp(qsc->lpBinaryPathName, strFullPath.c_str()) != 0;			
+			}
+			else
+			{
+				TRACEW("[driver] [load(3)]    WINDIR environment variable not found!");
+			}
+		}
 
 		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    service name: [%1%], file name: [%2%]")) 
 			% qsc->lpBinaryPathName % m_file.c_str() );
