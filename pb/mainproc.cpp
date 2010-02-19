@@ -106,7 +106,7 @@ void SetBlockHttp(bool block)
 	g_config.PortSet.AllowHttp = !block;
 	g_config.PortSet.Merge();
 
-	g_filter->setports(g_config.PortSet.Ports);
+	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 
 	if (g_config.Block)
 	{
@@ -401,6 +401,13 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
 
+	//TODO: clean up ports
+	// the block http might not be needed anymore but will need to check
+	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
+	g_config.PortSet.Merge();
+	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
+	g_filter->setsourceports(g_config.PortSet.SourcePorts);
+
 	if (!firsttime)
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
@@ -477,11 +484,6 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		allow.optimize(true);
 		g_filter->setranges(allow, false);
 	}
-
-	//TODO: clean up ports
-	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
-	g_config.PortSet.Merge();
-	g_filter->setports(g_config.PortSet.Ports);
 
 	return FALSE;
 }

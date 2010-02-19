@@ -231,30 +231,56 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 
 
 
-void pbfilter_base::setports(const std::set<ULONG> ports)
+void pbfilter_base::setdestinationports(const std::set<USHORT> ports)
 {
-	ULONG *nports = (ULONG*) malloc(sizeof(ULONG) * ports.size());
+	USHORT *nports = (USHORT*) malloc(sizeof(USHORT) * ports.size());
 	ULONG pcount = 0;
 
-	TRACEI("[pbfilter_base] [setports]  > Entering routine.");
-	for (set<ULONG>::const_iterator it = ports.begin(); it != ports.end(); it++)
+	TRACEI("[pbfilter_base] [setdestinationports]  > Entering routine.");
+	for (set<USHORT>::const_iterator it = ports.begin(); it != ports.end(); it++)
 	{
 		nports[pcount++] = *it;
-		TRACEI("[pbfilter_base] [setports]    ...iter...");
+		TRACEI("[pbfilter_base] [setdestinationports]    ...iter...");
 	}
 
-	TRACEI("[pbfilter_base] [setports]    finished parsing ports");
-	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETPORTS, nports, (DWORD)(sizeof(ULONG) * ports.size()));
+	TRACEI("[pbfilter_base] [setdestinationports]    finished parsing ports");
+	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETDESTINATIONPORTS, nports, (DWORD)(sizeof(USHORT) * ports.size()));
 
 	if (ret != ERROR_SUCCESS)
 	{
-		TRACEERR("[pbfilter_base] [setports]", L"Problems talking to driver", ret);
+		TRACEERR("[pbfilter_base] [setdestinationports]", L"Problems talking to driver", ret);
 		throw win32_error("DeviceIoControl", ret);
 	}
 
-	TRACEI("[pbfilter_base] [setports]  < Leaving Routine.");
+	TRACEI("[pbfilter_base] [setdestinationports]  < Leaving Routine.");
 
-} // End of setports()
+} // End of setdestinationports()
+
+
+void pbfilter_base::setsourceports(const std::set<USHORT> ports)
+{
+	USHORT *nports = (USHORT*) malloc(sizeof(USHORT) * ports.size());
+	ULONG pcount = 0;
+
+	TRACEI("[pbfilter_base] [setsourceports]  > Entering routine.");
+	for (set<USHORT>::const_iterator it = ports.begin(); it != ports.end(); it++)
+	{
+		nports[pcount++] = *it;
+		TRACEI("[pbfilter_base] [setsourceports]    ...iter...");
+	}
+
+	TRACEI("[pbfilter_base] [setsourceports]    finished parsing ports");
+	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETSOURCEPORTS, nports, (DWORD)(sizeof(USHORT) * ports.size()));
+
+	if (ret != ERROR_SUCCESS)
+	{
+		TRACEERR("[pbfilter_base] [setsourceports]", L"Problems talking to driver", ret);
+		throw win32_error("DeviceIoControl", ret);
+	}
+
+	TRACEI("[pbfilter_base] [setsourceports]  < Leaving Routine.");
+
+} // End of setsourceports()
 
 
 
