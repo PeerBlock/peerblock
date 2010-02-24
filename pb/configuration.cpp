@@ -33,7 +33,7 @@ Configuration::Configuration() :
 	Block(true), BlockHttp(true), AllowLocal(true), UpdatePeerBlock(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
 	LogSize(12), LastUpdate(0), LastArchived(0), CleanupInterval(2), LogAllowed(true), LogBlocked(true),
-	ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), UpdateProxyType(CURLPROXY_HTTP),
+	ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
@@ -435,6 +435,11 @@ bool Configuration::Load()
 		GetChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		GetChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
 		GetChild(settings, "LastVersionRun", this->LastVersionRun);
+
+		// specially-treat RecentBlockWarntime since otherwise TinyXML will save it to the .conf as a hex value
+		int i=(DWORD)RecentBlockWarntime;
+		GetChild(settings, "RecentBlockWarntime", i);
+		this->RecentBlockWarntime=(DWORD)i;
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config logging element");
@@ -716,6 +721,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		InsertChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
 		InsertChild(settings, "LastVersionRun", PB_VER_BUILDNUM);
+		InsertChild(settings, "RecentBlockWarntime", (int)this->RecentBlockWarntime);
 	}
 
 	{

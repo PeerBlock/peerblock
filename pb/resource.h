@@ -205,6 +205,8 @@
 #define IDS_LISTSAN_EXACTDUPE			259
 #define IDS_LISTSAN_DEFDUPE				260
 #define IDS_LISTSAN_DIFFDUPE			261
+#define IDS_EXITWHILEBLOCKING			262
+#define IDS_EXITWHILEBLOCKINGTEXT		263
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003

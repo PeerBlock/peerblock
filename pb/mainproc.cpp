@@ -225,7 +225,39 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case ID_TRAY_EXIT:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Exit' item");
-			DestroyWindow(hwnd);
+
+			// Check "last block time", so we can warn the user if we were blocking recently
+			DWORD lastBlockTime = 0;
+			DWORD exitTime = GetTickCount();
+			bool exitProg = true;	// should we really exit the program?
+
+			{
+				mutex::scoped_lock lock(g_lastblocklock);
+				lastBlockTime = g_lastblocktime;
+			}
+
+			if (exitTime > lastBlockTime + 1000 * g_config.RecentBlockWarntime)
+			{
+				TRACEI("[mainproc] [Main_OnCommand]    sufficient time has passed since last block, exiting program");
+			}
+			else
+			{
+				TRACEI("[mainproc] [Main_OnCommand]    insufficient time has passed since last block, displaying warning message");
+				int result = MessageBox(hwnd, IDS_EXITWHILEBLOCKINGTEXT, IDS_EXITWHILEBLOCKING, MB_ICONWARNING|MB_YESNO);
+				if (result == IDYES)
+				{
+					TRACEI("[mainproc] [Main_OnCommand]    user clicked Yes, exiting program");
+				}
+				else if (result == IDNO)
+				{
+					TRACEI("[mainproc] [Main_OnCommand]    user clicked No, NOT exiting program");
+					exitProg = false;
+				}
+			}
+
+			if (exitProg)
+				DestroyWindow(hwnd);
+
 			break;
 	}
 }

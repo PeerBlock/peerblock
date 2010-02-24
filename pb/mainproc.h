@@ -57,3 +57,5 @@ extern HWND g_main;
 
 extern bool g_trayactive;
 extern NOTIFYICONDATA g_nid;
+extern mutex g_lastblocklock;
+extern DWORD g_lastblocktime;

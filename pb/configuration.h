@@ -163,6 +163,7 @@ struct Configuration {
 	NotifyType BlinkOnBlock, NotifyOnBlock;
 	unsigned short UpdateInterval, LogSize, CleanupInterval;
 	short UpdateCountdown;
+	DWORD RecentBlockWarntime;	// time (in sec) we want to see blocked activity ending before we'll exit without warning
 	CleanType CleanupType;
 	tstring UpdateProxy;
 	long UpdateProxyType;

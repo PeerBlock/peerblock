@@ -44,6 +44,8 @@ static const int MAX_SIZE_IP = 32;
 allowlist_t g_allowlist, g_blocklist;
 threaded_sqlite3_connection g_con;
 int g_numlogged = 0;	// used to make sure we log at least a few allowed-packets before stopping, so that the user sees some activity
+DWORD g_lastblocktime;	// tracks time we last blocked something, for exit warning purposes, in msec resolution
+mutex g_lastblocklock;	// lock to protect g_lastblocktime accesses
 
 class LogFilterAction {
 private:
@@ -190,11 +192,23 @@ public:
 					lvi.iSubItem=0;
 					lvi.pszText=(LPTSTR)time.c_str();
 
-					if(action.type == pbfilter::action::blocked) {
+					if(action.type == pbfilter::action::blocked) 
+					{
 						TRACEV("[LogFilterAction] [operator()]    logging blocked packet");
+
 						if(action.protocol==IPPROTO_TCP && (destport==80 || destport==443))
-							lvi.lParam=(LPARAM)2;
-						else lvi.lParam=(LPARAM)1;
+						{
+							lvi.lParam=(LPARAM)2;	// HTTP block
+						}
+						else 
+						{
+							// non-HTTP block
+							lvi.lParam=(LPARAM)1;	
+
+							// Update "last block time", so we can warn the user when exiting.
+							mutex::scoped_lock lock(g_lastblocklock);
+							g_lastblocktime = GetTickCount();
+						}
 					}
 					else 
 					{
