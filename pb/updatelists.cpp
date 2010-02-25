@@ -1755,6 +1755,30 @@ static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, 
 
 
 
+//================================================================================================
+//
+//  UpdateLists()
+//
+//    - Called by UpdateStatus() while updating main window metrics
+//    - Called by Log_OnCommand() after opening and then closing List Manager
+//    - Called by Log_OnCommand() when user clicks Update button
+//    - Called by Log_OnTimer() when automatic-update timer expires
+//
+//    - Called by Main_OnInitDialog() in mainproc.cpp on timer expiry, after updating lists
+//    - Called by Main_OnInitDialog() in mainproc.cpp upon receipt of WM_LOG_HOOK or WM_LOG_RANGES messages
+//
+/// <summary>
+///   Checks for updated program / lists, downloads, and applies list-updates.
+/// </summary>
+/// <param name="hwnd">
+///   Parent's hwnd, if any.
+/// </param>
+/// <remarks>
+///   Callers of this routine are expected to have first acquired the g_lastudpatelock, to ensure
+///   that nobody else is attempting to check for updates (or check the timer) while a list-update
+///	  is already in progress.
+/// </remarks>
+//
 int UpdateLists(HWND parent) 
 {
 	TRACEI("[UpdateLists]  > Entering routine.");
@@ -1778,6 +1802,7 @@ int UpdateLists(HWND parent)
 			g_updater=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
 		}
 
+		TRACEI("[UpdateLists]    resetting LastUpdate time");
 		time(&g_config.LastUpdate);
 	}
 	else if(parent) 

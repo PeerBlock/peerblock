@@ -330,15 +330,18 @@ static void FitTabChild(HWND tabs, HWND child) {
 }
 
 static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy);
-static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+{
 	g_main=hwnd;
 
 	TRACEI("[mainproc] [Main_OnInitDialog]  > Entering routine.");
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    loading config");
 	bool firsttime=false;
-	try {
-		if(!g_config.Load()) {
+	try 
+	{
+		if(!g_config.Load()) 
+		{
 			TRACEI("[mainproc] [Main_OnInitDialog]    displaying first-time wizard");
 			DisplayStartupWizard(hwnd);
 			g_config.Save();
@@ -360,7 +363,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 			g_tlog.SetLoglevel(TRACELOG_LEVEL_NONE);
 		}
 	}
-	catch(exception &ex) {
+	catch(exception &ex) 
+	{
 		TRACEC("[mainproc] [Main_OnInitDialog]    Exception trying to load config!");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		DestroyWindow(hwnd);
@@ -369,7 +373,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	}
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    resetting g_filter");
-	try {
+	try 
+	{
 		g_filter.reset(new pbfilter());
 		TRACES("[mainproc] [Main_OnInitDialog]    g_filter reset.");
 	}
@@ -380,7 +385,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	catch(win32_error &ex) {
+	catch(win32_error &ex) 
+	{
 		DWORD code = ex.error();
 		if (code == 577)
 		{
@@ -397,7 +403,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	catch(exception &ex) {
+	catch(exception &ex) 
+	{
 		const tstring text=boost::str(tformat(LoadString(IDS_DRIVERERRTEXT))%typeid(ex).name()%ex.what());
 		MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
 
@@ -409,7 +416,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
-	for(size_t i=0; i<g_tabcount; i++) {
+	for(size_t i=0; i<g_tabcount; i++) 
+	{
 		tstring buf=LoadString(g_tabs[i].Title);
 
 		TCITEM tci={0};
@@ -421,9 +429,15 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		FitTabChild(tabs, g_tabs[i].Tab);
 	}
 
-	if(firsttime && !g_config.UpdateAtStartup) {
+	if(firsttime && !g_config.UpdateAtStartup) 
+	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
-		UpdateLists(g_tabs[0].Tab);
+
+		{
+			mutex::scoped_lock lock(g_lastupdatelock);
+			UpdateLists(g_tabs[0].Tab);
+		}
+
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
 
@@ -499,11 +513,18 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	if (g_config.UpdateAtStartup)
 	{
-		UpdateLists(hwnd);	// needs internet connection
+		TRACEI("[mainproc] [Main_OnInitDialog]    updating at startup");
+
+		{
+			mutex::scoped_lock lock(g_lastupdatelock);
+			UpdateLists(hwnd);	// needs internet connection
+		}
+
 		LoadLists(hwnd);
 	}
 	else if(g_filter)	// HACK: This should allow us to block at startup, even if we don't update
 	{
+		TRACEI("[mainproc] [Main_OnInitDialog]    not updating at startup");
 		p2p::list allow;
 		allow.insert(p2p::range(L"Auto-allow hack", 0, 0));
 		allow.optimize(true);

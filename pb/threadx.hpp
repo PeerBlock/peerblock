@@ -80,9 +80,9 @@ private:
 public:
 	void enter() 
 	{ 
-		TCHAR chBuf[256];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  > Entering Mutex:[%p]"), this);
-		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
+		//TCHAR chBuf[256];
+		//_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  > Entering Mutex:[%p]"), this);
+		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
 		EnterCriticalSection(&cs); 
 	}
@@ -91,9 +91,9 @@ public:
 #endif
 	void leave() 
 	{ 
-		TCHAR chBuf[256];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  < Leaving Mutex:[%p]"), this);
-		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
+		//TCHAR chBuf[256];
+		//_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  < Leaving Mutex:[%p]"), this);
+		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
 		LeaveCriticalSection(&cs); 
 	}

@@ -46,6 +46,8 @@ threaded_sqlite3_connection g_con;
 int g_numlogged = 0;	// used to make sure we log at least a few allowed-packets before stopping, so that the user sees some activity
 DWORD g_lastblocktime;	// tracks time we last blocked something, for exit warning purposes, in msec resolution
 mutex g_lastblocklock;	// lock to protect g_lastblocktime accesses
+mutex g_lastupdatelock;	// lock to protect against checking g_config.LastUpdate while we're in the process of updating
+
 
 class LogFilterAction {
 private:
@@ -528,6 +530,29 @@ static boost::shared_ptr<LogFilterAction> g_log;
 
 UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM &lvi);
 
+
+
+//================================================================================================
+//
+//  UpdateStatus()
+//
+//    - Called by Log_OnCommand() after user clicks Update button and lists get updated
+//    - Called by Log_OnInitDialog() near the end of setting everything up
+//    - Called by Log_OnTimer() on timer expiry, after updating lists
+//    - Called by Log_DlgProc() upon receipt of WM_LOG_HOOK or WM_LOG_RANGES messages
+//
+/// <summary>
+///   Updates the main PeerBlock window's "metrics", with number blocks, time of last update, etc.
+/// </summary>
+/// <param name="hwnd">
+///   Parent's hwnd, if any.
+/// </param>
+/// <remarks>
+///   Note that this routine can cause the lists to be updated, if it detects that too much time 
+///   has passed.  Because of this it is important that callers NOT have g_lastupdatelock 
+///   acquired as we will be using it.
+/// </remarks>
+//
 static void UpdateStatus(HWND hwnd) 
 {
 	TRACEV("[LogProc] [UpdateStatus]  > Entering routine.");
@@ -568,6 +593,7 @@ static void UpdateStatus(HWND hwnd)
 	if(g_config.LastUpdate) 
 	{
 		TRACEV("[LogProc] [UpdateStatus]    g_config.LastUpdate: [true]");
+		mutex::scoped_lock lock(g_lastupdatelock);
 		time_t dur=time(NULL)-g_config.LastUpdate;
 
 		if(dur<604800) 
@@ -618,12 +644,17 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case IDC_LISTS: 
 		{
-			TRACEV("[LogProc] [Log_OnCommand]  IDC_LISTS");
+			TRACEI("[LogProc] [Log_OnCommand]    user clicked List Manager button");
 			INT_PTR ret=DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LISTS), hwnd, Lists_DlgProc);
-			if(ret&LISTS_NEEDUPDATE) {
-				UpdateLists(hwnd);
-				SendMessage(hwnd, WM_TIMER, TIMER_UPDATE, 0);
+			if(ret&LISTS_NEEDUPDATE) 
+			{
+				{
+					TRACEI("[LogProc] [Log_OnCommand]    lists need to be updated");
+					mutex::scoped_lock lock(g_lastupdatelock);
+					UpdateLists(hwnd);
+				}
 
+				SendMessage(hwnd, WM_TIMER, TIMER_UPDATE, 0);
 				g_config.Save();
 			}
 			if(g_filter.get() && ret&LISTS_NEEDRELOAD) LoadLists(hwnd);
@@ -631,8 +662,13 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case IDC_UPDATE: 
 		{
-			TRACEV("[LogProc] [Log_OnCommand]  IDC_UPDATE");
-			int ret=UpdateLists(hwnd);
+			TRACEI("[LogProc] [Log_OnCommand]    user clicked Update button");
+			int ret = 0;
+
+			{
+				mutex::scoped_lock lock(g_lastupdatelock);
+				ret=UpdateLists(hwnd);
+			}
 
 			g_config.Save();
 
@@ -643,22 +679,22 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 		case IDC_HISTORY:
-			TRACEV("[LogProc] [Log_OnCommand]  IDC_HISTORY");
+			TRACEI("[LogProc] [Log_OnCommand]    user clicked View History button");
 			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_HISTORY), hwnd, History_DlgProc);
 			break;
 
 		case IDC_CLEAR:
-			TRACEV("[LogProc] [Log_OnCommand]  IDC_CLEAR");
+			TRACEI("[LogProc] [Log_OnCommand]    user clicked Clear Log button");
 			ListView_DeleteAllItems(GetDlgItem(hwnd, IDC_LIST));
 			break;
 
 		case IDC_ENABLE:
-			TRACEV("[LogProc] [Log_OnCommand]  IDC_ENABLE");
+			TRACEI("[LogProc] [Log_OnCommand]    user clicked Enable/Disable button");
 			SetBlock(!g_config.Block);
 			break;
 
 		case IDC_HTTP:
-			TRACEV("[LogProc] [Log_OnCommand]  IDC_HTTP");
+			TRACEI("[LogProc] [Log_OnCommand]    Block/Enable HTTP button");
 			SetBlockHttp(!g_config.BlockHttp);
 			break;
 	}
@@ -1085,31 +1121,45 @@ public:
 	}
 };
 
+
+
 static void Log_OnTimer(HWND hwnd, UINT id) 
 {
 	TRACEV("[LogProc] [Log_OnTimer]  > Entering routine.");
-	switch(id) {
+	switch(id) 
+	{
 		case TIMER_UPDATE:
 			TRACEV("[LogProc] [Log_OnTimer]    TIMER_UPDATE");
-			if(g_config.UpdateInterval>0 && (time(NULL)-g_config.LastUpdate >= ((time_t)g_config.UpdateInterval)*86400))
+
 			{
-				TRACEI("[LogProc] [Log_OnTimer]    performing automated update of program/lists");
-				UpdateLists(NULL);
+				mutex::scoped_lock lock(g_lastupdatelock);
+				if(g_config.UpdateInterval>0 && (time(NULL)-g_config.LastUpdate >= ((time_t)g_config.UpdateInterval)*86400))
+				{
+					TRACEI("[LogProc] [Log_OnTimer]    performing automated update of program/lists");
+					UpdateLists(NULL);
+				}
 			}
+
 			UpdateStatus(hwnd);
 			break;
+
 		case TIMER_TEMPALLOW:
 			TRACEV("[LogProc] [Log_OnTimer]    TIMER_TEMPALLOW");
 			g_allowlist.remove_if(TempAllowRemovePred(g_tempallow));
 			g_blocklist.remove_if(TempAllowRemovePred(g_tempblock));
 			break;
+
 		case TIMER_COMMITLOG:
 			TRACEV("[LogProc] [Log_OnTimer]    TIMER_COMMITLOG");
 			g_log->Commit();
 			break;
 	}
+
 	TRACEV("[LogProc] [Log_OnTimer]  < Leaving routine.");
-}
+
+} // End of Log_OnTimer()
+
+
 
 //================================================================================================
 //
