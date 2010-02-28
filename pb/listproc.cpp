@@ -8,7 +8,7 @@
 
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -631,7 +631,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						tstring str=g_rows[i].name;
 						boost::to_lower(str);
 						
-						if(str.find(s)!=tstring::npos) 
+						if(str.compare(s) == 0) 
 						{
 							SetWindowLongPtr(hwnd, DWLP_MSGRESULT, i);
 							return i;

@@ -56,7 +56,7 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 		for (unsigned int listUrl=LISTS_FIELD_BESTURL; listUrl<Lists[listName].size() && foundUrl==false; ++listUrl)	
 		{
 			// check for specified URL
-			if (Lists[listName][listUrl].Url.find(_url) != string::npos)
+			if (Lists[listName][listUrl].Url.compare(_url) == 0)
 			{
 				//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   found url at: [%1%][%2%]")) 
 				//	% listName % listUrl );
@@ -123,7 +123,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 	LISTFLAGS urlFlags = 0;
 	for (idx=LISTS_FIELD_BESTURL; _num!=LISTNAME_COUNT && idx<Lists[_num].size(); ++idx)
 	{
-		if (Lists[_num][idx].Url.find(_url) != string::npos)
+		if (Lists[_num][idx].Url.compare(_url) == 0)
 		{
 			// found it!
 			tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    found url at: [%1%][%2%]")) 
@@ -173,7 +173,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				// TODO:  Should probably refactor this stuff into its own subroutine...
 
 				// check against user-entered url
-				if (l->Url.find(_url) != string::npos)
+				if (l->Url.compare(_url) == 0)
 				{
 					TRACEI("[ListUrls] [CheckUrl]    found exact url in listman listview");
 					urlFlags.set(LISTFLAG_EXACTDUPE);
@@ -184,7 +184,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 					LISTNAME existingListId = FindListNum(l->Url);
 					for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 					{
-						if (Lists[existingListId][j].Url.find(_url) != string::npos)
+						if (Lists[existingListId][j].Url.compare(_url) == 0)
 						{
 							TRACEI("[ListUrls] [CheckUrl]    found similar url in listman listview");
 							urlFlags.set(LISTFLAG_DIFFDUPE);
@@ -200,7 +200,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 		for(vector<DynamicList>::size_type i=0; i<g_deflists.size(); i++)
 		{
 			// check against user-entered url
-			if (g_deflists[i].Url.find(_url) != string::npos)
+			if (g_deflists[i].Url.compare(_url) == 0)
 			{
 				TRACEI("[ListUrls] [CheckUrl]    found exact url in g_config dynamic lists");
 				urlFlags.set(LISTFLAG_EXACTDUPE);
@@ -211,7 +211,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				existingListId = FindListNum(g_deflists[i].Url);
 				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
-					if (Lists[existingListId][j].Url.find(_url) != string::npos)
+					if (Lists[existingListId][j].Url.compare(_url) == 0)
 					{
 						TRACEI("[ListUrls] [CheckUrl]    found similar url in g_config dynamic lists");
 						urlFlags.set(LISTFLAG_DIFFDUPE);
@@ -229,7 +229,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
 		{
 			// check against user-entered url
-			if (g_config.DynamicLists[i].Url.find(_url) != string::npos)
+			if (g_config.DynamicLists[i].Url.compare(_url) == 0)
 			{
 				TRACEI("[ListUrls] [CheckUrl]    found exact url in g_config dynamic lists");
 				urlFlags.set(LISTFLAG_EXACTDUPE);
@@ -240,7 +240,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				existingListId = FindListNum(g_config.DynamicLists[i].Url);
 				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
-					if (Lists[existingListId][j].Url.find(_url) != string::npos)
+					if (Lists[existingListId][j].Url.compare(_url) == 0)
 					{
 						TRACEI("[ListUrls] [CheckUrl]    found similar url in g_config dynamic lists");
 						urlFlags.set(LISTFLAG_DIFFDUPE);
@@ -310,24 +310,28 @@ bool ListUrls::Init()
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/level-1"));
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://list.iblocklist.com/?list=bt_level1", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://www.bluetack.co.uk/config/level1.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/p2p.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_level1", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"Advertising (Bluetack)"));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://list.iblocklist.com/?list=bt_ads", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://www.bluetack.co.uk/config/ads-trackers-and-bad-pr0n.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/ads.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_ads", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"Spyware (Bluetack)"));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/spyware"));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://list.iblocklist.com/?list=bt_spyware", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://www.bluetack.co.uk/config/spyware.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/spy.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_spyware", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"Education (Bluetack)"));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/edu"));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://list.iblocklist.com/?list=bt_edu", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://www.bluetack.co.uk/config/edu.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/edu.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_edu", LISTFLAG_WRONG));
 
 		// Bluetack Lists

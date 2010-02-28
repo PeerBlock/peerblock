@@ -177,7 +177,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 					DynamicList newList = *list;
 					newList.Url = listUrls.GetBestUrl(listId);
 					tempList.push_back(newList);
-					if (newList.Url.find(list->Url) != string::npos)
+					if (newList.Url.compare(list->Url) == 0)
 					{
 						tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - found no better list url than [%1%]")) 
 							% list->Url.c_str() );
@@ -190,7 +190,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 						TRACEBUFW(strBuf);
 					}
 				}
-				else if (list->Url.find(_T("http://www.bluetack.co.uk/config/trojan.zip")) != string::npos)
+				else if (list->Url.compare(_T("http://www.bluetack.co.uk/config/trojan.zip")) == 0)
 				{
 					TRACEW("[mainproc] [PerformPrevRelUpdates]    - removing no-longer-existant bt trojan");
 				}

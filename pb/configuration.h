@@ -63,11 +63,11 @@ struct DynamicList : List {
 
 	bool operator==(const DynamicList &right)
 	{
-		return Url.find(right.Url) != string::npos;
+		return Url.compare(right.Url) == 0;
 	}
 	bool operator==(const tstring &url)
 	{
-		return Url.find(url) != string::npos;
+		return Url.compare(url) == 0;
 	}
 
 	bool operator<(const DynamicList &right)
