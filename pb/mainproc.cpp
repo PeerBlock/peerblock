@@ -372,6 +372,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		return FALSE;
 	}
 
+	time(&g_config.LastStarted);
+
 	TRACEI("[mainproc] [Main_OnInitDialog]    resetting g_filter");
 	try 
 	{
@@ -429,7 +431,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		FitTabChild(tabs, g_tabs[i].Tab);
 	}
 
-	if(firsttime && !g_config.UpdateAtStartup) 
+	if( firsttime && !g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted ) 
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
 
@@ -511,7 +513,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
 	#endif
 
-	if (g_config.UpdateAtStartup)
+	if (g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted )
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    updating at startup");
 

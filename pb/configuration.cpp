@@ -32,9 +32,9 @@ Configuration g_config;
 Configuration::Configuration() :
 	Block(true), BlockHttp(true), AllowLocal(true), UpdatePeerBlock(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
-	LogSize(12), LastUpdate(0), LastArchived(0), CleanupInterval(2), LogAllowed(true), LogBlocked(true),
-	ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), UpdateProxyType(CURLPROXY_HTTP),
-	UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
+	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(2), LogAllowed(true), 
+	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), 
+	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete),
@@ -588,6 +588,16 @@ bool Configuration::Load()
 				// keep going
 			}
 		}
+
+		GetChild(updates, "LastStarted", lastupdate);
+		if(lastupdate.length()>0) {
+			try {
+				this->LastStarted=boost::lexical_cast<int>(lastupdate);
+			}
+			catch(...) {
+				// keep going
+			}
+		}
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config messages element");
@@ -860,6 +870,12 @@ void Configuration::Save(const TCHAR * _filename)
 		if(this->LastArchived) {
 			string t=boost::lexical_cast<string>((int)this->LastArchived);
 			lastarchived->InsertEndChild(TiXmlText(t));
+		}
+
+		TiXmlElement *laststarted=InsertChild(updates, "LastStarted");
+		if(this->LastStarted) {
+			string t=boost::lexical_cast<string>((int)this->LastStarted);
+			laststarted->InsertEndChild(TiXmlText(t));
 		}
 	}
 

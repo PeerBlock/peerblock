@@ -153,7 +153,7 @@ struct Configuration {
 	PortSet PortSet;
 	bool ColorCode;
 	Color BlockedColor, AllowedColor, HttpColor;
-	time_t LastUpdate, LastArchived;
+	time_t LastUpdate, LastArchived, LastStarted;
 	unsigned int CacheCrc;
 	bool Block, BlockHttp, AllowLocal;
 	bool UpdatePeerBlock, UpdateLists, UpdateAtStartup;
