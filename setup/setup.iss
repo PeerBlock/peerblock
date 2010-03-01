@@ -22,10 +22,8 @@
 ; *Inno Setup QuickStart Pack v5.3.8: http://www.jrsoftware.org/isdl.php#qsp
 ;
 ; NOTE:
-; *ISTool cannot be used to compile this package from within the GUI, due to
-;  lack of support for the SignTool directive by ISTool.  If you wish to use
-;  ISTool, you will need to comment out the SignTool directive.
-;  http://sourceforge.net/tracker/?func=detail&aid=2827413&group_id=206943&atid=999623
+; *To get the installer/uninstaller to be signed, you'll need to uncomment the
+;  SignTool directive below.
 
 
 #include "../pb/versioninfo_setup.h"
@@ -90,7 +88,7 @@ DisableProgramGroupPage=auto
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
 AppMutex=Global\PeerBlock
-SignTool=Standard
+; SignTool=Standard
 
 
 [Languages]
