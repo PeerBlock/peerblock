@@ -469,6 +469,11 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
 
+	//TODO: clean up ports
+	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
+	g_config.PortSet.Merge();
+	g_filter->setports(g_config.PortSet.Ports);
+
 	if (!firsttime)
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    loading lists");
@@ -552,11 +557,6 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		allow.optimize(true);
 		g_filter->setranges(allow, false);
 	}
-
-	//TODO: clean up ports
-	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
-	g_config.PortSet.Merge();
-	g_filter->setports(g_config.PortSet.Ports);
 
 	return FALSE;
 }
