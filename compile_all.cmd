@@ -53,18 +53,8 @@ PUSHD setup
 TITLE Compiling installer...
 ECHO:Compiling installer...
 ECHO.
-IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /Q "setup.iss"&&(
+IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /SStandard="cmd /c ..\tools\sign_driver.cmd $f " /Q "setup.iss"&&(
 ECHO:Installer compiled successfully!)) ELSE (ECHO:%M_%)
-POPD
-
-
-REM Sign installer
-IF NOT DEFINED PB_CERT (
-ECHO:Certificate not found!!! Installer will not be signed.&&(GOTO :CreateZips)
-)
-
-PUSHD "Distribution"
-FOR %%J IN (*.exe) DO CALL ..\tools\sign_driver.cmd %%J
 POPD
 
 
