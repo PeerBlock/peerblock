@@ -704,19 +704,20 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 static void Log_OnDestroy(HWND hwnd) 
 {
-	TRACEV("[LogProc] [Log_OnDestroy]  > Entering routine.");
+	TRACEI("[LogProc] [Log_OnDestroy]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 
 	SaveListColumns(list, g_config.LogColumns);
 
+	TRACEI("[LogProc] [Log_OnDestroy]    saving config");
 	g_config.Save();
 
-	TRACEV("[LogProc] [Log_OnDestroy]    setting filter action-function to nothing");
+	TRACEI("[LogProc] [Log_OnDestroy]    setting filter action-function to nothing");
 	g_filter->setactionfunc();
-	TRACEV("[LogProc] [Log_OnInitDialog]    setting g_log to empty LogFilterAction");
+	TRACEI("[LogProc] [Log_OnInitDialog]    setting g_log to empty LogFilterAction");
 	g_log=boost::shared_ptr<LogFilterAction>();
 
-	TRACEV("[LogProc] [Log_OnDestroy]  < Leaving routine.");
+	TRACEI("[LogProc] [Log_OnDestroy]  < Leaving routine.");
 
 } // End of Log_OnDestroy()
 
