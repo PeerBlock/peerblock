@@ -713,6 +713,8 @@ BEGIN
         MENUITEM "&Disabled",                   ID_TRAY_DISABLED
         MENUITEM SEPARATOR
         MENUITEM "&Allow HTTP",                 ID_TRAY_BLOCKHTTP
+        MENUITEM "Allow HTTP for 15 min",       ID_TRAY_TEMPALLOWHTTP15
+        MENUITEM "Allow HTTP for 60 min",       ID_TRAY_TEMPALLOWHTTP60
         MENUITEM SEPARATOR
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
         MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON

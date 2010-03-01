@@ -385,6 +385,8 @@
 #define ID_FILE_BACKUPDATABASE          40026
 #define ID_TRAY_HELP                    40027
 #define ID_TRAY_SUPPORT                 40028
+#define ID_TRAY_TEMPALLOWHTTP15         40029
+#define ID_TRAY_TEMPALLOWHTTP60         40030
 
 // Next default values for new objects
 // 

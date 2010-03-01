@@ -35,6 +35,7 @@ static const UINT WM_PB_TRAY=WM_APP+2;
 static const UINT TRAY_ID=1;
 static const UINT TIMER_BLINKTRAY=1;
 static const UINT TIMER_PROCESSDB=2;
+static const UINT TIMER_TEMPALLOWHTTP=3;	// used to "Allow HTTP for X Minutes" 
 
 bool g_trayactive;
 NOTIFYICONDATA g_nid={0};
@@ -183,6 +184,18 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		case ID_TRAY_BLOCKHTTP:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Block HTTP' item");
 			SetBlockHttp(!g_config.BlockHttp);
+			break;
+
+		case ID_TRAY_TEMPALLOWHTTP15:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 15 minutes' item");
+			SetBlockHttp(false);
+			SetTimer(hwnd, TIMER_TEMPALLOWHTTP, 15 * 60 * 1000, NULL);	// 15 minutes
+			break;
+
+		case ID_TRAY_TEMPALLOWHTTP60:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 60 minutes' item");
+			SetBlockHttp(false);
+			SetTimer(hwnd, TIMER_TEMPALLOWHTTP, 60 * 60 * 1000, NULL);	// 60 minutes
 			break;
 
 		case ID_TRAY_ALWAYSONTOP:
@@ -763,6 +776,12 @@ static void Main_OnTimer(HWND hwnd, UINT id)
 		}
 		else
 			g_processlock.leave();
+	}
+	else if(id==TIMER_TEMPALLOWHTTP)
+	{
+		TRACEI("[mainproc] [Main_OnTimer]    temp-allow-http timer expired, blocking http again");
+		SetBlockHttp(true);
+		KillTimer(hwnd, TIMER_TEMPALLOWHTTP);
 	}
 }
 
