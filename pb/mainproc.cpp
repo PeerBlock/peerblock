@@ -291,17 +291,24 @@ static void Main_OnDestroy(HWND hwnd)
 
 	if(g_trayactive) Shell_NotifyIcon(NIM_DELETE, &g_nid);
 
+	TRACEI("[mainproc] [Main_OnDestroy]    destroying main window tabs");
+	try 
 	{
-		TRACEI("[mainproc] [Main_OnDestroy]    deleting tray icons");
-		try {
-			for(size_t i=0; i<g_tabcount; i++)
-				DestroyWindow(g_tabs[i].Tab);
+		for(size_t i=0; i<g_tabcount; i++)
+		{
+			tstring strBuf = boost::str(tformat(_T("[mainproc] [Main_OnDestroy]    destroying tab: [%1%]")) % LoadString(g_tabs[i].Title) );
+			TRACEBUFE(strBuf);
+			DestroyWindow(g_tabs[i].Tab);
+			strBuf = boost::str(tformat(_T("[mainproc] [Main_OnDestroy]    tab [%1%] destroyed")) % LoadString(g_tabs[i].Title) );
+			TRACEBUFE(strBuf);
 		}
-		catch(exception &ex) {
-			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		}
-		TRACEI("[mainproc] [Main_OnDestroy]    tray icons destroyed");
 	}
+	catch(exception &ex) 
+	{
+		TRACEE("[mainproc] [Main_OnDestroy]  * ERROR: Exception occurred while destroying main window tabs");
+		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
+	}
+	TRACEI("[mainproc] [Main_OnDestroy]    main window tabs destroyed");
 
 	TRACEW("[mainproc] [Main_OnDestroy]    Terminating program...");
 	PostQuitMessage(0);
