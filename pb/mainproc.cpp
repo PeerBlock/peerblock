@@ -443,8 +443,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
 
-	TRACEI("[mainproc] [Main_OnInitDialog]    setting block");
-	g_filter->setblock(g_config.Block);
+	TRACEI("[mainproc] [Main_OnInitDialog]    setting block, forcing to Enabled");
+	g_filter->setblock(true);
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
