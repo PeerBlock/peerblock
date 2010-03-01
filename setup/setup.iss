@@ -20,13 +20,9 @@
 ;
 ; Requirements:
 ; *Inno Setup QuickStart Pack v5.3.8: http://www.jrsoftware.org/isdl.php#qsp
-;
-; NOTE:
-; *To get the installer/uninstaller to be signed, you'll need to uncomment the
-;  SignTool directive below.
 
 
-#include "../pb/versioninfo_setup.h"
+#include "icons/../../pb/versioninfo_setup.h"
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
 
 ; Uncomment one of the #define simple_app_version and comment all other
@@ -88,7 +84,10 @@ DisableProgramGroupPage=auto
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
 AppMutex=Global\PeerBlock
-; SignTool=Standard
+
+#if GetEnv("PB_CERT")
+SignTool=Standard
+#endif
 
 
 [Languages]
