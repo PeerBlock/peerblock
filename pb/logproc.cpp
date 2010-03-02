@@ -161,7 +161,7 @@ public:
 		if((action.type == pbfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed || g_numlogged < 10) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK)) 
 		{
 			TRACEV("[LogFilterAction] [operator()]    allowed, not loopbacks");
-			if(action.type == pbfilter::action::blocked && g_config.BlinkOnBlock!=Never && (g_config.BlinkOnBlock==OnBlock || destport==80 || destport==443))
+			if(action.type == pbfilter::action::blocked && g_config.BlinkOnBlock!=Never && (g_config.BlinkOnBlock==OnBlock || ((destport==80 || destport==443) && action.protocol==IPPROTO_TCP)))
 			{
 				TRACEV("[LogFilterAction] [operator()]    start blinking");
 				g_blinkstart=GetTickCount();
