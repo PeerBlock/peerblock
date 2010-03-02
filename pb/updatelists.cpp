@@ -1785,7 +1785,11 @@ int UpdateLists(HWND parent)
 
 	int ret=0;
 
-	if(g_updater==NULL) 
+	if (!g_config.UpdateLists && !g_config.UpdatePeerBlock)
+	{
+		TRACEI("[UpdateLists]    neither UpdateLists nor UpdatePeerBlock is enabled, so nothing to update");
+	}
+	else if(g_updater==NULL) 
 	{
 		if(parent) 
 		{
