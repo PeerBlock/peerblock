@@ -447,36 +447,43 @@ bool ListUrls::Init()
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"Bogon (TBG)"));
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/bogon"));
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://list.iblocklist.com/?list=ewqglwibdgjttwttrinl", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://tbg.iblocklist.com/Lists/Bogon.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://iblocklist.com/list.php?list=ewqglwibdgjttwttrinl", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"Business ISPs (TBG)"));
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/business-isps"));
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://list.iblocklist.com/?list=jcjfaxgyyshvdbceroxf", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://tbg.iblocklist.com/Lists/BusinessISPs.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://iblocklist.com/list.php?list=jcjfaxgyyshvdbceroxf", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"Educational Institutions (TBG)"));
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/educational-institutions"));
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://list.iblocklist.com/?list=lljggjrpmefcwqknpalp", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://tbg.iblocklist.com/Lists/Educational-Institutions.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://iblocklist.com/list.php?list=lljggjrpmefcwqknpalp", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"Corporate Ranges (TBG)"));
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/general-corporate-ranges"));
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://list.iblocklist.com/?list=ecqbsykllnadihkdirsh", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://tbg.iblocklist.com/Lists/GeneralCorporateRanges.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://iblocklist.com/list.php?list=ecqbsykllnadihkdirsh", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"Hijacked (TBG)"));
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/hijacked"));
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://list.iblocklist.com/?list=tbnuqfclfkemqivekikv", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://tbg.iblocklist.com/Lists/Hijacked.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://iblocklist.com/list.php?list=tbnuqfclfkemqivekikv", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"Primary Threats (TBG)"));
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/primary-threats"));
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://list.iblocklist.com/?list=ijfqtofzixtwayqovmxn", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://tbg.iblocklist.com/Lists/PrimaryThreats.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://iblocklist.com/list.php?list=ijfqtofzixtwayqovmxn", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"Search Engines (TBG)"));
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/search-engines"));
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://list.iblocklist.com/?list=pfefqteoxlfzopecdtyw", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://tbg.iblocklist.com/Lists/SearchEngines.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://iblocklist.com/list.php?list=pfefqteoxlfzopecdtyw", LISTFLAG_WRONG));
 
 		// Misc Lists
