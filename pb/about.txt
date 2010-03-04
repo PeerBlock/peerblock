@@ -22,7 +22,7 @@ XhmikosR - Installer
 Test Team:
 2Ceedz
 brandonjm8
-gjp
+gip
 Petri Nurmi (Keefa)
 LANsquared
 opus
