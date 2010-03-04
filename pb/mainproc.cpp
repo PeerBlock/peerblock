@@ -792,10 +792,35 @@ static void Main_OnTimer(HWND hwnd, UINT id)
 	}
 }
 
-static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
+
+
+//================================================================================================
+//
+//  Main_OnTray()
+//
+//    - Called by Main_DlgProc()
+//
+/// <summary>
+///   Handles window-messages meant for the tray icon.
+/// </summary>
+/// <param name="hwnd">
+///   Handle of the window from which this message was sent.
+/// </param>
+/// <param name="id">
+///   ID of the control which sent this message.
+/// </param>
+/// <param name="eventMsg">
+///   The window-message we're processing.
+/// </param>
+//
+static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) 
+{
 	if(eventMsg==WM_LBUTTONUP)
-		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, TRUE);
-	else if(eventMsg==WM_RBUTTONUP) {
+	{
+		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, g_config.WindowHidden);
+	}
+	else if(eventMsg==WM_RBUTTONUP) 
+	{
 		POINT pt;
 		GetCursorPos(&pt);
 
@@ -813,7 +838,10 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
 
 		DestroyMenu(menu);
 	}
-}
+
+} // End of Main_OnTray()
+
+
 
 static void Main_OnVisible(HWND hwnd, BOOL visible) 
 {
@@ -897,6 +925,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Main_OnTray(hwnd, (UINT)wParam, (UINT)lParam);
 				return 1;
 			case WM_MAIN_VISIBLE:
+				TRACEI("[Main_DlgProc]    received WM_MAIN_VISIBLE message");
 				Main_OnVisible(hwnd, (BOOL)lParam);
 				return 1;
 			default:
