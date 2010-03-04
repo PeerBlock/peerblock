@@ -256,7 +256,8 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			else
 			{
 				TRACEI("[mainproc] [Main_OnCommand]    insufficient time has passed since last block, displaying warning message");
-				int result = MessageBox(hwnd, IDS_EXITWHILEBLOCKINGTEXT, IDS_EXITWHILEBLOCKING, MB_ICONWARNING|MB_YESNO);
+				tstring text=boost::str(tformat(LoadString(IDS_EXITWHILEBLOCKINGTEXT)) % g_config.RecentBlockWarntime);
+				int result = MessageBox(hwnd, text, IDS_EXITWHILEBLOCKING, MB_ICONWARNING|MB_YESNO);
 				if (result == IDYES)
 				{
 					TRACEI("[mainproc] [Main_OnCommand]    user clicked Yes, exiting program");

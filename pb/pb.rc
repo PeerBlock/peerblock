@@ -967,7 +967,7 @@ BEGIN
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
     IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
 	IDS_EXITWHILEBLOCKING	"Are you sure you want to exit PeerBlock?"
-	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts recently.  If PeerBlock was not running, these connections would have succeeded.\r\n\r\nExit PeerBlock anyway?"
+	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting Peerblock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
 END
 
 // List sanity-checking messages
