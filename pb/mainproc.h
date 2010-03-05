@@ -46,7 +46,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void SetBlock(bool block);
 void SendDialogIconRefreshMessage();
-void SetBlockHttp(bool block);
+void SetBlockHttp(bool block, unsigned int time = 0);
 void Shutdown();
 
 

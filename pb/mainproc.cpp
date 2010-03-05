@@ -94,24 +94,46 @@ void SetBlock(bool block)
 
 
 
-void SetBlockHttp(bool block) 
+//================================================================================================
+//
+//  SetBlockHttp()
+//
+//    - Called by Main_OnCommand() while processing systray menu clicks
+//    - Called by Log_OnCommand() if user clicked Allow HTTP button on main UI
+//
+/// <summary>
+///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies 
+///   the driver.
+/// </summary>
+/// <param name="block">
+///   True if we are going to start blocking HTTP requests.
+/// </param>
+/// <param name="time">
+///   Optional parameter specifying the number of minutes for which this change will be active.  
+///   If 0, then the change is permanent.  Default is 0.
+/// </param>
+//
+void SetBlockHttp(bool _block, unsigned int _time) 
 {
 	TRACEV("[mainproc] [SetBlockHttp]  > Entering routine.");
 
 	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]   setting PeerBlock HTTP blocking from [%1%] to [%2%]")) 
-		% g_config.BlockHttp % block);
+		% g_config.BlockHttp % _block);
 	TRACEBUFI(strBuf);
-	g_config.BlockHttp=block;
-	g_filter->setblockhttp(block);
 
-	g_config.PortSet.AllowHttp = !block;
+	// setup old style http-blocking
+	g_config.BlockHttp = _block;
+	g_filter->setblockhttp(_block);
+
+	// setup new PortAllow style http-blocking
+	g_config.PortSet.AllowHttp = !_block;
 	g_config.PortSet.Merge();
-
 	g_filter->setports(g_config.PortSet.Ports);
 
+	// set icon to match our new state
 	if (g_config.Block)
 	{
-		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), _block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
 		if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
 
 		SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
@@ -120,9 +142,26 @@ void SetBlockHttp(bool block)
 
 	SendDialogIconRefreshMessage();
 
+	// temp-allow related stuff
+	if (_time > 0)
+	{
+		tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]    setting temp-http timer to [%1%] minutes")) % _time );
+		TRACEBUFI(strBuf);
+		SetTimer(g_main, TIMER_TEMPALLOWHTTP, _time * 60 * 1000, NULL);	// _time minutes
+		g_config.TempAllowingHttp = true;	// ensure that we don't save this to our config file at exit
+	}
+	else
+	{
+		TRACEI("[mainproc] [SetBlockHttp]    cancelling temp-http timer");
+		KillTimer(g_main, TIMER_TEMPALLOWHTTP);
+		g_config.TempAllowingHttp = false;
+	}
+
+	// cleanup
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
-	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
-}
+	TRACEV("[mainproc] [SetBlockHttp]  < Leaving routine.");
+
+} // End of SetBlockHttp()
 
 
 
@@ -188,14 +227,12 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case ID_TRAY_TEMPALLOWHTTP15:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 15 minutes' item");
-			SetBlockHttp(false);
-			SetTimer(hwnd, TIMER_TEMPALLOWHTTP, 15 * 60 * 1000, NULL);	// 15 minutes
+			SetBlockHttp(false, 15);
 			break;
 
 		case ID_TRAY_TEMPALLOWHTTP60:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 60 minutes' item");
-			SetBlockHttp(false);
-			SetTimer(hwnd, TIMER_TEMPALLOWHTTP, 60 * 60 * 1000, NULL);	// 60 minutes
+			SetBlockHttp(false, 60);
 			break;
 
 		case ID_TRAY_ALWAYSONTOP:
@@ -787,9 +824,8 @@ static void Main_OnTimer(HWND hwnd, UINT id)
 	}
 	else if(id==TIMER_TEMPALLOWHTTP)
 	{
-		TRACEI("[mainproc] [Main_OnTimer]    temp-allow-http timer expired, blocking http again");
-		SetBlockHttp(true);
-		KillTimer(hwnd, TIMER_TEMPALLOWHTTP);
+		TRACEI("[mainproc] [Main_OnTimer]    temp-allow-http timer expired, resetting http-blocking");
+		SetBlockHttp(!g_config.BlockHttp);
 	}
 }
 

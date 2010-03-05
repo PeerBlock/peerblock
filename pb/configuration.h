@@ -173,8 +173,12 @@ struct Configuration {
 	int TracelogLevel;
 	int LastVersionRun;
 
+	// ui settings
 	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos, PortSetWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
+
+	// non-saved value, stuff used internally only during one run of PeerBlock
+	bool TempAllowingHttp;
 
 	Configuration();
 

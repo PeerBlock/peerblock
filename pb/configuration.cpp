@@ -37,7 +37,7 @@ Configuration::Configuration() :
 	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
-	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete),
+	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete), TempAllowingHttp(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
 	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(0) {
 		HistoryColumns[0]=64;
@@ -715,6 +715,8 @@ static bool RectValid(const RECT &rc) {
 void Configuration::Save(const TCHAR * _filename) 
 {
 	TRACEI("[Configuration] [Save]  > Entering routine.");
+
+	if (TempAllowingHttp) SetBlockHttp(!BlockHttp);	// make sure we don't accidentally startup allowed
 
 	TiXmlDocument doc;
 	doc.InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
