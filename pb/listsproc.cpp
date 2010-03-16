@@ -390,7 +390,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENEDU");
 
-			vector<DynamicList>::size_type i = FindInDefLists(_T("list.iblocklist.com/lists/bluetack/edu"));
+			vector<DynamicList>::size_type i = FindInDefLists(_T("http://list.iblocklist.com/lists/bluetack/edu"));
 			if (i != -1)
 			{
 				TRACEV("[listsproc] [Lists_OnCommand]    found Edu list in def-lists");
