@@ -205,6 +205,7 @@
 #define IDS_LISTSAN_EXACTDUPE			259
 #define IDS_LISTSAN_DEFDUPE				260
 #define IDS_LISTSAN_DIFFDUPE			261
+#define IDS_PORTSETTINGS                262
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003
@@ -386,6 +387,9 @@
 #define ID_FILE_BACKUPDATABASE          40026
 #define ID_TRAY_HELP                    40027
 #define ID_TRAY_SUPPORT                 40028
+
+// PeerBlock window messages
+#define WM_PORTSETTINGSCHANGE           (WM_APP+1)
 
 // Next default values for new objects
 // 

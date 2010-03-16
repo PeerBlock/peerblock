@@ -35,7 +35,7 @@ Configuration::Configuration() :
 	LogSize(12), LastUpdate(0), LastArchived(0), CleanupInterval(2), LogAllowed(true), LogBlocked(true),
 	ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), UpdateProxyType(CURLPROXY_HTTP),
 	UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
-	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
+	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
@@ -504,7 +504,6 @@ bool Configuration::Load()
 		GetChild(windowing, "ListManager", this->ListManagerWindowPos);
 		GetChild(windowing, "ListEditor", this->ListEditorWindowPos);
 		GetChild(windowing, "History", this->HistoryWindowPos);
-		GetChild(windowing, "PortEditor", this->PortSetWindowPos);
 		
 		GetChild(windowing, "StartMinimized", this->StartMinimized);
 		GetChild(windowing, "ShowSplash", this->ShowSplash);
@@ -795,9 +794,6 @@ void Configuration::Save(const TCHAR * _filename)
 
 		if(RectValid(this->HistoryWindowPos))
 			InsertChild(windowing, "History", this->HistoryWindowPos);
-
-		if(RectValid(this->PortSetWindowPos))
-			InsertChild(windowing, "PortEditor", this->PortSetWindowPos);
 
 		InsertChild(windowing, "StartMinimized", this->StartMinimized);
 		InsertChild(windowing, "ShowSplash", this->ShowSplash);

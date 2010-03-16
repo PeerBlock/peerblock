@@ -121,6 +121,12 @@ struct PortSet
 			if (AllowHttp) {
 				DestinationPorts.insert(80);
 				DestinationPorts.insert(443);
+#if defined(_WIN32_WINNT) && _WIN32_WINNT == 0x0500
+				// XP needs source ports to be allowed as well otherwise it will still act as if it was blocked
+				// this behaviour was in the latest version of PeerGuardian so nothing is broken
+				SourcePorts.insert(80);
+				SourcePorts.insert(443);
+#endif
 			}
 			if (AllowFtp)
 				DestinationPorts.insert(21);
@@ -183,7 +189,7 @@ struct Configuration {
 	int TracelogLevel;
 	int LastVersionRun;
 
-	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos, PortSetWindowPos;
+	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
 
 	Configuration();
