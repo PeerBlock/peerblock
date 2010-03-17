@@ -644,7 +644,7 @@ bool Configuration::Load()
 	TRACEI("[Configuration] [Load]    parsing config lists element");
 	if(const TiXmlElement *lists=root->FirstChildElement("Lists")) {
 		for(const TiXmlElement *list=lists->FirstChildElement("List"); list!=NULL; list=list->NextSiblingElement("List")) {
-			string file, url, type, description, lastupdate;
+			string file, url, type, description, lastupdate, lastdownload;
 			bool enabled, failedupdate=false;
 
 			GetChild(list, "File", file);
@@ -652,6 +652,7 @@ bool Configuration::Load()
 			GetChild(list, "Type", type);
 			GetChild(list, "Description", description);
 			GetChild(list, "LastUpdate", lastupdate);
+			GetChild(list, "LastDownload", lastdownload);
 			GetChild(list, "FailedUpdate", failedupdate);
 			if(!GetChild(list, "Enabled", enabled))
 				enabled=true;
@@ -678,6 +679,15 @@ bool Configuration::Load()
 				if(lastupdate.length()>0) {
 					try {
 						l.LastUpdate=boost::lexical_cast<int>(lastupdate);
+					}
+					catch(...) {
+						// keep going
+					}
+				}
+
+				if(lastdownload.length()>0) {
+					try {
+						l.LastDownload=boost::lexical_cast<int>(lastdownload);
 					}
 					catch(...) {
 						// keep going
@@ -937,6 +947,12 @@ void Configuration::Save(const TCHAR * _filename)
 			if(this->DynamicLists[i].LastUpdate) {
 				string s=boost::lexical_cast<string>((int)this->DynamicLists[i].LastUpdate);
 				lastupdate->InsertEndChild(TiXmlText(s));
+			}
+
+			TiXmlElement *lastdownload=InsertChild(list, "LastDownload");
+			if(this->DynamicLists[i].LastDownload) {
+				string s=boost::lexical_cast<string>((int)this->DynamicLists[i].LastDownload);
+				lastdownload->InsertEndChild(TiXmlText(s));
 			}
 		}
 	}

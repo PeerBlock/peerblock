@@ -52,9 +52,10 @@ struct StaticList : List {
 struct DynamicList : List {
 	tstring Url;
 	time_t LastUpdate;
+	time_t LastDownload;
 	bool FailedUpdate;
 
-	DynamicList() : LastUpdate(0),FailedUpdate(false) {}
+	DynamicList() : LastUpdate(0),LastDownload(0),FailedUpdate(false) {}
 
 	path File() const;
 	path TempFile() const;
@@ -77,8 +78,8 @@ struct DynamicList : List {
 
 	void Dump(TRACELOG_LEVEL _lvl)
 	{
-		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%]")) 
-			% Description % Url % Enabled % Type % LastUpdate);
+		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%] downloaded:[%6%]")) 
+			% Description % Url % Enabled % Type % LastUpdate % LastDownload );
 
 		g_tlog.LogMessage(strBuf, _lvl);
 	}
