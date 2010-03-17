@@ -86,14 +86,15 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
 		m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 
-	if(!service) {
-		TRACEI("[driver] [load(3)]    driver not currently installed as service");
+	if(!service) 
+	{
+		TRACEERR("[driver] [load(3)]", L"driver not currently installed as service", err = GetLastError());
+
+		err = 0;
 		service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
-
-		if(!service) {
-			err = GetLastError();
-
-			TRACEC("[driver] [load(3)]    ERROR opening service");
+		if(!service) 
+		{
+			TRACEERR("[driver] [load(3)]", L"opening service", err = GetLastError());
 			CloseServiceHandle(manager);
 			throw win32_error("OpenService", err);
 		}
@@ -103,28 +104,31 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		DWORD bytes;
 		BOOL ret = QueryServiceConfig(service, NULL, 0, &bytes);
 
-		if(ret || (err = GetLastError()) != ERROR_INSUFFICIENT_BUFFER) {
-			TRACEC("[driver] [load(3)]    ERROR calling QueryServiceConfig");
+		if(ret || (err = GetLastError()) != ERROR_INSUFFICIENT_BUFFER) 
+		{
+			TRACEERR("[driver] [load(3)]", L"calling QueryServiceConfig", err);
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
-			throw win32_error("QueryServiceConfig");
+			throw win32_error("QueryServiceConfig", err);
 		}
 		err = 0;	// reset error-code, so that nobody else accidentally trips over it.
 
 		QUERY_SERVICE_CONFIG *qsc = (QUERY_SERVICE_CONFIG*)malloc(bytes);
-		if(!qsc) {
-			TRACEC("[driver] [load(3)]    ERROR allocating memory for QueryServiceConfig");
+		if(!qsc) 
+		{
+			TRACEERR("[driver] [load(3)]", L"allocating memory for QueryServiceConfig", err = GetLastError());
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
 			throw std::bad_alloc("unable to allocate memory for QueryServiceConfig");
 		}
 
 		ret = QueryServiceConfig(service, qsc, bytes, &bytes);
-		if(!ret) {
-			TRACEC("[driver] [load(3)]    ERROR with second call to QueryServiceConfig");
+		if(!ret) 
+		{
+			TRACEERR("[driver] [load(3)]", L"second call to QueryServiceConfig", err = GetLastError());
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
-			throw win32_error("QueryServiceConfig");
+			throw win32_error("QueryServiceConfig", err);
 		}
 
 		bool del = _wcsicmp(qsc->lpBinaryPathName, m_file.c_str()) != 0;
@@ -157,12 +161,14 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		free(qsc);
 
 		// paths don't match, remove service and recreate.
-		if(del) {
+		if(del) 
+		{
 			TRACEW("[driver] [load(3)]    paths don't match, removing and recreating driver-service");
 			TCHAR buf[128];
 
 			// if it's not removable, bail out.
-			if(!this->removable) {
+			if(!this->removable) 
+			{
 				TRACEC("[driver] [load(3)]    ERROR trying to remove driver-service");
 				CloseServiceHandle(service);
 				CloseServiceHandle(manager);
@@ -172,7 +178,8 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			// check if its running
 			SERVICE_STATUS status;
 			ret = QueryServiceStatus(service, &status);
-			if(!ret) {
+			if(!ret) 
+			{
 				TRACEERR("[driver] [load(3)]", L"ERROR calling QueryServiceStatus", err = GetLastError());
 				CloseServiceHandle(service);
 				CloseServiceHandle(manager);
@@ -215,9 +222,11 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 					TRACEBUFE(buf);
 					break;
 			}
-			if(status.dwCurrentState != SERVICE_STOPPED && status.dwCurrentState != SERVICE_STOP_PENDING) {
+			if(status.dwCurrentState != SERVICE_STOPPED && status.dwCurrentState != SERVICE_STOP_PENDING) 
+			{
 				ret = ControlService(service, SERVICE_CONTROL_STOP, &status);
-				if(!ret) {
+				if(!ret) 
+				{
 					TRACEERR("[driver] [load(3)]", L"ERROR stopping driver-service", err = GetLastError());
 					CloseServiceHandle(service);
 					CloseServiceHandle(manager);
