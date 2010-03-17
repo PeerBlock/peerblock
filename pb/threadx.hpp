@@ -78,8 +78,8 @@ private:
 	CRITICAL_SECTION cs;
 
 public:
-	void enter() 
-	{ 
+	void enter()
+	{
 		//TCHAR chBuf[256];
 		//_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  > Entering Mutex:[%p]"), this);
 		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
@@ -89,8 +89,8 @@ public:
 #ifdef _WIN32_WINNT
 	bool tryenter() { return TryEnterCriticalSection(&cs)!=0; }
 #endif
-	void leave() 
-	{ 
+	void leave()
+	{
 		//TCHAR chBuf[256];
 		//_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  < Leaving Mutex:[%p]"), this);
 		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);

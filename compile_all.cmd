@@ -62,12 +62,10 @@ REM Create all the zip files ready for distribution
 :CreateZips
 TITLE Creating ZIP files...
 MD "Distribution" >NUL 2>&1
-DEL "tools\buildnum_parsed.txt" >NUL 2>&1
 ECHO.
-"tools\SubWCRev.exe" "." "tools\buildnum.txt" "tools\buildnum_parsed.txt"
 
-FOR /f "delims=" %%K IN (
-	'FINDSTR ".*" "tools\buildnum_parsed.txt"') DO (
+FOR /f "tokens=3,4 delims= " %%K IN (
+	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "pb\versioninfo_setup.h"') DO (
 	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO.
 

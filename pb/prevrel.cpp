@@ -33,7 +33,7 @@
 //
 /// <summary>
 ///   Checks the version of the last time we ran, and if that number falls within certain ranges
-///	  we'll do some release-specific cleanup.
+///   we'll do some release-specific cleanup.
 /// </summary>
 //
 void PerformPrevRelUpdates(HWND _hwnd)
@@ -217,6 +217,5 @@ void PerformPrevRelUpdates(HWND _hwnd)
 	}
 
 }; // End of PerformPrevRelUpdates()
-
 
 

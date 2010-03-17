@@ -63,7 +63,6 @@ OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM
 Compression=lzma/max
 InternalCompressLevel=normal
 SolidCompression=yes
-CompressionThreads=2
 MinVersion=0,5.0.2195
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
@@ -77,7 +76,6 @@ AllowNoIcons=yes
 ShowTasksTreeLines=yes
 AlwaysShowDirOnReadyPage=yes
 AlwaysShowGroupOnReadyPage=yes
-WizardImageStretch=no
 PrivilegesRequired=admin
 DisableDirPage=auto
 DisableProgramGroupPage=auto
