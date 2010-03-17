@@ -65,7 +65,7 @@ MD "Distribution" >NUL 2>&1
 ECHO.
 
 FOR /f "tokens=3,4 delims= " %%K IN (
-	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "pb\versioninfo_setup.h"') DO (
+	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "pb\versioninfo_parsed.h"') DO (
 	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO.
 

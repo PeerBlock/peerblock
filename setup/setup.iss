@@ -22,7 +22,7 @@
 ; *Inno Setup QuickStart Pack v5.3.8: http://www.jrsoftware.org/isdl.php#qsp
 
 
-#include "icons/../../pb/versioninfo_parsed.h"
+#include "icons/../../pb/versioninfo_setup.h"
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
 
 ; Uncomment one of the #define simple_app_version and comment all other
