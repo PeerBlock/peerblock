@@ -561,8 +561,18 @@ static void UpdateStatus(HWND hwnd)
 	enable=LoadString(g_config.Block?IDS_DISABLE:IDS_ENABLE);
 	http=LoadString(g_config.BlockHttp?IDS_ALLOWHTTP:IDS_BLOCKHTTP);
 
-	if(g_config.Block) blocking=boost::str(tformat(LoadString(IDS_PBACTIVE)) % g_filter->blockcount());
-	else blocking=LoadString(IDS_PBDISABLED);
+	if(g_config.Block) 
+	{
+		// Use locale-specific number grouping
+		std::ostringstream numblocked;
+		numblocked.imbue(std::locale(""));
+		numblocked << g_filter->blockcount();
+		blocking=boost::str(tformat(LoadString(IDS_PBACTIVE)) % numblocked.str().c_str());
+	}
+	else 
+	{
+		blocking=LoadString(IDS_PBDISABLED);
+	}
 
 	httpstatus=boost::str(tformat(LoadString(IDS_HTTPIS)) % LoadString(g_config.BlockHttp?IDS_BLOCKED:IDS_ALLOWED));
 
