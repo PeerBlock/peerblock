@@ -72,9 +72,15 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	}
 
 	tstringstream ports;
-	for (set<USHORT>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
+	for (vector<PortRange>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
 	{
-		ports << *iter;
+		PortRange pr = (PortRange) *iter;
+
+		ports << pr.Start;
+
+		if (pr.End > pr.Start)
+			ports << "-" << pr.End;
+
 		ports << _T("\r\n");
 	}
 
@@ -119,15 +125,29 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			tstring txtports = GetDlgItemText(hwnd, IDC_PORTPORTS);
 
 			// allow for a whole range of separators
-			boost::split(ports, txtports, boost::is_any_of("\t \n\r,|"));
+			boost::split(ports, txtports, boost::is_any_of("\t\n\r,|"));
 
 			for (std::vector<tstring>::size_type i = 0; i < ports.size(); i++) 
 			{
 				try 
 				{
-					USHORT p = boost::lexical_cast<USHORT>(ports[i]);
+					std::vector<tstring> ranges;
+					boost::split(ranges, ports[i], boost::is_any_of("-"));
 
-					pp->Ports.insert((USHORT) p);
+					if (ranges.size() > 0 && ranges.size() <= 2)
+					{
+						USHORT s = boost::lexical_cast<USHORT>(ranges[0]);
+						USHORT e = s;
+
+						if (ranges.size() > 1)
+							e = boost::lexical_cast<USHORT>(ranges[1]);
+
+						PortRange pr;
+						pr.Start = s;
+						pr.End = e;
+
+						pp->Ports.push_back(pr);
+					}
 				}
 				catch (boost::bad_lexical_cast &) 
 				{

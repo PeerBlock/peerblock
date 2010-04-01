@@ -308,6 +308,13 @@ static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, PortType p
 	return InsertChild(root, node, v);
 }
 
+static void InsertAttribute(TiXmlElement *root, PortRange pr) {
+	root->SetAttribute("Start", pr.Start);
+
+	if (pr.End > pr.Start)
+		root->SetAttribute("End", pr.End);
+}
+
 
 
 //================================================================================================
@@ -630,14 +637,23 @@ bool Configuration::Load()
 				GetChild(profile, "Type", pf.Type);
 
 				if (const TiXmlElement *ports = profile->FirstChildElement("Ports")) {
-					for (const TiXmlElement *port = ports->FirstChildElement("Port"); port != NULL; port = port->NextSiblingElement("Port")) {
-						const char *txtport = port->GetText();
+					for (const TiXmlElement *range = ports->FirstChildElement("Range"); range != NULL; range = range->NextSiblingElement("Range")) {
+						const char *start = range->Attribute("Start");
+						const char *end = range->Attribute("End");
 
-						if (txtport) {
+						if (start) {
 							try {
-								USHORT p = boost::lexical_cast<USHORT>(txtport);
+								USHORT s = boost::lexical_cast<USHORT>(start);
+								USHORT e = 0;
+								
+								if (end)
+									e = boost::lexical_cast<USHORT>(end);
 
-								pf.Ports.insert((USHORT) p);
+								PortRange pr;
+								pr.Start = s;
+								pr.End = e;
+
+								pf.Ports.push_back(pr);
 							}
 							catch (boost::bad_lexical_cast &) {
 								// not valid number
@@ -905,8 +921,9 @@ void Configuration::Save(const TCHAR * _filename)
 			InsertChild(profile, "Type", pf.Type);
 
 			TiXmlElement *ports = InsertChild(profile, "Ports");
-			for (set<USHORT>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
-				InsertChild(ports, "Port", (USHORT) *pit);
+			for (vector<PortRange>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
+				TiXmlElement *range = InsertChild(ports, "Range");
+				InsertAttribute(range, (PortRange) *pit);
 			}
 		}
 	}

@@ -90,12 +90,18 @@ enum NotifyType { Never, OnBlock, OnHttpBlock };
 enum CleanType { None, Delete, ArchiveDelete };
 enum PortType { Destination, Source, Both };
 
+struct PortRange
+{
+	USHORT Start;
+	USHORT End;
+};
+
 struct PortProfile 
 {
-	tstring Name;           // name of profile
-	bool Enabled;           // true to use this profile
-	PortType Type;          // source/destination port check
-	std::set<USHORT> Ports;	// ports in profile
+	tstring Name;                  // name of profile
+	bool Enabled;                  // true to use this profile
+	PortType Type;                 // source/destination port check
+	std::vector<PortRange> Ports;  // ports in profile
 };
 
 struct PortSet 
@@ -140,15 +146,22 @@ struct PortSet
 			PortProfile pp = (PortProfile) *iter;
 
 			if (pp.Enabled) {
-				if (pp.Type == Destination || pp.Type == Both) {
-					for (set<USHORT>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
-						DestinationPorts.insert((USHORT) *iter2);
-					}
-				}
-				
-				if (pp.Type == Source || pp.Type == Both) {
-					for (set<USHORT>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
-						SourcePorts.insert((USHORT) *iter2);
+				for (vector<PortRange>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
+					PortRange pr =(PortRange) *iter2;
+
+					if (pr.Start <= pr.End)
+					{
+						if (pp.Type == Destination || pp.Type == Both) {
+							for (USHORT i = pr.Start; i <= pr.End; i++) {
+								DestinationPorts.insert(i);
+							}
+						}
+						
+						if (pp.Type == Source || pp.Type == Both) {
+							for (USHORT i = pr.Start; i <= pr.End; i++) {
+								SourcePorts.insert(i);
+							}
+						}
 					}
 				}
 			}
