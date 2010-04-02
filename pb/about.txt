@@ -20,17 +20,8 @@ A. Jesse Harper (DarC / DisCoStu) - Installer
 XhmikosR - Installer
 
 Test Team:
-2Ceedz
-brandonjm8
-gip
-Petri Nurmi (Keefa)
-LANsquared
-opus
-Praeses (PraesesZA)
-RavenSoft
-Tran Dinh Thien (Tippy / Thikku)
-Uzerrr
-zerocoolxp
+2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), LANsquared, opus, Praeses (PraesesZA),
+RavenSoft, Tran Dinh Thien (Tippy / Thikku), Uzerrr, zerocoolxp
 
 Documentation:
 Nathan van der Velden (hoodadilly) - Documentation

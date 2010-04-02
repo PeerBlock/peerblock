@@ -7,8 +7,8 @@ IF NOT DEFINED PB_DDK_DIR (
 ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO :END)
 )
 
-REM Compile PeerBlock with Microsoft Visual Studio
-TITLE Compiling PeerBlock with Microsoft Visual Studio...
+REM Compile PeerBlock with MSVC 2008
+TITLE Compiling PeerBlock with MSVC 2008...
 FOR %%A IN ("Win32" "x64"
 ) DO (
 CALL :SubMSVS "Release" %%A
@@ -19,7 +19,7 @@ ECHO.
 ECHO.
 
 
-REM Sign drivers and programs
+REM Sign driver and program
 IF NOT DEFINED PB_CERT (
 ECHO:Certificate not found!!! Driver and program will not be signed.&&(GOTO :BuildInstaller)
 )
@@ -36,7 +36,7 @@ POPD
 
 :BuildInstaller
 REM Detect if we are running on 64bit WIN and use Wow6432Node, set the path
-REM of Inno Setup accordingly and compile installer
+REM of Inno Setup accordingly and compile the installer
 IF "%PROGRAMFILES(x86)%zzz"=="zzz" (SET "U_=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 ) ELSE (
 SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
@@ -54,7 +54,7 @@ TITLE Compiling installer...
 ECHO:Compiling installer...
 ECHO.
 IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /SStandard="cmd /c ..\tools\sign_driver.cmd $f " /Q "setup.iss"&&(
-ECHO:Installer compiled successfully!)) ELSE (ECHO:%M_%)
+ECHO:Installer compiled!)) ELSE (ECHO:%M_%)
 POPD
 
 
@@ -125,4 +125,4 @@ TITLE Compiling PeerBlock - Finished!
 ECHO.
 ECHO.
 ENDLOCAL && PAUSE
-EXIT
+GOTO :EOF
