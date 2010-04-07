@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
@@ -32,14 +32,14 @@ Configuration g_config;
 Configuration::Configuration() :
 	Block(true), BlockHttp(true), AllowLocal(true), UpdatePeerBlock(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
-	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(2), LogAllowed(true), 
+	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true), 
 	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), 
 	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete), TempAllowingHttp(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
-	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(0) {
+	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(100000000) {
 		HistoryColumns[0]=64;
 		HistoryColumns[1]=128;
 		HistoryColumns[2]=124;

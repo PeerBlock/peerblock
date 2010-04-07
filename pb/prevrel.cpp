@@ -216,6 +216,46 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		}
 	}
 
+
+	//--------------------------------------------------
+	// Update max history.db size from old default of 0 (unlimited) to 100 MB
+
+	if (prevRelease < 341)
+	{
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for old History defaults of 0, and migrating it to the new default of 100 MB (r341)");
+
+		if (g_config.CleanupType == None && g_config.MaxHistorySize > 0)
+		{
+			TRACEW("[mainproc] [PerformPrevRelUpdates]    CleanupType = None, updating it to Delete every 7 Days");
+			int result = MessageBox(_hwnd, IDS_PREVREL341TEXT_DEL, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+			g_config.CleanupType = Delete;
+			g_config.CleanupInterval = 7;
+			g_config.Save();
+		}
+		else if (g_config.MaxHistorySize == 0 && g_config.CleanupType != None)
+		{
+			TRACEW("[mainproc] [PerformPrevRelUpdates]    Max history.db size 0 ('unlimited'), updating it to 100 MB");
+			int result = MessageBox(_hwnd, IDS_PREVREL341TEXT_MAX, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+			g_config.MaxHistorySize = 100 * 1000000;	// g_config.MaxHistory is in bytes...
+			g_config.Save();
+		}
+		else if (g_config.MaxHistorySize == 0 && g_config.CleanupType == None)
+		{
+			TRACEW("[mainproc] [PerformPrevRelUpdates]    Changing history.db max size to 100 MB, and CleaupType to Delete every 7 days");
+			int result = MessageBox(_hwnd, IDS_PREVREL341TEXT_BOTH, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+			g_config.CleanupType = Delete;
+			g_config.CleanupInterval = 7;
+			g_config.MaxHistorySize = 100 * 1000000;	// g_config.MaxHistory is in bytes...
+			g_config.Save();
+		}
+		else
+		{
+			TRACEW("[mainproc] [PerformPrevRelUpdates]    Not changing config");
+			tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    Max history.db size (%1%) ")) % g_config.MaxHistorySize );
+			g_tlog.LogMessage(strBuf, TRACELOG_LEVEL_WARNING);
+		}
+	}
+
 }; // End of PerformPrevRelUpdates()
 
 
