@@ -1,31 +1,16 @@
-#ifndef __LIB_CONFIG_WIN32_H
-#define __LIB_CONFIG_WIN32_H
+#ifndef __SRC_CONFIG_WIN32_H
+#define __SRC_CONFIG_WIN32_H
 
 /* ================================================================ */
-/*    lib/config-win32.h - Hand crafted config file for Windows     */
+/*    src/config-win32.h - Hand crafted config file for windows     */
 /* ================================================================ */
 
 /* ---------------------------------------------------------------- */
 /*                          HEADER FILES                            */
 /* ---------------------------------------------------------------- */
 
-/* Define if you have the <arpa/inet.h> header file.  */
-/* #define HAVE_ARPA_INET_H 1 */
-
-/* Define if you have the <assert.h> header file.  */
-#define HAVE_ASSERT_H 1
-
-/* Define if you have the <crypto.h> header file.  */
-/* #define HAVE_CRYPTO_H 1 */
-
-/* Define if you have the <err.h> header file.  */
-/* #define HAVE_ERR_H 1 */
-
 /* Define if you have the <fcntl.h> header file.  */
 #define HAVE_FCNTL_H 1
-
-/* Define if you have the <getopt.h> header file.  */
-/* #define HAVE_GETOPT_H 1 */
 
 /* Define if you have the <io.h> header file.  */
 #define HAVE_IO_H 1
@@ -33,48 +18,19 @@
 /* Define if you have the <limits.h> header file.  */
 #define HAVE_LIMITS_H 1
 
+/* Define if you have the <locale.h> header file.  */
+#define HAVE_LOCALE_H 1
+
 /* Define if you need the malloc.h header file even with stdlib.h  */
 #if !defined(__SALFORDC__) && !defined(__POCC__)
 #define NEED_MALLOC_H 1
 #endif
 
-/* Define if you have the <netdb.h> header file.  */
-/* #define HAVE_NETDB_H 1 */
-
-/* Define if you have the <netinet/in.h> header file.  */
-/* #define HAVE_NETINET_IN_H 1 */
-
-/* Define if you have the <process.h> header file.  */
-#ifndef __SALFORDC__
-#define HAVE_PROCESS_H 1
-#endif
-
 /* Define if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
 
-/* Define if you have the <sgtty.h> header file.  */
-/* #define HAVE_SGTTY_H 1 */
-
-/* Define if you have the <ssl.h> header file.  */
-/* #define HAVE_SSL_H 1 */
-
 /* Define if you have the <stdlib.h> header file.  */
 #define HAVE_STDLIB_H 1
-
-/* Define if you have the <sys/param.h> header file.  */
-/* #define HAVE_SYS_PARAM_H 1 */
-
-/* Define if you have the <sys/select.h> header file.  */
-/* #define HAVE_SYS_SELECT_H 1 */
-
-/* Define if you have the <sys/socket.h> header file.  */
-/* #define HAVE_SYS_SOCKET_H 1 */
-
-/* Define if you have the <sys/sockio.h> header file.  */
-/* #define HAVE_SYS_SOCKIO_H 1 */
-
-/* Define if you have the <sys/stat.h> header file.  */
-#define HAVE_SYS_STAT_H 1
 
 /* Define if you have the <sys/time.h> header file */
 /* #define HAVE_SYS_TIME_H 1 */
@@ -86,12 +42,6 @@
 #ifndef __BORLANDC__
 #define HAVE_SYS_UTIME_H 1
 #endif
-
-/* Define if you have the <termio.h> header file.  */
-/* #define HAVE_TERMIO_H 1 */
-
-/* Define if you have the <termios.h> header file.  */
-/* #define HAVE_TERMIOS_H 1 */
 
 /* Define if you have the <time.h> header file.  */
 #define HAVE_TIME_H 1
@@ -135,32 +85,8 @@
 /*                             FUNCTIONS                            */
 /* ---------------------------------------------------------------- */
 
-/* Define if you have the closesocket function.  */
-#define HAVE_CLOSESOCKET 1
-
-/* Define if you don't have vprintf but do have _doprnt.  */
-/* #define HAVE_DOPRNT 1 */
-
-/* Define if you have the gethostbyaddr function.  */
-#define HAVE_GETHOSTBYADDR 1
-
-/* Define if you have the gethostname function.  */
-#define HAVE_GETHOSTNAME 1
-
-/* Define if you have the getpass function.  */
-/* #define HAVE_GETPASS 1 */
-
-/* Define if you have the getservbyname function.  */
-#define HAVE_GETSERVBYNAME 1
-
-/* Define if you have the getprotobyname function.  */
-#define HAVE_GETPROTOBYNAME
-
-/* Define if you have the gettimeofday function.  */
-/* #define HAVE_GETTIMEOFDAY 1 */
-
-/* Define if you have the inet_addr function.  */
-#define HAVE_INET_ADDR 1
+/* Define if you have the ftruncate function.  */
+#define HAVE_FTRUNCATE 1
 
 /* Define if you have the ioctlsocket function. */
 #define HAVE_IOCTLSOCKET 1
@@ -168,38 +94,19 @@
 /* Define if you have a working ioctlsocket FIONBIO function. */
 #define HAVE_IOCTLSOCKET_FIONBIO 1
 
-/* Define if you have the perror function.  */
-#define HAVE_PERROR 1
+/* Define if you have the setlocale function.  */
+#define HAVE_SETLOCALE 1
 
-/* Define if you have the RAND_screen function when using SSL  */
-#define HAVE_RAND_SCREEN 1
+/* Define if you have the setmode function. */
+#define HAVE_SETMODE 1
 
-/* Define if you have the `RAND_status' function when using SSL. */
-#define HAVE_RAND_STATUS 1
-
-/* Define to 1 if you have the `CRYPTO_cleanup_all_ex_data' function.
-   This is present in OpenSSL versions after 0.9.6b */
-#define HAVE_CRYPTO_CLEANUP_ALL_EX_DATA 1
-
-/* Define if you have the select function.  */
-#define HAVE_SELECT 1
-
-/* Define if you have the setvbuf function.  */
-#define HAVE_SETVBUF 1
-
-/* Define if you have the socket function.  */
-#define HAVE_SOCKET 1
-
-/* Define if you have the strcasecmp function.  */
+/* Define if you have the strcasecmp function. */
 /* #define HAVE_STRCASECMP 1 */
 
 /* Define if you have the strdup function.  */
 #define HAVE_STRDUP 1
 
-/* Define if you have the strftime function.  */
-#define HAVE_STRFTIME 1
-
-/* Define if you have the stricmp function. */
+/* Define if you have the stricmp function.  */
 #define HAVE_STRICMP 1
 
 /* Define if you have the strncasecmp function. */
@@ -208,39 +115,10 @@
 /* Define if you have the strnicmp function. */
 #define HAVE_STRNICMP 1
 
-/* Define if you have the strstr function.  */
-#define HAVE_STRSTR 1
-
-/* Define if you have the strtoll function.  */
-#if defined(__MINGW32__) || defined(__WATCOMC__) || defined(__POCC__)
-#define HAVE_STRTOLL 1
-#endif
-
-/* Define if you have the tcgetattr function.  */
-/* #define HAVE_TCGETATTR 1 */
-
-/* Define if you have the tcsetattr function.  */
-/* #define HAVE_TCSETATTR 1 */
-
 /* Define if you have the utime function */
 #ifndef __BORLANDC__
 #define HAVE_UTIME 1
 #endif
-
-/* Define to the type qualifier of arg 1 for getnameinfo. */
-#define GETNAMEINFO_QUAL_ARG1 const
-
-/* Define to the type of arg 1 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG1 struct sockaddr *
-
-/* Define to the type of arg 2 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG2 socklen_t
-
-/* Define to the type of args 4 and 6 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG46 DWORD
-
-/* Define to the type of arg 7 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG7 int
 
 /* Define if you have the recv function. */
 #define HAVE_RECV 1
@@ -333,11 +211,17 @@
 /*                            TYPE SIZES                            */
 /* ---------------------------------------------------------------- */
 
-/* The number of bytes in a long double.  */
+/* The size of `int', as computed by sizeof. */
+#define SIZEOF_INT 4
+
+/* The size of `long double', as computed by sizeof. */
 #define SIZEOF_LONG_DOUBLE 16
 
-/* The number of bytes in a long long.  */
+/* The size of `long long', as computed by sizeof. */
 /* #define SIZEOF_LONG_LONG 8 */
+
+/* The size of `short', as computed by sizeof. */
+#define SIZEOF_SHORT 2
 
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */
@@ -350,6 +234,9 @@
 
 /* Define this if you have struct timeval */
 #define HAVE_STRUCT_TIMEVAL 1
+
+/* Define this if struct sockaddr_in6 has the sin6_scope_id member */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
 
 /* ---------------------------------------------------------------- */
 /*                        Watt-32 tcp/ip SPECIFIC                   */
@@ -507,67 +394,19 @@
 #endif
 
 /* ---------------------------------------------------------------- */
-/*                       DNS RESOLVER SPECIALTY                     */
-/* ---------------------------------------------------------------- */
-
-/*
- * Undefine both USE_ARES and USE_THREADS_WIN32 for synchronous DNS
- */
-
-/* Define USE_ARES to enable c-ares asynchronous DNS lookups */
-/* #define USE_ARES 1 */
-
-/* Define USE_THREADS_WIN32 to enable threaded asynchronous DNS lookups */
-#define USE_THREADS_WIN32 1
-
-#if defined(USE_ARES) && defined(USE_THREADS_WIN32)
-#  error "Only one DNS lookup specialty may be defined at most"
-#endif
-
-/* ---------------------------------------------------------------- */
-/*                           LDAP SUPPORT                           */
-/* ---------------------------------------------------------------- */
-
-#if defined(CURL_HAS_NOVELL_LDAPSDK) || defined(CURL_HAS_MOZILLA_LDAPSDK)
-#undef CURL_LDAP_HYBRID
-#undef CURL_LDAP_WIN
-#define HAVE_LDAP_SSL_H 1
-#define HAVE_LDAP_URL_PARSE 1
-#elif defined(CURL_HAS_OPENLDAP_LDAPSDK)
-#undef CURL_LDAP_HYBRID
-#undef CURL_LDAP_WIN
-#define HAVE_LDAP_URL_PARSE 1
-#else
-#undef CURL_LDAP_HYBRID
-#undef HAVE_LDAP_URL_PARSE
-#define CURL_LDAP_WIN 1
-#endif
-
-#if defined(__POCC__) && defined(CURL_LDAP_WIN)
-#  define CURL_DISABLE_LDAP 1
-#endif
-
-/* ---------------------------------------------------------------- */
 /*                       ADDITIONAL DEFINITIONS                     */
 /* ---------------------------------------------------------------- */
 
 /* Define cpu-machine-OS */
-#undef OS
-#if defined(_M_IX86) || defined(__i386__) /* x86 (MSVC or gcc) */
+#ifndef OS
 #define OS "i386-pc-win32"
-#elif defined(_M_IA64) /* Itanium */
-#define OS "ia64-pc-win32"
-#elif defined(_M_X64) /* AMD64/EM64T - Not defined until MSVC 2005 */
-#define OS "amd64-pc-win32"
-#else
-#define OS "unknown-pc-win32"
 #endif
 
-/* Name of package */
-#define PACKAGE "curl"
+/* Define to 1 if you want the built-in manual */
+#define USE_MANUAL 1
 
 #if defined(__POCC__)
 #  define ENABLE_IPV6 1
 #endif
 
-#endif /* __LIB_CONFIG_WIN32_H */
+#endif /* __SRC_CONFIG_WIN32_H */

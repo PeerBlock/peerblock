@@ -1,10 +1,9 @@
 #################################################################
-# $Id: Makefile.netware,v 1.128 2009-09-07 19:34:03 gknauf Exp $
 #
-## Makefile for building libcurl.nlm (NetWare version - gnu make)
+## Makefile for building curl.nlm (NetWare version - gnu make)
 ## Use: make -f Makefile.netware
 ##
-## Comments to: Guenter Knauf http://www.gknw.de/phpbb
+## Comments to: Guenter Knauf http://www.gknw.net/phpbb
 #
 #################################################################
 
@@ -15,22 +14,27 @@ endif
 
 # Edit the path below to point to the base of your Zlib sources.
 ifndef ZLIB_PATH
-ZLIB_PATH = ../../zlib-1.2.3
+ZLIB_PATH = ../../zlib-1.2.4
 endif
 
 # Edit the path below to point to the base of your OpenSSL package.
 ifndef OPENSSL_PATH
-OPENSSL_PATH = ../../openssl-0.9.8k
+OPENSSL_PATH = ../../openssl-0.9.8n
 endif
 
 # Edit the path below to point to the base of your LibSSH2 package.
 ifndef LIBSSH2_PATH
-LIBSSH2_PATH = ../../libssh2-1.1
+LIBSSH2_PATH = ../../libssh2-1.2.4
 endif
 
 # Edit the path below to point to the base of your libidn package.
 ifndef LIBIDN_PATH
-LIBIDN_PATH = ../../libidn-1.13
+LIBIDN_PATH = ../../libidn-1.18
+endif
+
+# Edit the path below to point to the base of your c-ares package.
+ifndef LIBCARES_PATH
+LIBCARES_PATH = ../ares
 endif
 
 ifndef INSTDIR
@@ -38,14 +42,15 @@ INSTDIR	= ..$(DS)curl-$(LIBCURL_VERSION_STR)-bin-nw
 endif
 
 # Edit the vars below to change NLM target settings.
-TARGET  = libcurl
+TARGET  = curl
 VERSION	= $(LIBCURL_VERSION)
 COPYR	= Copyright (C) $(LIBCURL_COPYRIGHT_STR)
-DESCR	= cURL libcurl $(LIBCURL_VERSION_STR) ($(LIBARCH)) - http://curl.haxx.se
+DESCR	= cURL $(LIBCURL_VERSION_STR) ($(LIBARCH)) - http://curl.haxx.se
 MTSAFE	= YES
 STACK	= 64000
-SCREEN	= none
-EXPORTS	= @libcurl.imp
+SCREEN	= $(TARGET) commandline utility
+# Comment the line below if you dont want to load protected automatically.
+# LDRING = 3
 
 # Uncomment the next line to enable linking with POSIX semantics.
 # POSIXFL = 1
@@ -83,7 +88,6 @@ PERL	= perl
 # a native win32 awk can be downloaded from here:
 # http://www.gknw.net/development/prgtools/awk-20070501.zip
 AWK	= awk
-YACC	= bison -y
 CP	= cp -afv
 MKDIR	= mkdir
 # RM	= rm -f
@@ -103,12 +107,9 @@ CFLAGS	+= $(OPT) -D$(DB) -DNETWARE -DHAVE_CONFIG_H -nostdinc
 
 ifeq ($(CC),mwccnlm)
 LD	= mwldnlm
-LDFLAGS	= -nostdlib $(PRELUDE) $(OBJL) -o $@ -commandfile
-AR	= mwldnlm
-ARFLAGS	= -nostdlib -type library -o
+LDFLAGS	= -nostdlib $(OBJS) $(PRELUDE) $(LDLIBS) -o $@ -commandfile
 LIBEXT	= lib
-#RANLIB	=
-CFLAGS	+= -msgstyle gcc -gccinc -inline off -opt nointrinsics -proc 586
+CFLAGS	+= -gccinc -inline off -opt nointrinsics -proc 586
 CFLAGS	+= -relax_pointers
 #CFLAGS	+= -w on
 ifeq ($(LIBARCH),LIBC)
@@ -128,10 +129,7 @@ endif
 else
 LD	= nlmconv
 LDFLAGS	= -T
-AR	= ar
-ARFLAGS	= -cq
 LIBEXT	= a
-RANLIB	= ranlib
 CFLAGS	+= -fno-builtin -fpcc-struct-return -fno-strict-aliasing
 CFLAGS	+= -Wall # -pedantic
 ifeq ($(LIBARCH),LIBC)
@@ -141,10 +139,10 @@ else
 	PRELUDE = $(SDK_LIBC)/imports/libcpre.gcc.o
 endif
 else
-	PRELUDE = $(SDK_CLIB)/imports/clibpre.gcc.o
+	# PRELUDE = $(SDK_CLIB)/imports/clibpre.gcc.o
 	# to avoid the __init_* / __deinit_* whoes dont use prelude from NDK
 	# http://www.gknw.net/development/mk_nlm/gcc_pre.zip
-	# PRELUDE = $(NDK_ROOT)/pre/prelude.o
+	PRELUDE = $(NDK_ROOT)/pre/prelude.o
 	CFLAGS += -include $(NDKBASE)/nlmconv/genlm.h
 endif
 endif
@@ -155,13 +153,17 @@ SDK_LIBC = $(NDK_ROOT)/libc
 SDK_LDAP = $(NDK_ROOT)/cldapsdk/netware
 CURL_INC = ../include
 CURL_LIB = ../lib
-ARES_LIB = ../ares
 
 INCLUDES = -I$(CURL_INC) -I$(CURL_LIB)
 
+ifdef LINK_STATIC
+	LDLIBS	= $(CURL_LIB)/libcurl.$(LIBEXT)
 ifdef WITH_ARES
-	INCLUDES += -I$(ARES_LIB)
-	LDLIBS += $(ARES_LIB)/libcares.$(LIBEXT)
+	LDLIBS += $(LIBCARES_PATH)/libcares.$(LIBEXT)
+endif
+else
+	MODULES	= libcurl.nlm
+	IMPORTS	= @$(CURL_LIB)/libcurl.imp
 endif
 ifdef WITH_SSH2
 	INCLUDES += -I$(LIBSSH2_PATH)/include
@@ -177,7 +179,6 @@ ifdef WITH_SSL
 	LDLIBS += $(OPENSSL_PATH)/out_nw_$(LIBARCH_L)/ssl.$(LIBEXT)
 	LDLIBS += $(OPENSSL_PATH)/out_nw_$(LIBARCH_L)/crypto.$(LIBEXT)
 	IMPORTS += GetProcessSwitchCount RunningProcess
-	INSTDEP += ca-bundle.crt
 endif
 ifdef WITH_ZLIB
 	INCLUDES += -I$(ZLIB_PATH)
@@ -189,7 +190,7 @@ else
 endif
 endif
 ifdef WITH_IDN
-	INCLUDES += -I$(LIBIDN_PATH)/include
+	# INCLUDES += -I$(LIBIDN_PATH)/include
 	LDLIBS += $(LIBIDN_PATH)/lib/libidn.$(LIBEXT)
 endif
 
@@ -200,11 +201,10 @@ ifeq ($(LIBARCH),LIBC)
 	CFLAGS += -D_POSIX_SOURCE
 else
 	INCLUDES += -I$(SDK_CLIB)/include/nlm
-	# INCLUDES += -I$(SDK_CLIB)/include/nlm/obsolete
 	# INCLUDES += -I$(SDK_CLIB)/include
 endif
 ifndef DISABLE_LDAP
-	INCLUDES += -I$(SDK_LDAP)/$(LIBARCH_L)/inc
+	# INCLUDES += -I$(SDK_LDAP)/$(LIBARCH_L)/inc
 endif
 CFLAGS	+= $(INCLUDES)
 
@@ -231,60 +231,45 @@ endif
 # Makefile.inc provides the CSOURCES and HHEADERS defines
 include Makefile.inc
 
-OBJS	:= $(patsubst %.c,$(OBJDIR)/%.o,$(strip $(CSOURCES))) $(OBJDIR)/nwos.o
+OBJX	:= $(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(strip $(CURLX_ONES))))
+OBJS	:= $(patsubst %.c,$(OBJDIR)/%.o,$(strip $(CURL_SOURCES))) $(OBJX)
 
-OBJL	= $(OBJS) $(OBJDIR)/nwlib.o $(LDLIBS)
+vpath %.c $(CURL_LIB)
 
-all: lib nlm
+all: prebuild $(TARGET).nlm
 
-nlm: prebuild $(TARGET).nlm
-
-lib: prebuild $(TARGET).$(LIBEXT)
-
-prebuild: $(OBJDIR) $(CURL_INC)/curl/curlbuild.h $(OBJDIR)/version.inc curl_config.h
+prebuild: $(OBJDIR) $(OBJDIR)/version.inc curl_config.h
 
 $(OBJDIR)/%.o: %.c
 #	@echo Compiling $<
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/version.inc: ../include/curl/curlver.h $(OBJDIR)
+$(OBJDIR)/version.inc: $(CURL_INC)/curl/curlver.h $(OBJDIR)
 	@echo Creating $@
 	@$(AWK) -f ../packages/NetWare/get_ver.awk $< > $@
 
-install: $(INSTDIR) all $(INSTDEP)
+install: $(INSTDIR) all
+	@-$(CP) ../docs/$(TARGET).pdf $(INSTDIR)
+	@-$(CP) ../docs/$(TARGET).html $(INSTDIR)
 	@$(CP) $(TARGET).nlm $(INSTDIR)
-	@$(CP) $(TARGET).$(LIBEXT) $(INSTDIR)
-	@$(CP) ../CHANGES $(INSTDIR)
-	@$(CP) ../COPYING $(INSTDIR)
-	@$(CP) ../README $(INSTDIR)
-	@$(CP) ../RELEASE-NOTES $(INSTDIR)
-ifdef WITH_SSL
-	@-$(CP) ca-bundle.crt $(INSTDIR)/ca-bundle.crt
-endif
 
 clean:
+ifeq "$(wildcard hugehelp.c.cvs)" "hugehelp.c.cvs"
+	-$(RM) hugehelp.c
+endif
 	-$(RM) curl_config.h
 	-$(RM) -r $(OBJDIR)
 
 distclean: clean
-	-$(RM) $(TARGET).$(LIBEXT) $(TARGET).nlm
-	-$(RM) certdata.txt ca-bundle.crt
+	-$(RM) $(TARGET).nlm
 
 $(OBJDIR) $(INSTDIR):
 	@$(MKDIR) $@
 
-$(TARGET).$(LIBEXT): $(OBJS)
-	@echo Creating $@
-	@-$(RM) $@
-	@$(AR) $(ARFLAGS) $@ $^
-ifdef RANLIB
-	@$(RANLIB) $@
-endif
-
-$(TARGET).nlm: $(OBJDIR)/$(TARGET).def $(OBJL) $(XDCDATA)
+$(TARGET).nlm: $(OBJS) $(OBJDIR)/$(TARGET).def $(XDCDATA)
 	@echo Linking $@
 	@-$(RM) $@
-	@$(LD) $(LDFLAGS) $<
+	@$(LD) $(LDFLAGS) $(OBJDIR)/$(TARGET).def
 
 $(OBJDIR)/%.xdc: Makefile.netware
 	@echo Creating $@
@@ -316,7 +301,12 @@ endif
 ifdef XDCDATA
 	@echo $(DL)xdcdata $(XDCDATA)$(DL) >> $@
 endif
-	@echo $(DL)flag_on 64$(DL) >> $@
+ifeq ($(LDRING),0)
+	@echo $(DL)flag_on 16$(DL) >> $@
+endif
+ifeq ($(LDRING),3)
+	@echo $(DL)flag_on 512$(DL) >> $@
+endif
 ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)start _Prelude$(DL) >> $@
 	@echo $(DL)exit _Stop$(DL) >> $@
@@ -335,6 +325,7 @@ else
 ifeq ($(POSIXFL),1)
 	@echo $(DL)flag_on 4194304$(DL) >> $@
 endif
+	@echo $(DL)flag_on 64$(DL) >> $@
 	@echo $(DL)pseudopreemption$(DL) >> $@
 ifeq ($(findstring posixpre,$(PRELUDE)),posixpre)
 	@echo $(DL)start POSIX_Start$(DL) >> $@
@@ -366,10 +357,10 @@ ifdef IMPORTS
 endif
 ifeq ($(findstring nlmconv,$(LD)),nlmconv)
 	@echo $(DL)input $(PRELUDE)$(DL) >> $@
-	@echo $(DL)input $(OBJL)$(DL) >> $@
-#ifdef LDLIBS
-#	@echo $(DL)input $(LDLIBS)$(DL) >> $@
-#endif
+	@echo $(DL)input $(OBJS)$(DL) >> $@
+ifdef LDLIBS
+	@echo $(DL)input $(LDLIBS)$(DL) >> $@
+endif
 	@echo $(DL)output $(TARGET).nlm$(DL) >> $@
 endif
 
@@ -500,6 +491,8 @@ endif
 	@echo $(DL)#define HAVE_UTIME_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_WRITEV 1$(DL) >> $@
 	@echo $(DL)#define RETSIGTYPE void$(DL) >> $@
+	@echo $(DL)#define SIZEOF_INT 4$(DL) >> $@
+	@echo $(DL)#define SIZEOF_SHORT 2$(DL) >> $@
 	@echo $(DL)#define SIZEOF_STRUCT_IN_ADDR 4$(DL) >> $@
 	@echo $(DL)#define STDC_HEADERS 1$(DL) >> $@
 	@echo $(DL)#define TIME_WITH_SYS_TIME 1$(DL) >> $@
@@ -562,81 +555,11 @@ else
 	@echo $(DL)#define CURL_CA_BUNDLE getenv("CURL_CA_BUNDLE")$(DL) >> $@
 endif
 
-FORCE: ;
-
-info: $(OBJDIR)/version.inc
-	@echo Configured to build $(TARGET) with these options:
-	@echo libarchitecture: $(LIBARCH)
-	@echo curl version:    $(LIBCURL_VERSION_STR)
-	@echo compiler/linker: $(CC) / $(LD)
-ifdef CABUNDLE
-	@echo ca-bundle path:  $(CABUNDLE)
-endif
-ifdef WITH_SSL
-	@echo SSL support:     enabled (OpenSSL)
-else
-	@echo SSL support:     no
-endif
-ifdef WITH_SSH2
-	@echo SSH2 support:    enabled (libssh2)
-else
-	@echo SSH2 support:    no
-endif
-ifdef WITH_ZLIB
-	@echo zlib support:    enabled
-else
-	@echo zlib support:    no
-endif
-ifdef WITH_ARES
-	@echo c-ares support:  enabled
-else
-	@echo c-ares support:  no
-endif
-ifdef ENABLE_IPV6
-	@echo ipv6 support:    enabled
-else
-	@echo ipv6 support:    no
-endif
-
-$(ARES_LIB)/libcares.$(LIBEXT):
-	$(MAKE) -C $(ARES_LIB) -f Makefile.netware lib
-
-ca-bundle.crt: mk-ca-bundle.pl
+hugehelp.c:
 	@echo Creating $@
-	@-$(PERL) $< -b -n $@
+	@$(CP) hugehelp.c.cvs $@
 
-$(CURL_INC)/curl/curlbuild.h: Makefile.netware FORCE
-	@echo Creating $@
-	@echo $(DL)/* $@ intended for NetWare target.$(DL) > $@
-	@echo $(DL)** Do not edit this file - it is created by make!$(DL) >> $@
-	@echo $(DL)** All your changes will be lost!!$(DL) >> $@
-	@echo $(DL)*/$(DL) >> $@
-	@echo $(DL)#ifndef __CURL_CURLBUILD_H$(DL) >> $@
-	@echo $(DL)#define __CURL_CURLBUILD_H$(DL) >> $@
-ifeq ($(LIBARCH),LIBC)
-	@echo $(DL)#define CURL_SIZEOF_LONG 4$(DL) >> $@
-	@echo $(DL)#define CURL_TYPEOF_CURL_SOCKLEN_T unsigned int$(DL) >> $@
-	@echo $(DL)#define CURL_SIZEOF_CURL_SOCKLEN_T 4$(DL) >> $@
-	@echo $(DL)#define CURL_TYPEOF_CURL_OFF_T long long$(DL) >> $@
-	@echo $(DL)#define CURL_FORMAT_CURL_OFF_T "lld"$(DL) >> $@
-	@echo $(DL)#define CURL_FORMAT_CURL_OFF_TU "llu"$(DL) >> $@
-	@echo $(DL)#define CURL_FORMAT_OFF_T "$(PCT)lld"$(DL) >> $@
-	@echo $(DL)#define CURL_SIZEOF_CURL_OFF_T 8$(DL) >> $@
-	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_T LL$(DL) >> $@
-	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_TU ULL$(DL) >> $@
-else
-	@echo $(DL)#define CURL_SIZEOF_LONG 4$(DL) >> $@
-	@echo $(DL)#define CURL_TYPEOF_CURL_SOCKLEN_T int$(DL) >> $@
-	@echo $(DL)#define CURL_SIZEOF_CURL_SOCKLEN_T 4$(DL) >> $@
-	@echo $(DL)#define CURL_TYPEOF_CURL_OFF_T long$(DL) >> $@
-	@echo $(DL)#define CURL_FORMAT_CURL_OFF_T "ld"$(DL) >> $@
-	@echo $(DL)#define CURL_FORMAT_CURL_OFF_TU "lu"$(DL) >> $@
-	@echo $(DL)#define CURL_FORMAT_OFF_T "$(PCT)ld"$(DL) >> $@
-	@echo $(DL)#define CURL_SIZEOF_CURL_OFF_T 4$(DL) >> $@
-	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_T L$(DL) >> $@
-	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_TU UL$(DL) >> $@
-endif
-	@echo $(DL)typedef CURL_TYPEOF_CURL_SOCKLEN_T curl_socklen_t;$(DL) >> $@
-	@echo $(DL)typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;$(DL) >> $@
-	@echo $(DL)#endif /* __CURL_CURLBUILD_H */$(DL) >> $@
+$(LIBCARES_PATH)/libcares.$(LIBEXT):
+	$(MAKE) -C $(LIBCARES_PATH) -f Makefile.netware lib
+
 

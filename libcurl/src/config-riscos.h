@@ -11,6 +11,9 @@
 /* Define cpu-machine-OS */
 #define OS "ARM-RISC OS"
 
+/* Define to 1 if you want the built-in manual */
+#define USE_MANUAL 1
+
 /* Define if you have the gethostbyaddr_r() function with 5 arguments */
 #undef HAVE_GETHOSTBYADDR_R_5
 
@@ -53,9 +56,6 @@
 /* Define if you want to enable IPv6 support */
 #undef ENABLE_IPV6
 
-/* Define to 1 if you have the alarm function. */
-#define HAVE_ALARM 1
-
 /* Define if you have the <alloca.h> header file. */
 #define HAVE_ALLOCA_H
 
@@ -76,6 +76,9 @@
 
 /* Define if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H
+
+/* Define if you have the `ftruncate' function. */
+#define HAVE_FTRUNCATE
 
 /* Define if getaddrinfo exists and works */
 #define HAVE_GETADDRINFO
@@ -120,7 +123,7 @@
 #define HAVE_INTTYPES_H
 
 /* Define if you have the <io.h> header file. */
-#define HAVE_IO_H
+#undef HAVE_IO_H
 
 /* Define if you have the `krb_get_our_ip_for_realm' function. */
 #undef HAVE_KRB_GET_OUR_IP_FOR_REALM
@@ -155,7 +158,7 @@
 /* Define if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H
 
-/* Define if you need the malloc.h header file even with stdlib.h  */
+/* Define to 1 if you need the malloc.h header file even with stdlib.h */
 /* #define NEED_MALLOC_H 1 */
 
 /* Define if you have the <memory.h> header file. */
@@ -227,15 +230,6 @@
 /* Define if you have the `signal' function. */
 #define HAVE_SIGNAL
 
-/* Define if you have the <signal.h> header file. */
-#define HAVE_SIGNAL_H
-
-/* Define if sig_atomic_t is an available typedef. */
-#define HAVE_SIG_ATOMIC_T
-
-/* Define if sig_atomic_t is already defined as volatile. */
-#undef HAVE_SIG_ATOMIC_T_VOLATILE
-
 /* Define if you have the `socket' function. */
 #define HAVE_SOCKET
 
@@ -280,9 +274,6 @@
 
 /* Define if you have the `strtok_r' function. */
 #undef HAVE_STRTOK_R
-
-/* Define if you have the `strtoll' function. */
-#undef HAVE_STRTOLL
 
 /* Define if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
@@ -338,11 +329,17 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
 
-/* The size of a `long double', as computed by sizeof. */
+/* The size of `int', as computed by sizeof. */
+#define SIZEOF_INT 4
+
+/* The size of `long double', as computed by sizeof. */
 #undef SIZEOF_LONG_DOUBLE
 
-/* The size of a `long long', as computed by sizeof. */
+/* The size of `long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
+
+/* The size of `short', as computed by sizeof. */
+#define SIZEOF_SHORT 2
 
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
@@ -380,90 +377,3 @@
 
 /* Define if you have a working ioctl FIONBIO function. */
 #define HAVE_IOCTL_FIONBIO
-
-/* to disable LDAP */
-#define CURL_DISABLE_LDAP
-
-/* Define if you have the getnameinfo function. */
-#define HAVE_GETNAMEINFO 1
-
-/* Define to the type qualifier of arg 1 for getnameinfo. */
-#define GETNAMEINFO_QUAL_ARG1 const
-
-/* Define to the type of arg 1 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG1 struct sockaddr *
-
-/* Define to the type of arg 2 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG2 socklen_t
-
-/* Define to the type of args 4 and 6 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG46 size_t
-
-/* Define to the type of arg 7 for getnameinfo. */
-#define GETNAMEINFO_TYPE_ARG7 int
-
-/* Define if you have the recv function. */
-#define HAVE_RECV 1
-
-/* Define to the type of arg 1 for recv. */
-#define RECV_TYPE_ARG1 int
-
-/* Define to the type of arg 2 for recv. */
-#define RECV_TYPE_ARG2 void *
-
-/* Define to the type of arg 3 for recv. */
-#define RECV_TYPE_ARG3 size_t
-
-/* Define to the type of arg 4 for recv. */
-#define RECV_TYPE_ARG4 int
-
-/* Define to the function return type for recv. */
-#define RECV_TYPE_RETV ssize_t
-
-/* Define 1 if you have the recvfrom function. */
-#define HAVE_RECVFROM 1
-
-/* Define to the type of arg 1 for recvfrom. */
-#define RECVFROM_TYPE_ARG1 int
-
-/* Define to the type pointed by arg 2 for recvfrom. */
-#define RECVFROM_TYPE_ARG2 void
-
-/* Define to 1 if the type pointed by arg 2 for recvfrom is void. */
-#define RECVFROM_TYPE_ARG2_IS_VOID 1
-
-/* Define to the type of arg 3 for recvfrom. */
-#define RECVFROM_TYPE_ARG3 size_t
-
-/* Define to the type of arg 4 for recvfrom. */
-#define RECVFROM_TYPE_ARG4 int
-
-/* Define to the type pointed by arg 5 for recvfrom. */
-#define RECVFROM_TYPE_ARG5 struct sockaddr
-
-/* Define to the type pointed by arg 6 for recvfrom. */
-#define RECVFROM_TYPE_ARG6 int
-
-/* Define to the function return type for recvfrom. */
-#define RECVFROM_TYPE_RETV ssize_t
-
-/* Define if you have the send function. */
-#define HAVE_SEND 1
-
-/* Define to the type of arg 1 for send. */
-#define SEND_TYPE_ARG1 int
-
-/* Define to the type qualifier of arg 2 for send. */
-#define SEND_QUAL_ARG2 const
-
-/* Define to the type of arg 2 for send. */
-#define SEND_TYPE_ARG2 void *
-
-/* Define to the type of arg 3 for send. */
-#define SEND_TYPE_ARG3 size_t
-
-/* Define to the type of arg 4 for send. */
-#define SEND_TYPE_ARG4 int
-
-/* Define to the function return type for send. */
-#define SEND_TYPE_RETV ssize_t

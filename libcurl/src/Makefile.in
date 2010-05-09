@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# ./lib/Makefile.inc
+# ./src/Makefile.inc
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -38,9 +38,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+bin_PROGRAMS = curl$(EXEEXT)
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.inc $(srcdir)/curl_config.h.in
-subdir = lib
+subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/curl-compilers.m4 \
 	$(top_srcdir)/m4/curl-confopts.m4 \
@@ -54,37 +55,20 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/curl-compilers.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = curl_config.h $(top_builddir)/src/curl_config.h \
+CONFIG_HEADER = $(top_builddir)/lib/curl_config.h curl_config.h \
 	$(top_builddir)/include/curl/curlbuild.h
 CONFIG_CLEAN_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)"
-libLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(lib_LTLIBRARIES)
-libcurl_la_LIBADD =
-am__objects_1 = file.lo timeval.lo base64.lo hostip.lo progress.lo \
-	formdata.lo cookie.lo http.lo sendf.lo ftp.lo url.lo dict.lo \
-	if2ip.lo speedcheck.lo ldap.lo ssluse.lo version.lo getenv.lo \
-	escape.lo mprintf.lo telnet.lo netrc.lo getinfo.lo transfer.lo \
-	strequal.lo easy.lo security.lo krb4.lo krb5.lo memdebug.lo \
-	http_chunks.lo strtok.lo connect.lo llist.lo hash.lo multi.lo \
-	content_encoding.lo share.lo http_digest.lo md5.lo \
-	curl_rand.lo http_negotiate.lo http_ntlm.lo inet_pton.lo \
-	strtoofft.lo strerror.lo hostares.lo hostasyn.lo hostip4.lo \
-	hostip6.lo hostsyn.lo hostthre.lo inet_ntop.lo parsedate.lo \
-	select.lo gtls.lo sslgen.lo tftp.lo splay.lo strdup.lo \
-	socks.lo ssh.lo nss.lo qssl.lo rawstr.lo curl_addrinfo.lo \
-	socks_gssapi.lo socks_sspi.lo curl_sspi.lo slist.lo \
-	nonblock.lo curl_memrchr.lo imap.lo pop3.lo smtp.lo \
-	pingpong.lo rtsp.lo curl_threads.lo
-am__objects_2 =
-am_libcurl_la_OBJECTS = $(am__objects_1) $(am__objects_2)
-libcurl_la_OBJECTS = $(am_libcurl_la_OBJECTS)
+am__installdirs = "$(DESTDIR)$(bindir)"
+binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(bin_PROGRAMS)
+am__objects_1 = main.$(OBJEXT) hugehelp.$(OBJEXT) urlglob.$(OBJEXT) \
+	writeout.$(OBJEXT) writeenv.$(OBJEXT) getpass.$(OBJEXT) \
+	homedir.$(OBJEXT) curlutil.$(OBJEXT) os-specific.$(OBJEXT)
+am__objects_2 = strtoofft.$(OBJEXT) strdup.$(OBJEXT) rawstr.$(OBJEXT) \
+	nonblock.$(OBJEXT)
+am__objects_3 =
+am_curl_OBJECTS = $(am__objects_1) $(am__objects_2) $(am__objects_3)
+curl_OBJECTS = $(am_curl_OBJECTS)
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -96,8 +80,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libcurl_la_SOURCES)
-DIST_SOURCES = $(libcurl_la_SOURCES)
+SOURCES = $(curl_SOURCES)
+DIST_SOURCES = $(curl_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -180,7 +164,9 @@ NM = @NM@
 NMEDIT = @NMEDIT@
 NO_UNDEFINED_FALSE = @NO_UNDEFINED_FALSE@
 NO_UNDEFINED_TRUE = @NO_UNDEFINED_TRUE@
-NROFF = @NROFF@
+# Use the C locale to ensure that only ASCII characters appear in the
+# embedded text.
+NROFF = env LC_ALL=C @NROFF@ @MANOPT@ # figured out by the configure script
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -281,7 +267,7 @@ target_alias = @target_alias@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -294,33 +280,8 @@ target_alias = @target_alias@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.156 2010-02-09 09:35:07 bagder Exp $
 ###########################################################################
 AUTOMAKE_OPTIONS = foreign nostdinc
-DSP = vc6libcurl.dsp
-VCPROJ = libcurl.vcproj
-DOCS = README.encoding README.memoryleak README.ares README.curlx	\
- README.hostip README.multi_socket README.httpauth README.pipelining    \
- README.curl_off_t README.cmake README.pingpong
-
-CMAKE_DIST = CMakeLists.txt curl_config.h.cmake
-EXTRA_DIST = Makefile.b32 Makefile.m32 Makefile.vc6 Makefile.riscos $(DSP) \
- vc6libcurl.dsw config-win32.h config-win32ce.h config-riscos.h            \
- config-mac.h curl_config.h.in makefile.dj config.dos libcurl.plist        \
- libcurl.rc config-amigaos.h amigaos.c amigaos.h makefile.amiga		   \
- Makefile.netware nwlib.c nwos.c libcurl.imp msvcproj.head msvcproj.foot   \
- config-win32ce.h config-os400.h setup-os400.h config-symbian.h		   \
- Makefile.Watcom config-tpf.h $(DOCS) $(VCPROJ) mk-ca-bundle.pl		   \
- firefox-db2pem.sh $(CMAKE_DIST) config-vxworks.h Makefile.vxworks
-
-CLEANFILES = $(DSP) $(VCPROJ)
-lib_LTLIBRARIES = libcurl.la
-@USE_EMBEDDED_ARES_FALSE@INCLUDES = -I$(top_builddir)/include/curl \
-@USE_EMBEDDED_ARES_FALSE@           -I$(top_builddir)/include      \
-@USE_EMBEDDED_ARES_FALSE@           -I$(top_srcdir)/include        \
-@USE_EMBEDDED_ARES_FALSE@           -I$(top_builddir)/lib          \
-@USE_EMBEDDED_ARES_FALSE@           -I$(top_srcdir)/lib
-
 
 # Specify our include paths here, and do it relative to $(top_srcdir) and
 # $(top_builddir), to ensure that these paths which belong to the library
@@ -331,83 +292,49 @@ lib_LTLIBRARIES = libcurl.la
 # $(top_builddir)/include for generated curlbuild.h included from lib/setup.h
 # $(top_srcdir)/include is for libcurl's external include files
 # $(top_builddir)/lib is for libcurl's generated lib/curl_config.h file
-# $(top_srcdir)/lib is for libcurl's lib/setup.h and other "private" files
-# $(top_builddir)/ares is for in-tree c-ares's generated ares_build.h file
-# $(top_srcdir)/ares is for in-tree c-ares's external include files
-@USE_EMBEDDED_ARES_TRUE@INCLUDES = -I$(top_builddir)/include/curl \
-@USE_EMBEDDED_ARES_TRUE@           -I$(top_builddir)/include      \
-@USE_EMBEDDED_ARES_TRUE@           -I$(top_srcdir)/include        \
-@USE_EMBEDDED_ARES_TRUE@           -I$(top_builddir)/lib          \
-@USE_EMBEDDED_ARES_TRUE@           -I$(top_srcdir)/lib            \
-@USE_EMBEDDED_ARES_TRUE@           -I$(top_builddir)/ares         \
-@USE_EMBEDDED_ARES_TRUE@           -I$(top_srcdir)/ares
-
-@SONAME_BUMP_FALSE@VERSIONINFO = -version-info 6:0:2
-
-#
-# Bumping of SONAME conditionally may seem like a weird thing to do, and yeah
-# it is. The problem is that we try to avoid the bump as hard as possible, but
-# yet it is still necessary for a few rare situations. The configure script will
-# attempt to figure out these situations, and it can be forced to consider this
-# to be such a case! See README.curl_off_t for further details.
-#
-# This conditional soname bump SHOULD be removed at next "proper" bump.
-#
-@SONAME_BUMP_TRUE@VERSIONINFO = -version-info 7:0:2
-
-# This flag accepts an argument of the form current[:revision[:age]]. So,
-# passing -version-info 3:12:1 sets current to 3, revision to 12, and age to
-# 1.
-#
-# Here's the simplified rule guide on how to change -version-info:
-# (current version is C:R:A)
-# 
-# 1. if there are only source changes, use C:R+1:A
-# 2. if interfaces were added use C+1:0:A+1
-# 3. if interfaces were removed, then use C+1:0:0
-#
-# For the full guide on libcurl ABI rules, see docs/libcurl/ABI
-
-# The -no-undefined flag is CRUCIAL for this to build fine on Cygwin.
-@NO_UNDEFINED_TRUE@UNDEF = -no-undefined
-
-# This is for gcc on Solaris (8+ ?) to avoid "relocations remain against
-# allocatable but non-writable sections" problems.
-@MIMPURE_TRUE@MIMPURE = -mimpure-text
-libcurl_la_LDFLAGS = $(UNDEF) $(VERSIONINFO) $(MIMPURE) $(LIBCURL_LIBS)
-CSOURCES = file.c timeval.c base64.c hostip.c progress.c formdata.c	\
-  cookie.c http.c sendf.c ftp.c url.c dict.c if2ip.c speedcheck.c	\
-  ldap.c ssluse.c version.c getenv.c escape.c mprintf.c telnet.c	\
-  netrc.c getinfo.c transfer.c strequal.c easy.c security.c krb4.c	\
-  krb5.c memdebug.c http_chunks.c strtok.c connect.c llist.c hash.c	\
-  multi.c content_encoding.c share.c http_digest.c md5.c curl_rand.c	\
-  http_negotiate.c http_ntlm.c inet_pton.c strtoofft.c strerror.c	\
-  hostares.c hostasyn.c hostip4.c hostip6.c hostsyn.c hostthre.c	\
-  inet_ntop.c parsedate.c select.c gtls.c sslgen.c tftp.c splay.c	\
-  strdup.c socks.c ssh.c nss.c qssl.c rawstr.c curl_addrinfo.c          \
-  socks_gssapi.c socks_sspi.c curl_sspi.c slist.c nonblock.c		\
-  curl_memrchr.c imap.c pop3.c smtp.c pingpong.c rtsp.c curl_threads.c
-
-HHEADERS = arpa_telnet.h netrc.h file.h timeval.h qssl.h hostip.h	\
-  progress.h formdata.h cookie.h http.h sendf.h ftp.h url.h dict.h	\
-  if2ip.h speedcheck.h urldata.h curl_ldap.h ssluse.h escape.h telnet.h	\
-  getinfo.h strequal.h krb4.h memdebug.h http_chunks.h curl_rand.h	\
-  strtok.h connect.h llist.h hash.h content_encoding.h share.h		\
-  curl_md5.h http_digest.h http_negotiate.h http_ntlm.h inet_pton.h	\
-  strtoofft.h strerror.h inet_ntop.h curlx.h curl_memory.h setup.h	\
-  transfer.h select.h easyif.h multiif.h parsedate.h sslgen.h gtls.h	\
-  tftp.h sockaddr.h splay.h strdup.h setup_once.h socks.h ssh.h nssg.h	\
-  curl_base64.h rawstr.h curl_addrinfo.h curl_sspi.h slist.h nonblock.h	\
-  curl_memrchr.h imap.h pop3.h smtp.h pingpong.h rtsp.h curl_threads.h
+# $(top_builddir)/src is for curl's generated src/curl_config.h file
+# $(top_srcdir)/lib is for libcurl's lib/setup.h and other "borrowed" files
+# $(top_srcdir)/src is for curl's src/setup.h and "curl-private" files
+INCLUDES = -I$(top_builddir)/include/curl \
+           -I$(top_builddir)/include      \
+           -I$(top_srcdir)/include        \
+           -I$(top_builddir)/lib          \
+           -I$(top_builddir)/src          \
+           -I$(top_srcdir)/lib            \
+           -I$(top_srcdir)/src
 
 
-# Makefile.inc provides the CSOURCES and HHEADERS defines
-libcurl_la_SOURCES = $(CSOURCES) $(HHEADERS)
-WIN32SOURCES = $(CSOURCES)
-WIN32HEADERS = $(HHEADERS) config-win32.h
-DSPOUT = | awk '{printf("%s\r\n", $$0)}' >> $(DSP)
-VCPROJOUT = | awk '{printf("%s\r\n", $$0)}' >> $(VCPROJ)
-all: curl_config.h
+# libcurl has sources that provide functions named curlx_* that aren't part of
+# the official API, but we re-use the code here to avoid duplication.
+CURLX_ONES = $(top_srcdir)/lib/strtoofft.c \
+	$(top_srcdir)/lib/strdup.c \
+	$(top_srcdir)/lib/rawstr.c \
+	$(top_srcdir)/lib/nonblock.c
+
+CURL_SOURCES = main.c hugehelp.c urlglob.c writeout.c writeenv.c \
+	getpass.c homedir.c curlutil.c os-specific.c
+
+CURL_HFILES = hugehelp.h setup.h config-win32.h config-mac.h \
+	config-riscos.h urlglob.h version.h os-specific.h \
+	writeout.h writeenv.h getpass.h homedir.h curlutil.h
+
+curl_SOURCES = $(CURL_SOURCES) $(CURLX_ONES) $(CURL_HFILES)
+curl_LDADD = $(top_builddir)/lib/libcurl.la @CURL_LIBS@
+curl_DEPENDENCIES = $(top_builddir)/lib/libcurl.la
+BUILT_SOURCES = hugehelp.c
+CLEANFILES = hugehelp.c
+EXTRA_DIST = mkhelp.pl makefile.dj Makefile.vc6 Makefile.b32 Makefile.m32 \
+	Makefile.riscos curl_config.h.in macos/curl.mcp.xml.sit.hqx	  \
+	macos/MACINSTALL.TXT macos/src/curl_GUSIConfig.cpp vc6curlsrc.dsp \
+	macos/src/macos_main.cpp config-amigaos.h makefile.amiga curl.rc  \
+	Makefile.netware Makefile.inc Makefile.Watcom vc6curlsrc.dsw      \
+	CMakeLists.txt
+
+MANPAGE = $(top_srcdir)/docs/curl.1
+README = $(top_srcdir)/docs/MANUAL
+MKHELP = $(top_srcdir)/src/mkhelp.pl
+HUGE = hugehelp.c
+all: $(BUILT_SOURCES) curl_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
@@ -421,9 +348,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/Ma
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  lib/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  lib/Makefile
+	  $(AUTOMAKE) --foreign  src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -442,51 +369,53 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-curl_config.h: stamp-h1
+curl_config.h: stamp-h2
 	@if test ! -f $@; then \
-	  rm -f stamp-h1; \
-	  $(MAKE) stamp-h1; \
+	  rm -f stamp-h2; \
+	  $(MAKE) stamp-h2; \
 	else :; fi
 
-stamp-h1: $(srcdir)/curl_config.h.in $(top_builddir)/config.status
-	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status lib/curl_config.h
+stamp-h2: $(srcdir)/curl_config.h.in $(top_builddir)/config.status
+	@rm -f stamp-h2
+	cd $(top_builddir) && $(SHELL) ./config.status src/curl_config.h
 $(srcdir)/curl_config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	cd $(top_srcdir) && $(AUTOHEADER)
-	rm -f stamp-h1
+	rm -f stamp-h2
 	touch $@
 
 distclean-hdr:
-	-rm -f curl_config.h stamp-h1
-install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	-rm -f curl_config.h stamp-h2
+install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    f=$(am__strip_dir) \
-	    echo " $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
-	    $(LIBTOOL) --mode=install $(libLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
+	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  if test -f $$p \
+	     || test -f $$p1 \
+	  ; then \
+	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-libLTLIBRARIES:
+uninstall-binPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@set -x; list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  p=$(am__strip_dir) \
-	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$p'"; \
-	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$p"; \
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	done
 
-clean-libLTLIBRARIES:
-	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
-	  test "$$dir" != "$$p" || dir=.; \
-	  echo "rm -f \"$${dir}/so_locations\""; \
-	  rm -f "$${dir}/so_locations"; \
+clean-binPROGRAMS:
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  echo " rm -f $$p $$f"; \
+	  rm -f $$p $$f ; \
 	done
-libcurl.la: $(libcurl_la_OBJECTS) $(libcurl_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libcurl_la_LDFLAGS) $(libcurl_la_OBJECTS) $(libcurl_la_LIBADD) $(LIBS)
+curl$(EXEEXT): $(curl_OBJECTS) $(curl_DEPENDENCIES) 
+	@rm -f curl$(EXEEXT)
+	$(LINK) $(curl_LDFLAGS) $(curl_OBJECTS) $(curl_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -494,84 +423,19 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base64.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connect.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/content_encoding.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cookie.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_addrinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_memrchr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_rand.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_sspi.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_threads.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dict.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/easy.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/escape.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formdata.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ftp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getenv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtls.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostares.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostasyn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostip.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostip4.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostip6.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostsyn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostthre.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/http.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/http_chunks.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/http_digest.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/http_negotiate.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/http_ntlm.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/if2ip.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inet_ntop.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inet_pton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/krb4.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/krb5.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/llist.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/memdebug.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mprintf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netrc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nonblock.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nss.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parsedate.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pingpong.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pop3.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/progress.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qssl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rawstr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtsp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/security.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/select.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sendf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/share.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/slist.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smtp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/socks.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/socks_gssapi.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/socks_sspi.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/speedcheck.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/splay.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ssh.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslgen.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ssluse.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strdup.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strequal.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strerror.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtok.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtoofft.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/telnet.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tftp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeval.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transfer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/url.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/version.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curlutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getpass.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/homedir.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hugehelp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nonblock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/os-specific.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rawstr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strdup.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtoofft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urlglob.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeenv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/writeout.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -593,6 +457,62 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+strtoofft.o: $(top_srcdir)/lib/strtoofft.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT strtoofft.o -MD -MP -MF "$(DEPDIR)/strtoofft.Tpo" -c -o strtoofft.o `test -f '$(top_srcdir)/lib/strtoofft.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/strtoofft.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/strtoofft.Tpo" "$(DEPDIR)/strtoofft.Po"; else rm -f "$(DEPDIR)/strtoofft.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/strtoofft.c' object='strtoofft.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o strtoofft.o `test -f '$(top_srcdir)/lib/strtoofft.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/strtoofft.c
+
+strtoofft.obj: $(top_srcdir)/lib/strtoofft.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT strtoofft.obj -MD -MP -MF "$(DEPDIR)/strtoofft.Tpo" -c -o strtoofft.obj `if test -f '$(top_srcdir)/lib/strtoofft.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/strtoofft.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/strtoofft.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/strtoofft.Tpo" "$(DEPDIR)/strtoofft.Po"; else rm -f "$(DEPDIR)/strtoofft.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/strtoofft.c' object='strtoofft.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o strtoofft.obj `if test -f '$(top_srcdir)/lib/strtoofft.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/strtoofft.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/strtoofft.c'; fi`
+
+strdup.o: $(top_srcdir)/lib/strdup.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT strdup.o -MD -MP -MF "$(DEPDIR)/strdup.Tpo" -c -o strdup.o `test -f '$(top_srcdir)/lib/strdup.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/strdup.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/strdup.Tpo" "$(DEPDIR)/strdup.Po"; else rm -f "$(DEPDIR)/strdup.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/strdup.c' object='strdup.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o strdup.o `test -f '$(top_srcdir)/lib/strdup.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/strdup.c
+
+strdup.obj: $(top_srcdir)/lib/strdup.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT strdup.obj -MD -MP -MF "$(DEPDIR)/strdup.Tpo" -c -o strdup.obj `if test -f '$(top_srcdir)/lib/strdup.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/strdup.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/strdup.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/strdup.Tpo" "$(DEPDIR)/strdup.Po"; else rm -f "$(DEPDIR)/strdup.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/strdup.c' object='strdup.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o strdup.obj `if test -f '$(top_srcdir)/lib/strdup.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/strdup.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/strdup.c'; fi`
+
+rawstr.o: $(top_srcdir)/lib/rawstr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT rawstr.o -MD -MP -MF "$(DEPDIR)/rawstr.Tpo" -c -o rawstr.o `test -f '$(top_srcdir)/lib/rawstr.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/rawstr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/rawstr.Tpo" "$(DEPDIR)/rawstr.Po"; else rm -f "$(DEPDIR)/rawstr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/rawstr.c' object='rawstr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o rawstr.o `test -f '$(top_srcdir)/lib/rawstr.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/rawstr.c
+
+rawstr.obj: $(top_srcdir)/lib/rawstr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT rawstr.obj -MD -MP -MF "$(DEPDIR)/rawstr.Tpo" -c -o rawstr.obj `if test -f '$(top_srcdir)/lib/rawstr.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/rawstr.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/rawstr.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/rawstr.Tpo" "$(DEPDIR)/rawstr.Po"; else rm -f "$(DEPDIR)/rawstr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/rawstr.c' object='rawstr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o rawstr.obj `if test -f '$(top_srcdir)/lib/rawstr.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/rawstr.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/rawstr.c'; fi`
+
+nonblock.o: $(top_srcdir)/lib/nonblock.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT nonblock.o -MD -MP -MF "$(DEPDIR)/nonblock.Tpo" -c -o nonblock.o `test -f '$(top_srcdir)/lib/nonblock.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/nonblock.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/nonblock.Tpo" "$(DEPDIR)/nonblock.Po"; else rm -f "$(DEPDIR)/nonblock.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/nonblock.c' object='nonblock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o nonblock.o `test -f '$(top_srcdir)/lib/nonblock.c' || echo '$(srcdir)/'`$(top_srcdir)/lib/nonblock.c
+
+nonblock.obj: $(top_srcdir)/lib/nonblock.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT nonblock.obj -MD -MP -MF "$(DEPDIR)/nonblock.Tpo" -c -o nonblock.obj `if test -f '$(top_srcdir)/lib/nonblock.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/nonblock.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/nonblock.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/nonblock.Tpo" "$(DEPDIR)/nonblock.Po"; else rm -f "$(DEPDIR)/nonblock.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/lib/nonblock.c' object='nonblock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o nonblock.obj `if test -f '$(top_srcdir)/lib/nonblock.c'; then $(CYGPATH_W) '$(top_srcdir)/lib/nonblock.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/lib/nonblock.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -653,6 +573,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
+	$(mkdir_p) $(distdir)/macos $(distdir)/macos/src
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -680,13 +601,15 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
-all-am: Makefile $(LTLIBRARIES) curl_config.h
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
+all-am: Makefile $(PROGRAMS) curl_config.h
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -711,10 +634,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -734,7 +657,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am: install-binPROGRAMS
 
 install-info: install-info-am
 
@@ -760,66 +683,42 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES
+uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool ctags distclean \
-	distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
+	clean-generic clean-libtool ctags distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
 	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-libLTLIBRARIES install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-info-am uninstall-libLTLIBRARIES
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-info-am
 
 
-$(DSP): msvcproj.head msvcproj.foot Makefile.am
-	echo "creating $(DSP)"
-	@(cp $(srcdir)/msvcproj.head $(DSP); \
-	echo "# Begin Group \"Source Files\"" $(DSPOUT); \
-        echo "" $(DSPOUT); \
-        echo "# PROP Default_Filter \"\"" $(DSPOUT); \
-        win32_srcs='$(WIN32SOURCES)'; \
-        sorted_srcs=`for file in $$win32_srcs; do echo $$file; done | sort`; \
-        for file in $$sorted_srcs; do \
-	echo "# Begin Source File" $(DSPOUT); \
-	echo "" $(DSPOUT); \
-	echo "SOURCE=.\\"$$file $(DSPOUT); \
-	echo "# End Source File" $(DSPOUT); \
-	done; \
-	echo "# End Group" $(DSPOUT); \
-	echo "# Begin Group \"Header Files\"" $(DSPOUT); \
-        echo "" $(DSPOUT); \
-        echo "# PROP Default_Filter \"\"" $(DSPOUT); \
-        win32_hdrs='$(WIN32HEADERS)'; \
-        sorted_hdrs=`for file in $$win32_hdrs; do echo $$file; done | sort`; \
-        for file in $$sorted_hdrs; do \
-	echo "# Begin Source File" $(DSPOUT); \
-	echo "" $(DSPOUT); \
-	echo "SOURCE=.\\"$$file $(DSPOUT); \
-	echo "# End Source File" $(DSPOUT); \
-	done; \
-	echo "# End Group" $(DSPOUT); \
-	cat $(srcdir)/msvcproj.foot $(DSPOUT) )
+# Here are the stuff to create a built-in manual
 
-$(VCPROJ): vc8proj.head vc8proj.foot Makefile.am
-	echo "creating $(VCPROJ)"
-	@(cp $(srcdir)/vc8proj.head $(VCPROJ); \
-        win32_srcs='$(WIN32SOURCES)'; \
-        sorted_srcs=`for file in $$win32_srcs; do echo $$file; done | sort`; \
-        for file in $$sorted_srcs; do \
-	echo "<File RelativePath=\""$$file"\"></File>" $(VCPROJOUT); \
-	done; \
-	echo "</Filter><Filter	Name=\"Header Files\">" $(VCPROJOUT); \
-        win32_hdrs='$(WIN32HEADERS)'; \
-        sorted_hdrs=`for file in $$win32_hdrs; do echo $$file; done | sort`; \
-        for file in $$sorted_hdrs; do \
-	echo "<File RelativePath=\""$$file"\"></File>" $(VCPROJOUT); \
-	done; \
-	cat $(srcdir)/vc8proj.foot $(VCPROJOUT) )
+# This generates the hugehelp.c file in both uncompressed and compressed formats
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@$(HUGE): $(README) $(MANPAGE)  mkhelp.pl
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@	echo '#include "setup.h"' > $(HUGE)
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@	echo '#ifndef HAVE_LIBZ' >> $(HUGE)
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@	$(NROFF) $(MANPAGE) | $(PERL) $(MKHELP) $(README) >> $(HUGE)
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@	echo '#else' >> $(HUGE)
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@	$(NROFF) $(MANPAGE) | $(PERL) $(MKHELP) -c $(README) >> $(HUGE)
+@HAVE_LIBZ_TRUE@@USE_MANUAL_TRUE@	echo '#endif /* HAVE_LIBZ */' >> $(HUGE)
+# This generates the hugehelp.c file uncompressed only
+@HAVE_LIBZ_FALSE@@USE_MANUAL_TRUE@$(HUGE): $(README) $(MANPAGE)  mkhelp.pl
+@HAVE_LIBZ_FALSE@@USE_MANUAL_TRUE@	echo '#include "setup.h"' > $(HUGE)
+@HAVE_LIBZ_FALSE@@USE_MANUAL_TRUE@	$(NROFF) $(MANPAGE) | $(PERL) $(MKHELP) $(README) >> $(HUGE)
+
+# built-in manual has been disabled, make a blank file
+@USE_MANUAL_FALSE@$(HUGE):
+@USE_MANUAL_FALSE@	echo "/* built-in manual is disabled, blank function */" > $(HUGE)
+@USE_MANUAL_FALSE@	echo '#include "hugehelp.h"' >> $(HUGE)
+@USE_MANUAL_FALSE@	echo "void hugehelp(void) {}" >>$(HUGE)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

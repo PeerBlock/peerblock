@@ -1,34 +1,68 @@
 #
+#
 #  Adapted for djgpp2 / Watt-32 / DOS by
 #  Gisle Vanem <giva@bgnett.no>
 #
-# $Id: makefile.dj,v 1.16 2009-07-14 13:25:14 gknauf Exp $
 
-DEPEND_PREREQ = curl_config.h
+DEPEND_PREREQ = curl_config.h hugehelp.c
+
+top_srcdir = ..
 TOPDIR = ..
 
 include ../packages/DOS/common.dj
 include Makefile.inc
 
-OBJECTS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(strip $(CSOURCES)))
+CSOURCES = $(CURL_SOURCES)
 
-CURL_LIB = libcurl.a
+ifeq ($(USE_SSL),1)
+  EX_LIBS += $(OPENSSL_ROOT)/lib/libssl.a $(OPENSSL_ROOT)/lib/libcrypt.a
+endif
 
-# NOTE: if ../include/curl/curlbuild.h is missing, you're probably building
-# this from a CVS checkout and then you need to run buildconf.bat first.
+ifeq ($(USE_ARES),1)
+  EX_LIBS += $(ARES_ROOT)/libcares.a
+endif
 
-all: $(OBJ_DIR) curl_config.h $(CURL_LIB)
+ifeq ($(USE_ZLIB),1)
+  EX_LIBS += $(ZLIB_ROOT)/libz.a
+  CFLAGS  += -DUSE_MANUAL
+endif
 
-$(CURL_LIB): $(OBJECTS)
-	ar rs $@ $?
+ifeq ($(USE_IDNA),1)
+  EX_LIBS += $(LIBIDN_ROOT)/lib/dj_obj/libidn.a -liconv
+endif
 
-curl_config.h: config.dos
-	$(COPY) $^ $@
+EX_LIBS += $(WATT32_ROOT)/lib/libwatt.a
+
+CFLAGS += -DUSE_ENVIRONMENT
+
+PROGRAM  = curl.exe
+OBJECTS += $(addprefix $(OBJ_DIR)/, $(CSOURCES:.c=.o))
+
+all: $(OBJ_DIR) curl_config.h $(PROGRAM)
+	@echo Welcome to cURL
+
+$(PROGRAM): $(OBJECTS) ../lib/libcurl.a
+	$(CC) -o $@ $^ $(LDFLAGS) $(EX_LIBS)
+
+curl_config.h:
+ifeq ($(IS_UNIX_SHELL),1)
+	@echo '#include "../lib/config.dos"' > $@
+else
+	@echo #include "../lib/config.dos" > $@
+endif
+
+#
+# groff 1.18+ requires "-P -c"
+#
+hugehelp.c: ../docs/MANUAL ../docs/curl.1 mkhelp.pl
+	groff -Tascii -man ../docs/curl.1 | \
+	perl -w mkhelp.pl ../docs/MANUAL > $@
 
 # clean generated files
 #
 genclean:
 	- $(DELETE) curl_config.h
+	- $(DELETE) hugehelp.c
 
 # clean object files and subdir
 #
@@ -36,7 +70,7 @@ objclean: genclean
 	- $(DELETE) $(OBJ_DIR)$(DS)*.o
 	- $(RMDIR) $(OBJ_DIR)
 
-# clean without removing built library
+# clean without removing built program
 #
 clean: objclean
 	- $(DELETE) depend.dj
@@ -44,7 +78,7 @@ clean: objclean
 # clean everything
 #
 realclean vclean: clean
-	- $(DELETE) $(CURL_LIB)
+	- $(DELETE) $(PROGRAM)
 
 -include depend.dj
 

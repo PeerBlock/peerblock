@@ -1,5 +1,5 @@
 #
-# $VER: LibcURL Makefile for AmigaOS ...
+# $VER: cURL Makefile for AmigaOS ...
 #
 
 # change the follow to where you have the AmiTCP SDK v4.3 includes:
@@ -9,24 +9,21 @@ ATCPSDKI=	/GG/netinclude
 
 CC	=	m68k-amigaos-gcc
 CFLAGS	=	-I$(ATCPSDKI) -m68020-60 -O2 -msoft-float -noixemul -g -I. -I../include -W -Wall
+LIBS	=	../lib/libcurl.a -lssl -lcrypto -lz
+MANPAGE =	../docs/curl.1
+README	=	../docs/MANUAL
+MKHELP	=	../src/mkhelp.pl
 
-OBJS = amigaos.c \
-  file.c timeval.c base64.c hostip.c progress.c formdata.c	\
-  cookie.c http.c sendf.c ftp.c url.c dict.c if2ip.c speedcheck.c	\
-  ldap.c ssluse.c version.c getenv.c escape.c mprintf.c telnet.c	\
-  netrc.c getinfo.c transfer.c strequal.c easy.c security.c krb4.c	\
-  krb5.c memdebug.c http_chunks.c strtok.c connect.c llist.c hash.c	\
-  multi.c content_encoding.c share.c http_digest.c md5.c curl_rand.c	\
-  http_negotiate.c http_ntlm.c inet_pton.c strtoofft.c strerror.c	\
-  hostares.c hostasyn.c hostip4.c hostip6.c hostsyn.c hostthre.c	\
-  inet_ntop.c parsedate.c select.c gtls.c sslgen.c tftp.c splay.c	\
-  strdup.c socks.c ssh.c nss.c qssl.c rawstr.c curl_addrinfo.c          \
-  socks_gssapi.c socks_sspi.c curl_sspi.c slist.c nonblock.c		\
-  curl_memrchr.c imap.c pop3.c smtp.c pingpong.c rtsp.c curl_threads.c
+OBJS	=	getpass.c hugehelp.c main.c urlglob.c writeenv.c writeout.c curlutil.c os-specific.c ../lib/rawstr.c ../lib/nonblock.c
 
-all:	$(OBJS:.c=.o)
-	ar cru libcurl.a $(OBJS:.c=.o)
-	ranlib libcurl.a
+
+all:	hugehelp.c $(OBJS:.c=.o)
+	$(CC) $(CFLAGS) -o cURL $(OBJS:.c=.o) $(LIBS) -Wl,-Map,cURL.map,--cref
+
+hugehelp.c: $(README) $(MANPAGE)  mkhelp.pl
+	rm -f hugehelp.c
+	/bin/nroff -man $(MANPAGE) | /bin/perl $(MKHELP) -c $(README) > hugehelp.c
 
 install:
-	$(INSTALL) -c ./libcurl.a /lib/libcurl.a
+	$(INSTALL) -c cURL /c/cURL
+

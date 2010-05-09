@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curl.h,v 1.406 2010-01-22 12:17:03 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -168,8 +167,8 @@ struct curl_httppost {
 };
 
 typedef void (*curl_preconnect_callback)(void *clientp,
-                                         struct sockaddr *addr,
-                                         int addrlen);
+										 struct sockaddr *addr,
+										 int addrlen);
 
 typedef int (*curl_progress_callback)(void *clientp,
                                       double dltotal,
@@ -181,7 +180,9 @@ typedef int (*curl_progress_callback)(void *clientp,
   /* Tests have proven that 20K is a very bad buffer size for uploads on
      Windows, while 16K for some odd reason performed a lot better.
      We do the ifndef check to allow this value to easier be changed at build
-     time for those who feel adventurous. */
+     time for those who feel adventurous. The practical minimum is about
+     400 bytes since libcurl uses a buffer of this size as a scratch area
+     (unrelated to network send operations). */
 #define CURL_MAX_WRITE_SIZE 16384
 #endif
 
