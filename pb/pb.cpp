@@ -39,9 +39,6 @@ TraceLog g_tlog;
 
 HINSTANCE hPeerBlockInstance = 0;
 
-// blocks ips without updating for vista
-//void BlockWithoutUpdating(HWND hwnd);
-
 
 //================================================================================================
 //
@@ -257,28 +254,3 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	return 0;
 
 } // End of _tWinMain()
-
-
-
-//================================================================================================
-//
-//  BlockWithoutUpdating()
-//
-//    - Called by ???
-//
-/// <summary>
-///   Commented-out routine, looks like it might have once been a starting point at a workaround
-///	  for some of the PG2 load problems on Vista?
-/// </summary>
-//
-//void BlockWithoutUpdating(HWND hwnd)
-//{
-	//pbfilter *f = g_filter.get();
-	//f->m_filter.load(L"pbfilter");
-	//f->setblock(g_config.Block);
-	//f->setblockhttp(g_config.BlockHttp);
-
-	//UINT msg=RegisterWindowMessage(_T("PeerBlockLoadLists"));
-	//SendMessage(HWND_BROADCAST, WM_PB_LOADLISTS, 0, 0);
-
-//} // End of BlockWithoutUpdating()
