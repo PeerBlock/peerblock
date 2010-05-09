@@ -4,7 +4,7 @@
 	Version="9.00"
 	Name="pbfilter"
 	ProjectGUID="{141BF107-16D2-4AF8-85F2-FA655A327F35}"
-	RootNamespace="pgfilter"
+	RootNamespace="pbfilter"
 	Keyword="ManagedCProj"
 	TargetFrameworkVersion="131072"
 	>

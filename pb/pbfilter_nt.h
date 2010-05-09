@@ -32,4 +32,3 @@ public:
 private:
 	driver m_ipfltdrv;
 };
-

@@ -282,7 +282,7 @@ vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list)
 	{
 		strBuf = boost::str(tformat(_T("[lists] [FindUrl]    checking listnum:[%1%] url:[%2%]")) % i % _list[i].Url);
 		TRACEBUFV(strBuf);
-		if (_list[i].Url.find(_url) != tstring::npos)
+		if (_list[i].Url.compare(_url) == 0)
 		{
 			strBuf = boost::str(tformat(_T("[lists] [FindUrl]    found listnum:[%1%] url:[%2%]")) % i % _list[i].Url);
 			TRACEBUFV(strBuf);

@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
@@ -32,14 +32,14 @@ Configuration g_config;
 Configuration::Configuration() :
 	Block(true), BlockHttp(true), AllowLocal(true), UpdatePeerBlock(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
-	LogSize(12), LastUpdate(0), LastArchived(0), CleanupInterval(2), LogAllowed(true), LogBlocked(true),
-	ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), UpdateProxyType(CURLPROXY_HTTP),
-	UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
+	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true), 
+	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), 
+	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
-	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete),
+	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete), TempAllowingHttp(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
-	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(0) {
+	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(100000000) {
 		HistoryColumns[0]=64;
 		HistoryColumns[1]=128;
 		HistoryColumns[2]=124;
@@ -467,6 +467,11 @@ bool Configuration::Load()
 		GetChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		GetChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
 		GetChild(settings, "LastVersionRun", this->LastVersionRun);
+
+		// specially-treat RecentBlockWarntime since otherwise TinyXML will save it to the .conf as a hex value
+		int i=(DWORD)RecentBlockWarntime;
+		GetChild(settings, "RecentBlockWarntime", i);
+		this->RecentBlockWarntime=(DWORD)i;
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config logging element");
@@ -614,6 +619,16 @@ bool Configuration::Load()
 				// keep going
 			}
 		}
+
+		GetChild(updates, "LastStarted", lastupdate);
+		if(lastupdate.length()>0) {
+			try {
+				this->LastStarted=boost::lexical_cast<int>(lastupdate);
+			}
+			catch(...) {
+				// keep going
+			}
+		}
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config messages element");
@@ -670,7 +685,7 @@ bool Configuration::Load()
 	TRACEI("[Configuration] [Load]    parsing config lists element");
 	if(const TiXmlElement *lists=root->FirstChildElement("Lists")) {
 		for(const TiXmlElement *list=lists->FirstChildElement("List"); list!=NULL; list=list->NextSiblingElement("List")) {
-			string file, url, type, description, lastupdate;
+			string file, url, type, description, lastupdate, lastdownload;
 			bool enabled, failedupdate=false;
 
 			GetChild(list, "File", file);
@@ -678,6 +693,7 @@ bool Configuration::Load()
 			GetChild(list, "Type", type);
 			GetChild(list, "Description", description);
 			GetChild(list, "LastUpdate", lastupdate);
+			GetChild(list, "LastDownload", lastdownload);
 			GetChild(list, "FailedUpdate", failedupdate);
 			if(!GetChild(list, "Enabled", enabled))
 				enabled=true;
@@ -704,6 +720,15 @@ bool Configuration::Load()
 				if(lastupdate.length()>0) {
 					try {
 						l.LastUpdate=boost::lexical_cast<int>(lastupdate);
+					}
+					catch(...) {
+						// keep going
+					}
+				}
+
+				if(lastdownload.length()>0) {
+					try {
+						l.LastDownload=boost::lexical_cast<int>(lastdownload);
 					}
 					catch(...) {
 						// keep going
@@ -742,6 +767,8 @@ void Configuration::Save(const TCHAR * _filename)
 {
 	TRACEI("[Configuration] [Save]  > Entering routine.");
 
+	if (TempAllowingHttp) SetBlockHttp(!BlockHttp);	// make sure we don't accidentally startup allowed
+
 	TiXmlDocument doc;
 	doc.InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 
@@ -757,6 +784,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
 		InsertChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
 		InsertChild(settings, "LastVersionRun", PB_VER_BUILDNUM);
+		InsertChild(settings, "RecentBlockWarntime", (int)this->RecentBlockWarntime);
 	}
 
 	{
@@ -893,6 +921,12 @@ void Configuration::Save(const TCHAR * _filename)
 			string t=boost::lexical_cast<string>((int)this->LastArchived);
 			lastarchived->InsertEndChild(TiXmlText(t));
 		}
+
+		TiXmlElement *laststarted=InsertChild(updates, "LastStarted");
+		if(this->LastStarted) {
+			string t=boost::lexical_cast<string>((int)this->LastStarted);
+			laststarted->InsertEndChild(TiXmlText(t));
+		}
 	}
 
 	{
@@ -953,6 +987,12 @@ void Configuration::Save(const TCHAR * _filename)
 			if(this->DynamicLists[i].LastUpdate) {
 				string s=boost::lexical_cast<string>((int)this->DynamicLists[i].LastUpdate);
 				lastupdate->InsertEndChild(TiXmlText(s));
+			}
+
+			TiXmlElement *lastdownload=InsertChild(list, "LastDownload");
+			if(this->DynamicLists[i].LastDownload) {
+				string s=boost::lexical_cast<string>((int)this->DynamicLists[i].LastDownload);
+				lastdownload->InsertEndChild(TiXmlText(s));
 			}
 		}
 	}

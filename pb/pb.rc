@@ -722,6 +722,8 @@ BEGIN
         MENUITEM "&Disabled",                   ID_TRAY_DISABLED
         MENUITEM SEPARATOR
         MENUITEM "&Allow HTTP",                 ID_TRAY_BLOCKHTTP
+        MENUITEM "Allow HTTP for 15 min",       ID_TRAY_TEMPALLOWHTTP15
+        MENUITEM "Allow HTTP for 60 min",       ID_TRAY_TEMPALLOWHTTP60
         MENUITEM SEPARATOR
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
         MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
@@ -974,6 +976,8 @@ BEGIN
     IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%"
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
     IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
+	IDS_EXITWHILEBLOCKING	"Are you sure you want to exit PeerBlock?"
+	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting Peerblock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
 END
 
 // List sanity-checking messages
@@ -994,6 +998,9 @@ STRINGTABLE
 BEGIN
     IDS_PREVREL				"Updating PeerBlock"
     IDS_PREVREL268TEXT		"PeerBlock now makes use of new ""friendly"" names for iblocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
+    IDS_PREVREL341TEXT_DEL	"PeerBlock is updating your History settings to 'Remove every 7 days'.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
+    IDS_PREVREL341TEXT_MAX	"PeerBlock is updating your History settings to use a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
+    IDS_PREVREL341TEXT_BOTH	"PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
 END
 
 #endif    // English (U.S.) resources

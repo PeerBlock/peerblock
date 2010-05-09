@@ -35,6 +35,7 @@ static const UINT WM_PB_TRAY=WM_APP+2;
 static const UINT TRAY_ID=1;
 static const UINT TIMER_BLINKTRAY=1;
 static const UINT TIMER_PROCESSDB=2;
+static const UINT TIMER_TEMPALLOWHTTP=3;	// used to "Allow HTTP for X Minutes" 
 
 bool g_trayactive;
 NOTIFYICONDATA g_nid={0};
@@ -93,24 +94,46 @@ void SetBlock(bool block)
 
 
 
-void SetBlockHttp(bool block) 
+//================================================================================================
+//
+//  SetBlockHttp()
+//
+//    - Called by Main_OnCommand() while processing systray menu clicks
+//    - Called by Log_OnCommand() if user clicked Allow HTTP button on main UI
+//
+/// <summary>
+///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies 
+///   the driver.
+/// </summary>
+/// <param name="block">
+///   True if we are going to start blocking HTTP requests.
+/// </param>
+/// <param name="time">
+///   Optional parameter specifying the number of minutes for which this change will be active.  
+///   If 0, then the change is permanent.  Default is 0.
+/// </param>
+//
+void SetBlockHttp(bool _block, unsigned int _time) 
 {
 	TRACEV("[mainproc] [SetBlockHttp]  > Entering routine.");
 
 	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]   setting PeerBlock HTTP blocking from [%1%] to [%2%]")) 
-		% g_config.BlockHttp % block);
+		% g_config.BlockHttp % _block);
 	TRACEBUFI(strBuf);
-	g_config.BlockHttp=block;
-	g_filter->setblockhttp(block);
 
-	g_config.PortSet.AllowHttp = !block;
+	// setup old style http-blocking
+	g_config.BlockHttp = _block;
+	g_filter->setblockhttp(_block);
+
+	// setup new PortAllow style http-blocking
+	g_config.PortSet.AllowHttp = !_block;
 	g_config.PortSet.Merge();
-
 	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 
+	// set icon to match our new state
 	if (g_config.Block)
 	{
-		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), _block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
 		if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
 
 		SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
@@ -119,10 +142,26 @@ void SetBlockHttp(bool block)
 
 	SendDialogIconRefreshMessage();
 
+	// temp-allow related stuff
+	if (_time > 0)
+	{
+		tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]    setting temp-http timer to [%1%] minutes")) % _time );
+		TRACEBUFI(strBuf);
+		SetTimer(g_main, TIMER_TEMPALLOWHTTP, _time * 60 * 1000, NULL);	// _time minutes
+		g_config.TempAllowingHttp = true;	// ensure that we don't save this to our config file at exit
+	}
+	else
+	{
+		TRACEI("[mainproc] [SetBlockHttp]    cancelling temp-http timer");
+		KillTimer(g_main, TIMER_TEMPALLOWHTTP);
+		g_config.TempAllowingHttp = false;
+	}
+
+	// cleanup
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 	SendMessage(g_tabs[2].Tab, WM_PORTSETTINGSCHANGE, 0, 0);
-	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
-}
+	TRACEV("[mainproc] [SetBlockHttp]  < Leaving routine.");
+} // End of SetBlockHttp()
 
 
 
@@ -186,6 +225,16 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			SetBlockHttp(!g_config.BlockHttp);
 			break;
 
+		case ID_TRAY_TEMPALLOWHTTP15:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 15 minutes' item");
+			SetBlockHttp(false, 15);
+			break;
+
+		case ID_TRAY_TEMPALLOWHTTP60:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 60 minutes' item");
+			SetBlockHttp(false, 60);
+			break;
+
 		case ID_TRAY_ALWAYSONTOP:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Always on Top' item");
 			g_config.AlwaysOnTop=!g_config.AlwaysOnTop;
@@ -226,7 +275,40 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case ID_TRAY_EXIT:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Exit' item");
-			DestroyWindow(hwnd);
+
+			// Check "last block time", so we can warn the user if we were blocking recently
+			DWORD lastBlockTime = 0;
+			DWORD exitTime = GetTickCount();
+			bool exitProg = true;	// should we really exit the program?
+
+			{
+				mutex::scoped_lock lock(g_lastblocklock);
+				lastBlockTime = g_lastblocktime;
+			}
+
+			if (exitTime > lastBlockTime + 1000 * g_config.RecentBlockWarntime)
+			{
+				TRACEI("[mainproc] [Main_OnCommand]    sufficient time has passed since last block, exiting program");
+			}
+			else
+			{
+				TRACEI("[mainproc] [Main_OnCommand]    insufficient time has passed since last block, displaying warning message");
+				tstring text=boost::str(tformat(LoadString(IDS_EXITWHILEBLOCKINGTEXT)) % g_config.RecentBlockWarntime);
+				int result = MessageBox(hwnd, text, IDS_EXITWHILEBLOCKING, MB_ICONWARNING|MB_YESNO);
+				if (result == IDYES)
+				{
+					TRACEI("[mainproc] [Main_OnCommand]    user clicked Yes, exiting program");
+				}
+				else if (result == IDNO)
+				{
+					TRACEI("[mainproc] [Main_OnCommand]    user clicked No, NOT exiting program");
+					exitProg = false;
+				}
+			}
+
+			if (exitProg)
+				DestroyWindow(hwnd);
+
 			break;
 	}
 }
@@ -247,17 +329,24 @@ static void Main_OnDestroy(HWND hwnd)
 
 	if(g_trayactive) Shell_NotifyIcon(NIM_DELETE, &g_nid);
 
+	TRACEI("[mainproc] [Main_OnDestroy]    destroying main window tabs");
+	try 
 	{
-		TRACEI("[mainproc] [Main_OnDestroy]    deleting tray icons");
-		try {
-			for(size_t i=0; i<g_tabcount; i++)
-				DestroyWindow(g_tabs[i].Tab);
+		for(size_t i=0; i<g_tabcount; i++)
+		{
+			tstring strBuf = boost::str(tformat(_T("[mainproc] [Main_OnDestroy]    destroying tab: [%1%]")) % LoadString(g_tabs[i].Title) );
+			TRACEBUFE(strBuf);
+			DestroyWindow(g_tabs[i].Tab);
+			strBuf = boost::str(tformat(_T("[mainproc] [Main_OnDestroy]    tab [%1%] destroyed")) % LoadString(g_tabs[i].Title) );
+			TRACEBUFE(strBuf);
 		}
-		catch(exception &ex) {
-			ExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		}
-		TRACEI("[mainproc] [Main_OnDestroy]    tray icons destroyed");
 	}
+	catch(exception &ex) 
+	{
+		TRACEE("[mainproc] [Main_OnDestroy]  * ERROR: Exception occurred while destroying main window tabs");
+		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
+	}
+	TRACEI("[mainproc] [Main_OnDestroy]    main window tabs destroyed");
 
 	TRACEW("[mainproc] [Main_OnDestroy]    Terminating program...");
 	PostQuitMessage(0);
@@ -299,15 +388,18 @@ static void FitTabChild(HWND tabs, HWND child) {
 }
 
 static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy);
-static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+{
 	g_main=hwnd;
 
 	TRACEI("[mainproc] [Main_OnInitDialog]  > Entering routine.");
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    loading config");
 	bool firsttime=false;
-	try {
-		if(!g_config.Load()) {
+	try 
+	{
+		if(!g_config.Load()) 
+		{
 			TRACEI("[mainproc] [Main_OnInitDialog]    displaying first-time wizard");
 			DisplayStartupWizard(hwnd);
 			g_config.Save();
@@ -329,7 +421,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 			g_tlog.SetLoglevel(TRACELOG_LEVEL_NONE);
 		}
 	}
-	catch(exception &ex) {
+	catch(exception &ex) 
+	{
 		TRACEC("[mainproc] [Main_OnInitDialog]    Exception trying to load config!");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		DestroyWindow(hwnd);
@@ -337,8 +430,11 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		return FALSE;
 	}
 
+	time(&g_config.LastStarted);
+
 	TRACEI("[mainproc] [Main_OnInitDialog]    resetting g_filter");
-	try {
+	try 
+	{
 		g_filter.reset(new pbfilter());
 		TRACES("[mainproc] [Main_OnInitDialog]    g_filter reset.");
 	}
@@ -349,7 +445,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	catch(win32_error &ex) {
+	catch(win32_error &ex) 
+	{
 		DWORD code = ex.error();
 		if (code == 577)
 		{
@@ -366,7 +463,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	catch(exception &ex) {
+	catch(exception &ex) 
+	{
 		const tstring text=boost::str(tformat(LoadString(IDS_DRIVERERRTEXT))%typeid(ex).name()%ex.what());
 		MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
 
@@ -391,7 +489,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
-	for(size_t i=0; i<g_tabcount; i++) {
+	for(size_t i=0; i<g_tabcount; i++) 
+	{
 		tstring buf=LoadString(g_tabs[i].Title);
 
 		TCITEM tci={0};
@@ -403,9 +502,15 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		FitTabChild(tabs, g_tabs[i].Tab);
 	}
 
-	if(firsttime && !g_config.UpdateAtStartup) {
+	if( firsttime && !g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted ) 
+	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
-		UpdateLists(g_tabs[0].Tab);
+
+		{
+			mutex::scoped_lock lock(g_lastupdatelock);
+			UpdateLists(g_tabs[0].Tab);
+		}
+
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
 
@@ -473,13 +578,20 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
 	#endif
 
-	if (g_config.UpdateAtStartup)
+	if (g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted )
 	{
-		UpdateLists(hwnd);	// needs internet connection
+		TRACEI("[mainproc] [Main_OnInitDialog]    updating at startup");
+
+		{
+			mutex::scoped_lock lock(g_lastupdatelock);
+			UpdateLists(hwnd);	// needs internet connection
+		}
+
 		LoadLists(hwnd);
 	}
 	else if(g_filter)	// HACK: This should allow us to block at startup, even if we don't update
 	{
+		TRACEI("[mainproc] [Main_OnInitDialog]    not updating at startup");
 		p2p::list allow;
 		allow.insert(p2p::range(L"Auto-allow hack", 0, 0));
 		allow.optimize(true);
@@ -712,12 +824,42 @@ static void Main_OnTimer(HWND hwnd, UINT id)
 		else
 			g_processlock.leave();
 	}
+	else if(id==TIMER_TEMPALLOWHTTP)
+	{
+		TRACEI("[mainproc] [Main_OnTimer]    temp-allow-http timer expired, resetting http-blocking");
+		SetBlockHttp(!g_config.BlockHttp);
+	}
 }
 
-static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
+
+
+//================================================================================================
+//
+//  Main_OnTray()
+//
+//    - Called by Main_DlgProc()
+//
+/// <summary>
+///   Handles window-messages meant for the tray icon.
+/// </summary>
+/// <param name="hwnd">
+///   Handle of the window from which this message was sent.
+/// </param>
+/// <param name="id">
+///   ID of the control which sent this message.
+/// </param>
+/// <param name="eventMsg">
+///   The window-message we're processing.
+/// </param>
+//
+static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) 
+{
 	if(eventMsg==WM_LBUTTONUP)
-		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, TRUE);
-	else if(eventMsg==WM_RBUTTONUP) {
+	{
+		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, g_config.WindowHidden);
+	}
+	else if(eventMsg==WM_RBUTTONUP) 
+	{
 		POINT pt;
 		GetCursorPos(&pt);
 
@@ -735,7 +877,10 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) {
 
 		DestroyMenu(menu);
 	}
-}
+
+} // End of Main_OnTray()
+
+
 
 static void Main_OnVisible(HWND hwnd, BOOL visible) 
 {
@@ -819,6 +964,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Main_OnTray(hwnd, (UINT)wParam, (UINT)lParam);
 				return 1;
 			case WM_MAIN_VISIBLE:
+				TRACEI("[Main_DlgProc]    received WM_MAIN_VISIBLE message");
 				Main_OnVisible(hwnd, (BOOL)lParam);
 				return 1;
 			default:

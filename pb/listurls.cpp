@@ -56,7 +56,7 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 		for (unsigned int listUrl=LISTS_FIELD_BESTURL; listUrl<Lists[listName].size() && foundUrl==false; ++listUrl)	
 		{
 			// check for specified URL
-			if (Lists[listName][listUrl].Url.find(_url) != string::npos)
+			if (Lists[listName][listUrl].Url.compare(_url) == 0)
 			{
 				//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   found url at: [%1%][%2%]")) 
 				//	% listName % listUrl );
@@ -123,7 +123,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 	LISTFLAGS urlFlags = 0;
 	for (idx=LISTS_FIELD_BESTURL; _num!=LISTNAME_COUNT && idx<Lists[_num].size(); ++idx)
 	{
-		if (Lists[_num][idx].Url.find(_url) != string::npos)
+		if (Lists[_num][idx].Url.compare(_url) == 0)
 		{
 			// found it!
 			tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    found url at: [%1%][%2%]")) 
@@ -173,7 +173,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				// TODO:  Should probably refactor this stuff into its own subroutine...
 
 				// check against user-entered url
-				if (l->Url.find(_url) != string::npos)
+				if (l->Url.compare(_url) == 0)
 				{
 					TRACEI("[ListUrls] [CheckUrl]    found exact url in listman listview");
 					urlFlags.set(LISTFLAG_EXACTDUPE);
@@ -184,7 +184,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 					LISTNAME existingListId = FindListNum(l->Url);
 					for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 					{
-						if (Lists[existingListId][j].Url.find(_url) != string::npos)
+						if (Lists[existingListId][j].Url.compare(_url) == 0)
 						{
 							TRACEI("[ListUrls] [CheckUrl]    found similar url in listman listview");
 							urlFlags.set(LISTFLAG_DIFFDUPE);
@@ -200,7 +200,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 		for(vector<DynamicList>::size_type i=0; i<g_deflists.size(); i++)
 		{
 			// check against user-entered url
-			if (g_deflists[i].Url.find(_url) != string::npos)
+			if (g_deflists[i].Url.compare(_url) == 0)
 			{
 				TRACEI("[ListUrls] [CheckUrl]    found exact url in g_config dynamic lists");
 				urlFlags.set(LISTFLAG_EXACTDUPE);
@@ -211,7 +211,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				existingListId = FindListNum(g_deflists[i].Url);
 				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
-					if (Lists[existingListId][j].Url.find(_url) != string::npos)
+					if (Lists[existingListId][j].Url.compare(_url) == 0)
 					{
 						TRACEI("[ListUrls] [CheckUrl]    found similar url in g_config dynamic lists");
 						urlFlags.set(LISTFLAG_DIFFDUPE);
@@ -229,7 +229,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
 		{
 			// check against user-entered url
-			if (g_config.DynamicLists[i].Url.find(_url) != string::npos)
+			if (g_config.DynamicLists[i].Url.compare(_url) == 0)
 			{
 				TRACEI("[ListUrls] [CheckUrl]    found exact url in g_config dynamic lists");
 				urlFlags.set(LISTFLAG_EXACTDUPE);
@@ -240,7 +240,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				existingListId = FindListNum(g_config.DynamicLists[i].Url);
 				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
-					if (Lists[existingListId][j].Url.find(_url) != string::npos)
+					if (Lists[existingListId][j].Url.compare(_url) == 0)
 					{
 						TRACEI("[ListUrls] [CheckUrl]    found similar url in g_config dynamic lists");
 						urlFlags.set(LISTFLAG_DIFFDUPE);
@@ -310,24 +310,32 @@ bool ListUrls::Init()
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/level-1"));
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://list.iblocklist.com/?list=bt_level1", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://www.bluetack.co.uk/config/level1.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://www.bluetack.co.uk/config/level1.zip", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/p2p.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_LEVEL1].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_level1", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"Advertising (Bluetack)"));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/ads-trackers-and-bad-pr0n"));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://list.iblocklist.com/?list=bt_ads", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://www.bluetack.co.uk/config/ads-trackers-and-bad-pr0n.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://www.bluetack.co.uk/config/ads-trackers-and-bad-pr0n.zip", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/ads.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_ADS].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_ads", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"Spyware (Bluetack)"));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/spyware"));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://list.iblocklist.com/?list=bt_spyware", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://www.bluetack.co.uk/config/spyware.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://www.bluetack.co.uk/config/spyware.zip", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/spy.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_SPY].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_spyware", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"Education (Bluetack)"));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/edu"));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://list.iblocklist.com/?list=bt_edu", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://www.bluetack.co.uk/config/edu.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://www.bluetack.co.uk/config/edu.zip", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://peerguardian.sourceforge.net/lists/edu.php", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_EDU].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_edu", LISTFLAG_WRONG));
 
 		// Bluetack Lists
@@ -336,28 +344,34 @@ bool ListUrls::Init()
 		Lists[LISTNAME_BT_LEVEL2].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/level-2"));
 		Lists[LISTNAME_BT_LEVEL2].push_back(ListData(L"http://list.iblocklist.com/?list=bt_level2", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_LEVEL2].push_back(ListData(L"http://www.bluetack.co.uk/config/level2.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_LEVEL2].push_back(ListData(L"http://www.bluetack.co.uk/config/level2.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_LEVEL2].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_level2", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_LEVEL3].push_back(ListData(L"Level 3 (Bluetack)"));
 		Lists[LISTNAME_BT_LEVEL3].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/level-3"));
 		Lists[LISTNAME_BT_LEVEL3].push_back(ListData(L"http://list.iblocklist.com/?list=bt_level3", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_LEVEL3].push_back(ListData(L"http://www.bluetack.co.uk/config/level3.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_LEVEL3].push_back(ListData(L"http://www.bluetack.co.uk/config/level3.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_LEVEL3].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_level3", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_BOGON].push_back(ListData(L"Bogon (Bluetack)"));
 		Lists[LISTNAME_BT_BOGON].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/bogon"));
 		Lists[LISTNAME_BT_BOGON].push_back(ListData(L"http://list.iblocklist.com/?list=bt_bogon", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_BOGON].push_back(ListData(L"http://www.bluetack.co.uk/config/bogon.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_BOGON].push_back(ListData(L"http://www.bluetack.co.uk/config/bogon.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_BOGON].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_bogon", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_DSHIELD].push_back(ListData(L"DShield (Bluetack)"));
 		Lists[LISTNAME_BT_DSHIELD].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/dshield"));
 		Lists[LISTNAME_BT_DSHIELD].push_back(ListData(L"http://list.iblocklist.com/?list=bt_dshield", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_DSHIELD].push_back(ListData(L"http://www.bluetack.co.uk/config/dshield.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_DSHIELD].push_back(ListData(L"http://www.bluetack.co.uk/config/dshield.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_DSHIELD].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_dshield", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_HIJACKED].push_back(ListData(L"Hijacked (Bluetack)"));
 		Lists[LISTNAME_BT_HIJACKED].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/hijacked"));
 		Lists[LISTNAME_BT_HIJACKED].push_back(ListData(L"http://list.iblocklist.com/?list=bt_hijacked", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_HIJACKED].push_back(ListData(L"http://www.bluetack.co.uk/config/hijacked.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_HIJACKED].push_back(ListData(L"http://www.bluetack.co.uk/config/hijacked.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_HIJACKED].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_hijacked", LISTFLAG_WRONG));
 
@@ -365,55 +379,70 @@ bool ListUrls::Init()
 		Lists[LISTNAME_BT_MICROSOFT].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/microsoft"));
 		Lists[LISTNAME_BT_MICROSOFT].push_back(ListData(L"http://list.iblocklist.com/?list=bt_microsoft", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_BT_MICROSOFT].push_back(ListData(L"http://www.bluetack.co.uk/config/Microsoft.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_MICROSOFT].push_back(ListData(L"http://www.bluetack.co.uk/config/Microsoft.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_MICROSOFT].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_microsoft", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_IANA_MULTICAST].push_back(ListData(L"IANA Multicast (Bluetack)"));
 		Lists[LISTNAME_BT_IANA_MULTICAST].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/iana-multicast"));
 		Lists[LISTNAME_BT_IANA_MULTICAST].push_back(ListData(L"http://list.iblocklist.com/?list=pwqnlynprfgtjbgqoizj", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_IANA_MULTICAST].push_back(ListData(L"http://www.bluetack.co.uk/config/iana-multicast.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_IANA_MULTICAST].push_back(ListData(L"http://www.bluetack.co.uk/config/iana-multicast.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_IANA_MULTICAST].push_back(ListData(L"http://iblocklist.com/list.php?list=pwqnlynprfgtjbgqoizj", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_IANA_PRIVATE].push_back(ListData(L"IANA Private (Bluetack)"));
 		Lists[LISTNAME_BT_IANA_PRIVATE].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/iana-private"));
 		Lists[LISTNAME_BT_IANA_PRIVATE].push_back(ListData(L"http://list.iblocklist.com/?list=cslpybexmxyuacbyuvib", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_IANA_PRIVATE].push_back(ListData(L"http://www.bluetack.co.uk/config/iana-private.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_IANA_PRIVATE].push_back(ListData(L"http://www.bluetack.co.uk/config/iana-private.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_IANA_PRIVATE].push_back(ListData(L"http://iblocklist.com/list.php?list=cslpybexmxyuacbyuvib", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_IANA_RESERVED].push_back(ListData(L"IANA Reserved (Bluetack)"));
 		Lists[LISTNAME_BT_IANA_RESERVED].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/iana-reserved"));
 		Lists[LISTNAME_BT_IANA_RESERVED].push_back(ListData(L"http://list.iblocklist.com/?list=bcoepfyewziejvcqyhqo", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_IANA_RESERVED].push_back(ListData(L"http://www.bluetack.co.uk/config/iana-reserved.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_IANA_RESERVED].push_back(ListData(L"http://www.bluetack.co.uk/config/iana-reserved.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_IANA_RESERVED].push_back(ListData(L"http://iblocklist.com/list.php?list=bcoepfyewziejvcqyhqo", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_FORNONLAN].push_back(ListData(L"For Non-LAN Computers (Bluetack)"));
 		Lists[LISTNAME_BT_FORNONLAN].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/for-non-lan-computers"));
 		Lists[LISTNAME_BT_FORNONLAN].push_back(ListData(L"http://list.iblocklist.com/?list=jhaoawihmfxgnvmaqffp", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_FORNONLAN].push_back(ListData(L"http://www.bluetack.co.uk/config/fornonlancomputers.gz", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_FORNONLAN].push_back(ListData(L"http://www.bluetack.co.uk/config/fornonlancomputers.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_FORNONLAN].push_back(ListData(L"http://iblocklist.com/list.php?list=jhaoawihmfxgnvmaqffp", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_BADPEERS].push_back(ListData(L"Bad Peers (Bluetack)"));
 		Lists[LISTNAME_BT_BADPEERS].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/bad-peers"));
 		Lists[LISTNAME_BT_BADPEERS].push_back(ListData(L"http://list.iblocklist.com/?list=bt_templist", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_BADPEERS].push_back(ListData(L"http://www.bluetack.co.uk/config/badpeers.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_BADPEERS].push_back(ListData(L"http://www.bluetack.co.uk/config/badpeers.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_BADPEERS].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_templist", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_PROXY].push_back(ListData(L"Proxy (Bluetack)"));
 		Lists[LISTNAME_BT_PROXY].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/proxy"));
 		Lists[LISTNAME_BT_PROXY].push_back(ListData(L"http://list.iblocklist.com/?list=bt_proxy", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_PROXY].push_back(ListData(L"http://www.bluetack.co.uk/config/proxy.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_PROXY].push_back(ListData(L"http://www.bluetack.co.uk/config/proxy.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_PROXY].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_proxy", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_RANGETEST].push_back(ListData(L"Range Test (Bluetack)"));
 		Lists[LISTNAME_BT_RANGETEST].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/range-test"));
 		Lists[LISTNAME_BT_RANGETEST].push_back(ListData(L"http://list.iblocklist.com/?list=bt_rangetest", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_RANGETEST].push_back(ListData(L"http://www.bluetack.co.uk/config/rangetest.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_RANGETEST].push_back(ListData(L"http://www.bluetack.co.uk/config/rangetest.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_RANGETEST].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_rangetest", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_SPIDER].push_back(ListData(L"Spider (Bluetack)"));
 		Lists[LISTNAME_BT_SPIDER].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/spider"));
 		Lists[LISTNAME_BT_SPIDER].push_back(ListData(L"http://list.iblocklist.com/?list=bt_spider", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_SPIDER].push_back(ListData(L"http://www.bluetack.co.uk/config/spider.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_SPIDER].push_back(ListData(L"http://www.bluetack.co.uk/config/spider.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_SPIDER].push_back(ListData(L"http://iblocklist.com/list.php?list=bt_spider", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"WebExploit ForumSpam (Bluetack)"));
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/webexploit-forumspam"));
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://list.iblocklist.com/?list=bimsvyvtgxeelunveyal", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://www.bluetack.co.uk/config/webexploit-forumspam.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://www.bluetack.co.uk/config/webexploit-forumspam.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://iblocklist.com/list.php?list=bimsvyvtgxeelunveyal", LISTFLAG_WRONG));
 
 		// DCHA Lists
@@ -443,36 +472,43 @@ bool ListUrls::Init()
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"Bogon (TBG)"));
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/bogon"));
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://list.iblocklist.com/?list=ewqglwibdgjttwttrinl", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://tbg.iblocklist.com/Lists/Bogon.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_BOGON].push_back(ListData(L"http://iblocklist.com/list.php?list=ewqglwibdgjttwttrinl", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"Business ISPs (TBG)"));
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/business-isps"));
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://list.iblocklist.com/?list=jcjfaxgyyshvdbceroxf", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://tbg.iblocklist.com/Lists/BusinessISPs.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_BUSINESS_ISP].push_back(ListData(L"http://iblocklist.com/list.php?list=jcjfaxgyyshvdbceroxf", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"Educational Institutions (TBG)"));
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/educational-institutions"));
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://list.iblocklist.com/?list=lljggjrpmefcwqknpalp", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://tbg.iblocklist.com/Lists/Educational-Institutions.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_EDU].push_back(ListData(L"http://iblocklist.com/list.php?list=lljggjrpmefcwqknpalp", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"Corporate Ranges (TBG)"));
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/general-corporate-ranges"));
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://list.iblocklist.com/?list=ecqbsykllnadihkdirsh", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://tbg.iblocklist.com/Lists/GeneralCorporateRanges.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_CORP].push_back(ListData(L"http://iblocklist.com/list.php?list=ecqbsykllnadihkdirsh", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"Hijacked (TBG)"));
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/hijacked"));
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://list.iblocklist.com/?list=tbnuqfclfkemqivekikv", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://tbg.iblocklist.com/Lists/Hijacked.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_HIJACKED].push_back(ListData(L"http://iblocklist.com/list.php?list=tbnuqfclfkemqivekikv", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"Primary Threats (TBG)"));
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/primary-threats"));
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://list.iblocklist.com/?list=ijfqtofzixtwayqovmxn", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://tbg.iblocklist.com/Lists/PrimaryThreats.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_PTHREAT].push_back(ListData(L"http://iblocklist.com/list.php?list=ijfqtofzixtwayqovmxn", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"Search Engines (TBG)"));
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://list.iblocklist.com/lists/tbg/search-engines"));
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://list.iblocklist.com/?list=pfefqteoxlfzopecdtyw", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://tbg.iblocklist.com/Lists/SearchEngines.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_TBG_SEARCHENG].push_back(ListData(L"http://iblocklist.com/list.php?list=pfefqteoxlfzopecdtyw", LISTFLAG_WRONG));
 
 		// Misc Lists

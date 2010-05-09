@@ -394,18 +394,24 @@ public:
 
 				for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) 
 				{
-					if(!g_config.DynamicLists[i].Enabled) continue;
+					if(!g_config.DynamicLists[i].Enabled)
+					{
+						tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    list not enabled, so not updating url: [%1%]")) % g_config.DynamicLists[i].Url );
+						TRACEBUFI(strBuf);
+						continue;
+					}
 
 					const path file=g_config.DynamicLists[i].File();
 
-					TCHAR chBuf[256];
-					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    updating file: [%s]"), file.c_str());
-					TRACEBUFI(chBuf);
+					tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    updating file:[%1%] from url:[%2%]")) 
+						%  file.c_str() % g_config.DynamicLists[i].Url );
+					TRACEBUFI(strBuf);
 
 					time_t elapsedTime = curtime-g_config.DynamicLists[i].LastUpdate;
 					bool fileExists = path::exists(file);
 					DWORD fileSize = 0;
 
+					TCHAR chBuf[256];
 					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %d (of 43200) seconds have passed since last update"), elapsedTime);
 					TRACEBUFI(chBuf);
 
@@ -458,10 +464,12 @@ public:
 									curl_easy_setopt(site, CURLOPT_PROXYTYPE, g_config.UpdateProxyType);
 								}
 
-								if(g_config.DynamicLists[i].LastUpdate && path::exists(g_config.DynamicLists[i].File())) 
+								if(g_config.DynamicLists[i].LastDownload && path::exists(g_config.DynamicLists[i].File())) 
 								{
+									tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    + checking against last-downloaded time:[%1%]")) % g_config.DynamicLists[i].LastDownload );
+									TRACEBUFI(strBuf);
 									curl_easy_setopt(site, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-									curl_easy_setopt(site, CURLOPT_TIMEVALUE, g_config.DynamicLists[i].LastUpdate);
+									curl_easy_setopt(site, CURLOPT_TIMEVALUE, g_config.DynamicLists[i].LastDownload);
 								}
 								else curl_easy_setopt(site, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
 								
@@ -633,6 +641,7 @@ public:
 													data->list->FailedUpdate=false;
 
 													time(&data->list->LastUpdate);
+													time(&data->list->LastDownload);
 													changes++;
 												}
 												else
@@ -1235,9 +1244,9 @@ public:
 									curl_easy_setopt(site, CURLOPT_PROXYTYPE, g_config.UpdateProxyType);
 								}
 
-								if(g_config.DynamicLists[i].LastUpdate && path::exists(g_config.DynamicLists[i].File())) {
+								if(g_config.DynamicLists[i].LastDownload && path::exists(g_config.DynamicLists[i].File())) {
 									curl_easy_setopt(site, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-									curl_easy_setopt(site, CURLOPT_TIMEVALUE, g_config.DynamicLists[i].LastUpdate);
+									curl_easy_setopt(site, CURLOPT_TIMEVALUE, g_config.DynamicLists[i].LastDownload);
 								}
 								else curl_easy_setopt(site, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
 								
@@ -1366,6 +1375,7 @@ public:
 											data->list->FailedUpdate=false;
 
 											time(&data->list->LastUpdate);
+											time(&data->list->LastDownload);
 											changes++;
 
 											if(list) {
@@ -1755,13 +1765,41 @@ static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, 
 
 
 
+//================================================================================================
+//
+//  UpdateLists()
+//
+//    - Called by UpdateStatus() while updating main window metrics
+//    - Called by Log_OnCommand() after opening and then closing List Manager
+//    - Called by Log_OnCommand() when user clicks Update button
+//    - Called by Log_OnTimer() when automatic-update timer expires
+//
+//    - Called by Main_OnInitDialog() in mainproc.cpp on timer expiry, after updating lists
+//    - Called by Main_OnInitDialog() in mainproc.cpp upon receipt of WM_LOG_HOOK or WM_LOG_RANGES messages
+//
+/// <summary>
+///   Checks for updated program / lists, downloads, and applies list-updates.
+/// </summary>
+/// <param name="hwnd">
+///   Parent's hwnd, if any.
+/// </param>
+/// <remarks>
+///   Callers of this routine are expected to have first acquired the g_lastudpatelock, to ensure
+///   that nobody else is attempting to check for updates (or check the timer) while a list-update
+///	  is already in progress.
+/// </remarks>
+//
 int UpdateLists(HWND parent) 
 {
 	TRACEI("[UpdateLists]  > Entering routine.");
 
 	int ret=0;
 
-	if(g_updater==NULL) 
+	if (!g_config.UpdateLists && !g_config.UpdatePeerBlock)
+	{
+		TRACEI("[UpdateLists]    neither UpdateLists nor UpdatePeerBlock is enabled, so nothing to update");
+	}
+	else if(g_updater==NULL) 
 	{
 		if(parent) 
 		{
@@ -1778,6 +1816,7 @@ int UpdateLists(HWND parent)
 			g_updater=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
 		}
 
+		TRACEI("[UpdateLists]    resetting LastUpdate time");
 		time(&g_config.LastUpdate);
 	}
 	else if(parent) 

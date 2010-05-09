@@ -52,9 +52,10 @@ struct StaticList : List {
 struct DynamicList : List {
 	tstring Url;
 	time_t LastUpdate;
+	time_t LastDownload;
 	bool FailedUpdate;
 
-	DynamicList() : LastUpdate(0),FailedUpdate(false) {}
+	DynamicList() : LastUpdate(0),LastDownload(0),FailedUpdate(false) {}
 
 	path File() const;
 	path TempFile() const;
@@ -63,11 +64,11 @@ struct DynamicList : List {
 
 	bool operator==(const DynamicList &right)
 	{
-		return Url.find(right.Url) != string::npos;
+		return Url.compare(right.Url) == 0;
 	}
 	bool operator==(const tstring &url)
 	{
-		return Url.find(url) != string::npos;
+		return Url.compare(url) == 0;
 	}
 
 	bool operator<(const DynamicList &right)
@@ -77,8 +78,8 @@ struct DynamicList : List {
 
 	void Dump(TRACELOG_LEVEL _lvl)
 	{
-		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%]")) 
-			% Description % Url % Enabled % Type % LastUpdate);
+		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%] downloaded:[%6%]")) 
+			% Description % Url % Enabled % Type % LastUpdate % LastDownload );
 
 		g_tlog.LogMessage(strBuf, _lvl);
 	}
@@ -183,7 +184,7 @@ struct Configuration {
 	PortSet PortSet;
 	bool ColorCode;
 	Color BlockedColor, AllowedColor, HttpColor;
-	time_t LastUpdate, LastArchived;
+	time_t LastUpdate, LastArchived, LastStarted;
 	unsigned int CacheCrc;
 	bool Block, BlockHttp, AllowLocal;
 	bool UpdatePeerBlock, UpdateLists, UpdateAtStartup;
@@ -193,6 +194,7 @@ struct Configuration {
 	NotifyType BlinkOnBlock, NotifyOnBlock;
 	unsigned short UpdateInterval, LogSize, CleanupInterval;
 	short UpdateCountdown;
+	DWORD RecentBlockWarntime;	// time (in sec) we want to see blocked activity ending before we'll exit without warning
 	CleanType CleanupType;
 	tstring UpdateProxy;
 	long UpdateProxyType;
@@ -202,8 +204,12 @@ struct Configuration {
 	int TracelogLevel;
 	int LastVersionRun;
 
+	// ui settings
 	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
+
+	// non-saved value, stuff used internally only during one run of PeerBlock
+	bool TempAllowingHttp;
 
 	Configuration();
 

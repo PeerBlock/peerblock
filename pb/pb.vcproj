@@ -482,7 +482,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="&quot;$(SolutionDir)pb\versioninfo_setup.bat&quot;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration

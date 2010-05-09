@@ -205,7 +205,12 @@
 #define IDS_LISTSAN_EXACTDUPE			259
 #define IDS_LISTSAN_DEFDUPE				260
 #define IDS_LISTSAN_DIFFDUPE			261
-#define IDS_PORTSETTINGS                262
+#define IDS_EXITWHILEBLOCKING			262
+#define IDS_EXITWHILEBLOCKINGTEXT		263
+#define IDS_PREVREL341TEXT_DEL			264
+#define IDS_PREVREL341TEXT_MAX			265
+#define IDS_PREVREL341TEXT_BOTH			266
+#define IDS_PORTSETTINGS                267
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003
@@ -387,6 +392,8 @@
 #define ID_FILE_BACKUPDATABASE          40026
 #define ID_TRAY_HELP                    40027
 #define ID_TRAY_SUPPORT                 40028
+#define ID_TRAY_TEMPALLOWHTTP15         40029
+#define ID_TRAY_TEMPALLOWHTTP60         40030
 
 // PeerBlock window messages
 #define WM_PORTSETTINGSCHANGE           (WM_APP+1)
