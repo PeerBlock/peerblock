@@ -10,7 +10,7 @@ libcurl version 7.20.1
 License:    MIT/X derivate license
 Website:    http://curl.haxx.se/libcurl
 
-SQLite version 3.23.1
+SQLite version 3.6.23.1
 License:    Public domain
 Website:    http://www.sqlite.org
 

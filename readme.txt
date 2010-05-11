@@ -24,8 +24,8 @@ http://code.google.com/p/peerblock/     PeerBlock Source Code
 
 Open Source
 -----------
-PeerBlock makes use of a number of third-party libraries,
-see thirdparty\readme.txt for more information.
+PeerBlock makes use of a number of third-party libraries, see
+thirdparty\readme.txt for more information.
 
 
 PeerBlock Credits

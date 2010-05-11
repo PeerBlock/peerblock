@@ -30,7 +30,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -118,7 +118,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -208,7 +208,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -303,7 +303,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -399,7 +399,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -497,7 +497,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -593,7 +593,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -681,7 +681,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate version-information from SVN working-dir info:"
-				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir).&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
+				CommandLine="..\..\bin\windows\SubWCRev.exe &quot;$(SolutionDir)\..\..\.&quot; ..\peerblock\versioninfo.h ..\peerblock\versioninfo_parsed.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
