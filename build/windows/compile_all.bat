@@ -15,9 +15,7 @@ CALL :SubMSVS "Release" %%A
 CALL :SubMSVS "Release (Vista)" %%A
 )
 
-ECHO.
-ECHO.
-
+ECHO.&&ECHO.
 
 REM Sign driver and program
 IF NOT DEFINED PB_CERT (
@@ -54,7 +52,7 @@ TITLE Compiling installer...
 ECHO:Compiling installer...
 ECHO.
 IF DEFINED InnoSetupPath (
-"%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\bin\windows\sign_driver.cmd" $f "^
+"%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\..\..\bin\windows\sign_driver.cmd" $f "^
  /Q /O"..\..\..\distribution" "setup.iss"&&(
 ECHO:Installer compiled!)
 ) ELSE (ECHO:%M_%)
@@ -90,8 +88,7 @@ GOTO :END
 
 :END
 TITLE Compiling PeerBlock - Finished!
-ECHO.
-ECHO.
+ECHO.&&ECHO.
 ENDLOCAL && PAUSE
 EXIT
 
