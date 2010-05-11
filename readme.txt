@@ -31,7 +31,7 @@ see thirdparty\readme.txt for more information.
 PeerBlock Credits
 -----------------
 Mark Bulas (MarkSide)               Lead Developer
-Night_stalker_z                     Core Team
+night_stalker_z                     Core Team
 XhmikosR                            Core Team
 Jason Casimir                       Contributor
 A. Jesse Harper (DarC / DisCoStu)   Contributor
