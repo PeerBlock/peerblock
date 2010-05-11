@@ -28,8 +28,8 @@ FOR %%F IN (
 "Win32\Release" "Win32\Release (Vista)" "x64\Release" "x64\Release (Vista)"
 ) DO (
 PUSHD %%F
-CALL ..\..\tools\sign_driver.cmd pbfilter.sys
-CALL ..\..\tools\sign_driver.cmd peerblock.exe
+CALL ..\..\bin\windows\sign_driver.cmd pbfilter.sys
+CALL ..\..\bin\windows\sign_driver.cmd peerblock.exe
 POPD
 )
 
@@ -54,8 +54,8 @@ TITLE Compiling installer...
 ECHO:Compiling installer...
 ECHO.
 IF DEFINED InnoSetupPath (
-"%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\tools\sign_driver.cmd" $f "^
- /Q /O"..\Distribution" "setup.iss"&&(
+"%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\bin\windows\sign_driver.cmd" $f "^
+ /Q /O"..\..\..\distribution" "setup.iss"&&(
 ECHO:Installer compiled!)
 ) ELSE (ECHO:%M_%)
 POPD
@@ -64,11 +64,11 @@ POPD
 REM Create all the zip files ready for distribution
 :CreateZips
 TITLE Creating ZIP files...
-MD "Distribution" >NUL 2>&1
+MD "..\..\distribution" >NUL 2>&1
 ECHO.
 
 FOR /f "tokens=3,4 delims= " %%K IN (
-	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "pb\versioninfo_parsed.h"') DO (
+	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\versioninfo_parsed.h"') DO (
 	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO.
 
@@ -83,7 +83,7 @@ GOTO :AllOK
 
 
 :AllOK
-REN "Distribution\PeerBlock_r*_Release (Vista).zip"^
+REN "..\..\distribution\PeerBlock_r*_Release (Vista).zip"^
  "PeerBlock_r*_Release_(Vista).zip" >NUL 2>&1
 GOTO :END
 
@@ -110,12 +110,12 @@ COPY "license.txt" "temp_zip\" /Y /V
 COPY "setup\readme.rtf" "temp_zip\" /Y /V
 
 PUSHD "temp_zip"
-START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
+START "" /B /WAIT "..\..\bin\windows\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
 
 ECHO:PeerBlock_r%buildnum%__%1_^%~2.zip created successfully!
-MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\Distribution" >NUL 2>&1
+MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\..\..\distribution" >NUL 2>&1
 POPD
 RD /S /Q "temp_zip" >NUL 2>&1
 ECHO.
