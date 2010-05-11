@@ -28,8 +28,8 @@ FOR %%F IN (
 "Win32\Release" "Win32\Release (Vista)" "x64\Release" "x64\Release (Vista)"
 ) DO (
 PUSHD %%F
-CALL ..\..\bin\windows\sign_driver.cmd pbfilter.sys
-CALL ..\..\bin\windows\sign_driver.cmd peerblock.exe
+CALL ..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
+CALL ..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
 POPD
 )
 
