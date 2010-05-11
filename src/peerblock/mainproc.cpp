@@ -856,7 +856,74 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 {
 	if(eventMsg==WM_LBUTTONUP)
 	{
-		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, g_config.WindowHidden);
+		bool showWindow = false;
+		if (g_config.WindowHidden)
+		{
+			showWindow = true;
+		}
+		else
+		{
+			// Check four corners of our window to see if we're the visible window there
+			RECT rect;
+			GetWindowRect(hwnd, &rect);
+			rect.right -= 1;	// correct edge, since .right is the first pixel _outside_ our window
+			rect.bottom -= 1;	// correct edge, since .bottom is the first pixel _outside_ our window
+
+			// Also need to correctly handle part of our window being off-screen
+			int desktopWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+			int desktopHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+			tstring strBuf = boost::str(tformat(_T("[Main_OnVisible]    rect:[%1%, %2%][%3%, %4%] desktop:[%5% x %6%]")) 
+				% rect.left % rect.top % rect.right % rect.bottom % desktopWidth % desktopHeight);
+			TRACEBUFV(strBuf)
+
+			POINT pt;
+			HWND tgtHwnd = 0;
+			bool isOccluded = false;
+
+			pt.x = rect.left;
+			pt.y = rect.top;
+			tgtHwnd = WindowFromPoint(pt);
+			if (tgtHwnd != hwnd && rect.left >= 0 && rect.top >= 0)
+			{
+				TRACEV(" ** (left,top) not our window");
+				isOccluded = true;
+			}
+
+			pt.x = rect.right;
+			pt.y = rect.top;
+			tgtHwnd = WindowFromPoint(pt);
+			if (tgtHwnd != hwnd && rect.right <= desktopWidth && rect.top >= 0)
+			{
+				TRACEV(" ** (right,top) not our window");
+				isOccluded = true;
+			}
+
+			pt.x = rect.right;
+			pt.y = rect.bottom;
+			tgtHwnd = WindowFromPoint(pt);
+			if (tgtHwnd != hwnd && rect.right <= desktopWidth && rect.bottom <= desktopHeight)
+			{
+				TRACEV(" ** (right,bottom) not our window");
+				isOccluded = true;
+			}
+
+			pt.x = rect.left;
+			pt.y = rect.bottom;
+			tgtHwnd = WindowFromPoint(pt);
+			if (tgtHwnd != hwnd && rect.left >= 0 && rect.bottom <= desktopHeight)
+			{
+				TRACEV(" ** (left,bottom) not our window");
+				isOccluded = true;
+			}
+
+			if (isOccluded)
+				showWindow = true;
+			else
+				showWindow = false;
+		}
+
+		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, showWindow);
 	}
 	else if(eventMsg==WM_RBUTTONUP) 
 	{
@@ -882,13 +949,30 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 
 
 
+//================================================================================================
+//
+//  Main_OnVisible()
+//
+//    - Called by Main_DlgProc(), indirectly by Main_OnTray()
+//
+/// <summary>
+///   Shows (restores) or minimizes our main window.
+/// </summary>
+/// <param name="hwnd">
+///   Handle of the window from which this message was sent.
+/// </param>
+/// <param name="visible">
+///   True if we need to show/restore the window; false if we need to minimize it.
+/// </param>
+//
 static void Main_OnVisible(HWND hwnd, BOOL visible) 
 {
 	TRACEI("[Main_OnVisible]  > Entering routine.");
 	int index=TabCtrl_GetCurSel(GetDlgItem(hwnd, IDC_TABS));
 	TRACEV("[Main_OnVisible]    tabctrl_getcursel");
 
-	if(visible) {
+	if(visible) 
+	{
 		TRACEI("[Main_OnVisible]    visible:[TRUE]");
 		if(index!=-1) 
 		{
@@ -906,7 +990,8 @@ static void Main_OnVisible(HWND hwnd, BOOL visible)
 		g_config.WindowHidden=false;
 		TRACEI("[Main_OnVisible]    checking for g_trayactive and g_config.StayHidden");
 
-		if(!g_trayactive && !g_config.StayHidden) {
+		if(!g_trayactive && !g_config.StayHidden) 
+		{
 			TRACEV("[Main_OnVisible]    NOT g_trayactive AND NOT g_config.StayHidden");
 			g_trayactive=true;
 			g_config.HideTrayIcon=false;
@@ -915,8 +1000,10 @@ static void Main_OnVisible(HWND hwnd, BOOL visible)
 			TRACEV("[Main_OnVisible]    done showing notify-icon");
 		}
 	}
-	else {
+	else 
+	{
 		TRACEI("[Main_OnVisible]    visible:[FALSE]");
+
 		if(index!=-1) 
 		{
 			TRACEI("[Main_OnVisible]    index != [-1], hiding window based on tab");
@@ -936,7 +1023,10 @@ static void Main_OnVisible(HWND hwnd, BOOL visible)
 	#endif
 	}
 	TRACEI("[Main_OnVisible]  < Leaving routine.");
-}
+
+} // End of Main_OnTray()
+
+
 
 INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
