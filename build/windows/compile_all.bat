@@ -81,8 +81,9 @@ GOTO :AllOK
 
 
 :AllOK
-REN "..\..\distribution\PeerBlock_r*_Release (Vista).zip"^
- "PeerBlock_r*_Release_(Vista).zip" >NUL 2>&1
+DEL/f/a "..\..\distribution\PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
+REN "..\..\distribution\PeerBlock_r%buildnum%*_Release (Vista).zip"^
+ "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
 GOTO :END
 
 
@@ -110,6 +111,7 @@ PUSHD "temp_zip"
 START "" /B /WAIT "..\..\..\bin\windows\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
 ECHO:PeerBlock_r%buildnum%__%1_^%~2.zip created successfully!
 MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\..\..\distribution" >NUL 2>&1
