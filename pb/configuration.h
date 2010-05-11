@@ -89,51 +89,81 @@ struct Color { COLORREF Text, Background; };
 
 enum NotifyType { Never, OnBlock, OnHttpBlock };
 enum CleanType { None, Delete, ArchiveDelete };
+enum PortType { Destination, Source, Both };
+
+struct PortRange
+{
+	USHORT Start;
+	USHORT End;
+};
 
 struct PortProfile 
 {
-	tstring Name;	// name of profile
-	bool Enabled;	// true to use this profile
-	std::set<ULONG> Ports;	// ports in profile
+	tstring Name;                  // name of profile
+	bool Enabled;                  // true to use this profile
+	PortType Type;                 // source/destination port check
+	std::vector<PortRange> Ports;  // ports in profile
 };
 
 struct PortSet 
 {
-	// allow common protocols
+	// allow common protocols for destination
 	bool AllowHttp;    // 80, 443
 	bool AllowFtp;     // 21
 	bool AllowSmtp;    // 25
 	bool AllowPop3;    // 110
 
-	// all ports combined
-	std::set<ULONG> Ports;	// will use all profiles marked as enabled
+	std::set<USHORT> DestinationPorts;
+	std::set<USHORT> SourcePorts;
 
 	std::vector<PortProfile> Profiles;	// list of profiles
 
 	// merges all the enabled profiles
 	void Merge() 
 	{
-		Ports.clear();
+		DestinationPorts.clear();
+		SourcePorts.clear();
 
 		{
 			if (AllowHttp) {
-				Ports.insert(80);
-				Ports.insert(443);
+				DestinationPorts.insert(80);
+				DestinationPorts.insert(443);
+#if defined(_WIN32_WINNT) && _WIN32_WINNT == 0x0500
+				// XP needs source ports to be allowed as well otherwise it will still act as if it was blocked
+				// this behaviour was in the latest version of PeerGuardian so nothing is broken
+				SourcePorts.insert(80);
+				SourcePorts.insert(443);
+#endif
 			}
 			if (AllowFtp)
-				Ports.insert(21);
-			if (AllowFtp)
-				Ports.insert(25);
-			if (AllowFtp)
-				Ports.insert(110);
+				DestinationPorts.insert(21);
+			if (AllowSmtp)
+				DestinationPorts.insert(25);
+			if (AllowPop3)
+				DestinationPorts.insert(110);
 		}
 
 		for (vector<PortProfile>::const_iterator iter = Profiles.begin(); iter != Profiles.end(); iter++) {
 			PortProfile pp = (PortProfile) *iter;
 
 			if (pp.Enabled) {
-				for (set<ULONG>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
-					Ports.insert((ULONG) *iter2);
+				for (vector<PortRange>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
+					PortRange pr =(PortRange) *iter2;
+
+					if (pr.Start <= pr.End)
+					{
+						if (pp.Type == Destination || pp.Type == Both) {
+							for (USHORT i = pr.Start; i <= pr.End; i++) {
+								DestinationPorts.insert(i);
+							}
+						}
+						
+						if (pp.Type == Source || pp.Type == Both) {
+							for (USHORT i = pr.Start; i <= pr.End; i++) {
+								SourcePorts.insert(i);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -175,7 +205,7 @@ struct Configuration {
 	int LastVersionRun;
 
 	// ui settings
-	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos, PortSetWindowPos;
+	RECT WindowPos, UpdateWindowPos, ListManagerWindowPos, ListEditorWindowPos, HistoryWindowPos;
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
 
 	// non-saved value, stuff used internally only during one run of PeerBlock

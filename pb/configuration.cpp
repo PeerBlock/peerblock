@@ -35,7 +35,7 @@ Configuration::Configuration() :
 	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true), 
 	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), 
 	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
-	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
+	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete), TempAllowingHttp(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
@@ -201,6 +201,18 @@ static bool GetChild(const TiXmlElement *root, const string &node, CleanType &nt
 	return true;
 }
 
+static bool GetChild(const TiXmlElement *root, const string &node, PortType &pt) {
+	string v;
+	if(!GetChild(root, node, v)) return false;
+
+	if(v=="Destination") pt=Destination;
+	else if(v=="Source") pt=Source;
+	else if(v=="Both") pt=Both;
+	else return false;
+
+	return true;
+}
+
 static TiXmlElement *InsertChild(TiXmlNode *root, const string &node) {
 	return root->InsertEndChild(TiXmlElement(node))->ToElement();
 }
@@ -281,6 +293,26 @@ static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, CleanType 
 	}
 
 	return InsertChild(root, node, v);
+}
+
+static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, PortType pt) {
+	const char *v;
+
+	switch(pt) {
+		case Destination: v="Destination"; break;
+		case Source: v="Source"; break;
+		case Both: v="Both"; break;
+		default: __assume(0);
+	}
+
+	return InsertChild(root, node, v);
+}
+
+static void InsertAttribute(TiXmlElement *root, PortRange pr) {
+	root->SetAttribute("Start", pr.Start);
+
+	if (pr.End > pr.Start)
+		root->SetAttribute("End", pr.End);
 }
 
 
@@ -484,7 +516,6 @@ bool Configuration::Load()
 		GetChild(windowing, "ListManager", this->ListManagerWindowPos);
 		GetChild(windowing, "ListEditor", this->ListEditorWindowPos);
 		GetChild(windowing, "History", this->HistoryWindowPos);
-		GetChild(windowing, "PortEditor", this->PortSetWindowPos);
 		
 		GetChild(windowing, "StartMinimized", this->StartMinimized);
 		GetChild(windowing, "ShowSplash", this->ShowSplash);
@@ -618,19 +649,29 @@ bool Configuration::Load()
 				PortProfile pf;
 				GetChild(profile, "Name", pf.Name);
 				GetChild(profile, "Enabled", pf.Enabled);
+				GetChild(profile, "Type", pf.Type);
 
 				if (const TiXmlElement *ports = profile->FirstChildElement("Ports")) {
-					for (const TiXmlElement *port = ports->FirstChildElement("Port"); port != NULL; port = port->NextSiblingElement("Port")) {
-						const char *txtport = port->GetText();
+					for (const TiXmlElement *range = ports->FirstChildElement("Range"); range != NULL; range = range->NextSiblingElement("Range")) {
+						const char *start = range->Attribute("Start");
+						const char *end = range->Attribute("End");
 
-						if (txtport) {
+						if (start) {
 							try {
-								int p = boost::lexical_cast<int>(txtport);
+								USHORT s = boost::lexical_cast<USHORT>(start);
+								USHORT e = 0;
+								
+								if (end)
+									e = boost::lexical_cast<USHORT>(end);
 
-								if (p > 0)
-									pf.Ports.insert((ULONG) p);
+								PortRange pr;
+								pr.Start = s;
+								pr.End = e;
+
+								pf.Ports.push_back(pr);
 							}
-							catch (...) {
+							catch (boost::bad_lexical_cast &) {
+								// not valid number
 							}
 						}
 					}
@@ -798,9 +839,6 @@ void Configuration::Save(const TCHAR * _filename)
 		if(RectValid(this->HistoryWindowPos))
 			InsertChild(windowing, "History", this->HistoryWindowPos);
 
-		if(RectValid(this->PortSetWindowPos))
-			InsertChild(windowing, "PortEditor", this->PortSetWindowPos);
-
 		InsertChild(windowing, "StartMinimized", this->StartMinimized);
 		InsertChild(windowing, "ShowSplash", this->ShowSplash);
 		InsertChild(windowing, "StayHidden", this->StayHidden);
@@ -914,10 +952,12 @@ void Configuration::Save(const TCHAR * _filename)
 
 			InsertChild(profile, "Name", pf.Name);
 			InsertChild(profile, "Enabled", pf.Enabled);
+			InsertChild(profile, "Type", pf.Type);
 
 			TiXmlElement *ports = InsertChild(profile, "Ports");
-			for (set<ULONG>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
-				InsertChild(ports, "Port", (int) *pit);
+			for (vector<PortRange>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
+				TiXmlElement *range = InsertChild(ports, "Range");
+				InsertAttribute(range, (PortRange) *pit);
 			}
 		}
 	}

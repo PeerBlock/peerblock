@@ -210,6 +210,7 @@
 #define IDS_PREVREL341TEXT_DEL			264
 #define IDS_PREVREL341TEXT_MAX			265
 #define IDS_PREVREL341TEXT_BOTH			266
+#define IDS_PORTSETTINGS                267
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003
@@ -364,6 +365,9 @@
 #define IDC_POP3PORT                    1204
 #define IDC_PORTNAME                    1205
 #define IDC_PORTPORTS                   1206
+#define IDC_DESTINATIONPORT             1207
+#define IDC_SOURCEPORT                  1208
+#define IDC_BOTHPORT                    1209
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
@@ -390,6 +394,9 @@
 #define ID_TRAY_SUPPORT                 40028
 #define ID_TRAY_TEMPALLOWHTTP15         40029
 #define ID_TRAY_TEMPALLOWHTTP60         40030
+
+// PeerBlock window messages
+#define WM_PORTSETTINGSCHANGE           (WM_APP+1)
 
 // Next default values for new objects
 // 

@@ -22,9 +22,9 @@
 #include "stdafx.h"
 #include "resource.h"
 
-HWND g_hEditPortsDlg = NULL;
-
-static void EditPorts_OnClose(HWND hwnd)
+// Saves and merges ports
+// hwnd - handle to the window
+static void SavePorts(HWND hwnd)
 {
 	HWND list = GetDlgItem(hwnd, IDC_PORTS);
 	for (vector<PortProfile>::size_type i = 0; i < g_config.PortSet.Profiles.size(); i++) {
@@ -32,13 +32,10 @@ static void EditPorts_OnClose(HWND hwnd)
 	}
 
 	g_config.PortSet.Merge();
-	g_filter->setports(g_config.PortSet.Ports);
-	EndDialog(hwnd, NULL);
+	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
+	g_filter->setsourceports(g_config.PortSet.SourcePorts);
 }
 
-static void About_OnDestroy(HWND hwnd) {
-	g_hEditPortsDlg = NULL;
-}
 
 static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
@@ -46,15 +43,19 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 	{
 		case IDC_HTTPPORT:
 			g_config.PortSet.AllowHttp = (IsDlgButtonChecked(hwnd, IDC_HTTPPORT) == BST_CHECKED);
+			SavePorts(hwnd);
 			break;
 		case IDC_FTPPORT:
 			g_config.PortSet.AllowFtp = (IsDlgButtonChecked(hwnd, IDC_FTPPORT) == BST_CHECKED);
+			SavePorts(hwnd);
 			break;
 		case IDC_SMTPPORT:
 			g_config.PortSet.AllowSmtp = (IsDlgButtonChecked(hwnd, IDC_SMTPPORT) == BST_CHECKED);
+			SavePorts(hwnd);
 			break;
 		case IDC_POP3PORT:
 			g_config.PortSet.AllowPop3 = (IsDlgButtonChecked(hwnd, IDC_POP3PORT) == BST_CHECKED);
+			SavePorts(hwnd);
 			break;
 		case IDC_ADD: {
 			PortProfile p;
@@ -77,6 +78,8 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 				ListView_InsertItem(list, &lvi);
 
 				ListView_SetCheckState(list, idx, true);
+
+				SavePorts(hwnd);
 			}
 		} break;
 		case IDC_REMOVE:
@@ -94,6 +97,8 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 					g_config.PortSet.Profiles.erase(g_config.PortSet.Profiles.begin() + idx);
 					ListView_DeleteItem(list, idx);
 				}
+
+				SavePorts(hwnd);
 			}
 			break;
 		case IDC_EDIT: {
@@ -106,16 +111,12 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 				if (DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PORTPROFILE), hwnd, PortProfile_DlgProc, (LPARAM) &p)==IDOK) {
 					g_config.PortSet.Profiles[idx] = p;
 					ListView_SetItemText(list, idx, 0, (LPWSTR) p.Name.c_str());
+
+					SavePorts(hwnd);
 				}
 			}
 		} break;
 	}
-}
-
-
-static void EditPorts_OnDestroy(HWND hwnd)
-{
-	SaveWindowPosition(hwnd, g_config.PortSetWindowPos);
 }
 
 
@@ -133,25 +134,18 @@ static void EditPorts_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	HDWP dwp=BeginDeferWindowPos(8);
 
-	DeferWindowPos(dwp, defgroup, NULL, 7, 2, cx-14, 120, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
-	DeferWindowPos(dwp, ports, NULL, 7, 130, cx-14, cy-21-140-(rc.bottom-rc.top), SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
+	DeferWindowPos(dwp, defgroup, NULL, 7, 5, cx-14, 120, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
+	DeferWindowPos(dwp, ports, NULL, 7, 133, cx-14, cy-21-140-(rc.bottom-rc.top), SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
 	DeferWindowPos(dwp, add, NULL, cx-((rc.right-rc.left+7)*3), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, edit, NULL, cx-((rc.right-rc.left+7)*2), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, remove, NULL, cx-(rc.right-rc.left+7), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 
 	EndDeferWindowPos(dwp);
-
-	if (state == SIZE_RESTORED) 
-	{
-		SaveWindowPosition(hwnd, g_config.PortSetWindowPos);
-	}
 }
 
 
 static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
-	g_hEditPortsDlg = hwnd;
-
 	CheckDlgButton(hwnd, IDC_HTTPPORT, g_config.PortSet.AllowHttp);
 	CheckDlgButton(hwnd, IDC_FTPPORT, g_config.PortSet.AllowFtp);
 	CheckDlgButton(hwnd, IDC_SMTPPORT, g_config.PortSet.AllowSmtp);
@@ -191,24 +185,6 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		idx++;
 	}
 
-	if(	g_config.PortSetWindowPos.left!=0 || g_config.PortSetWindowPos.top!=0 ||
-		g_config.PortSetWindowPos.right!=0 || g_config.PortSetWindowPos.bottom!=0 ) 
-	{
-		SetWindowPos(hwnd, NULL,
-			g_config.PortSetWindowPos.left,
-			g_config.PortSetWindowPos.top,
-			g_config.PortSetWindowPos.right-g_config.PortSetWindowPos.left,
-			g_config.PortSetWindowPos.bottom-g_config.PortSetWindowPos.top,
-			SWP_NOACTIVATE|SWP_NOOWNERZORDER|SWP_NOZORDER );
-	}
-
-	RECT rc;
-	GetClientRect(hwnd, &rc);
-	EditPorts_OnSize(hwnd, 0, rc.right, rc.bottom);
-
-	// Load peerblock icon in the windows titlebar
-	RefreshDialogIcon(hwnd);
-
 	return TRUE;
 }
 
@@ -241,6 +217,8 @@ static INT_PTR EditPorts_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 
 				EnableWindow(GetDlgItem(hwnd, IDC_EDIT), edit);
 				EnableWindow(GetDlgItem(hwnd, IDC_REMOVE), remove);
+
+				SavePorts(hwnd);
 			} break;
 			case NM_DBLCLK: {
 				if (ListView_GetSelectedCount(nmh->hwndFrom) == 1) {
@@ -254,34 +232,18 @@ static INT_PTR EditPorts_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 }
 
 
-static void EditPorts_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) 
-{
-	RECT rc={0};
-	rc.right=349;
-	rc.bottom=219;
-
-	MapDialogRect(hwnd, &rc);
-
-	lpMinMaxInfo->ptMinTrackSize.x=rc.right;
-	lpMinMaxInfo->ptMinTrackSize.y=rc.bottom;
-}
-
-
 INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 {
 	try 
 	{
 		switch(msg) 
 		{
-			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, EditPorts_OnGetMinMaxInfo);
 			HANDLE_MSG(hwnd, WM_COMMAND, EditPorts_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, EditPorts_OnInitDialog);
 			HANDLE_MSG(hwnd, WM_NOTIFY, EditPorts_OnNotify);
 			HANDLE_MSG(hwnd, WM_SIZE, EditPorts_OnSize);
-			HANDLE_MSG(hwnd, WM_CLOSE, EditPorts_OnClose);
-			HANDLE_MSG(hwnd, WM_DESTROY, EditPorts_OnDestroy);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
+			case WM_PORTSETTINGSCHANGE:
+				CheckDlgButton(hwnd, IDC_HTTPPORT, g_config.PortSet.AllowHttp);
 				return 1;
 			default: return 0;
 		}

@@ -50,7 +50,8 @@ boost::shared_ptr<pbfilter> g_filter;
 
 TabData g_tabs[]={
 	{ IDS_LOG, MAKEINTRESOURCE(IDD_LOG), Log_DlgProc },
-	{ IDS_SETTINGS, MAKEINTRESOURCE(IDD_SETTINGS), Settings_DlgProc }
+	{ IDS_SETTINGS, MAKEINTRESOURCE(IDD_SETTINGS), Settings_DlgProc },
+	{ IDS_PORTSETTINGS, MAKEINTRESOURCE(IDD_EDITPORTS), EditPorts_DlgProc }
 };
 static const size_t g_tabcount=sizeof(g_tabs)/sizeof(TabData);
 
@@ -60,7 +61,6 @@ void SendDialogIconRefreshMessage()
 	SendMessage(g_hAddListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
 	SendMessage(g_hCreateListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
 	SendMessage(g_hEditListDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
-	SendMessage(g_hEditPortsDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
 	SendMessage(g_hExportHistoryDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
 	SendMessage(g_hHistoryFindDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
 	SendMessage(g_hHistoryDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
@@ -128,7 +128,7 @@ void SetBlockHttp(bool _block, unsigned int _time)
 	// setup new PortAllow style http-blocking
 	g_config.PortSet.AllowHttp = !_block;
 	g_config.PortSet.Merge();
-	g_filter->setports(g_config.PortSet.Ports);
+	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 
 	// set icon to match our new state
 	if (g_config.Block)
@@ -159,8 +159,8 @@ void SetBlockHttp(bool _block, unsigned int _time)
 
 	// cleanup
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
+	SendMessage(g_tabs[2].Tab, WM_PORTSETTINGSCHANGE, 0, 0);
 	TRACEV("[mainproc] [SetBlockHttp]  < Leaving routine.");
-
 } // End of SetBlockHttp()
 
 
@@ -473,6 +473,19 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		return FALSE;
 	}
 
+	TRACEI("[mainproc] [Main_OnInitDialog]    setting block");
+	g_filter->setblock(g_config.Block);
+
+	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
+	g_filter->setblockhttp(g_config.BlockHttp);
+
+	//TODO: clean up ports
+	// the block http might not be needed anymore but will need to check
+	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
+	g_config.PortSet.Merge();
+	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
+	g_filter->setsourceports(g_config.PortSet.SourcePorts);
+
 	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
@@ -500,17 +513,6 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 		SendMessage(g_tabs[0].Tab, WM_TIMER, TIMER_UPDATE, 0);
 	}
-
-	TRACEI("[mainproc] [Main_OnInitDialog]    setting block, forcing to Enabled");
-	SetBlock(true);
-
-	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
-	g_filter->setblockhttp(g_config.BlockHttp);
-
-	//TODO: clean up ports
-	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
-	g_config.PortSet.Merge();
-	g_filter->setports(g_config.PortSet.Ports);
 
 	if (!firsttime)
 	{

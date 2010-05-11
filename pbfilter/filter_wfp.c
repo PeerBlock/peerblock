@@ -73,34 +73,34 @@ static ULONG CheckRanges(PBNOTIFICATION *pbn, ULONG ip) {
 	return action;
 }
 
-static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAddr6, ULONG srcPort, ULONG destAddr, const IN6_ADDR *destAddr6, ULONG destPort) {
+static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAddr6, USHORT srcPort, ULONG destAddr, const IN6_ADDR *destAddr6, USHORT destPort) {
 	if(!srcAddr6) {
 		pbn->source.addr4.sin_family = AF_INET;
 		pbn->source.addr4.sin_addr.s_addr = NTOHL(srcAddr);
-		pbn->source.addr4.sin_port = (USHORT)NTOHS((USHORT)srcPort);
+		pbn->source.addr4.sin_port = NTOHS(srcPort);
 	}
 	else {
 		pbn->source.addr6.sin6_family = AF_INET6;
 		pbn->source.addr6.sin6_addr = *srcAddr6;
-		pbn->source.addr6.sin6_port = (USHORT)NTOHS((USHORT)srcPort);
+		pbn->source.addr6.sin6_port = NTOHS(srcPort);
 	}
 
 	if(!destAddr6) {
 		pbn->dest.addr4.sin_family = AF_INET;
 		pbn->dest.addr4.sin_addr.s_addr = NTOHL(destAddr);
-		pbn->dest.addr4.sin_port = (USHORT)NTOHS((USHORT)destPort);
+		pbn->dest.addr4.sin_port = NTOHS(destPort);
 	}
 	else {
 		pbn->dest.addr6.sin6_family = AF_INET6;
 		pbn->dest.addr6.sin6_addr = *destAddr6;
-		pbn->dest.addr6.sin6_port = (USHORT)NTOHS((USHORT)destPort);
+		pbn->dest.addr6.sin6_port = NTOHS(destPort);
 	}
 }
 
-static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, ULONG localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, ULONG remotePort) {
+static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if(protocol == IPPROTO_TCP && PortAllowed(remotePort) && !g_internal->blockhttp) {
+	if(protocol == IPPROTO_TCP && !g_internal->blockhttp && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
 		pbn.action = 2;
 	}
 	else {
@@ -117,7 +117,8 @@ static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_AD
 static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
 											 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
-	ULONG protocol, localAddr, localPort, remoteAddr, remotePort;
+	ULONG protocol, localAddr, remoteAddr;
+	USHORT localPort, remotePort;
 
 	if(!g_internal->block) return STATUS_SUCCESS;
 
@@ -145,7 +146,7 @@ static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 	return STATUS_SUCCESS;
 }
 
-static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, ULONG localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, ULONG remotePort) {
+static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
 	pbn.action = CheckRanges(&pbn, remoteAddr);
@@ -160,7 +161,8 @@ static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADD
 static NTSTATUS ClassifyV4Accept(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
 											 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
-	ULONG protocol, localAddr, localPort, remoteAddr, remotePort;
+	ULONG protocol, localAddr, remoteAddr;
+	USHORT localPort, remotePort;
 
 	if(!g_internal->block) return STATUS_SUCCESS;
 
@@ -193,7 +195,8 @@ static NTSTATUS ClassifyV6Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 {
 	const IN6_ADDR *localAddr, *remoteAddr;
 	const FAKEV6ADDR *fakeremoteAddr;
-	ULONG protocol, localPort, remotePort;
+	ULONG protocol;
+	USHORT localPort, remotePort;
 	int action;
 
 	if(!g_internal->block) return STATUS_SUCCESS;
@@ -258,7 +261,8 @@ static NTSTATUS ClassifyV6Accept(const FWPS_INCOMING_VALUES0* inFixedValues, con
 {
 	const IN6_ADDR *localAddr, *remoteAddr;
 	const FAKEV6ADDR *fakeremoteAddr;
-	ULONG protocol, localPort, remotePort;
+	ULONG protocol;
+	USHORT localPort, remotePort;
 	int action;
 
 	if(!g_internal->block) return STATUS_SUCCESS;
@@ -478,17 +482,31 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
 
-		case IOCTL_PEERBLOCK_SETPORTS: 
+		case IOCTL_PEERBLOCK_SETDESTINATIONPORTS:
 		{
-			ULONG *ports;
+			USHORT *ports;
 			ULONG count;
 
-			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETPORTS\n");
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			SetPorts(ports, count / sizeof(ULONG));
-			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETPORTS\n");
+			SetDestinationPorts(ports, (USHORT) (count / sizeof(USHORT)));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+
+		} break;
+
+		case IOCTL_PEERBLOCK_SETSOURCEPORTS:
+		{
+			USHORT *ports;
+			ULONG count;
+
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+			ports = irp->AssociatedIrp.SystemBuffer;
+			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+
+			SetSourcePorts(ports, (USHORT) (count / sizeof(USHORT)));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
 
 		} break;
 
@@ -582,7 +600,8 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		g_internal->blockedcount = 0;
 		g_internal->allowedcount = 0;
 
-		g_internal->portcount = 0;
+		g_internal->destinationportcount = 0;
+		g_internal->sourceportcount = 0;
 
 		g_internal->block = 0;
 		g_internal->blockhttp = 1;

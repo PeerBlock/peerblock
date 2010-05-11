@@ -38,7 +38,7 @@ static void PortProfile_OnClose(HWND hwnd)
 {
 	TRACEI("[portprofileproc] [PortProfile_OnClose]  > Entering routine.");
 	EndDialog(hwnd, IDCANCEL);
-	TRACEI("[portprofileproc] [PortProfile_OnClose]  < Leavingroutine.");
+	TRACEI("[portprofileproc] [PortProfile_OnClose]  < Leaving routine.");
 
 } // End of PortProfile_OnClose()
 
@@ -61,10 +61,26 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	HWND hname = GetDlgItem(hwnd, IDC_PORTNAME);
 	Edit_SetText(hname, profile->Name.c_str());
 
+	if (profile->Type == Source) {
+		CheckDlgButton(hwnd, IDC_SOURCEPORT, BST_CHECKED);
+	}
+	else if (profile->Type == Both){
+		CheckDlgButton(hwnd, IDC_BOTHPORT, BST_CHECKED);
+	}
+	else {
+		CheckDlgButton(hwnd, IDC_DESTINATIONPORT, BST_CHECKED);
+	}
+
 	tstringstream ports;
-	for (set<ULONG>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
+	for (vector<PortRange>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
 	{
-		ports << *iter;
+		PortRange pr = (PortRange) *iter;
+
+		ports << pr.Start;
+
+		if (pr.End > pr.Start)
+			ports << "-" << pr.End;
+
 		ports << _T("\r\n");
 	}
 
@@ -95,22 +111,45 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			pp->Enabled = true;
 			pp->Ports.clear();
 
+			if (IsDlgButtonChecked(hwnd, IDC_SOURCEPORT) == BST_CHECKED) {
+				pp->Type = Source;
+			}
+			else if (IsDlgButtonChecked(hwnd, IDC_BOTHPORT) == BST_CHECKED){
+				pp->Type = Both;
+			}
+			else {
+				pp->Type = Destination;
+			}
+
 			std::vector<tstring> ports;
 			tstring txtports = GetDlgItemText(hwnd, IDC_PORTPORTS);
 
 			// allow for a whole range of separators
-			boost::split(ports, txtports, boost::is_any_of("\t \n\r,|"));
+			boost::split(ports, txtports, boost::is_any_of("\t\n\r,|"));
 
 			for (std::vector<tstring>::size_type i = 0; i < ports.size(); i++) 
 			{
 				try 
 				{
-					int p = boost::lexical_cast<int>(ports[i]);
+					std::vector<tstring> ranges;
+					boost::split(ranges, ports[i], boost::is_any_of("-"));
 
-					if (p > 0 && p <= 65535)
-						pp->Ports.insert((ULONG) p);
+					if (ranges.size() > 0 && ranges.size() <= 2)
+					{
+						USHORT s = boost::lexical_cast<USHORT>(ranges[0]);
+						USHORT e = s;
+
+						if (ranges.size() > 1)
+							e = boost::lexical_cast<USHORT>(ranges[1]);
+
+						PortRange pr;
+						pr.Start = s;
+						pr.End = e;
+
+						pp->Ports.push_back(pr);
+					}
 				}
-				catch (...) 
+				catch (boost::bad_lexical_cast &) 
 				{
 					TRACEW("[portprofileproc] [PortProfile_OnCommand]  * EXCEPTION caught (and ignored) while processing IDOK");
 				}

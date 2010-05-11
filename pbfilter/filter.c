@@ -96,18 +96,16 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 	int opening=1;
 	int http = 0;
 
-	// TCP = 6, UDP = 17 (http://www.iana.org/assignments/protocol-numbers/)
-	if(iph->ipProtocol==6 || iph->ipProtocol==17) {
+	// TCP = 6 (http://www.iana.org/assignments/protocol-numbers/)
+	if(iph->ipProtocol == IPPROTO_TCP) {
 		const TCP_HEADER *tcp=(TCP_HEADER*)packet;
 		srcport=NTOHS(tcp->sourcePort);
 		destport=NTOHS(tcp->destinationPort);
 
-		if(iph->ipProtocol==6) {
-			opening=(tcp->ack==0);
+		opening = (tcp->ack==0);
 
-			if(!g_internal->blockhttp &&  (PortAllowed(srcport) || PortAllowed(destport))) {
-				http = 1;
-			}
+		if(!g_internal->blockhttp && (DestinationPortAllowed(destport) || SourcePortAllowed(srcport))) {
+			http = 1;
 		}
 	}
 
@@ -265,17 +263,31 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
 			return Notification_Recieve(&g_internal->queue, irp);
 
-		case IOCTL_PEERBLOCK_SETPORTS: 
+		case IOCTL_PEERBLOCK_SETDESTINATIONPORTS: 
 		{
-			ULONG *ports;
+			USHORT *ports;
 			ULONG count;
 
-			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETPORTS\n");
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			SetPorts(ports, count / sizeof(ULONG));
-			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETPORTS\n");
+			SetDestinationPorts(ports, (USHORT) count / sizeof(ULONG));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+
+		} break;
+
+		case IOCTL_PEERBLOCK_SETSOURCEPORTS: 
+		{
+			USHORT *ports;
+			ULONG count;
+
+			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+			ports = irp->AssociatedIrp.SystemBuffer;
+			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+
+			SetSourcePorts(ports, (USHORT) count / sizeof(ULONG));
+			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
 
 		} break;
 
@@ -345,7 +357,8 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		DbgPrint("pbfilter:    ... resetting counters\n");
 		g_internal->blockedcount = 0;
 		g_internal->allowedcount = 0;
-		g_internal->portcount = 0;
+		g_internal->destinationportcount = 0;
+		g_internal->sourceportcount = 0;
 		g_internal->blockhttp=1;
 
 		DbgPrint("pbfilter:    internal data initted\n");
