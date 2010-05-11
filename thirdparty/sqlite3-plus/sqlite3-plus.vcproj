@@ -313,19 +313,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\command.cpp"
+				RelativePath=".\sqlite3x_command.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\connection.cpp"
+				RelativePath=".\sqlite3x_connection.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\exception.cpp"
+				RelativePath=".\sqlite3x_exception.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\reader.cpp"
+				RelativePath=".\sqlite3x_reader.cpp"
 				>
 			</File>
 		</Filter>

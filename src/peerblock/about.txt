@@ -14,10 +14,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 PeerBlock Credits:
 Mark Bulas (MarkSide) - Lead Developer
-night_stalker_z - Developer
-Jason Casimir - Developer
-A. Jesse Harper (DarC / DisCoStu) - Installer
-XhmikosR - Installer
+night_stalker_z - Core Team
+XhmikosR - Core Team
+Jason Casimir - Contributor
+A. Jesse Harper (DarC / DisCoStu) - Contributor
 
 Test Team:
 2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), LANsquared, opus, Praeses (PraesesZA), RavenSoft, Tran Dinh Thien (Tippy / Thikku), Uzerrr, zerocoolxp
