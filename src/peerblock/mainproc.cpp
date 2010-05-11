@@ -473,8 +473,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		return FALSE;
 	}
 
-	TRACEI("[mainproc] [Main_OnInitDialog]    setting block");
-	g_filter->setblock(g_config.Block);
+	TRACEI("[mainproc] [Main_OnInitDialog]    setting block, forcing to Enabled");
+	g_filter->setblock(true);
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
 	g_filter->setblockhttp(g_config.BlockHttp);
