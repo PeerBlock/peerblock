@@ -59,7 +59,7 @@ VersionInfoDescription=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 VersionInfoTextVersion={#= app_version}
 DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
-LicenseFile=..\..\..\doc\license.txt
+LicenseFile=..\..\..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=.
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}
@@ -149,8 +149,8 @@ Source: {code:GetPGPath}\*.p2p; DestDir: {app}; Tasks: use_pg_settings; Flags: s
 Source: {code:GetPGPath}\lists\*.p2b; DestDir: {app}\lists; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 Source: {code:GetPGPath}\lists\*.p2p; DestDir: {app}\lists; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 
-Source: ..\..\..\doc\license.txt; DestDir: {app}; Flags: ignoreversion
-Source: readme.rtf; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\..\license.txt; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\..\doc\readme.rtf; DestDir: {app}; Flags: ignoreversion
 
 
 [Icons]

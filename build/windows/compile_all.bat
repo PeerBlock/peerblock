@@ -106,11 +106,11 @@ GOTO :EOF
 MD "temp_zip" >NUL 2>&1
 COPY "%1\%~2\peerblock.exe" "temp_zip\" /Y /V
 COPY "%1\%~2\pbfilter.sys" "temp_zip\" /Y /V
-COPY "license.txt" "temp_zip\" /Y /V
-COPY "setup\readme.rtf" "temp_zip\" /Y /V
+COPY "..\..\license.txt" "temp_zip\" /Y /V
+COPY "..\..\doc\readme.rtf" "temp_zip\" /Y /V
 
 PUSHD "temp_zip"
-START "" /B /WAIT "..\..\bin\windows\7za\7za.exe" a -tzip -mx=9^
+START "" /B /WAIT "..\..\..\bin\windows\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
 
