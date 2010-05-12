@@ -19,11 +19,10 @@
 ;
 ;
 ; Requirements:
-; *Inno Setup QuickStart Pack v5.3.8: http://www.jrsoftware.org/isdl.php#qsp
+; *Inno Setup QuickStart Pack v5.3.9(+): http://www.jrsoftware.org/isdl.php#qsp
 
 
 #define dummy Exec("versioninfo_setup.bat","","",1,SW_HIDE)
-
 #include "versioninfo_setup.h"
 
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
@@ -48,7 +47,7 @@ AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 AppPublisher=PeerBlock, LLC
 AppCopyright=Copyright © 2009-2010, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
-AppSupportURL=http://www.peerblock.com/
+AppSupportURL=http://www.peerblock.com/support
 AppUpdatesURL=http://www.peerblock.com/
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
@@ -62,10 +61,10 @@ DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
 LicenseFile=..\license.txt
 InfoBeforeFile=readme_before.rtf
-OutputDir=..\Distribution
+OutputDir=.
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}
-Compression=lzma/max
-InternalCompressLevel=normal
+Compression=lzma2/max
+InternalCompressLevel=max
 SolidCompression=yes
 MinVersion=0,5.0.2195
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})

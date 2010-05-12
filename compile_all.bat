@@ -15,9 +15,7 @@ CALL :SubMSVS "Release" %%A
 CALL :SubMSVS "Release (Vista)" %%A
 )
 
-ECHO.
-ECHO.
-
+ECHO.&&ECHO.
 
 REM Sign driver and program
 IF NOT DEFINED PB_CERT (
@@ -53,8 +51,11 @@ PUSHD setup
 TITLE Compiling installer...
 ECHO:Compiling installer...
 ECHO.
-IF DEFINED InnoSetupPath ("%InnoSetupPath%\iscc.exe" /SStandard="cmd /c ..\tools\sign_driver.cmd $f " /Q "setup.iss"&&(
-ECHO:Installer compiled!)) ELSE (ECHO:%M_%)
+IF DEFINED InnoSetupPath (
+"%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\tools\sign_driver.cmd" $f "^
+ /Q /O"..\Distribution" "setup.iss"&&(
+ECHO:Installer compiled!)
+) ELSE (ECHO:%M_%)
 POPD
 
 
@@ -78,14 +79,20 @@ CALL :SubZipFiles x64 %%L
 
 GOTO :AllOK
 
+
 :AllOK
-REN "Distribution\PeerBlock_r*_Release (Vista).zip"^
- "PeerBlock_r*_Release_(Vista).zip" >NUL 2>&1
+DEL/f/a "Distribution\PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
+REN "Distribution\PeerBlock_r%buildnum%*_Release (Vista).zip"^
+ "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
 GOTO :END
 
-:ErrorDetected
-ECHO:Compilation FAILED!!!
-GOTO :END
+
+:END
+TITLE Compiling PeerBlock - Finished!
+ECHO.&&ECHO.
+ENDLOCAL && PAUSE
+EXIT
+
 
 :SubMSVS
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerBlock.sln^
@@ -95,15 +102,16 @@ GOTO :EOF
 
 :SubZipFiles
 MD "temp_zip" >NUL 2>&1
-COPY "%1\%~2\peerblock.exe" "temp_zip\" /Y
-COPY "%1\%~2\pbfilter.sys" "temp_zip\" /Y
-COPY "license.txt" "temp_zip\" /Y
-COPY "setup\readme.rtf" "temp_zip\" /Y
+COPY "%1\%~2\peerblock.exe" "temp_zip\" /Y /V
+COPY "%1\%~2\pbfilter.sys" "temp_zip\" /Y /V
+COPY "license.txt" "temp_zip\" /Y /V
+COPY "setup\readme.rtf" "temp_zip\" /Y /V
 
 PUSHD "temp_zip"
 START "" /B /WAIT "..\tools\7za\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
 ECHO:PeerBlock_r%buildnum%__%1_^%~2.zip created successfully!
 MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\Distribution" >NUL 2>&1
@@ -120,9 +128,8 @@ GOTO :EOF
 SET buildnum=%*
 GOTO :EOF
 
-:END
-TITLE Compiling PeerBlock - Finished!
-ECHO.
-ECHO.
-ENDLOCAL && PAUSE
-GOTO :EOF
+:ErrorDetected
+ECHO.&&ECHO.
+ECHO:Compilation FAILED!!!
+PAUSE
+EXIT

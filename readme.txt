@@ -18,7 +18,6 @@ if you use it.
 Links
 -----
 http://www.peerblock.com                PeerBlock Website
-http://devblog.peerblock.com            PeerBlock Development Blog
 http://forums.peerblock.com             PeerBlock Forums
 http://code.google.com/p/peerblock/     PeerBlock Source Code
 
@@ -35,14 +34,28 @@ SQLite          http://www.sqlite.org
 TinyXml         http://www.grinninglizard.com/tinyxml
 zlib            http://www.zlib.net
 
-
-Credits
--------
+PeerBlock Credits
+-----------------
 Mark Bulas (MarkSide)               Lead Developer
-Night_stalker_z                     Developer
-Jason Casimir                       Developer
-A. Jesse Harper (DarC / DisCoStu)   Installer
-XhmikosR                            Installer
+night_stalker_z                     Core Team
+XhmikosR                            Core Team
+Jason Casimir                       Contributor
+A. Jesse Harper (DarC / DisCoStu)   Contributor
+
+Test Team:
+2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), LANsquared, opus,
+Praeses (PraesesZA), RavenSoft, Tran Dinh Thien (Tippy / Thikku), Uzerrr,
+zerocoolxp
+
+Documentation:
+Nathan van der Velden (hoodadilly)  Documentation
+Martin Eilbeck (Freelandr)          Start with Windows Tutorial
+
+Website:
+Brian Quinn (ss18)                  Site Admin
+Rob Robinson (RobrPatty)            Forum Moderator
+Jesse Hall (Jessay)                 Web Design
+LANsquared                          Hosting
 
 
 PeerGuardian 2 Credits

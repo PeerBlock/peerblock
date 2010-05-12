@@ -129,11 +129,8 @@ begin
   DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
   RemoveDir(ExpandConstant('{app}\archives\'));
   DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
-  DelTree(ExpandConstant('{app}\lists\*.list.tmp'), False, True, False);
-  DelTree(ExpandConstant('{app}\lists\*.list.failed'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
-  RemoveDir(ExpandConstant('{app}\lists\'));
   DeleteFile(ExpandConstant('{app}\peerblock.conf'));
   DeleteFile(ExpandConstant('{app}\peerblock.conf.bak'));
 end;
@@ -141,10 +138,14 @@ end;
 
 procedure RemoveMiscFiles();
 begin
+  DelTree(ExpandConstant('{app}\lists\*.list.failed'), False, True, False);
+  DelTree(ExpandConstant('{app}\lists\*.list.tmp'), False, True, False);
+  RemoveDir(ExpandConstant('{app}\lists\'));
   DeleteFile(ExpandConstant('{app}\cache.p2b'));
   DeleteFile(ExpandConstant('{app}\history.db'));
   DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
   DeleteFile(ExpandConstant('{app}\peerblock.log'));
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak.tmp'));
   DeleteFile(ExpandConstant('{app}\peerblock.conf.tmp'));
 end;
 
