@@ -209,7 +209,7 @@ struct Configuration {
 	bool WindowHidden, AlwaysOnTop, HideTrayIcon;
 
 	// non-saved value, stuff used internally only during one run of PeerBlock
-	bool TempAllowingHttp;
+	bool TempAllowingHttpShort, TempAllowingHttpLong;
 
 	Configuration();
 
