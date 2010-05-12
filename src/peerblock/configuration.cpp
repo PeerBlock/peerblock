@@ -664,7 +664,7 @@ bool Configuration::Load()
 						if (start) {
 							try {
 								USHORT s = boost::lexical_cast<USHORT>(start);
-								USHORT e = 0;
+								USHORT e = s;
 								
 								if (end)
 									e = boost::lexical_cast<USHORT>(end);
