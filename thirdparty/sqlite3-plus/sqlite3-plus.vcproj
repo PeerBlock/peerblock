@@ -328,6 +328,10 @@
 				RelativePath=".\sqlite3x_reader.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\sqlite3x_transaction.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -16,7 +16,11 @@
 	2. Altered source versions must be plainly marked as such, and must not be
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
-
+	
+	CVS Info :
+		$Author: phrostbyte $
+		$Date: 2005/06/16 20:46:40 $
+		$Revision: 1.1 $
 */
 
 #ifndef __SQLITE3X_HPP__
@@ -82,6 +86,20 @@ namespace sqlite3x {
 		std::string executeblob(const std::wstring &sql);
 	};
 
+	class sqlite3_transaction : boost::noncopyable {
+	private:
+		sqlite3_connection &con;
+		bool intrans;
+
+	public:
+		sqlite3_transaction(sqlite3_connection &con, bool start=true);
+		~sqlite3_transaction();
+
+		void begin();
+		void commit();
+		void rollback();
+	};
+
 	class sqlite3_command : boost::noncopyable {
 	private:
 		friend class sqlite3_reader;
@@ -144,8 +162,8 @@ namespace sqlite3x {
 		std::wstring getstring16(int index);
 		std::string getblob(int index);
 
-		std::string getname(int index);
-		std::wstring getname16(int index);
+		std::string getcolname(int index);
+		std::wstring getcolname16(int index);
 	};
 
 	class database_error : public std::runtime_error {

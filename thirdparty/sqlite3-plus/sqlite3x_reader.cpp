@@ -16,7 +16,11 @@
 	2. Altered source versions must be plainly marked as such, and must not be
 		misrepresented as being the original software.
 	3. This notice may not be removed or altered from any source distribution.
-
+	
+	CVS Info :
+		$Author: phrostbyte $
+		$Date: 2005/06/16 20:46:40 $
+		$Revision: 1.1 $
 */
 
 #include <sqlite3.h>
@@ -36,7 +40,6 @@ sqlite3_reader::sqlite3_reader(sqlite3_command *cmd) : cmd(cmd) {
 
 sqlite3_reader::~sqlite3_reader() {
 	this->close();
-
 }
 
 sqlite3_reader& sqlite3_reader::operator=(const sqlite3_reader &copy) {
@@ -111,13 +114,13 @@ std::string sqlite3_reader::getblob(int index) {
 	return std::string((const char*)sqlite3_column_blob(this->cmd->stmt, index), sqlite3_column_bytes(this->cmd->stmt, index));
 }
 
-std::string sqlite3_reader::getname(int index) {
+std::string sqlite3_reader::getcolname(int index) {
 	if(!this->cmd) throw database_error("reader is closed");
 	if((index)>(this->cmd->argc-1)) throw std::out_of_range("index out of range");
 	return sqlite3_column_name(this->cmd->stmt, index);
 }
 
-std::wstring sqlite3_reader::getname16(int index) {
+std::wstring sqlite3_reader::getcolname16(int index) {
 	if(!this->cmd) throw database_error("reader is closed");
 	if((index)>(this->cmd->argc-1)) throw std::out_of_range("index out of range");
 	return (const wchar_t*)sqlite3_column_name16(this->cmd->stmt, index);

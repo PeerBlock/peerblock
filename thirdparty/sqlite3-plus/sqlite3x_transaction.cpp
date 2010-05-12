@@ -28,7 +28,34 @@
 
 namespace sqlite3x {
 
-database_error::database_error(const char *msg) : runtime_error(msg) {}
-database_error::database_error(sqlite3_connection &con) : runtime_error(sqlite3_errmsg(con.db)) {}
+sqlite3_transaction::sqlite3_transaction(sqlite3_connection &con, bool start) : con(con),intrans(false) {
+	if(start) begin();
+}
+
+sqlite3_transaction::~sqlite3_transaction() {
+	if(intrans) {
+		try {
+			rollback();
+		}
+		catch(...) {
+			return;
+		}
+	}
+}
+
+void sqlite3_transaction::begin() {
+	con.executenonquery("begin;");
+	intrans=true;
+}
+
+void sqlite3_transaction::commit() {
+	con.executenonquery("commit;");
+	intrans=false;
+}
+
+void sqlite3_transaction::rollback() {
+	con.executenonquery("rollback;");
+	intrans=false;
+}
 
 }
