@@ -191,6 +191,7 @@ struct Configuration {
 	bool StartMinimized, ShowSplash, HideOnClose, StayHidden;
 	bool LogAllowed, LogBlocked, ShowAllowed;
 	bool FirstBlock, FirstHide;
+	bool EnableListSanityChecking, EnableWarningIconForHttpAllow;
 	NotifyType BlinkOnBlock, NotifyOnBlock;
 	unsigned short UpdateInterval, LogSize, CleanupInterval;
 	short UpdateCountdown;

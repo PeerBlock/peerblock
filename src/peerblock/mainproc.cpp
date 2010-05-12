@@ -70,6 +70,59 @@ void SendDialogIconRefreshMessage()
 	SendMessage(g_hUpdateListsDlg, WM_DIALOG_ICON_REFRESH, 0, 0);
 }
 
+
+
+//================================================================================================
+//
+//  DetermineIcon()
+//
+//    - Called by SetBlock(), SetBlockHttp(), and Main_OnInitDialog()
+//
+/// <summary>
+///   Selects the correct icon we should be using, based on whether we're enabled/disabled, 
+///	  allowing HTTP and whether we're allowed to use a yellow "warning" icon.
+/// </summary>
+//
+HICON DetermineIcon()
+{
+	HICON icon = 0;
+	if (g_config.Block)
+	{
+		if (!g_config.BlockHttp && g_config.EnableWarningIconForHttpAllow)
+		{
+			icon = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+		}
+		else
+		{
+			icon = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+		}
+	}
+	else
+	{
+		icon = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+	}
+
+	return icon;
+
+} // End of DetermineIcon()
+
+
+
+//================================================================================================
+//
+//  SetBlock()
+//
+//    - Called by Main_OnCommand() while processing systray menu clicks
+//    - Called by Log_OnCommand() if user clicked Enable/Disable button on main UI
+//
+/// <summary>
+///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies 
+///   the driver.
+/// </summary>
+/// <param name="block">
+///   True if we are being set to Enabled, meaning we will start filtering network traffic.
+/// </param>
+//
 void SetBlock(bool block) 
 {
 	TRACEV("[mainproc] [SetBlock]  > Entering routine.");
@@ -80,7 +133,7 @@ void SetBlock(bool block)
 	g_config.Block=block;
 	g_filter->setblock(block);
 	
-	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), block?g_config.BlockHttp?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+	g_nid.hIcon = DetermineIcon();
 	if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
 
 	SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
@@ -90,7 +143,8 @@ void SetBlock(bool block)
 
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
 	TRACEV("[mainproc] [SetBlock]  < Leaving routine.");
-}
+
+} // End of SetBlock()
 
 
 
@@ -133,7 +187,7 @@ void SetBlockHttp(bool _block, unsigned int _time)
 	// set icon to match our new state
 	if (g_config.Block)
 	{
-		g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), _block?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+		g_nid.hIcon = DetermineIcon();
 		if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
 
 		SendMessage(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_nid.hIcon);
@@ -545,7 +599,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_nid.uID=TRAY_ID;
 	g_nid.uCallbackMessage=WM_PB_TRAY;
 	g_nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;	
-	g_nid.hIcon=(HICON)LoadImage(GetModuleHandle(NULL), g_config.Block?g_config.BlockHttp?MAKEINTRESOURCE(IDI_MAIN):MAKEINTRESOURCE(IDI_HTTPDISABLED):MAKEINTRESOURCE(IDI_DISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
+	g_nid.hIcon = DetermineIcon();
 	StringCbCopy(g_nid.szTip, sizeof(g_nid.szTip), _T("PeerBlock"));
 
 	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden))) 
