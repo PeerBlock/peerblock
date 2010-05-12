@@ -4,22 +4,27 @@ TITLE Compiling PeerBlock...
 
 REM Check if Windows DDK 6.1 is present in PATH
 IF NOT DEFINED PB_DDK_DIR (
-ECHO:Windows DDK 6.1 path NOT FOUND!!!&&(GOTO :END)
+COLOR 0C
+ECHO:Windows DDK 6.1 path NOT FOUND!!!
+ECHO:Install the Windows DDK 6.1 and set an environment variable named "PB_DDK_DIR"
+ECHO:pointing to the Windows DDK 6.1 installation path.
+ECHO:Example: H:\progs\WinDDK\6001.18002
+GOTO :ErrorDetected
 )
 
 REM Compile PeerBlock with MSVC 2008
 TITLE Compiling PeerBlock with MSVC 2008...
 FOR %%A IN ("Win32" "x64"
 ) DO (
-CALL :SubMSVS "Release" %%A
-CALL :SubMSVS "Release (Vista)" %%A
+CALL :SubMSVC "Release" %%A
+CALL :SubMSVC "Release (Vista)" %%A
 )
-
-ECHO.&&ECHO.
 
 REM Sign driver and program
 IF NOT DEFINED PB_CERT (
-ECHO:Certificate not found!!! Driver and program will not be signed.&&(GOTO :BuildInstaller)
+ECHO. && ECHO.
+ECHO:Certificate not found!!! Driver and program will not be signed.
+GOTO :BuildInstaller
 )
 
 FOR %%F IN (
@@ -42,20 +47,26 @@ SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
 
 SET "I_=Inno Setup"
 SET "A_=%I_% 5"
-SET "M_=Inno Setup IS NOT INSTALLED!!!"
 FOR /f "delims=" %%a IN (
 	'REG QUERY "%U_%\%A_%_is1" /v "%I_%: App Path"2^>Nul^|FIND "REG_"') DO (
 	SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
 
+IF NOT DEFINED InnoSetupPath (
+ECHO. && ECHO.
+ECHO:Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
+GOTO :CreateZips
+)
+
 PUSHD setup
 TITLE Compiling installer...
+ECHO.
 ECHO:Compiling installer...
 ECHO.
-IF DEFINED InnoSetupPath (
+
 "%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\tools\sign_driver.cmd" $f "^
- /Q /O"..\Distribution" "setup.iss"&&(
-ECHO:Installer compiled!)
-) ELSE (ECHO:%M_%)
+ /Q /O"..\Distribution" "setup.iss"
+IF %ERRORLEVEL% NEQ 0 (GOTO :ErrorDetected) ELSE (
+ECHO:Installer compiled successfully!)
 POPD
 
 
@@ -89,12 +100,12 @@ GOTO :END
 
 :END
 TITLE Compiling PeerBlock - Finished!
-ECHO.&&ECHO.
+ECHO. && ECHO.
 ENDLOCAL && PAUSE
 EXIT
 
 
-:SubMSVS
+:SubMSVC
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerBlock.sln^
  /t:Rebuild /p:Configuration=%1 /p:Platform=%2
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
@@ -129,7 +140,8 @@ SET buildnum=%*
 GOTO :EOF
 
 :ErrorDetected
-ECHO.&&ECHO.
+ECHO. && ECHO.
 ECHO:Compilation FAILED!!!
-PAUSE
+ECHO. && ECHO.
+ENDLOCAL && PAUSE
 EXIT

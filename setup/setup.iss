@@ -167,7 +167,6 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset_settings remove_startup_task; Flags: deletevalue uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Flags: uninsdeletevalue
 
 
 [Run]
@@ -287,5 +286,6 @@ begin
     // Always delete the rest of PeerBlock's files
     RemoveMiscFiles;
     RemoveDir(ExpandConstant('{app}'));
+    RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock');
   end;
 end;
