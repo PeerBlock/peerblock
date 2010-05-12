@@ -148,13 +148,25 @@ void SetBlockHttp(bool _block, unsigned int _time)
 		tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]    setting temp-http timer to [%1%] minutes")) % _time );
 		TRACEBUFI(strBuf);
 		SetTimer(g_main, TIMER_TEMPALLOWHTTP, _time * 60 * 1000, NULL);	// _time minutes
-		g_config.TempAllowingHttp = true;	// ensure that we don't save this to our config file at exit
+		if (_time < 30) 
+		{
+			g_config.TempAllowingHttpShort = true;
+			g_config.TempAllowingHttpLong = false;
+		}
+		else 
+		{
+			g_config.TempAllowingHttpLong = true;
+			g_config.TempAllowingHttpShort = false;
+		}
+				
 	}
-	else
+
+	if (_time <= 0 || _block)
 	{
 		TRACEI("[mainproc] [SetBlockHttp]    cancelling temp-http timer");
 		KillTimer(g_main, TIMER_TEMPALLOWHTTP);
-		g_config.TempAllowingHttp = false;
+		g_config.TempAllowingHttpShort = false;
+		g_config.TempAllowingHttpLong = false;
 	}
 
 	// cleanup
@@ -222,17 +234,20 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case ID_TRAY_BLOCKHTTP:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Block HTTP' item");
-			SetBlockHttp(!g_config.BlockHttp);
+			if (!g_config.TempAllowingHttpShort && !g_config.TempAllowingHttpLong) SetBlockHttp(!g_config.BlockHttp);
+			else SetBlockHttp(false);
 			break;
 
 		case ID_TRAY_TEMPALLOWHTTP15:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 15 minutes' item");
-			SetBlockHttp(false, 15);
+			if (!g_config.TempAllowingHttpShort) SetBlockHttp(false, 15);
+			else SetBlockHttp(true);
 			break;
 
 		case ID_TRAY_TEMPALLOWHTTP60:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Allow HTTP for 60 minutes' item");
-			SetBlockHttp(false, 60);
+			if (!g_config.TempAllowingHttpLong) SetBlockHttp(false, 60);
+			else SetBlockHttp(true);
 			break;
 
 		case ID_TRAY_ALWAYSONTOP:
@@ -935,7 +950,30 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 		CheckMenuItem(submenu, ID_TRAY_ALWAYSONTOP, MF_BYCOMMAND|(g_config.AlwaysOnTop?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_ENABLED, MF_BYCOMMAND|(g_config.Block?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_DISABLED, MF_BYCOMMAND|(g_config.Block?MF_UNCHECKED:MF_CHECKED));
-		CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|(g_config.BlockHttp?MF_UNCHECKED:MF_CHECKED));
+		if (!g_config.BlockHttp && g_config.TempAllowingHttpShort)
+		{
+			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_UNCHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_CHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP60, MF_BYCOMMAND|MF_UNCHECKED);
+		}
+		else if (!g_config.BlockHttp && g_config.TempAllowingHttpLong)
+		{
+			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_UNCHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_UNCHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP60, MF_BYCOMMAND|MF_CHECKED);
+		}
+		else if (!g_config.BlockHttp)
+		{
+			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_CHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_UNCHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP60, MF_BYCOMMAND|MF_UNCHECKED);
+		}
+		else
+		{
+			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_UNCHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_UNCHECKED);
+			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP60, MF_BYCOMMAND|MF_UNCHECKED);
+		}
 
 		SetForegroundWindow(hwnd);
 		TrackPopupMenuEx(submenu, TPM_BOTTOMALIGN, pt.x, pt.y, hwnd, NULL);
