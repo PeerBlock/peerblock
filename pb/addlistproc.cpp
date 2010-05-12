@@ -287,7 +287,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				}
 
 				// sanity-check
-				url = AddList_SanityCheckUrl(url);
+				if (g_config.EnableListSanityChecking) url = AddList_SanityCheckUrl(url);
 
 				if (!url.empty())
 				{

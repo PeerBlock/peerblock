@@ -37,6 +37,7 @@ Configuration::Configuration() :
 	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()), PortSetWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
+	EnableListSanityChecking(true), EnableWarningIconForHttpAllow(true),
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete), TempAllowingHttpShort(false),
 	TempAllowingHttpLong(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
@@ -441,6 +442,9 @@ bool Configuration::Load()
 		int i=(DWORD)RecentBlockWarntime;
 		GetChild(settings, "RecentBlockWarntime", i);
 		this->RecentBlockWarntime=(DWORD)i;
+
+		GetChild(settings, "ListSanityChecking", this->EnableListSanityChecking);
+		GetChild(settings, "WarningIconForHttpAllow", this->EnableWarningIconForHttpAllow);
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config logging element");
@@ -746,6 +750,8 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(settings, "NotifyOnBlock", this->NotifyOnBlock);
 		InsertChild(settings, "LastVersionRun", PB_VER_BUILDNUM);
 		InsertChild(settings, "RecentBlockWarntime", (int)this->RecentBlockWarntime);
+		InsertChild(settings, "ListSanityChecking", this->EnableListSanityChecking);
+		InsertChild(settings, "WarningIconForHttpAllow", this->EnableWarningIconForHttpAllow);
 	}
 
 	{
