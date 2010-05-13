@@ -9,7 +9,7 @@ Website:  http://www.boost.org
 libcurl version 7.20.1
 License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl
-Notes:    The version used by PeerBlock is slightly modified.
+Notes:    The version PeerBlock is using is slightly modified.
           See here: (http://code.google.com/p/peerblock/source/detail?r=284)
 
 miniunzip version 1.01h

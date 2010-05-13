@@ -20,22 +20,6 @@ CALL :SubMSVC "Release" %%A
 CALL :SubMSVC "Release (Vista)" %%A
 )
 
-REM Sign driver and program
-IF NOT DEFINED PB_CERT (
-ECHO. && ECHO.
-ECHO:Certificate not found!!! Driver and program will not be signed.
-GOTO :BuildInstaller
-)
-
-FOR %%F IN (
-"Win32\Release" "Win32\Release (Vista)" "x64\Release" "x64\Release (Vista)"
-) DO (
-PUSHD %%F
-CALL ..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
-CALL ..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
-POPD
-)
-
 
 :BuildInstaller
 REM Detect if we are running on 64bit WIN and use Wow6432Node, set the path
