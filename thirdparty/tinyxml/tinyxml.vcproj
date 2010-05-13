@@ -54,7 +54,6 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -121,7 +120,6 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CallingConvention="1"
 			/>
@@ -192,8 +190,6 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -263,8 +259,6 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CallingConvention="1"
 			/>
 			<Tool

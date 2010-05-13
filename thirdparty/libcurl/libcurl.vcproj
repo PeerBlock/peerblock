@@ -55,7 +55,6 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -124,7 +123,6 @@
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CallingConvention="1"
 				CompileAs="1"
@@ -197,8 +195,6 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
 			<Tool
@@ -270,8 +266,6 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CallingConvention="1"
 				CompileAs="1"
 			/>
@@ -343,8 +337,6 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
 			<Tool
@@ -416,8 +408,6 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CallingConvention="1"
 				CompileAs="1"
 			/>
@@ -837,15 +827,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-amigaos.h"
-				>
-			</File>
-			<File
 				RelativePath=".\lib\config-amigaos.h"
 				>
 			</File>
 			<File
-				RelativePath=".\lib\config-mac.h"
+				RelativePath=".\src\config-amigaos.h"
 				>
 			</File>
 			<File
@@ -853,15 +839,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\config-mac.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\config-os400.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-riscos.h"
+				RelativePath=".\lib\config-riscos.h"
 				>
 			</File>
 			<File
-				RelativePath=".\lib\config-riscos.h"
+				RelativePath=".\src\config-riscos.h"
 				>
 			</File>
 			<File
@@ -1133,11 +1123,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\setup.h"
+				RelativePath=".\lib\setup.h"
 				>
 			</File>
 			<File
-				RelativePath=".\lib\setup.h"
+				RelativePath=".\src\setup.h"
 				>
 			</File>
 			<File

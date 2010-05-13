@@ -4,7 +4,7 @@
 	Version="9,00"
 	Name="peerblock"
 	ProjectGUID="{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
-	RootNamespace="pb"
+	RootNamespace="peerblock"
 	Keyword="ManagedCProj"
 	TargetFrameworkVersion="131072"
 	>
@@ -59,7 +59,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -80,7 +79,6 @@
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -149,7 +147,6 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CallingConvention="1"
 			/>
@@ -173,7 +170,6 @@
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				OptimizeForWindows98="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -244,8 +240,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -268,7 +262,6 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="2"
 				DataExecutionPrevention="2"
 				TargetMachine="1"
@@ -341,8 +334,6 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CallingConvention="1"
 			/>
 			<Tool
@@ -439,8 +430,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -465,7 +454,6 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="2"
 				DataExecutionPrevention="2"
 				TargetMachine="1"
@@ -538,8 +526,6 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="0"
 				CallingConvention="1"
 			/>
 			<Tool
@@ -564,7 +550,6 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="2"
 				DataExecutionPrevention="2"
 				TargetMachine="17"
@@ -633,7 +618,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -654,7 +638,6 @@
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -723,7 +706,6 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CallingConvention="1"
 			/>
@@ -747,7 +729,6 @@
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				OptimizeForWindows98="0"
 				TargetMachine="17"
 			/>
 			<Tool
