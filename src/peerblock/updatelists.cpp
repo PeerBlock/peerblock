@@ -48,12 +48,11 @@ extern TraceLog g_tlog;
 #endif
 #endif
 
-#define BUILDNUM (BUILDTYPE*(unsigned long long)10000000000+BUILDDATE)
-#define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE)
+#define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE) STRINGIFY(PB_VER_BUILDNUM)
 
 static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) "." MAKE_STR(PB_VER_BUILDNUM);
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
-const unsigned long long g_build=BUILDNUM;
+const unsigned long long g_build=boost::lexical_cast<unsigned long long>(BUILDSTR);
 
 #ifdef PB_RELTYPE_STABLE
 static const char *g_updateurl="http://update.peerblock.com/pb_update.php?build="BUILDSTR;

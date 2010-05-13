@@ -1,7 +1,8 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#include "versioninfo_parsed.h"
+#include "version_parsed.h"
+#include "versioninfo.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////

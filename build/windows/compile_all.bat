@@ -76,7 +76,7 @@ TITLE Creating ZIP files...
 
 REM Get the revision number
 FOR /f "tokens=3,4 delims= " %%K IN (
-	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\versioninfo_parsed.h"') DO (
+	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\version_parsed.h"') DO (
 	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO. && ECHO.
 

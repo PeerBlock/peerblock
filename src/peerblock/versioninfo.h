@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "version_parsed.h"
+
 #define DO_MAKE_STR(x) #x
 #define MAKE_STR(x) DO_MAKE_STR(x)
 
@@ -31,13 +33,7 @@
 //#define PB_RELTYPE_DEV
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 1003090$WCREV$	// PB_REV
-
-#define PB_VER_BUILDNUM $WCREV$
-
-#define PB_VER_MAJOR 1
-#define PB_VER_MINOR 0
-#define PB_VER_BUGFIX 0
+#define BUILDDATE 1003090 	// PB_REV
 
 #ifdef PB_RELTYPE_STABLE
 //#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) 

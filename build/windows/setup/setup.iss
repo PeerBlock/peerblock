@@ -22,8 +22,7 @@
 ; *Inno Setup QuickStart Pack v5.3.9(+): http://www.jrsoftware.org/isdl.php#qsp
 
 
-#define dummy Exec("versioninfo_setup.bat","","",1,SW_HIDE)
-#include "versioninfo_setup.h"
+#include "..\..\..\src\peerblock\version_parsed.h"
 
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
 
