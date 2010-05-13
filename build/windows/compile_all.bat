@@ -70,16 +70,17 @@ ECHO:Installer compiled successfully!)
 POPD
 
 
-REM Create all the zip files ready for distribution
 :CreateZips
+REM Create all the zip files ready for distribution
 TITLE Creating ZIP files...
-MD "..\..\distribution" >NUL 2>&1
-ECHO.
 
+REM Get the revision number
 FOR /f "tokens=3,4 delims= " %%K IN (
 	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\versioninfo_parsed.h"') DO (
 	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
-ECHO.
+ECHO. && ECHO.
+
+MD "..\..\distribution" >NUL 2>&1
 
 FOR %%L IN (
 "Release" "Release (Vista)"
@@ -92,9 +93,15 @@ GOTO :AllOK
 
 
 :AllOK
-DEL/f/a "..\..\distribution\PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
-REN "..\..\distribution\PeerBlock_r%buildnum%*_Release (Vista).zip"^
+PUSHD "..\..\distribution"
+DEL/f/a "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
+REN "PeerBlock_r%buildnum%*_Release (Vista).zip"^
  "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
+
+REM Calculate the md5 hashes
+"..\bin\windows\md5sum.exe" "PeerBlock_r%buildnum%__*.zip" "PeerBlock-Setup_v*_r%buildnum%.exe" > md5_hashes_r%buildnum%.md5
+
+POPD
 GOTO :END
 
 
@@ -119,16 +126,16 @@ COPY "..\..\license.txt" "temp_zip\" /Y /V
 COPY "..\..\doc\readme.rtf" "temp_zip\" /Y /V
 
 PUSHD "temp_zip"
-START "" /B /WAIT "..\..\..\bin\windows\7za\7za.exe" a -tzip -mx=9^
+START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
 ECHO:PeerBlock_r%buildnum%__%1_^%~2.zip created successfully!
 MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\..\..\distribution" >NUL 2>&1
+ECHO.
 POPD
 RD /S /Q "temp_zip" >NUL 2>&1
-ECHO.
 GOTO :EOF
 
 :SubISPath
