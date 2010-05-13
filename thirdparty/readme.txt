@@ -12,6 +12,10 @@ Website:    http://curl.haxx.se/libcurl
 Notes:      The version used by PeerBlock is slightly modified.
             See here: (http://code.google.com/p/peerblock/source/detail?r=284)
 
+miniunzip version 1.01h
+License:    Zlib License
+Website:    http://www.winimage.com/zLibDll/minizip.html
+
 SQLite version 3.6.23.1
 License:    Public Domain
 Website:    http://www.sqlite.org
