@@ -109,8 +109,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -203,8 +203,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -277,7 +277,6 @@
 				Driver="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				EntryPointSymbol="DriverEntry"
 				RandomizedBaseAddress="0"
 				DataExecutionPrevention="0"
@@ -303,8 +302,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -376,7 +375,6 @@
 				Driver="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				EntryPointSymbol="DriverEntry"
 				RandomizedBaseAddress="0"
 				DataExecutionPrevention="0"
@@ -402,8 +400,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -476,7 +474,6 @@
 				Driver="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				EntryPointSymbol="DriverEntry"
 				RandomizedBaseAddress="0"
 				DataExecutionPrevention="0"
@@ -502,8 +499,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -575,7 +572,6 @@
 				Driver="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				EntryPointSymbol="DriverEntry"
 				RandomizedBaseAddress="0"
 				DataExecutionPrevention="0"
@@ -601,8 +597,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -695,8 +691,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 		<Configuration
@@ -789,8 +785,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing pbfilter.sys driver"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)&#x0D;&#x0A;"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing pbfilter.sys driver&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll pbfilter.sys&#x0D;&#x0A;)"
 			/>
 		</Configuration>
 	</Configurations>

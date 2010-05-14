@@ -103,8 +103,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -192,8 +192,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -252,7 +252,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/SafeSEH"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				GenerateManifest="false"
@@ -286,8 +286,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -382,8 +382,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -442,7 +442,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/SafeSEH"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib fwpuclnt.lib"
 				LinkIncremental="1"
 				GenerateManifest="true"
@@ -478,8 +478,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -574,8 +574,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -662,8 +662,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -751,8 +751,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Signing peerblock.exe"
-				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)"
+				Description=""
+				CommandLine="IF DEFINED PB_CERT (&#x0D;&#x0A;ECHO:Signing peerblock.exe&#x0D;&#x0A;cd  &quot;$(OutDir)\&quot;&#x0D;&#x0A;&quot;%PB_DDK_DIR%\bin\SelfSign\signtool.exe&quot; sign /v /ac %PB_CERT% /s my /n &quot;PeerBlock, LLC&quot; /t http://timestamp.globalsign.com/scripts/timstamp.dll peerblock.exe&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
