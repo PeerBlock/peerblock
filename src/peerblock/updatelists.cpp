@@ -27,9 +27,6 @@ using namespace std;
 #include "tracelog.h"
 extern TraceLog g_tlog;
 
-#define DO_STRINGIFY(x) #x
-#define STRINGIFY(x) DO_STRINGIFY(x)
-
 #ifdef _WIN32_WINNT
 #ifdef _WIN64
 // nt x64 build
@@ -50,7 +47,7 @@ extern TraceLog g_tlog;
 
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE) STRINGIFY(PB_VER_BUILDNUM)
 
-static const char *g_agent="PeerBlock/" MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) "." MAKE_STR(PB_VER_BUILDNUM);
+static const char *g_agent="PeerBlock/" STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR) "." STRINGIFY(PB_VER_BUGFIX) "." STRINGIFY(PB_VER_BUILDNUM);
 static const LPCTSTR g_updateserver=_T("http://www.peerblock.com");	// displayed in Update UI
 const unsigned long long g_build=boost::lexical_cast<unsigned long long>(BUILDSTR);
 

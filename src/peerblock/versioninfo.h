@@ -23,8 +23,8 @@
 
 #include "version_parsed.h"
 
-#define DO_MAKE_STR(x) #x
-#define MAKE_STR(x) DO_MAKE_STR(x)
+#define DO_STRINGIFY(x) #x
+#define STRINGIFY(x) DO_STRINGIFY(x)
 
 // only one of these should be uncommented at any given time
 //#define PB_RELTYPE_STABLE
@@ -36,16 +36,16 @@
 #define BUILDDATE 1003090 	// PB_REV
 
 #ifdef PB_RELTYPE_STABLE
-//#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "." MAKE_STR(PB_VER_BUGFIX) 
-#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR)
+//#define PB_BLDSTR "PeerBlock " STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR) "." STRINGIFY(PB_VER_BUGFIX) 
+#define PB_BLDSTR "PeerBlock " STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR)
 #endif
 #ifdef PB_RELTYPE_BETA
-#define PB_BLDSTR "PeerBlock " MAKE_STR(PB_VER_MAJOR) "." MAKE_STR(PB_VER_MINOR) "+" " (r" MAKE_STR(PB_VER_BUILDNUM) ") - BETA RELEASE" 
-//#define PB_BLDSTR "PeerBlock r" MAKE_STR(PB_VER_BUILDNUM) " - BETA RELEASE" 
+#define PB_BLDSTR "PeerBlock " STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR) "+" " (r" STRINGIFY(PB_VER_BUILDNUM) ") - BETA RELEASE" 
+//#define PB_BLDSTR "PeerBlock r" STRINGIFY(PB_VER_BUILDNUM) " - BETA RELEASE" 
 #endif
 #ifdef PB_RELTYPE_TEST
-#define PB_BLDSTR "PeerBlock r" MAKE_STR(PB_VER_BUILDNUM) " - INTERNAL TEST RELEASE" 
+#define PB_BLDSTR "PeerBlock r" STRINGIFY(PB_VER_BUILDNUM) " - INTERNAL TEST RELEASE" 
 #endif
 #ifdef PB_RELTYPE_DEV
-#define PB_BLDSTR "PeerBlock r" MAKE_STR(PB_VER_BUILDNUM) " - DEV BUILD" 
+#define PB_BLDSTR "PeerBlock r" STRINGIFY(PB_VER_BUILDNUM) " - DEV BUILD" 
 #endif
