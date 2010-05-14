@@ -81,10 +81,6 @@ PUSHD "..\..\distribution"
 DEL/f/a "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
 REN "PeerBlock_r%buildnum%*_Release (Vista).zip"^
  "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
-
-REM Calculate the md5 hashes
-"..\bin\windows\md5sum.exe" "PeerBlock_r%buildnum%__*.zip" "PeerBlock-Setup_v*_r%buildnum%.exe" > md5_hashes_r%buildnum%.md5
-
 POPD
 GOTO :END
 
