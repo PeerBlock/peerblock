@@ -20,6 +20,18 @@ CALL :SubMSVC "Release" %%A
 CALL :SubMSVC "Release (Vista)" %%A
 )
 
+REM Sign driver and program
+IF DEFINED PB_CERT (
+TITLE Signing driver and program...
+  FOR %%F IN (
+  "Win32\Release" "Win32\Release (Vista)" "x64\Release" "x64\Release (Vista)"
+  ) DO (
+  PUSHD %%F
+  CALL ..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
+  CALL ..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
+  POPD
+  )
+)
 
 :BuildInstaller
 REM Detect if we are running on 64bit WIN and use Wow6432Node, set the path
@@ -49,8 +61,12 @@ ECHO.
 
 "%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\..\..\bin\windows\sign_driver.cmd" $f "^
  /Q /O"..\..\..\distribution" "setup.iss"
-IF %ERRORLEVEL% NEQ 0 (GOTO :ErrorDetected) ELSE (
-ECHO:Installer compiled successfully!)
+
+IF %ERRORLEVEL% NEQ 0 (
+GOTO :ErrorDetected
+) ELSE (
+ECHO:Installer compiled successfully!
+)
 POPD
 
 
