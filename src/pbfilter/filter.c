@@ -104,7 +104,12 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 
 		opening = (tcp->ack==0);
 
-		if(!g_internal->blockhttp && (DestinationPortAllowed(destport) || SourcePortAllowed(srcport))) {
+		// XP needs this as the port which comes back is the same
+		// as the port going out and therefore it will be blocked
+		if (!g_internal->blockhttp &&
+		   (DestinationPortAllowed(destport) || DestinationPortAllowed(srcport) ||
+		   SourcePortAllowed(destport) || SourcePortAllowed(srcport)
+		)) {
 			http = 1;
 		}
 	}
@@ -272,7 +277,7 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			SetDestinationPorts(ports, (USHORT) count / sizeof(ULONG));
+			SetDestinationPorts(ports, (USHORT) (count / sizeof(USHORT)));
 			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
 
 		} break;
@@ -286,7 +291,7 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-			SetSourcePorts(ports, (USHORT) count / sizeof(ULONG));
+			SetSourcePorts(ports, (USHORT) (count / sizeof(USHORT)));
 			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
 
 		} break;
@@ -351,7 +356,8 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 		DbgPrint("pbfilter:    ... initializing lock and queue\n");
 		KeInitializeSpinLock(&g_internal->rangeslock);
-		KeInitializeSpinLock(&g_internal->portslock);
+		KeInitializeSpinLock(&g_internal->destinationportslock);
+		KeInitializeSpinLock(&g_internal->sourceportslock);
 		InitNotificationQueue(&g_internal->queue);
 
 		DbgPrint("pbfilter:    ... resetting counters\n");

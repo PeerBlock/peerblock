@@ -107,7 +107,8 @@ typedef struct __pb_internal {
 	PBIPRANGE *allowedranges;
 	ULONG allowedcount, allowedlabelsid;
 
-	KSPIN_LOCK portslock;
+	KSPIN_LOCK destinationportslock;
+	KSPIN_LOCK sourceportslock;
 
 	USHORT *destinationports;
 	USHORT destinationportcount;

@@ -594,7 +594,8 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		g_internal = device->DeviceExtension;
 
 		KeInitializeSpinLock(&g_internal->rangeslock);
-		KeInitializeSpinLock(&g_internal->portslock);
+		KeInitializeSpinLock(&g_internal->destinationportslock);
+		KeInitializeSpinLock(&g_internal->sourceportslock);
 		InitNotificationQueue(&g_internal->queue);
 
 		g_internal->blockedcount = 0;

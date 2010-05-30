@@ -149,15 +149,15 @@ void SetDestinationPorts(const USHORT *ports, USHORT count)
 		g_internal->destinationportcount = 0;
 	}
 
-	KeAcquireSpinLock(&g_internal->portslock, &irq);
+	KeAcquireSpinLock(&g_internal->destinationportslock, &irq);
 
 	g_internal->destinationports = nports;
 	g_internal->destinationportcount = count;
 
-	KeReleaseSpinLock(&g_internal->portslock, irq);
+	KeReleaseSpinLock(&g_internal->destinationportslock, irq);
 
 	if (oldports) {
-		ExFreePoolWithTag(oldports, 'tPBP');
+		ExFreePoolWithTag(oldports, 'PDBP');
 	}
 }
 
@@ -183,15 +183,15 @@ void SetSourcePorts(const USHORT *ports, USHORT count)
 		g_internal->sourceportcount = 0;
 	}
 
-	KeAcquireSpinLock(&g_internal->portslock, &irq);
+	KeAcquireSpinLock(&g_internal->sourceportslock, &irq);
 
 	g_internal->sourceports = nports;
 	g_internal->sourceportcount = count;
 
-	KeReleaseSpinLock(&g_internal->portslock, irq);
+	KeReleaseSpinLock(&g_internal->sourceportslock, irq);
 
 	if (oldports) {
-		ExFreePoolWithTag(oldports, 'tPBP');
+		ExFreePoolWithTag(oldports, 'PSBP');
 	}
 }
 
