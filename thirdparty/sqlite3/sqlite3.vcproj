@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="sqlite3"
 	ProjectGUID="{ED1837D6-2439-45A1-8554-449647FF770B}"
 	RootNamespace="sqlite3"
@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -86,8 +86,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -153,8 +153,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -221,8 +221,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"

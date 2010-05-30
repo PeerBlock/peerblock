@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -87,8 +87,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -155,8 +155,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -224,8 +224,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -295,8 +295,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release (Vista)|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -364,8 +364,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release (Vista)|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -821,15 +821,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\lib\config-amigaos.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\config-amigaos.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-mac.h"
+				RelativePath=".\lib\config-amigaos.h"
 				>
 			</File>
 			<File
@@ -837,15 +833,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\config-mac.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\config-os400.h"
 				>
 			</File>
 			<File
-				RelativePath=".\lib\config-riscos.h"
+				RelativePath=".\src\config-riscos.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-riscos.h"
+				RelativePath=".\lib\config-riscos.h"
 				>
 			</File>
 			<File
@@ -1117,11 +1117,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\lib\setup.h"
+				RelativePath=".\src\setup.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\setup.h"
+				RelativePath=".\lib\setup.h"
 				>
 			</File>
 			<File
