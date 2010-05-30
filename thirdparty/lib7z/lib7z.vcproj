@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -85,8 +85,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -151,8 +151,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
@@ -218,8 +218,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			ManagedExtensions="0"
