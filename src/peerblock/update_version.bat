@@ -1,4 +1,4 @@
-ECHO OFF
+@ECHO OFF
 SubWCRev "..\.." "version.h" "version_parsed.h"
 IF %ERRORLEVEL% NEQ 0 GOTO :NoSubWCRev
 GOTO :EOF
