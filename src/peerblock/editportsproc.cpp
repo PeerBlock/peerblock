@@ -22,6 +22,10 @@
 #include "stdafx.h"
 #include "resource.h"
 
+// flag so that populating the list wont trigger any unnecessary notifications
+// which may cause the checkboxes to be in an incorrect state
+static bool finishedloading = false;
+
 // Saves and merges ports
 // hwnd - handle to the window
 static void SavePorts(HWND hwnd)
@@ -164,33 +168,29 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	ListView_InsertColumn(list, 0, &lvc);
 
-	int idx = 0;
-	for (vector<StaticList>::size_type i = 0; i < g_config.PortSet.Profiles.size(); i++) {
+	for (vector<PortProfile>::size_type i = 0; i < g_config.PortSet.Profiles.size(); i++) {
 		PortProfile profile = g_config.PortSet.Profiles[i];
 
 		LVITEM lvi = {0};
-		lvi.mask = LVIF_TEXT|LVIF_PARAM;
-		lvi.iItem = idx;
+		lvi.mask = LVIF_TEXT;
+		lvi.iItem = i;
 
 		lvi.iSubItem = 0;
-		lvi.lParam = (LPARAM) &profile;
 		lvi.pszText = (LPTSTR) profile.Name.c_str();
 
 		ListView_InsertItem(list, &lvi);
 
-		lvi.mask = LVIF_TEXT;
-
-		ListView_SetCheckState(list, idx, profile.Enabled);
-
-		idx++;
+		ListView_SetCheckState(list, i, profile.Enabled);
 	}
+
+	finishedloading = true;
 
 	return TRUE;
 }
 
 
 static INT_PTR EditPorts_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
-	if (nmh->idFrom == IDC_PORTS) 
+	if (finishedloading && (nmh->idFrom == IDC_PORTS)) 
 	{
 		switch(nmh->code) 
 		{
