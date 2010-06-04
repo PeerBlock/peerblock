@@ -141,6 +141,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="3"
 				CallingConvention="1"
 			/>
@@ -318,6 +319,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
+				WarnAsError="true"
 				CallingConvention="1"
 			/>
 			<Tool
@@ -499,6 +501,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
+				WarnAsError="true"
 				CallingConvention="1"
 			/>
 			<Tool
@@ -669,6 +672,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="3"
 				CallingConvention="1"
 			/>
