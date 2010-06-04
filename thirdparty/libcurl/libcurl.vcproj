@@ -49,7 +49,7 @@
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;_WIN32_WINNT=0x0500"
 				StringPooling="true"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
@@ -116,7 +116,7 @@
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="_DEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;WIN64;_WIN32_WINNT=0x0502"
 				StringPooling="true"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
@@ -188,7 +188,7 @@
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;_WIN32_WINNT=0x0500"
 				StringPooling="true"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
@@ -258,7 +258,7 @@
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;WIN64;_WIN32_WINNT=0x0502"
 				StringPooling="true"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
@@ -328,7 +328,7 @@
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;_WIN32_WINNT=0x0600"
 				StringPooling="true"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
@@ -398,7 +398,7 @@
 				AdditionalIncludeDirectories="include;src;..\zlib"
 				PreprocessorDefinitions="NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;WIN64;_WIN32_WINNT=0x0600"
 				StringPooling="true"
-				ExceptionHandling="0"
+				ExceptionHandling="2"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
@@ -821,15 +821,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\lib\config-amigaos.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\config-amigaos.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-mac.h"
+				RelativePath=".\lib\config-amigaos.h"
 				>
 			</File>
 			<File
@@ -837,15 +833,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\config-mac.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\config-os400.h"
 				>
 			</File>
 			<File
-				RelativePath=".\lib\config-riscos.h"
+				RelativePath=".\src\config-riscos.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\config-riscos.h"
+				RelativePath=".\lib\config-riscos.h"
 				>
 			</File>
 			<File
@@ -1117,11 +1117,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\lib\setup.h"
+				RelativePath=".\src\setup.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\setup.h"
+				RelativePath=".\lib\setup.h"
 				>
 			</File>
 			<File
