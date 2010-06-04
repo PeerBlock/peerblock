@@ -12,6 +12,12 @@ ECHO:Example: H:\progs\WinDDK\6001.18002
 GOTO :ErrorDetected
 )
 
+IF "%1" == "" (
+SET BUILDTYPE=Rebuild
+) ELSE (
+SET BUILDTYPE=%1
+)
+
 REM Compile PeerBlock with MSVC 2010
 TITLE Compiling PeerBlock with MSVC 2010...
 FOR %%A IN ("Win32" "x64"
@@ -19,6 +25,8 @@ FOR %%A IN ("Win32" "x64"
 CALL :SubMSVC "Release" %%A
 CALL :SubMSVC "Release (Vista)" %%A
 )
+
+IF /I "%1" == "Clean" GOTO :END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (
@@ -110,7 +118,7 @@ EXIT
 
 :SubMSVC
 "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" PeerBlock_2010.sln^
- /t:Rebuild /p:Configuration=%1 /p:Platform=%2 /maxcpucount^
+ /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2 /maxcpucount^
  /consoleloggerparameters:DisableMPLogging;Summary;Verbosity=minimal
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 GOTO :EOF
@@ -147,5 +155,6 @@ GOTO :EOF
 ECHO. && ECHO.
 ECHO:Compilation FAILED!!!
 ECHO. && ECHO.
-ENDLOCAL && PAUSE
-EXIT
+ENDLOCAL
+PAUSE
+EXIT /B
