@@ -168,12 +168,13 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	ListView_InsertColumn(list, 0, &lvc);
 
+	int idx = 0;
 	for (vector<PortProfile>::size_type i = 0; i < g_config.PortSet.Profiles.size(); i++) {
 		PortProfile profile = g_config.PortSet.Profiles[i];
 
 		LVITEM lvi = {0};
 		lvi.mask = LVIF_TEXT;
-		lvi.iItem = i;
+		lvi.iItem = idx++;
 
 		lvi.iSubItem = 0;
 		lvi.pszText = (LPTSTR) profile.Name.c_str();
