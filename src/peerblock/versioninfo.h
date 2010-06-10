@@ -33,7 +33,7 @@
 //#define PB_RELTYPE_DEV
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 1003090 	// PB_REV
+#define BUILDDATE 1006090
 
 #ifdef PB_RELTYPE_STABLE
 //#define PB_BLDSTR "PeerBlock " STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR) "." STRINGIFY(PB_VER_BUGFIX) 
