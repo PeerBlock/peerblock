@@ -26,6 +26,20 @@
 // which may cause the checkboxes to be in an incorrect state
 static bool finishedloading = false;
 
+static TCHAR* GetPortTypeString(PortType type)
+{
+	TCHAR* ret;
+
+	if (type == Destination)
+		ret = _T("Outgoing");
+	else if (type == Source)
+		ret = _T("Incoming");
+	else
+		ret = _T("Both");
+
+	return ret;
+}
+
 // Saves and merges ports
 // hwnd - handle to the window
 static void SavePorts(HWND hwnd)
@@ -81,6 +95,10 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 
 				ListView_InsertItem(list, &lvi);
 
+				lvi.iSubItem = 1;
+				lvi.pszText = GetPortTypeString(p.Type);
+				ListView_SetItem(list, &lvi);
+
 				ListView_SetCheckState(list, idx, true);
 
 				SavePorts(hwnd);
@@ -115,6 +133,7 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 				if (DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PORTPROFILE), hwnd, PortProfile_DlgProc, (LPARAM) &p)==IDOK) {
 					g_config.PortSet.Profiles[idx] = p;
 					ListView_SetItemText(list, idx, 0, (LPWSTR) p.Name.c_str());
+					ListView_SetItemText(list, idx, 1, GetPortTypeString(p.Type));
 
 					SavePorts(hwnd);
 				}
@@ -168,6 +187,11 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	ListView_InsertColumn(list, 0, &lvc);
 
+	lvc.pszText = _T("Allow from");
+	lvc.cx = 100;
+
+	ListView_InsertColumn(list, 1, &lvc);
+
 	int idx = 0;
 	for (vector<PortProfile>::size_type i = 0; i < g_config.PortSet.Profiles.size(); i++) {
 		PortProfile profile = g_config.PortSet.Profiles[i];
@@ -180,6 +204,10 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		lvi.pszText = (LPTSTR) profile.Name.c_str();
 
 		ListView_InsertItem(list, &lvi);
+
+		lvi.iSubItem = 1;
+		lvi.pszText = GetPortTypeString(profile.Type);
+		ListView_SetItem(list, &lvi);
 
 		ListView_SetCheckState(list, i, profile.Enabled);
 	}
