@@ -971,19 +971,19 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 						y >= 0 && y <= desktopHeight &&	// point x is onscreen
 						x >= 0 && x <= desktopWidth)	// point y is onscreen
 					{
-						TRACEI("[Main_OnTray] ** not our window");
+						TRACEV("[Main_OnTray] ** not our window");
 						tstring strBuf = boost::str(tformat(_T("[Main_OnTray]  * point [%1%, %2%] not our window")) % x % y );
 						TRACEBUFI(strBuf);
 						strBuf = boost::str(tformat(_T("[Main_OnTray]  * tgtHwnd:[%1%], our hwnd:[%2%]")) % tgtHwnd % hwnd );
-						TRACEBUFI(strBuf);
+						TRACEBUFV(strBuf);
 						strBuf = boost::str(tformat(_T("[Main_OnTray]  * desktopHeight:[%1%], desktopWidth:[%2%]")) % desktopHeight % desktopWidth );
-						TRACEBUFI(strBuf);
+						TRACEBUFV(strBuf);
 						strBuf = boost::str(tformat(_T("[Main_OnTray]  * parentHwnd:[%1%] our parentHwnd:[%2%]")) % GetParent(tgtHwnd) % GetParent(hwnd) );
-						TRACEBUFI(strBuf);
+						TRACEBUFV(strBuf);
 						strBuf = boost::str(tformat(_T("[Main_OnTray]  * tgt ancestor-root:[%1%] our ancestor-root:[%2%]")) % GetAncestor(tgtHwnd, GA_ROOT) % GetAncestor(hwnd, GA_ROOT) );
-						TRACEBUFI(strBuf);
+						TRACEBUFV(strBuf);
 						strBuf = boost::str(tformat(_T("[Main_OnTray]  * tgt ancestor-rootowner:[%1%] our ancestor-rootowner:[%2%]")) % GetAncestor(tgtHwnd, GA_ROOTOWNER) % GetAncestor(hwnd, GA_ROOTOWNER) );
-						TRACEBUFI(strBuf);
+						TRACEBUFV(strBuf);
 						isOccluded = true;
 						break;
 					}
