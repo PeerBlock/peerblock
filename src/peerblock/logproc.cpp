@@ -559,7 +559,7 @@ static void UpdateStatus(HWND hwnd)
 	tstring enable, http, blocking, httpstatus, update, lastupdate;
 
 	enable=LoadString(g_config.Block?IDS_DISABLE:IDS_ENABLE);
-	http=LoadString(g_config.BlockHttp?IDS_ALLOWHTTP:IDS_BLOCKHTTP);
+	http=LoadString(g_config.PortSet.IsHttpBlocked()?IDS_ALLOWHTTP:IDS_BLOCKHTTP);
 
 	if(g_config.Block) 
 	{
@@ -574,7 +574,7 @@ static void UpdateStatus(HWND hwnd)
 		blocking=LoadString(IDS_PBDISABLED);
 	}
 
-	httpstatus=boost::str(tformat(LoadString(IDS_HTTPIS)) % LoadString(g_config.BlockHttp?IDS_BLOCKED:IDS_ALLOWED));
+	httpstatus=boost::str(tformat(LoadString(IDS_HTTPIS)) % LoadString(g_config.PortSet.IsHttpBlocked()?IDS_BLOCKED:IDS_ALLOWED));
 
 	{
 		unsigned int lists=(unsigned int)(g_config.StaticLists.size()+g_config.DynamicLists.size());
@@ -705,7 +705,7 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case IDC_HTTP:
 			TRACEI("[LogProc] [Log_OnCommand]    Block/Enable HTTP button");
-			SetBlockHttp(!g_config.BlockHttp);
+			SetBlockHttp(!g_config.PortSet.IsHttpBlocked());
 			break;
 	}
 }

@@ -106,10 +106,9 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 
 		// XP needs this as the port which comes back is the same
 		// as the port going out and therefore it will be blocked
-		if (!g_internal->blockhttp &&
-		   (DestinationPortAllowed(destport) || DestinationPortAllowed(srcport) ||
-		   SourcePortAllowed(destport) || SourcePortAllowed(srcport)
-		)) {
+		if (DestinationPortAllowed(destport) || DestinationPortAllowed(srcport) ||
+		    SourcePortAllowed(destport) || SourcePortAllowed(srcport)
+		) {
 			http = 1;
 		}
 	}
@@ -226,21 +225,6 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 				irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 			}
 			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK");
-			break;
-
-		case IOCTL_PEERBLOCK_HTTP:
-			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HTTP");
-			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) 
-			{
-				DbgPrint("pbfilter:    setting blockhttp");
-				g_internal->blockhttp=*((int*)irp->AssociatedIrp.SystemBuffer);
-			}
-			else 
-			{
-				DbgPrint("pbfilter:  * ERROR: invalid parameter");
-				irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
-			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HTTP");
 			break;
 
 		case IOCTL_PEERBLOCK_SETRANGES: 
@@ -365,7 +349,6 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		g_internal->allowedcount = 0;
 		g_internal->destinationportcount = 0;
 		g_internal->sourceportcount = 0;
-		g_internal->blockhttp=1;
 
 		DbgPrint("pbfilter:    internal data initted\n");
 	}

@@ -100,7 +100,7 @@ static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAdd
 static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if(protocol == IPPROTO_TCP && !g_internal->blockhttp && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
+	if(protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
 		pbn.action = 2;
 	}
 	else {
@@ -442,21 +442,6 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
 			break;
 
-		case IOCTL_PEERBLOCK_HTTP:
-			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HTTP\n");
-			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) 
-			{
-				DbgPrint("pbfilter:    setting blockhttp\n");
-				g_internal->blockhttp = *(int*)irp->AssociatedIrp.SystemBuffer;
-			}
-			else  
-			{
-				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
-				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
-			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HTTP\n");
-			break;
-
 		case IOCTL_PEERBLOCK_SETRANGES: 
 		{
 			PBRANGES *ranges;
@@ -605,7 +590,6 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		g_internal->sourceportcount = 0;
 
 		g_internal->block = 0;
-		g_internal->blockhttp = 1;
 
 		g_internal->connect4 = 0;
 		g_internal->accept4 = 0;

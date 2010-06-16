@@ -52,7 +52,6 @@ public:
 	typedef boost::function<void(const action&)> action_function;
 
 	void setblock(bool block);
-	void setblockhttp(bool block);
 
 	void setranges(const p2p::list &ranges, bool block);
 

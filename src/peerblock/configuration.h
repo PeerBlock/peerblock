@@ -118,6 +118,11 @@ struct PortSet
 
 	std::vector<PortProfile> Profiles;	// list of profiles
 
+	bool IsHttpBlocked()
+	{
+		return !AllowHttp;
+	}
+
 	// merges all the enabled profiles
 	void Merge() 
 	{
@@ -180,7 +185,7 @@ struct Configuration {
 	Color BlockedColor, AllowedColor, HttpColor;
 	time_t LastUpdate, LastArchived, LastStarted;
 	unsigned int CacheCrc;
-	bool Block, BlockHttp, AllowLocal;
+	bool Block, AllowLocal;
 	bool UpdatePeerBlock, UpdateLists, UpdateAtStartup;
 	bool StartMinimized, ShowSplash, HideOnClose, StayHidden;
 	bool LogAllowed, LogBlocked, ShowAllowed;

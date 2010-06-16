@@ -116,7 +116,6 @@ typedef struct __pb_internal {
 	USHORT sourceportcount;
 
 	int block;
-	int blockhttp;
 	
 	UINT32 connect4;
 	UINT32 accept4;

@@ -118,33 +118,6 @@ void pbfilter_base::setblock(bool block)
 
 
 
-void pbfilter_base::setblockhttp(bool block) 
-{
-	TRACEV("[pbfilter_base] [setblockhttp]  > Entering routine.");
-	TRACEV("[pbfilter_base] [setblockhttp]    acquiring lock");
-	mutex::scoped_lock lock(m_blocklock);
-
-	if(block != m_blockhttp) 
-	{
-		if (block)
-			TRACEV("[pbfilter_base] [setblockhttp]    resetting m_blockhttp to: [true]")
-		else
-			TRACEV("[pbfilter_base] [setblockhttp]    resetting m_blockhttp to: [false]");
-
-		m_blockhttp = block;
-		int data = block ? 1 : 0;
-
-		DWORD ret = m_filter.write(IOCTL_PEERBLOCK_HTTP, &data, sizeof(data));
-		if(ret != ERROR_SUCCESS) throw win32_error("DeviceIoControl", ret);
-	}
-
-	TRACEV("[pbfilter_base] [setblockhttp]    mutex leaving scope; releasing lock");
-	TRACEV("[pbfilter_base] [setblockhttp]  < Leaving routine");
-
-} // End of setblockhttp()
-
-
-
 void pbfilter_base::setranges(const p2p::list &ranges, bool block) 
 {
 	typedef stdext::hash_map<std::wstring, const wchar_t*> hmap_type;

@@ -30,7 +30,7 @@ extern TraceLog g_tlog;
 Configuration g_config;
 
 Configuration::Configuration() :
-	Block(true), BlockHttp(true), AllowLocal(true), UpdatePeerBlock(true),
+	Block(true), AllowLocal(true), UpdatePeerBlock(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
 	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true), 
 	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), 
@@ -463,7 +463,8 @@ bool Configuration::Load()
 	TRACEI("[Configuration] [Load]    parsing config settings element");
 	if(const TiXmlElement *settings=root->FirstChildElement("Settings")) {
 		GetChild(settings, "Block", this->Block);
-		GetChild(settings, "BlockHttp", this->BlockHttp);
+		if (GetChild(settings, "BlockHttp", this->PortSet.AllowHttp))
+			this->PortSet.AllowHttp = !this->PortSet.AllowHttp;
 		GetChild(settings, "AllowLocal", this->AllowLocal);
 		GetChild(settings, "CacheCrc", this->CacheCrc);
 		GetChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
@@ -773,7 +774,7 @@ void Configuration::Save(const TCHAR * _filename)
 	TRACEI("[Configuration] [Save]  > Entering routine.");
 
 	if (TempAllowingHttpShort || TempAllowingHttpLong) 
-		SetBlockHttp(!BlockHttp);	// make sure we don't accidentally startup allowed
+		SetBlockHttp(this->PortSet.AllowHttp);	// make sure we don't accidentally startup allowed
 
 	TiXmlDocument doc;
 	doc.InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
@@ -784,7 +785,6 @@ void Configuration::Save(const TCHAR * _filename)
 		TiXmlElement *settings=InsertChild(root, "Settings");
 
 		InsertChild(settings, "Block", this->Block);
-		InsertChild(settings, "BlockHttp", this->BlockHttp);
 		InsertChild(settings, "AllowLocal", this->AllowLocal);
 		InsertChild(settings, "CacheCrc", this->CacheCrc);
 		InsertChild(settings, "BlinkOnBlock", this->BlinkOnBlock);

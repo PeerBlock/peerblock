@@ -53,7 +53,7 @@ static INT_PTR CALLBACK PickLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LP
 			if(g_spy) CheckDlgButton(hwnd, IDC_SPYWARE, BST_CHECKED);
 			if(g_edu) CheckDlgButton(hwnd, IDC_EDUCATIONAL, BST_CHECKED);
 			if(g_custom) CheckDlgButton(hwnd, IDC_CUSTOM, BST_CHECKED);
-			if(!g_config.BlockHttp) CheckDlgButton(hwnd, IDC_BLOCKHTTP, BST_CHECKED);
+			if(!g_config.PortSet.IsHttpBlocked()) CheckDlgButton(hwnd, IDC_BLOCKHTTP, BST_CHECKED);
 
 			tstring s=LoadString(IDS_STARTUP_LISTS);
 			SetWindowText(GetDlgItem(hwnd, IDC_RECOMMEND), s.c_str());
@@ -76,7 +76,7 @@ static INT_PTR CALLBACK PickLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LP
 					g_custom=(IsDlgButtonChecked(hwnd, IDC_CUSTOM)==BST_CHECKED);
 					break;
 				case IDC_BLOCKHTTP:
-					g_config.BlockHttp=(IsDlgButtonChecked(hwnd, IDC_BLOCKHTTP)!=BST_CHECKED);
+					g_config.PortSet.AllowHttp=(IsDlgButtonChecked(hwnd, IDC_BLOCKHTTP)==BST_CHECKED);
 					break;
 			}
 			break;

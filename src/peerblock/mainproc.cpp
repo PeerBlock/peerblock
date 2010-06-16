@@ -88,7 +88,7 @@ HICON DetermineIcon()
 	HICON icon = 0;
 	if (g_config.Block)
 	{
-		if (!g_config.BlockHttp && g_config.EnableWarningIconForHttpAllow)
+		if (!g_config.PortSet.IsHttpBlocked() && g_config.EnableWarningIconForHttpAllow)
 		{
 			icon = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_HTTPDISABLED), IMAGE_ICON, 0, 0, LR_SHARED|LR_DEFAULTSIZE);
 		}
@@ -172,12 +172,8 @@ void SetBlockHttp(bool _block, unsigned int _time)
 	TRACEV("[mainproc] [SetBlockHttp]  > Entering routine.");
 
 	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]   setting PeerBlock HTTP blocking from [%1%] to [%2%]")) 
-		% g_config.BlockHttp % _block);
+		% g_config.PortSet.IsHttpBlocked() % _block);
 	TRACEBUFI(strBuf);
-
-	// setup old style http-blocking
-	g_config.BlockHttp = _block;
-	g_filter->setblockhttp(_block);
 
 	// setup new PortAllow style http-blocking
 	g_config.PortSet.AllowHttp = !_block;
@@ -289,7 +285,7 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case ID_TRAY_BLOCKHTTP:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Block HTTP' item");
-			if (!g_config.TempAllowingHttpShort && !g_config.TempAllowingHttpLong) SetBlockHttp(!g_config.BlockHttp);
+			if (!g_config.TempAllowingHttpShort && !g_config.TempAllowingHttpLong) SetBlockHttp(!g_config.PortSet.IsHttpBlocked());
 			else SetBlockHttp(false);
 			break;
 
@@ -546,12 +542,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	TRACEI("[mainproc] [Main_OnInitDialog]    setting block, forcing to Enabled");
 	SetBlock(true);
 
-	TRACEI("[mainproc] [Main_OnInitDialog]    setting HTTP block");
-	g_filter->setblockhttp(g_config.BlockHttp);
-
-	//TODO: clean up ports
-	// the block http might not be needed anymore but will need to check
-	g_config.PortSet.AllowHttp = !g_config.BlockHttp;
+	// block ports
 	g_config.PortSet.Merge();
 	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 	g_filter->setsourceports(g_config.PortSet.SourcePorts);
@@ -897,7 +888,7 @@ static void Main_OnTimer(HWND hwnd, UINT id)
 	else if(id==TIMER_TEMPALLOWHTTP)
 	{
 		TRACEI("[mainproc] [Main_OnTimer]    temp-allow-http timer expired, resetting http-blocking");
-		SetBlockHttp(!g_config.BlockHttp);
+		SetBlockHttp(!g_config.PortSet.IsHttpBlocked());
 	}
 }
 
@@ -1016,19 +1007,19 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 		CheckMenuItem(submenu, ID_TRAY_ALWAYSONTOP, MF_BYCOMMAND|(g_config.AlwaysOnTop?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_ENABLED, MF_BYCOMMAND|(g_config.Block?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(submenu, ID_TRAY_DISABLED, MF_BYCOMMAND|(g_config.Block?MF_UNCHECKED:MF_CHECKED));
-		if (!g_config.BlockHttp && g_config.TempAllowingHttpShort)
+		if (!g_config.PortSet.IsHttpBlocked() && g_config.TempAllowingHttpShort)
 		{
 			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_UNCHECKED);
 			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_CHECKED);
 			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP60, MF_BYCOMMAND|MF_UNCHECKED);
 		}
-		else if (!g_config.BlockHttp && g_config.TempAllowingHttpLong)
+		else if (!g_config.PortSet.IsHttpBlocked() && g_config.TempAllowingHttpLong)
 		{
 			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_UNCHECKED);
 			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_UNCHECKED);
 			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP60, MF_BYCOMMAND|MF_CHECKED);
 		}
-		else if (!g_config.BlockHttp)
+		else if (!g_config.PortSet.IsHttpBlocked())
 		{
 			CheckMenuItem(submenu, ID_TRAY_BLOCKHTTP, MF_BYCOMMAND|MF_CHECKED);
 			CheckMenuItem(submenu, ID_TRAY_TEMPALLOWHTTP15, MF_BYCOMMAND|MF_UNCHECKED);

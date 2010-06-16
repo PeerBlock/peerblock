@@ -44,7 +44,7 @@ static void RefreshDialogIcon(HWND hDialog)
 	
 	if (g_config.Block == false)
 		hIcon = LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_DISABLED));
-	else if(g_config.Block == true && g_config.BlockHttp == false)
+	else if(g_config.Block == true && g_config.PortSet.IsHttpBlocked() == false)
 		hIcon = LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_HTTPDISABLED));
 	else
 		hIcon = LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_MAIN));
