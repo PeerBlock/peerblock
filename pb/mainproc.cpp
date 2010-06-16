@@ -72,7 +72,6 @@ void SendDialogIconRefreshMessage()
 
 
 
-
 //================================================================================================
 //
 //  DetermineIcon()
@@ -931,64 +930,73 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 		}
 		else
 		{
+			TRACEI("[Main_OnTray]  > Checking to see if our window is on top");
+
 			// Check four corners of our window to see if we're the visible window there
 			RECT rect;
 			GetWindowRect(hwnd, &rect);
 			rect.right -= 1;	// correct edge, since .right is the first pixel _outside_ our window
 			rect.bottom -= 1;	// correct edge, since .bottom is the first pixel _outside_ our window
+			LONG windowWidth = rect.right - rect.left;
+			LONG windowHeight = rect.bottom - rect.top;
 
 			// Also need to correctly handle part of our window being off-screen
 			int desktopWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
 			int desktopHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-			tstring strBuf = boost::str(tformat(_T("[Main_OnVisible]    rect:[%1%, %2%][%3%, %4%] desktop:[%5% x %6%]")) 
+			tstring strBuf = boost::str(tformat(_T("[Main_OnTray]    rect:[%1%, %2%][%3%, %4%] desktop:[%5% x %6%]")) 
 				% rect.left % rect.top % rect.right % rect.bottom % desktopWidth % desktopHeight);
-			TRACEBUFV(strBuf)
+			TRACEBUFI(strBuf)
 
 			POINT pt;
 			HWND tgtHwnd = 0;
 			bool isOccluded = false;
 
-			pt.x = rect.left;
-			pt.y = rect.top;
-			tgtHwnd = WindowFromPoint(pt);
-			if (tgtHwnd != hwnd && rect.left >= 0 && rect.top >= 0)
-			{
-				TRACEV(" ** (left,top) not our window");
-				isOccluded = true;
-			}
+			// divide window into a 10 x 10 grid of points to check
+			LONG stepx = (LONG)(windowWidth / 10);
+			LONG stepy = (LONG)(desktopHeight / 10);
+			LONG x = 0;
+			LONG y = 0;
 
-			pt.x = rect.right;
-			pt.y = rect.top;
-			tgtHwnd = WindowFromPoint(pt);
-			if (tgtHwnd != hwnd && rect.right <= desktopWidth && rect.top >= 0)
+			for (x = rect.left; x < rect.right + stepx; x += stepx)
 			{
-				TRACEV(" ** (right,top) not our window");
-				isOccluded = true;
-			}
-
-			pt.x = rect.right;
-			pt.y = rect.bottom;
-			tgtHwnd = WindowFromPoint(pt);
-			if (tgtHwnd != hwnd && rect.right <= desktopWidth && rect.bottom <= desktopHeight)
-			{
-				TRACEV(" ** (right,bottom) not our window");
-				isOccluded = true;
-			}
-
-			pt.x = rect.left;
-			pt.y = rect.bottom;
-			tgtHwnd = WindowFromPoint(pt);
-			if (tgtHwnd != hwnd && rect.left >= 0 && rect.bottom <= desktopHeight)
-			{
-				TRACEV(" ** (left,bottom) not our window");
-				isOccluded = true;
+				if (x >= rect.right) x = rect.right;
+				for (y = rect.top; y < rect.bottom + stepy; y += stepy)
+				{
+					if (y > rect.bottom) y = rect.bottom;
+					pt.x = x;
+					pt.y = y;
+					tgtHwnd = WindowFromPoint(pt);
+					if (GetAncestor(tgtHwnd, GA_ROOT) != GetAncestor(hwnd, GA_ROOT) &&	// not our window
+						y >= 0 && y <= desktopHeight &&	// point x is onscreen
+						x >= 0 && x <= desktopWidth)	// point y is onscreen
+					{
+						TRACEI("[Main_OnTray] ** not our window");
+						tstring strBuf = boost::str(tformat(_T("[Main_OnTray]  * point [%1%, %2%] not our window")) % x % y );
+						TRACEBUFI(strBuf);
+						strBuf = boost::str(tformat(_T("[Main_OnTray]  * tgtHwnd:[%1%], our hwnd:[%2%]")) % tgtHwnd % hwnd );
+						TRACEBUFI(strBuf);
+						strBuf = boost::str(tformat(_T("[Main_OnTray]  * desktopHeight:[%1%], desktopWidth:[%2%]")) % desktopHeight % desktopWidth );
+						TRACEBUFI(strBuf);
+						strBuf = boost::str(tformat(_T("[Main_OnTray]  * parentHwnd:[%1%] our parentHwnd:[%2%]")) % GetParent(tgtHwnd) % GetParent(hwnd) );
+						TRACEBUFI(strBuf);
+						strBuf = boost::str(tformat(_T("[Main_OnTray]  * tgt ancestor-root:[%1%] our ancestor-root:[%2%]")) % GetAncestor(tgtHwnd, GA_ROOT) % GetAncestor(hwnd, GA_ROOT) );
+						TRACEBUFI(strBuf);
+						strBuf = boost::str(tformat(_T("[Main_OnTray]  * tgt ancestor-rootowner:[%1%] our ancestor-rootowner:[%2%]")) % GetAncestor(tgtHwnd, GA_ROOTOWNER) % GetAncestor(hwnd, GA_ROOTOWNER) );
+						TRACEBUFI(strBuf);
+						isOccluded = true;
+						break;
+					}
+				}
+				if (isOccluded) break;
 			}
 
 			if (isOccluded)
 				showWindow = true;
 			else
 				showWindow = false;
+
+			TRACEI("[Main_OnTray]  < Finished checking to see if our window is on top");
 		}
 
 		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, showWindow);
