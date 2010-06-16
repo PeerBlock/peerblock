@@ -71,7 +71,8 @@ am__objects_1 = file.lo timeval.lo base64.lo hostip.lo progress.lo \
 	formdata.lo cookie.lo http.lo sendf.lo ftp.lo url.lo dict.lo \
 	if2ip.lo speedcheck.lo ldap.lo ssluse.lo version.lo getenv.lo \
 	escape.lo mprintf.lo telnet.lo netrc.lo getinfo.lo transfer.lo \
-	strequal.lo easy.lo security.lo krb4.lo krb5.lo memdebug.lo \
+	strequal.lo easy.lo security.lo krb4.lo curl_fnmatch.lo \
+	fileinfo.lo ftplistparser.lo wildcard.lo krb5.lo memdebug.lo \
 	http_chunks.lo strtok.lo connect.lo llist.lo hash.lo multi.lo \
 	content_encoding.lo share.lo http_digest.lo md5.lo \
 	curl_rand.lo http_negotiate.lo http_ntlm.lo inet_pton.lo \
@@ -81,7 +82,8 @@ am__objects_1 = file.lo timeval.lo base64.lo hostip.lo progress.lo \
 	socks.lo ssh.lo nss.lo qssl.lo rawstr.lo curl_addrinfo.lo \
 	socks_gssapi.lo socks_sspi.lo curl_sspi.lo slist.lo \
 	nonblock.lo curl_memrchr.lo imap.lo pop3.lo smtp.lo \
-	pingpong.lo rtsp.lo curl_threads.lo warnless.lo
+	pingpong.lo rtsp.lo curl_threads.lo warnless.lo hmac.lo \
+	polarssl.lo curl_rtmp.lo openldap.lo
 am__objects_2 =
 am_libcurl_la_OBJECTS = $(am__objects_1) $(am__objects_2)
 libcurl_la_OBJECTS = $(am_libcurl_la_OBJECTS)
@@ -149,6 +151,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_LDAP_SSL = @HAVE_LDAP_SSL@
 HAVE_LIBZ = @HAVE_LIBZ@
 HAVE_LIBZ_FALSE = @HAVE_LIBZ_FALSE@
 HAVE_LIBZ_TRUE = @HAVE_LIBZ_TRUE@
@@ -218,10 +221,13 @@ USE_ARES = @USE_ARES@
 USE_EMBEDDED_ARES_FALSE = @USE_EMBEDDED_ARES_FALSE@
 USE_EMBEDDED_ARES_TRUE = @USE_EMBEDDED_ARES_TRUE@
 USE_GNUTLS = @USE_GNUTLS@
+USE_LIBRTMP = @USE_LIBRTMP@
 USE_LIBSSH2 = @USE_LIBSSH2@
 USE_MANUAL_FALSE = @USE_MANUAL_FALSE@
 USE_MANUAL_TRUE = @USE_MANUAL_TRUE@
 USE_NSS = @USE_NSS@
+USE_OPENLDAP = @USE_OPENLDAP@
+USE_POLARSSL = @USE_POLARSSL@
 USE_SSLEAY = @USE_SSLEAY@
 USE_WINDOWS_SSPI = @USE_WINDOWS_SSPI@
 VERSION = @VERSION@
@@ -378,6 +384,7 @@ CSOURCES = file.c timeval.c base64.c hostip.c progress.c formdata.c	\
   cookie.c http.c sendf.c ftp.c url.c dict.c if2ip.c speedcheck.c	\
   ldap.c ssluse.c version.c getenv.c escape.c mprintf.c telnet.c	\
   netrc.c getinfo.c transfer.c strequal.c easy.c security.c krb4.c	\
+  curl_fnmatch.c fileinfo.c ftplistparser.c wildcard.c \
   krb5.c memdebug.c http_chunks.c strtok.c connect.c llist.c hash.c	\
   multi.c content_encoding.c share.c http_digest.c md5.c curl_rand.c	\
   http_negotiate.c http_ntlm.c inet_pton.c strtoofft.c strerror.c	\
@@ -386,12 +393,13 @@ CSOURCES = file.c timeval.c base64.c hostip.c progress.c formdata.c	\
   strdup.c socks.c ssh.c nss.c qssl.c rawstr.c curl_addrinfo.c          \
   socks_gssapi.c socks_sspi.c curl_sspi.c slist.c nonblock.c		\
   curl_memrchr.c imap.c pop3.c smtp.c pingpong.c rtsp.c curl_threads.c	\
-  warnless.c
+  warnless.c hmac.c polarssl.c curl_rtmp.c openldap.c
 
 HHEADERS = arpa_telnet.h netrc.h file.h timeval.h qssl.h hostip.h	\
   progress.h formdata.h cookie.h http.h sendf.h ftp.h url.h dict.h	\
   if2ip.h speedcheck.h urldata.h curl_ldap.h ssluse.h escape.h telnet.h	\
   getinfo.h strequal.h krb4.h memdebug.h http_chunks.h curl_rand.h	\
+  curl_fnmatch.h wildcard.h fileinfo.h ftplistparser.h \
   strtok.h connect.h llist.h hash.h content_encoding.h share.h		\
   curl_md5.h http_digest.h http_negotiate.h http_ntlm.h inet_pton.h	\
   strtoofft.h strerror.h inet_ntop.h curlx.h curl_memory.h setup.h	\
@@ -399,7 +407,7 @@ HHEADERS = arpa_telnet.h netrc.h file.h timeval.h qssl.h hostip.h	\
   tftp.h sockaddr.h splay.h strdup.h setup_once.h socks.h ssh.h nssg.h	\
   curl_base64.h rawstr.h curl_addrinfo.h curl_sspi.h slist.h nonblock.h	\
   curl_memrchr.h imap.h pop3.h smtp.h pingpong.h rtsp.h curl_threads.h	\
-  warnless.h
+  warnless.h curl_hmac.h polarssl.h curl_rtmp.h
 
 
 # Makefile.inc provides the CSOURCES and HHEADERS defines
@@ -500,20 +508,25 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/content_encoding.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cookie.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_addrinfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_fnmatch.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_memrchr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_rand.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_rtmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_sspi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curl_threads.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dict.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/easy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/escape.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fileinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formdata.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ftp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ftplistparser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getenv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtls.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmac.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostares.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostasyn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hostip.Plo@am__quote@
@@ -541,8 +554,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nonblock.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nss.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openldap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parsedate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pingpong.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/polarssl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pop3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/progress.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qssl.Plo@am__quote@
@@ -574,6 +589,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/url.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/version.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/warnless.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wildcard.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

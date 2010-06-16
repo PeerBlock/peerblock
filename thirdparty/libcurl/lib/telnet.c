@@ -67,6 +67,7 @@
 #include "sendf.h"
 #include "telnet.h"
 #include "connect.h"
+#include "progress.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -962,16 +963,16 @@ CURLcode telrcv(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   struct TELNET *tn = (struct TELNET *)data->state.proto.telnet;
 
-#define startskipping() \
-    if(startwrite >= 0) { \
-       result = Curl_client_write(conn, \
-                                  CLIENTWRITE_BODY, \
-                                  (char *)&inbuf[startwrite], \
-                                  in-startwrite); \
-      if(result != CURLE_OK) \
-        return result; \
-    } \
-    startwrite = -1
+#define startskipping()                                       \
+  if(startwrite >= 0) {                                       \
+    result = Curl_client_write(conn,                          \
+                               CLIENTWRITE_BODY,              \
+                               (char *)&inbuf[startwrite],    \
+                               in-startwrite);                \
+    if(result != CURLE_OK)                                    \
+      return result;                                          \
+  }                                                           \
+  startwrite = -1
 
 #define writebyte() \
     if(startwrite < 0) \
@@ -1206,8 +1207,10 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
 #else
   int interval_ms;
   struct pollfd pfd[2];
+  int poll_cnt;
+  curl_off_t total_dl = 0;
+  curl_off_t total_ul = 0;
 #endif
-  int ret;
   ssize_t nread;
   struct timeval now;
   bool keepon = TRUE;
@@ -1379,14 +1382,13 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
       }
       if(events.lNetworkEvents & FD_READ) {
         /* read data from network */
-        ret = Curl_read(conn, sockfd, buf, BUFSIZE - 1, &nread);
-        /* returned sub-zero, this would've blocked. Loop again */
-        if(ret < 0)
+        code = Curl_read(conn, sockfd, buf, BUFSIZE - 1, &nread);
+        /* read would've blocked. Loop again */
+        if(code == CURLE_AGAIN)
           break;
         /* returned not-zero, this an error */
-        else if(ret) {
+        else if(code) {
           keepon = FALSE;
-          code = (CURLcode)ret;
           break;
         }
         /* returned zero but actually received 0 or less here,
@@ -1401,8 +1403,6 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
           keepon = FALSE;
           break;
         }
-
-        fflush(stdout);
 
         /* Negotiate if the peer has started negotiating,
            otherwise don't. We don't want to speak telnet with
@@ -1446,37 +1446,37 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
 #else
   pfd[0].fd = sockfd;
   pfd[0].events = POLLIN;
-  pfd[1].fd = 0;
-  pfd[1].events = POLLIN;
-  interval_ms = 1 * 1000;
+
+  if (data->set.is_fread_set) {
+    poll_cnt = 1;
+    interval_ms = 100; /* poll user-supplied read function */
+  }
+  else {
+    pfd[1].fd = 0;
+    pfd[1].events = POLLIN;
+    poll_cnt = 2;
+    interval_ms = 1 * 1000;
+  }
 
   while(keepon) {
-    switch (Curl_poll(pfd, 2, interval_ms)) {
+    switch (Curl_poll(pfd, poll_cnt, interval_ms)) {
     case -1:                    /* error, stop reading */
       keepon = FALSE;
       continue;
     case 0:                     /* timeout */
-      break;
+      pfd[0].revents = 0;
+      pfd[1].revents = 0;
+      /* fall through */
     default:                    /* read! */
-      if(pfd[1].revents & POLLIN) { /* read from stdin */
-        nread = read(0, buf, 255);
-        code = send_telnet_data(conn, buf, nread);
-        if(code) {
-          keepon = FALSE;
-          break;
-        }
-      }
-
       if(pfd[0].revents & POLLIN) {
         /* read data from network */
-        ret = Curl_read(conn, sockfd, buf, BUFSIZE - 1, &nread);
-        /* returned sub-zero, this would've blocked. Loop again */
-        if(ret < 0)
+        code = Curl_read(conn, sockfd, buf, BUFSIZE - 1, &nread);
+        /* read would've blocked. Loop again */
+        if(code == CURLE_AGAIN)
           break;
         /* returned not-zero, this an error */
-        else if(ret) {
+        else if(code) {
           keepon = FALSE;
-          code = (CURLcode)ret;
           break;
         }
         /* returned zero but actually received 0 or less here,
@@ -1486,6 +1486,8 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
           break;
         }
 
+        total_dl += nread;
+        Curl_pgrsSetDownloadCounter(data, total_dl);
         code = telrcv(conn, (unsigned char *)buf, nread);
         if(code) {
           keepon = FALSE;
@@ -1500,7 +1502,39 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
           tn->already_negotiated = 1;
         }
       }
-    }
+
+      nread = 0;
+      if (poll_cnt == 2) {
+        if(pfd[1].revents & POLLIN) { /* read from stdin */
+          nread = read(0, buf, BUFSIZE - 1);
+        }
+      }
+      else {
+        /* read from user-supplied method */
+        nread = (int)conn->fread_func(buf, 1, BUFSIZE - 1, conn->fread_in);
+        if (nread == CURL_READFUNC_ABORT) {
+          keepon = FALSE;
+          break;
+        }
+        if (nread == CURL_READFUNC_PAUSE)
+          break;
+      }
+
+      if (nread > 0) {
+        code = send_telnet_data(conn, buf, nread);
+        if(code) {
+          keepon = FALSE;
+          break;
+        }
+        total_ul += nread;
+        Curl_pgrsSetUploadCounter(data, total_ul);
+      }
+      else if (nread < 0)
+        keepon = FALSE;
+
+      break;
+    } /* poll switch statement */
+
     if(data->set.timeout) {
       now = Curl_tvnow();
       if(Curl_tvdiff(now, conn->created) >= data->set.timeout) {
@@ -1508,6 +1542,11 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
         code = CURLE_OPERATION_TIMEDOUT;
         keepon = FALSE;
       }
+    }
+
+    if(Curl_pgrsUpdate(conn)) {
+       code = CURLE_ABORTED_BY_CALLBACK;
+       break;
     }
   }
 #endif

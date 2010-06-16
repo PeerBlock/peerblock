@@ -1283,7 +1283,6 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
   struct SessionHandle *data=conn->data;
   struct SingleRequest *k = &data->req;
   CURLcode result;
-  int res;
   long timeout =
     data->set.timeout?data->set.timeout:PROXY_TIMEOUT; /* in milliseconds */
   curl_socket_t tunnelsocket = conn->sock[sockindex];
@@ -1467,11 +1466,10 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
           break;
         default:
           DEBUGASSERT(ptr+BUFSIZE-nread <= data->state.buffer+BUFSIZE+1);
-          res = Curl_read(conn, tunnelsocket, ptr, BUFSIZE-nread, &gotbytes);
-          if(res< 0)
-            /* EWOULDBLOCK */
+          result = Curl_read(conn, tunnelsocket, ptr, BUFSIZE-nread, &gotbytes);
+          if(result==CURLE_AGAIN)
             continue; /* go loop yourself */
-          else if(res)
+          else if(result)
             keepon = FALSE;
           else if(gotbytes <= 0) {
             keepon = FALSE;
@@ -1817,9 +1815,9 @@ static CURLcode https_connecting(struct connectdata *conn, bool *done)
 }
 #endif
 
-#ifdef USE_SSLEAY
-/* This function is OpenSSL-specific. It should be made to query the generic
-   SSL layer instead. */
+#if defined(USE_SSLEAY) || defined(USE_GNUTLS)
+/* This function is for OpenSSL and GnuTLS only. It should be made to query
+   the generic SSL layer instead. */
 static int https_getsock(struct connectdata *conn,
                          curl_socket_t *socks,
                          int numsocks)
@@ -1844,17 +1842,6 @@ static int https_getsock(struct connectdata *conn,
   return CURLE_OK;
 }
 #else
-#ifdef USE_GNUTLS
-static int https_getsock(struct connectdata *conn,
-                         curl_socket_t *socks,
-                         int numsocks)
-{
-  (void)conn;
-  (void)socks;
-  (void)numsocks;
-  return GETSOCK_BLANK;
-}
-#else
 #ifdef USE_NSS
 static int https_getsock(struct connectdata *conn,
                          curl_socket_t *socks,
@@ -1867,6 +1854,17 @@ static int https_getsock(struct connectdata *conn,
 }
 #else
 #ifdef USE_QSOSSL
+static int https_getsock(struct connectdata *conn,
+                         curl_socket_t *socks,
+                         int numsocks)
+{
+  (void)conn;
+  (void)socks;
+  (void)numsocks;
+  return GETSOCK_BLANK;
+}
+#else
+#ifdef USE_POLARSSL
 static int https_getsock(struct connectdata *conn,
                          curl_socket_t *socks,
                          int numsocks)
@@ -2665,14 +2663,13 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
         return result;
 
       result = Curl_add_buffer_send(req_buffer, conn,
-                               &data->info.request_size, 0, FIRSTSOCKET);
+                                    &data->info.request_size, 0, FIRSTSOCKET);
       if(result)
         failf(data, "Failed sending POST request");
       else
         /* setup variables for the upcoming transfer */
-        result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
-                                     &http->readbytecount,
-                                     -1, NULL);
+        Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE, &http->readbytecount,
+                            -1, NULL);
       break;
     }
 
@@ -2740,10 +2737,9 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       failf(data, "Failed sending POST request");
     else
       /* setup variables for the upcoming transfer */
-      result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
-                                   &http->readbytecount,
-                                   FIRSTSOCKET,
-                                   &http->writebytecount);
+      Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
+                          &http->readbytecount, FIRSTSOCKET,
+                          &http->writebytecount);
 
     if(result) {
       Curl_formclean(&http->sendit); /* free that whole lot */
@@ -2793,10 +2789,9 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       failf(data, "Failed sending PUT request");
     else
       /* prepare for transfer */
-      result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
-                                   &http->readbytecount,
-                                   postsize?FIRSTSOCKET:-1,
-                                   postsize?&http->writebytecount:NULL);
+      Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
+                          &http->readbytecount, postsize?FIRSTSOCKET:-1,
+                          postsize?&http->writebytecount:NULL);
     if(result)
       return result;
     break;
@@ -2943,11 +2938,9 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
     if(result)
       failf(data, "Failed sending HTTP POST request");
     else
-      result =
-        Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
-                            &http->readbytecount,
-                            http->postdata?FIRSTSOCKET:-1,
-                            http->postdata?&http->writebytecount:NULL);
+      Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
+                          &http->readbytecount, http->postdata?FIRSTSOCKET:-1,
+                          http->postdata?&http->writebytecount:NULL);
     break;
 
   default:
@@ -2963,10 +2956,9 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       failf(data, "Failed sending HTTP request");
     else
       /* HTTP GET/HEAD download: */
-      result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE,
-                                   &http->readbytecount,
-                                   http->postdata?FIRSTSOCKET:-1,
-                                   http->postdata?&http->writebytecount:NULL);
+      Curl_setup_transfer(conn, FIRSTSOCKET, -1, TRUE, &http->readbytecount,
+                          http->postdata?FIRSTSOCKET:-1,
+                          http->postdata?&http->writebytecount:NULL);
   }
   if(result)
     return result;

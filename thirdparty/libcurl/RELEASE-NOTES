@@ -1,51 +1,43 @@
-Curl and libcurl 7.20.1
+Curl and libcurl 7.21.0
 
- Public curl releases:         115
- Command line options:         136
- curl_easy_setopt() options:   174
+ Public curl releases:         116
+ Command line options:         138
+ curl_easy_setopt() options:   180
  Public functions in libcurl:  58
  Known libcurl bindings:       39
- Contributors:                 776
+ Contributors:                 794
 
 This release includes the following changes:
 
- o The 'ares' subtree has been removed from the source repository
- o smoother rate limiting
- o allow user+password in the URL for all protocols
- o POP3: Get message listing if no mailbox in URL
+ o added the --proto and -proto-redir options
+ o new configure option --enable-threaded-resolver
+ o improve TELNET ability with libcurl
+ o added support for PolarSSL
+ o added support for FTP wildcard matching and downloads
+ o added support for RTMP
+ o introducing new LDAP code for new enough OpenLDAP
+ o OpenLDAP support enabled for cygwin builds
+ o added CURLINFO_PRIMARY_PORT, CURLINFO_LOCAL_IP and CURLINFO_LOCAL_PORT
 
 This release includes the following bugfixes:
 
- o VMS builder bad behavior when used in a batch job
- o multiple recepients with SMTP
- o fixed the CURL_FORMAT_* defines when building with cmake
- o missing quote in libcurl.m4
- o SMTP: now waits for 250 after the DATA transfer
- o SMTP: use angle brackets in RCPT TO
- o curl --trace-time not using local time
- o off-by-one in the chunked encoding trailer parser
- o superfluous blocking for OpenSSL-based SSL connects and multi interface
- o TFTP upload
- o FTP timeouts after file transferred completely
- o skip poll() on Interix
- o CURLOPT_CERTINFO memory leak
- o sub-second timeouts improvements
- o configure fixes for GSSAPI
- o threaded resolver double free when closing curl handle
- o configure fixes for building with the clang compiler
- o easy interix rate limiting logic
- o curl_multi_remove_handle() caused use after free
- o TFTP improved error codes
- o TFTP fixed TSIZE handling for uploads
- o SSL possible double free when reusing curl handle
- o alarm()-based DNS timeout bug
- o re-used FTP connection multi interface crash
- o chunked-encoding with Content-Length: header problem
- o multi interface HTTP POST over a proxy using PROXYTUNNEL
- o RTSP GET_PARAMETER
- o timeout after last data chunk was handled
- o SFTP download hang
- o FTP quote commands prefixed with '*' now can fail without aborting
+ o prevent needless reverse name lookups
+ o detect GSS on ancient Linux distros
+ o GnuTLS: EOF caused error when it wasn't
+ o GnuTLS: SSL handshake phase is non-blocking
+ o -J/--remote-header-name strips CRLF
+ o MSVC makefiles now use ws2_32.lib instead of wsock32.lib
+ o -O crash on windows
+ o SSL handshake timeout underflow in libcurl-NSS
+ o multi interface missed storing connection time
+ o broken CRL support in libcurl-NSS
+ o ignore response-body on redirect even if compressed
+ o OpenSSL handshake state-machine for multi interface
+ o TFTP timeout option sent correctly
+ o TFTP block id wrap
+ o curl_multi_socket_action() timeout handles inaccuracy in timers better
+ o SCP/SFTP failure to respect the timeout
+ o spurious SSL connection aborts with OpenSSL
 
 This release includes the following known bugs:
 
@@ -54,11 +46,11 @@ This release includes the following known bugs:
 This release would not have looked like this without help, code, reports and
 advice from friends like these:
 
- Steven M. Schweda, Yang Tse, Jack Zhang, Tom Donovan, Martin Hager,
- Daniel Fandrich, Patrick Monnerat, Pat Ray, Wesley Miaw, Ben Greear,
- Ryan Chan, Markus Duft, Andrei Benea, Jacob Moshenko, Daniel Johnson,
- Constantine Sapuntzakis, Douglas Steinwand, Thomas Lopatic, Hauke Duden,
- Akos Pasztory, Kenny To, Christopher Conroy, Massimo Callegari,
- Bob Richmond, Matt Wixson
+ Rainer Canavan, Paul Howarth, Jerome Vouillon, Ruslan Gazizov, Yang Tse,
+ Kamil Dudka, Alex Bligh, Ben Greear, Hoi-Ho Chan, Howard Chu, Dirk Manske,
+ Pavel Raiskup, John-Mark Bell, Eric Mertens, Tor Arntsen, Douglas Kilpatrick,
+ Igor Novoseltsev, Jason McDonald, Dan Fandrich, Tanguy Fautre, Guenter Knauf,
+ Julien Chaffraix, Kalle Vahlman, Frank Meier, Constantine Sapuntzakis
+
 
         Thanks! (and sorry if I forgot to mention someone)

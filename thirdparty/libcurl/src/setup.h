@@ -212,7 +212,7 @@ int fileno( FILE *stream);
  */
 
 #ifndef __SETUP_ONCE_H
-#include "../lib/setup_once.h"
+#include "setup_once.h"
 #endif
 
 #endif /* HEADER_CURL_SRC_SETUP_H */

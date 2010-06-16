@@ -1,5 +1,4 @@
 #############################################################
-# $Id: Makefile.vc9,v 1.19 2004/11/14 13:48:15 giva Exp $
 #
 ## Makefile for building curl.exe with MSVC9
 ## Use: nmake -f makefile.vc9 [release | debug] [CFG=release-ssl]

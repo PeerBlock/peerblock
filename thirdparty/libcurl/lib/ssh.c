@@ -1556,8 +1556,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
         Curl_pgrsSetUploadSize(data, data->set.infilesize);
       }
       /* upload data */
-      result = Curl_setup_transfer(conn, -1, -1, FALSE, NULL,
-                                   FIRSTSOCKET, NULL);
+      Curl_setup_transfer(conn, -1, -1, FALSE, NULL, FIRSTSOCKET, NULL);
 
       /* not set by Curl_setup_transfer to preserve keepon bits */
       conn->sockfd = conn->writesockfd;
@@ -1850,7 +1849,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       sshc->readdir_longentry = NULL;
 
       /* no data to transfer */
-      result = Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
+      Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
       state(conn, SSH_STOP);
       break;
 
@@ -1910,7 +1909,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
           char *ptr2;
 
           from=curlx_strtoofft(conn->data->state.range, &ptr, 0);
-          while(ptr && *ptr && (isspace((int)*ptr) || (*ptr=='-')))
+          while(*ptr && (isspace((int)*ptr) || (*ptr=='-')))
             ptr++;
           to=curlx_strtoofft(ptr, &ptr2, 0);
           if((ptr == ptr2) /* no "to" value given */
@@ -1975,14 +1974,14 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
     /* Setup the actual download */
     if(data->req.size == 0) {
       /* no data to transfer */
-      result = Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
+      Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
       infof(data, "File already completely downloaded\n");
       state(conn, SSH_STOP);
       break;
     }
     else {
-      result = Curl_setup_transfer(conn, FIRSTSOCKET, data->req.size,
-                                   FALSE, NULL, -1, NULL);
+      Curl_setup_transfer(conn, FIRSTSOCKET, data->req.size,
+                          FALSE, NULL, -1, NULL);
 
       /* not set by Curl_setup_transfer to preserve keepon bits */
       conn->writesockfd = conn->sockfd;
@@ -2107,8 +2106,8 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       }
 
       /* upload data */
-      result = Curl_setup_transfer(conn, -1, data->req.size, FALSE, NULL,
-                                   FIRSTSOCKET, NULL);
+      Curl_setup_transfer(conn, -1, data->req.size, FALSE, NULL,
+                          FIRSTSOCKET, NULL);
 
       /* not set by Curl_setup_transfer to preserve keepon bits */
       conn->sockfd = conn->writesockfd;
@@ -2159,8 +2158,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       /* download data */
       bytecount = (curl_off_t)sb.st_size;
       data->req.maxdownload =  (curl_off_t)sb.st_size;
-      result = Curl_setup_transfer(conn, FIRSTSOCKET,
-                                   bytecount, FALSE, NULL, -1, NULL);
+      Curl_setup_transfer(conn, FIRSTSOCKET, bytecount, FALSE, NULL, -1, NULL);
 
       /* not set by Curl_setup_transfer to preserve keepon bits */
       conn->writesockfd = conn->sockfd;
@@ -2410,14 +2408,27 @@ static CURLcode ssh_multi_statemach(struct connectdata *conn, bool *done)
   return result;
 }
 
-static CURLcode ssh_easy_statemach(struct connectdata *conn)
+static CURLcode ssh_easy_statemach(struct connectdata *conn,
+                                   bool duringconnect)
 {
   struct ssh_conn *sshc = &conn->proto.sshc;
   CURLcode result = CURLE_OK;
+  struct SessionHandle *data = conn->data;
 
   while((sshc->state != SSH_STOP) && !result) {
     bool block;
+    long left;
+
     result = ssh_statemach_act(conn, &block);
+
+    if(Curl_pgrsUpdate(conn))
+      return CURLE_ABORTED_BY_CALLBACK;
+
+    left = Curl_timeleft(conn, NULL, duringconnect);
+    if(left < 0) {
+      failf(data, "Operation timed out\n");
+      return CURLE_OPERATION_TIMEDOUT;
+    }
 
 #ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTION
     if((CURLE_OK == result) && block) {
@@ -2432,7 +2443,8 @@ static CURLcode ssh_easy_statemach(struct connectdata *conn)
         fd_write = sock;
       }
       /* wait for the socket to become ready */
-      Curl_socket_ready(fd_read, fd_write, 1000); /* ignore result */
+      Curl_socket_ready(fd_read, fd_write,
+                        left>1000?1000:left); /* ignore result */
     }
 #endif
 
@@ -2466,6 +2478,9 @@ static CURLcode ssh_init(struct connectdata *conn)
   return CURLE_OK;
 }
 
+static Curl_recv scp_recv, sftp_recv;
+static Curl_send scp_send, sftp_send;
+
 /*
  * Curl_ssh_connect() gets called from Curl_protocol_connect() to allow us to
  * do protocol-specific actions at connect-time.
@@ -2491,6 +2506,13 @@ static CURLcode ssh_connect(struct connectdata *conn, bool *done)
   if(result)
     return result;
 
+  if(conn->protocol & PROT_SCP) {
+    conn->recv[FIRSTSOCKET] = scp_recv;
+    conn->send[FIRSTSOCKET] = scp_send;
+  } else {
+    conn->recv[FIRSTSOCKET] = sftp_recv;
+    conn->send[FIRSTSOCKET] = sftp_send;
+  }
   ssh = &conn->proto.sshc;
 
 #ifdef CURL_LIBSSH2_DEBUG
@@ -2540,7 +2562,7 @@ static CURLcode ssh_connect(struct connectdata *conn, bool *done)
   if(data->state.used_interface == Curl_if_multi)
     result = ssh_multi_statemach(conn, done);
   else {
-    result = ssh_easy_statemach(conn);
+    result = ssh_easy_statemach(conn, TRUE);
     if(!result)
       *done = TRUE;
   }
@@ -2576,7 +2598,7 @@ CURLcode scp_perform(struct connectdata *conn,
     result = ssh_multi_statemach(conn, dophase_done);
   }
   else {
-    result = ssh_easy_statemach(conn);
+    result = ssh_easy_statemach(conn, FALSE);
     *dophase_done = TRUE; /* with the easy interface we are done here */
   }
   *connected = conn->bits.tcpconnect;
@@ -2657,7 +2679,7 @@ static CURLcode scp_disconnect(struct connectdata *conn)
 
     state(conn, SSH_SESSION_DISCONNECT);
 
-    result = ssh_easy_statemach(conn);
+    result = ssh_easy_statemach(conn, FALSE);
   }
 
   return result;
@@ -2678,7 +2700,7 @@ static CURLcode ssh_done(struct connectdata *conn, CURLcode status)
        non-blocking DONE operations, not in the multi state machine and with
        Curl_done() invokes on several places in the code!
     */
-    result = ssh_easy_statemach(conn);
+    result = ssh_easy_statemach(conn, FALSE);
   }
   else
     result = status;
@@ -2705,8 +2727,8 @@ static CURLcode scp_done(struct connectdata *conn, CURLcode status,
 }
 
 /* return number of received (decrypted) bytes */
-ssize_t Curl_scp_send(struct connectdata *conn, int sockindex,
-                      const void *mem, size_t len)
+static ssize_t scp_send(struct connectdata *conn, int sockindex,
+                        const void *mem, size_t len, CURLcode *err)
 {
   ssize_t nwrite;
   (void)sockindex; /* we only support SCP on the fixed known primary socket */
@@ -2717,8 +2739,10 @@ ssize_t Curl_scp_send(struct connectdata *conn, int sockindex,
 
   ssh_block2waitfor(conn, (nwrite == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
 
-  if(nwrite == LIBSSH2_ERROR_EAGAIN)
-    return 0;
+  if(nwrite == LIBSSH2_ERROR_EAGAIN) {
+    *err = CURLE_AGAIN;
+    nwrite = 0;
+  }
 
   return nwrite;
 }
@@ -2727,8 +2751,8 @@ ssize_t Curl_scp_send(struct connectdata *conn, int sockindex,
  * If the read would block (EWOULDBLOCK) we return -1. Otherwise we return
  * a regular CURLcode value.
  */
-ssize_t Curl_scp_recv(struct connectdata *conn, int sockindex,
-                      char *mem, size_t len)
+static ssize_t scp_recv(struct connectdata *conn, int sockindex,
+                        char *mem, size_t len, CURLcode *err)
 {
   ssize_t nread;
   (void)sockindex; /* we only support SCP on the fixed known primary socket */
@@ -2738,6 +2762,10 @@ ssize_t Curl_scp_recv(struct connectdata *conn, int sockindex,
     libssh2_channel_read(conn->proto.sshc.ssh_channel, mem, len);
 
   ssh_block2waitfor(conn, (nread == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
+  if (nread == LIBSSH2_ERROR_EAGAIN) {
+    *err = CURLE_AGAIN;
+    nread = -1;
+  }
 
   return nread;
 }
@@ -2774,7 +2802,7 @@ CURLcode sftp_perform(struct connectdata *conn,
     result = ssh_multi_statemach(conn, dophase_done);
   }
   else {
-    result = ssh_easy_statemach(conn);
+    result = ssh_easy_statemach(conn, FALSE);
     *dophase_done = TRUE; /* with the easy interface we are done here */
   }
   *connected = conn->bits.tcpconnect;
@@ -2814,7 +2842,7 @@ static CURLcode sftp_disconnect(struct connectdata *conn)
   if(conn->proto.sshc.ssh_session) {
     /* only if there's a session still around to use! */
     state(conn, SSH_SFTP_SHUTDOWN);
-    result = ssh_easy_statemach(conn);
+    result = ssh_easy_statemach(conn, FALSE);
   }
 
   DEBUGF(infof(conn->data, "SSH DISCONNECT is done\n"));
@@ -2842,8 +2870,8 @@ static CURLcode sftp_done(struct connectdata *conn, CURLcode status,
 }
 
 /* return number of sent bytes */
-ssize_t Curl_sftp_send(struct connectdata *conn, int sockindex,
-                       const void *mem, size_t len)
+static ssize_t sftp_send(struct connectdata *conn, int sockindex,
+                         const void *mem, size_t len, CURLcode *err)
 {
   ssize_t nwrite;   /* libssh2_sftp_write() used to return size_t in 0.14
                        but is changed to ssize_t in 0.15. These days we don't
@@ -2854,8 +2882,10 @@ ssize_t Curl_sftp_send(struct connectdata *conn, int sockindex,
 
   ssh_block2waitfor(conn, (nwrite == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
 
-  if(nwrite == LIBSSH2_ERROR_EAGAIN)
-    return 0;
+  if(nwrite == LIBSSH2_ERROR_EAGAIN) {
+    *err = CURLE_AGAIN;
+    nwrite = 0;
+  }
 
   return nwrite;
 }
@@ -2863,8 +2893,8 @@ ssize_t Curl_sftp_send(struct connectdata *conn, int sockindex,
 /*
  * Return number of received (decrypted) bytes
  */
-ssize_t Curl_sftp_recv(struct connectdata *conn, int sockindex,
-                       char *mem, size_t len)
+static ssize_t sftp_recv(struct connectdata *conn, int sockindex,
+                         char *mem, size_t len, CURLcode *err)
 {
   ssize_t nread;
   (void)sockindex;
@@ -2873,6 +2903,10 @@ ssize_t Curl_sftp_recv(struct connectdata *conn, int sockindex,
 
   ssh_block2waitfor(conn, (nread == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
 
+  if(nread == LIBSSH2_ERROR_EAGAIN) {
+    *err = CURLE_AGAIN;
+    nread = -1;
+  }
   return nread;
 }
 

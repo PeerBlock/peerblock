@@ -63,10 +63,7 @@
 /* to enable hidden symbols */
 #undef CURL_HIDDEN_SYMBOLS
 
-/* W$ LDAP with non-W$ compiler */
-#undef CURL_LDAP_HYBRID
-
-/* Use W$ LDAP implementation */
+/* Use Windows LDAP implementation */
 #undef CURL_LDAP_WIN
 
 /* when not building a shared library */
@@ -352,6 +349,9 @@
 /* Define to 1 if you have the ldap.h header file. */
 #undef HAVE_LDAP_H
 
+/* Define to 1 if you have the `ldap_init_fd' function. */
+#undef HAVE_LDAP_INIT_FD
+
 /* Use LDAPS implementation */
 #undef HAVE_LDAP_SSL
 
@@ -373,11 +373,23 @@
 /* Define to 1 if you have the `resolve' library (-lresolve). */
 #undef HAVE_LIBRESOLVE
 
+/* Define to 1 if you have the `rtmp' library (-lrtmp). */
+#undef HAVE_LIBRTMP
+
+/* Define to 1 if you have the <librtmp/rtmp.h> header file. */
+#undef HAVE_LIBRTMP_RTMP_H
+
 /* Define to 1 if you have the `ssh2' library (-lssh2). */
 #undef HAVE_LIBSSH2
 
+/* Define to 1 if you have the `libssh2_exit' function. */
+#undef HAVE_LIBSSH2_EXIT
+
 /* Define to 1 if you have the <libssh2.h> header file. */
 #undef HAVE_LIBSSH2_H
+
+/* Define to 1 if you have the `libssh2_init' function. */
+#undef HAVE_LIBSSH2_INIT
 
 /* Define to 1 if you have the `libssh2_version' function. */
 #undef HAVE_LIBSSH2_VERSION
@@ -481,6 +493,9 @@
 
 /* Define to 1 if you have a working POSIX-style strerror_r function. */
 #undef HAVE_POSIX_STRERROR_R
+
+/* if you have <pthread.h> */
+#undef HAVE_PTHREAD_H
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #undef HAVE_PWD_H
@@ -912,6 +927,9 @@
 /* if GnuTLS is enabled */
 #undef USE_GNUTLS
 
+/* if librtmp is in use */
+#undef USE_LIBRTMP
+
 /* if libSSH2 is in use */
 #undef USE_LIBSSH2
 
@@ -921,11 +939,20 @@
 /* if NSS is enabled */
 #undef USE_NSS
 
+/* Use OpenLDAP-specific code */
+#undef USE_OPENLDAP
+
 /* if OpenSSL is in use */
 #undef USE_OPENSSL
 
+/* if PolarSSL is enabled */
+#undef USE_POLARSSL
+
 /* if SSL is enabled */
 #undef USE_SSLEAY
+
+/* if you want POSIX threaded DNS lookup */
+#undef USE_THREADS_POSIX
 
 /* Define to 1 if you are building a Windows target without large file
    support. */

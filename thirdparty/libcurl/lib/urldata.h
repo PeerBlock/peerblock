@@ -43,6 +43,9 @@
 #define PORT_SMTP 25
 #define PORT_SMTPS 465 /* sometimes called SSMTP */
 #define PORT_RTSP 554
+#define PORT_RTMP 1935
+#define PORT_RTMPT PORT_HTTP
+#define PORT_RTMPS PORT_HTTPS
 
 #define DICT_MATCH "/MATCH:"
 #define DICT_MATCH2 "/M:"
@@ -102,6 +105,11 @@
 #include <gnutls/gnutls.h>
 #endif
 
+#ifdef USE_POLARSSL
+#include <polarssl/havege.h>
+#include <polarssl/ssl.h>
+#endif
+
 #ifdef USE_NSS
 #include <nspr.h>
 #include <pk11pub.h>
@@ -148,6 +156,7 @@
 #include "ssh.h"
 #include "http.h"
 #include "rtsp.h"
+#include "wildcard.h"
 
 #ifdef HAVE_GSSAPI
 # ifdef HAVE_GSSGNU
@@ -231,7 +240,18 @@ struct ssl_connect_data {
 #ifdef USE_GNUTLS
   gnutls_session session;
   gnutls_certificate_credentials cred;
+  ssl_connect_state connecting_state;
 #endif /* USE_GNUTLS */
+#ifdef USE_POLARSSL
+  havege_state hs;
+  ssl_context ssl;
+  ssl_session ssn;
+  int server_fd;
+  x509_cert cacert;
+  x509_cert clicert;
+  x509_crl crl;
+  rsa_context rsa;
+#endif /* USE_POLARSSL */
 #ifdef USE_NSS
   PRFileDesc *handle;
   char *client_nickname;
@@ -632,6 +652,20 @@ struct Curl_handler {
   long protocol;      /* PROT_* flags concerning the protocol set */
 };
 
+/* return the count of bytes sent, or -1 on error */
+typedef ssize_t (Curl_send)(struct connectdata *conn, /* connection data */
+                            int sockindex,            /* socketindex */
+                            const void *buf,          /* data to write */
+                            size_t len,               /* max amount to write */
+                            CURLcode *err);           /* error to return */
+
+/* return the count of bytes read, or -1 on error */
+typedef ssize_t (Curl_recv)(struct connectdata *conn, /* connection data */
+                            int sockindex,            /* socketindex */
+                            char *buf,                /* store data here */
+                            size_t len,               /* max amount to read */
+                            CURLcode *err);           /* error to return */
+
 /*
  * The connectdata struct contains all fields and variables that should be
  * unique for an entire connection.
@@ -674,13 +708,19 @@ struct connectdata {
 #define PROT_SMTP    CURLPROTO_SMTP
 #define PROT_SMTPS   CURLPROTO_SMTPS
 #define PROT_RTSP    CURLPROTO_RTSP
+#define PROT_RTMP    CURLPROTO_RTMP
+#define PROT_RTMPT   CURLPROTO_RTMPT
+#define PROT_RTMPE   CURLPROTO_RTMPE
+#define PROT_RTMPTE  CURLPROTO_RTMPTE
+#define PROT_RTMPS   CURLPROTO_RTMPS
+#define PROT_RTMPTS  CURLPROTO_RTMPTS
 
-/* (1<<18) is currently the highest used bit in the public bitmask. We make
+/* (1<<24) is currently the highest used bit in the public bitmask. We make
    sure we use "private bits" above the public ones to make things easier. */
 
-#define PROT_EXTMASK 0xfffff
+#define PROT_EXTMASK 0xffffff
 
-#define PROT_SSL     (1<<25) /* protocol requires SSL */
+#define PROT_SSL     (1<<29) /* protocol requires SSL */
 
 /* these ones need action before socket close */
 #define PROT_CLOSEACTION (PROT_FTP | PROT_IMAP | PROT_POP3)
@@ -727,6 +767,9 @@ struct connectdata {
   struct timeval created; /* creation time */
   curl_socket_t sock[2]; /* two sockets, the second is used for the data
                             transfer when doing FTP */
+
+  Curl_recv *recv[2];
+  Curl_send *send[2];
 
   struct ssl_connect_data ssl[2]; /* this is for ssl-stuff */
   struct ssl_config_data ssl_config;
@@ -829,6 +872,7 @@ struct connectdata {
     struct pop3_conn pop3c;
     struct smtp_conn smtpc;
     struct rtsp_conn rtspc;
+    void *generic;
   } proto;
 
   int cselect_bits; /* bitmask of socket events */
@@ -867,6 +911,12 @@ struct PureInfo {
   char ip[MAX_IPADR_LEN]; /* this buffer gets the numerical ip version stored
                              at the connect *attempt* so it will get the last
                              tried connect IP even on failures */
+  long port; /* the remote port the last connection was established to */
+  char localip[MAX_IPADR_LEN]; /* this buffer gets the numerical (local) ip
+                                  stored from where the last connection was
+                                  established */
+  long localport; /* the local (src) port the last connection
+                     originated from */
   struct curl_certinfo certs; /* info about the certs, only populated in
                                  OpenSSL builds. Asked for with
                                  CURLOPT_CERTINFO / CURLINFO_CERTINFO */
@@ -1235,6 +1285,8 @@ struct UserDefined {
   curl_write_callback fwrite_header; /* function that stores headers */
   curl_write_callback fwrite_rtp;    /* function that stores interleaved RTP */
   curl_read_callback fread_func;     /* function that reads the input */
+  int is_fread_set; /* boolean, has read callback been set to non-NULL? */
+  int is_fwrite_set; /* boolean, has write callback been set to non-NULL? */
   curl_progress_callback fprogress;  /* function for progress information */
   curl_debug_callback fdebug;      /* function that write informational data */
   curl_ioctl_callback ioctl_func;  /* function for I/O control */
@@ -1374,6 +1426,13 @@ struct UserDefined {
   /* Common RTSP header options */
   Curl_RtspReq rtspreq; /* RTSP request type */
   long rtspversion; /* like httpversion, for RTSP */
+  bool wildcardmatch; /* enable wildcard matching */
+  curl_chunk_bgn_callback chunk_bgn; /* called before part of transfer starts */
+  curl_chunk_end_callback chunk_end; /* called after part transferring
+                                        stopped */
+  curl_fnmatch_callback fnmatch; /* callback to decide which file corresponds
+                                    to pattern (e.g. if WILDCARDMATCH is on) */
+  void *fnmatch_data;
 };
 
 struct Names {
@@ -1415,6 +1474,7 @@ struct SessionHandle {
   struct Progress progress;    /* for all the progress meter data */
   struct UrlState state;       /* struct for fields used for state info and
                                   other dynamic purposes */
+  struct WildcardData wildcard; /* wildcard download state info */
   struct PureInfo info;        /* stats, reports and info data */
 #if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
   iconv_t outbound_cd;         /* for translating to the network encoding */

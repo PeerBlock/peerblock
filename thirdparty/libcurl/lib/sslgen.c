@@ -31,6 +31,7 @@
    Curl_ossl_ - prefix for OpenSSL ones
    Curl_gtls_ - prefix for GnuTLS ones
    Curl_nss_ - prefix for NSS ones
+   Curl_polarssl_ - prefix for PolarSSL ones
 
    Note that this source code uses curlssl_* functions, and they are all
    defines/macros #defined by the lib-specific header files.
@@ -55,6 +56,7 @@
 #include "gtls.h"   /* GnuTLS versions */
 #include "nssg.h"   /* NSS versions */
 #include "qssl.h"   /* QSOSSL versions */
+#include "polarssl.h" /* PolarSSL versions */
 #include "sendf.h"
 #include "rawstr.h"
 #include "url.h"
@@ -407,25 +409,6 @@ struct curl_slist *Curl_ssl_engines_list(struct SessionHandle *data)
 {
   return curlssl_engines_list(data);
 }
-
-ssize_t Curl_ssl_send(struct connectdata *conn,
-                      int sockindex,
-                      const void *mem,
-                      size_t len,
-                      int *curlcode)
-{
-  return curlssl_send(conn, sockindex, mem, len, curlcode);
-}
-
-ssize_t Curl_ssl_recv(struct connectdata *conn,
-                      int sockindex,
-                      char *mem,
-                      size_t len,
-                      int *curlcode)
-{
-  return curlssl_recv(conn, sockindex, mem, len, curlcode);
-}
-
 
 /*
  * This sets up a session ID cache to the specified size. Make sure this code

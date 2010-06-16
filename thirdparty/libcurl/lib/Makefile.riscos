@@ -1,6 +1,4 @@
 # Makefile for project libcurl
-# Generated on Sun,13 Jan 2002.16:57:00 by EasyGCC (0.1.3 [beta 2] (3 Jan 2002))
-# Contact: easygcc@melotech.co.uk
 
 # Project objects:
 objs =	o.base64 o.connect o.cookie o.dict \
@@ -9,13 +7,15 @@ objs =	o.base64 o.connect o.cookie o.dict \
 	o.getinfo o.getpass o.hostip \
 	o.hostip4 o.hostsyn o.http \
 	o.http_chunks o.inet_ntop o.inet_pton o.if2ip o.krb4 o.ldap \
+	o.curl_fnmatch o.fileinfo o.ftplistparser o.wildcard \
 	o.memdebug o.mprintf o.netrc o.parsedate o.progress \
 	o.security o.select o.sendf o.speedcheck o.ssluse \
 	o.strequal o.strtok o.telnet o.timeval \
 	o.transfer o.url o.version o.strtoofft o.sslgen o.gtls \
 	o.rawstr o.curl_addrinfo o.slist o.nonblock o.curl_rand \
 	o.curl_memrchr o.imap o.pop3 o.smtp o.pingpong o.rtsp \
-	o.curl_threads o.warnless
+	o.curl_threads o.warnless o.hmac o.md5 o.curl_rtmp \
+	o.openldap o.polarssl
 
 
 # Compile options:
@@ -44,6 +44,9 @@ o.curl_memrchr:	c.curl_memrchr
 
 o.curl_rand:	c.curl_rand
 		gcc $(compileropts) -c -o curl_rand.o c.curl_rand
+
+o.curl_rtmp:	c.curl_rtmp
+		gcc $(compileropts) -c -o curl_rtmp.o c.curl_rtmp
 
 o.curl_threads:	c.curl_threads
 		gcc $(compileropts) -c -o curl_threads.o c.curl_threads
@@ -78,6 +81,9 @@ o.getinfo:	c.getinfo
 o.getpass:	c.getpass
 		gcc $(compileropts) -c -o getpass.o c.getpass
 
+o.hmac:		c.hmac
+		gcc $(compileropts) -c -o hmac.o c.hmac
+
 o.hostip:	c.hostip
 		gcc $(compileropts) -c -o hostip.o c.hostip
 
@@ -111,6 +117,9 @@ o.krb4:	c.krb4
 o.ldap:	c.ldap
 		gcc $(compileropts) -IOpenLDAP: -c -o ldap.o c.ldap
 
+o.md5:		c.md5
+		gcc $(compileropts) -c -o md5.o c.md5
+
 o.memdebug:	c.memdebug
 		gcc $(compileropts) -c -o memdebug.o c.memdebug
 
@@ -120,11 +129,17 @@ o.mprintf:	c.mprintf
 o.netrc:	c.netrc
 		gcc $(compileropts) -c -o netrc.o c.netrc
 
+o.openldap:	c.openldap
+		gcc $(compileropts) -c -o openldap.o c.openldap
+
 o.parsedate:	c.parsedate
 		gcc $(compileropts) -c -o parsedate.o c.parsedate
 
 o.pingpong:	c.pingpong
 		gcc $(compileropts) -c -o pingpong.o c.pingpong
+
+o.polarssl:	c.polarssl
+		gcc $(compileropts) -c -o polarssl.o c.polarssl
 
 o.pop3:		c.pop3
 		gcc $(compileropts) -c -o pop3.o c.pop3
@@ -153,7 +168,7 @@ o.smtp:		c.smtp
 o.speedcheck:	c.speedcheck
 		gcc $(compileropts) -c -o speedcheck.o c.speedcheck
 
-o.gtls:	c.gtls
+o.gtls:		c.gtls
 		gcc $(compileropts) -c -o gtls.o c.gtls
 
 o.sslgen:	c.sslgen
@@ -186,7 +201,7 @@ o.timeval:	c.timeval
 o.transfer:	c.transfer
 		gcc $(compileropts) -c -o transfer.o c.transfer
 
-o.url:	c.url
+o.url:		c.url
 		gcc $(compileropts) -c -o url.o c.url
 
 o.version:	c.version
@@ -194,3 +209,15 @@ o.version:	c.version
 
 o.warnless:	c.warnless
 		gcc $(compileropts) -c -o warnless.o c.warnless
+
+o.curl_fnmatch:	c.curl_fnmatch
+		gcc $(compileropts) -c -o curl_fnmatch.o c.curl_fnmatch
+
+o.fileinfo:	c.fileinfo
+		gcc $(compileropts) -c -o fileinfo.o c.fileinfo
+
+o.ftplistparser:	c.ftplistparser
+		gcc $(compileropts) -c -o ftplistparser.o c.ftplistparser
+
+o.wildcard:	c.wildcard
+		gcc $(compileropts) -c -o wildcard.o c.wildcard

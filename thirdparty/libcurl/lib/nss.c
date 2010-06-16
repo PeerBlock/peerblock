@@ -63,6 +63,7 @@
 #include <secport.h>
 #include <certdb.h>
 #include <base64.h>
+#include <cert.h>
 
 #include "curl_memory.h"
 #include "rawstr.h"
@@ -79,6 +80,7 @@
 PRFileDesc *PR_ImportTCPSocket(PRInt32 osfd);
 
 PRLock * nss_initlock = NULL;
+PRLock * nss_crllock = NULL;
 
 volatile int initialized = 0;
 
@@ -411,78 +413,90 @@ static int nss_load_cert(struct ssl_connect_data *ssl,
   return 1;
 }
 
-static int nss_load_crl(const char* crlfilename, PRBool ascii)
+/* add given CRL to cache if it is not already there */
+static SECStatus nss_cache_crl(SECItem *crlDER)
+{
+  CERTCertDBHandle *db = CERT_GetDefaultCertDB();
+  CERTSignedCrl *crl = SEC_FindCrlByDERCert(db, crlDER, 0);
+  if(crl) {
+    /* CRL already cached */
+    SEC_DestroyCrl(crl);
+    SECITEM_FreeItem(crlDER, PR_FALSE);
+    return SECSuccess;
+  }
+
+  /* acquire lock before call of CERT_CacheCRL() */
+  PR_Lock(nss_crllock);
+  if(SECSuccess != CERT_CacheCRL(db, crlDER)) {
+    /* unable to cache CRL */
+    PR_Unlock(nss_crllock);
+    SECITEM_FreeItem(crlDER, PR_FALSE);
+    return SECFailure;
+  }
+
+  /* we need to clear session cache, so that the CRL could take effect */
+  SSL_ClearSessionCache();
+  PR_Unlock(nss_crllock);
+  return SECSuccess;
+}
+
+static SECStatus nss_load_crl(const char* crlfilename)
 {
   PRFileDesc *infile;
-  PRStatus    prstat;
   PRFileInfo  info;
-  PRInt32     nb;
-  int rv;
-  SECItem crlDER;
-  CERTSignedCrl *crl=NULL;
-  PK11SlotInfo *slot=NULL;
+  SECItem filedata = { 0, NULL, 0 };
+  SECItem crlDER = { 0, NULL, 0 };
+  char *body;
 
-  infile = PR_Open(crlfilename,PR_RDONLY,0);
-  if (!infile) {
-    return 0;
-  }
-  crlDER.data = NULL;
-  prstat = PR_GetOpenFileInfo(infile,&info);
-  if (prstat!=PR_SUCCESS)
-    return 0;
-  if (ascii) {
-    SECItem filedata;
-    char *asc,*body;
-    filedata.data = NULL;
-    if (!SECITEM_AllocItem(NULL,&filedata,info.size))
-      return 0;
-    nb = PR_Read(infile,filedata.data,info.size);
-    if (nb!=info.size)
-      return 0;
-    asc = (char*)filedata.data;
-    if (!asc)
-      return 0;
+  infile = PR_Open(crlfilename, PR_RDONLY, 0);
+  if(!infile)
+    return SECFailure;
 
-    body=strstr(asc,"-----BEGIN");
-    if (body != NULL) {
-      char *trailer=NULL;
-      asc = body;
-      body = PORT_Strchr(asc,'\n');
-      if (!body)
-        body = PORT_Strchr(asc,'\r');
-      if (body)
-        trailer = strstr(++body,"-----END");
-      if (trailer!=NULL)
-        *trailer='\0';
-      else
-        return 0;
-    }
-    else {
-      body = asc;
-    }
-    rv = ATOB_ConvertAsciiToItem(&crlDER,body);
-    PORT_Free(filedata.data);
-    if (rv)
-      return 0;
-  }
-  else {
-    if (!SECITEM_AllocItem(NULL,&crlDER,info.size))
-      return 0;
-    nb = PR_Read(infile,crlDER.data,info.size);
-    if (nb!=info.size)
-      return 0;
-  }
+  if(PR_SUCCESS != PR_GetOpenFileInfo(infile, &info))
+    goto fail;
 
-  slot = PK11_GetInternalKeySlot();
-  crl  = PK11_ImportCRL(slot,&crlDER,
-                        NULL,SEC_CRL_TYPE,
-                        NULL,CRL_IMPORT_DEFAULT_OPTIONS,
-                        NULL,(CRL_DECODE_DEFAULT_OPTIONS|
-                              CRL_DECODE_DONT_COPY_DER));
-  if (slot) PK11_FreeSlot(slot);
-  if (!crl) return 0;
-  SEC_DestroyCrl(crl);
-  return 1;
+  if(!SECITEM_AllocItem(NULL, &filedata, info.size + /* zero ended */ 1))
+    goto fail;
+
+  if(info.size != PR_Read(infile, filedata.data, info.size))
+    goto fail;
+
+  /* place a trailing zero right after the visible data */
+  body = (char*)filedata.data;
+  body[--filedata.len] = '\0';
+
+  body = strstr(body, "-----BEGIN");
+  if(body) {
+    /* assume ASCII */
+    char *trailer;
+    char *begin = PORT_Strchr(body, '\n');
+    if(!begin)
+      begin = PORT_Strchr(body, '\r');
+    if(!begin)
+      goto fail;
+
+    trailer = strstr(++begin, "-----END");
+    if(!trailer)
+      goto fail;
+
+    /* retrieve DER from ASCII */
+    *trailer = '\0';
+    if(ATOB_ConvertAsciiToItem(&crlDER, begin))
+      goto fail;
+
+    SECITEM_FreeItem(&filedata, PR_FALSE);
+  }
+  else
+    /* assume DER */
+    crlDER = filedata;
+
+  PR_Close(infile);
+  return nss_cache_crl(&crlDER);
+
+fail:
+  PR_Close(infile);
+  SECITEM_FreeItem(&filedata, PR_FALSE);
+  return SECFailure;
 }
 
 static int nss_load_key(struct connectdata *conn, int sockindex,
@@ -889,6 +903,7 @@ int Curl_nss_init(void)
   if (nss_initlock == NULL) {
     PR_Init(PR_USER_THREAD, PR_PRIORITY_NORMAL, 256);
     nss_initlock = PR_NewLock();
+    nss_crllock = PR_NewLock();
   }
 
   /* We will actually initialize NSS later */
@@ -918,6 +933,7 @@ void Curl_nss_cleanup(void)
   PR_Unlock(nss_initlock);
 
   PR_DestroyLock(nss_initlock);
+  PR_DestroyLock(nss_crllock);
   nss_initlock = NULL;
 
   initialized = 0;
@@ -1010,6 +1026,9 @@ static bool handle_cc_error(PRInt32 err, struct SessionHandle *data)
   }
 }
 
+static Curl_recv nss_recv;
+static Curl_send nss_send;
+
 CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
 {
   PRInt32 err;
@@ -1025,6 +1044,7 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
   int curlerr;
   const int *cipher_to_enable;
   PRSocketOptionData sock_opt;
+  long time_left;
   PRUint32 timeout;
 
   curlerr = CURLE_SSL_CONNECT_ERROR;
@@ -1243,8 +1263,7 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
         data->set.ssl.CApath ? data->set.ssl.CApath : "none");
 
   if (data->set.ssl.CRLfile) {
-    int rc = nss_load_crl(data->set.ssl.CRLfile, PR_FALSE);
-    if (!rc) {
+    if(SECSuccess != nss_load_crl(data->set.ssl.CRLfile)) {
       curlerr = CURLE_SSL_CRL_BADFILE;
       goto error;
     }
@@ -1302,8 +1321,15 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
 
   SSL_SetURL(connssl->handle, conn->host.name);
 
+  /* check timeout situation */
+  time_left = Curl_timeleft(conn, NULL, TRUE);
+  if(time_left < 0L) {
+    failf(data, "timed out before SSL handshake");
+    goto error;
+  }
+  timeout = PR_MillisecondsToInterval((PRUint32) time_left);
+
   /* Force the handshake now */
-  timeout = PR_MillisecondsToInterval((PRUint32)Curl_timeleft(conn, NULL, TRUE));
   if(SSL_ForceHandshakeWithTimeout(connssl->handle, timeout) != SECSuccess) {
     if(conn->data->set.ssl.certverifyresult == SSL_ERROR_BAD_CERT_DOMAIN)
       curlerr = CURLE_PEER_FAILED_VERIFICATION;
@@ -1313,6 +1339,8 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
   }
 
   connssl->state = ssl_connection_complete;
+  conn->recv[sockindex] = nss_recv;
+  conn->send[sockindex] = nss_send;
 
   display_conn_info(conn, connssl->handle);
 
@@ -1365,12 +1393,11 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
   return curlerr;
 }
 
-/* for documentation see Curl_ssl_send() in sslgen.h */
-int Curl_nss_send(struct connectdata *conn,  /* connection data */
-                  int sockindex,             /* socketindex */
-                  const void *mem,           /* send this data */
-                  size_t len,                /* amount to write */
-                  int *curlcode)
+static ssize_t nss_send(struct connectdata *conn,  /* connection data */
+                        int sockindex,             /* socketindex */
+                        const void *mem,           /* send this data */
+                        size_t len,                /* amount to write */
+                        CURLcode *curlcode)
 {
   int rc;
 
@@ -1379,7 +1406,7 @@ int Curl_nss_send(struct connectdata *conn,  /* connection data */
   if(rc < 0) {
     PRInt32 err = PR_GetError();
     if(err == PR_WOULD_BLOCK_ERROR)
-      *curlcode = -1; /* EWOULDBLOCK */
+      *curlcode = CURLE_AGAIN;
     else if(handle_cc_error(err, conn->data))
       *curlcode = CURLE_SSL_CERTPROBLEM;
     else {
@@ -1391,12 +1418,11 @@ int Curl_nss_send(struct connectdata *conn,  /* connection data */
   return rc; /* number of bytes */
 }
 
-/* for documentation see Curl_ssl_recv() in sslgen.h */
-ssize_t Curl_nss_recv(struct connectdata * conn, /* connection data */
-                      int num,                   /* socketindex */
-                      char *buf,                 /* store read data here */
-                      size_t buffersize,         /* max amount to read */
-                      int *curlcode)
+static ssize_t nss_recv(struct connectdata * conn, /* connection data */
+                        int num,                   /* socketindex */
+                        char *buf,                 /* store read data here */
+                        size_t buffersize,         /* max amount to read */
+                        CURLcode *curlcode)
 {
   ssize_t nread;
 
@@ -1406,7 +1432,7 @@ ssize_t Curl_nss_recv(struct connectdata * conn, /* connection data */
     PRInt32 err = PR_GetError();
 
     if(err == PR_WOULD_BLOCK_ERROR)
-      *curlcode = -1; /* EWOULDBLOCK */
+      *curlcode = CURLE_AGAIN;
     else if(handle_cc_error(err, conn->data))
       *curlcode = CURLE_SSL_CERTPROBLEM;
     else {

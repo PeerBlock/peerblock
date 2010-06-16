@@ -287,6 +287,13 @@ CURLcode curl_global_init(long flags)
   }
 #endif
 
+#if defined(USE_LIBSSH2) && defined(HAVE_LIBSSH2_INIT)
+  if(libssh2_init(0)) {
+    DEBUGF(fprintf(stderr, "Error: libssh2_init failed\n"));
+    return CURLE_FAILED_INIT;
+  }
+#endif
+
   init_flags  = flags;
 
   /* Preset pseudo-random number sequence. */
@@ -353,6 +360,10 @@ void curl_global_cleanup(void)
 
 #ifdef __AMIGA__
   amiga_cleanup();
+#endif
+
+#if defined(USE_LIBSSH2) && defined(HAVE_LIBSSH2_EXIT)
+  (void)libssh2_exit();
 #endif
 
   init_flags  = 0;
@@ -1097,7 +1108,6 @@ CURLcode curl_easy_recv(CURL *curl, void *buffer, size_t buflen, size_t *n)
 {
   curl_socket_t sfd;
   CURLcode ret;
-  int ret1;
   ssize_t n1;
   struct connectdata *c;
   struct SessionHandle *data = (struct SessionHandle *)curl;
@@ -1107,13 +1117,10 @@ CURLcode curl_easy_recv(CURL *curl, void *buffer, size_t buflen, size_t *n)
     return ret;
 
   *n = 0;
-  ret1 = Curl_read(c, sfd, buffer, buflen, &n1);
+  ret = Curl_read(c, sfd, buffer, buflen, &n1);
 
-  if(ret1 == -1)
-    return CURLE_AGAIN;
-
-  if(ret1 != CURLE_OK)
-    return (CURLcode)ret1;
+  if(ret != CURLE_OK)
+    return ret;
 
   *n = (size_t)n1;
 

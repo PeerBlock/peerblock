@@ -6,6 +6,265 @@
 
                                   Changelog
 
+Version 7.21.0 (16 June 2010)
+
+Daniel Stenberg (5 June 2010)
+- Constantine Sapuntzakis fixed a case of spurious SSL connection aborts using
+  libcurl and OpenSSL. "I tracked it down to uncleared error state on the
+  OpenSSL error stack - patch attached deals with that."
+
+Daniel Stenberg (5 June 2010)
+- Frank Meier added CURLINFO_PRIMARY_PORT, CURLINFO_LOCAL_IP and
+  CURLINFO_LOCAL_PORT to curl_easy_getinfo().
+
+Yang Tse (4 June 2010)
+- Enabled OpenLDAP support for cygwin builds. This support was disabled back
+  in 2008 due to incompatibilities between OpenSSL and OpenLDAP headers.
+  cygwin's OpenSSL 0.9.8l and OpenLDAP 2.3.43 versions on cygwin 1.5.25
+  allow building an OpenLDAP enabled libcurl supporting back to Windows 95.
+
+  Removed the non-functional CURL_LDAP_HYBRID code and references.
+
+Daniel Stenberg (2 June 2010)
+- Jason McDonald posted bug report #3006786 when he found that the SFTP code
+  didn't timeout properly in several places in the code even if a timeout was
+  set properly.
+
+  Based on his suggested patch, I wrote a different implementation that I
+  think addressed the issue better and also uses the connect timeout for the
+  initial part of the SSH/SFTP done during the "protocol connect" phase.
+
+  (http://curl.haxx.se/bug/view.cgi?id=3006786)
+
+Yang Tse (2 June 2010)
+- Added missing new libcurl files to non-configure targets. Adjusted
+  libcurl standard internal header inclusions in new files. Fixed an
+  SPNEGO related memory leak. Fixed several LDAP related compilation
+  issues, and fixed some compiler warnings.
+
+Daniel Stenberg (1 June 2010)
+- Igor Novoseltsev reported a problem with the multi socket API and using
+  timeouts and timers. It boiled down to a problem with libcurl's use of
+  GetTickCount() interally to figure out the current time, while Igor's own
+  application code used another function call.
+
+  It made his app call the socket API timeout function a bit _before_ libcurl
+  would consider the timeout to trigger, and that could easily lead to
+  timeouts or stalls in the app. It seems GetTickCount() in general often has
+  no better resolution than 16ms and switching to the alternative function
+  QueryPerformanceCounter has its share of problems:
+      http://www.virtualdub.org/blog/pivot/entry.php?id=106
+
+  We address this problem by simply having libcurl treat timers that already
+  has occured or will occur within 40ms subject for treatment. I'm confident
+  that there are other implementations and operating systems with similarly in
+  accurate timer functions so it makes sense to have applied generically and I
+  don't believe we sacrifice much by adding a 40ms inaccuracy on these
+  timeouts.
+
+Kamil Dudka (27 May 2010)
+- added a new test for CRL support (test313)
+
+- Tor Arntsen changed the alternative definition of bool to use enum instead
+  of unsigned char.
+
+Daniel Stenberg (25 May 2010)
+- Julien Chaffraix fixed the warning seen when compiling lib/rtmp.c: one
+  unused variables, several unused arguments and some missing #include.
+
+- Julien Chaffraix fixed 2 OOM errors: a missing NULL-check in
+  lib/http_negociate.c and a potential NULL dereferencing in lib/splay.c
+
+- Howard Chu brought a patch that makes the LDAP code much cleaner, nicer and
+  in general being a better libcurl citizen. If a new enough OpenLDAP version
+  is detect, the new and shiny lib/openldap.c code is then used instead of the
+  old cruft.
+
+Daniel Stenberg (21 May 2010)
+- Eric Mertens posted bug #3003705: when we made TFTP use the correct timeout
+  option when sent to the server (fixed May 18th 2010) it became obvious that
+  libcurl used invalid timeout values (300 by default while the RFC allows
+  nothing above 255). While of course it is obvious that as TFTP has worked
+  thus far without being able to set timeout at all, just removing the setting
+  wouldn't make any difference in behavior. I decided to still keep it (but
+  fix the problem) as it now actually allows for easier (future) customization
+  of the timeout.
+
+  (http://curl.haxx.se/bug/view.cgi?id=3003705)
+
+- Douglas Kilpatrick filed bug report #3004787 and pointed out that the TFTP
+  code didn't handle block id wraps correctly. His suggested fix inspired the
+  fix I committed.
+
+  (http://curl.haxx.se/bug/view.cgi?id=3004787)
+
+Daniel Stenberg (20 May 2010)
+- Tanguy Fautre brought a fix to allow curl to build with Microsoft VC10.
+
+Daniel Stenberg (18 May 2010)
+- Eric Mertens posted bug report #3003005 pointing out that the libcurl TFTP
+  code was not sending the timeout option properly to the server, and
+  suggested a fix.
+
+  (http://curl.haxx.se/bug/view.cgi?id=3003005)
+
+Kamil Dudka (16 May 2010)
+- Pavel Raiskup introduced a new option CURLOPT_FNMATCH_DATA in order to pass
+  a custom data pointer to the callback specified by CURLOPT_FNMATCH_FUNCTION.
+
+Daniel Stenberg (14 May 2010)
+- John-Mark Bell filed bug #3000052 that identified a problem (with an
+  associated patch) with the OpenSSL handshake state machine when the multi
+  interface is used:
+
+  Performing an https request using a curl multi handle and using select or
+  epoll to wait for events results in a hang. It appears that the cause is the
+  fix for bug #2958179, which makes ossl_connect_common unconditionally return
+  from the step 2 loop when fetching from a multi handle.
+
+  When ossl_connect_step2 has completed, it updates connssl->connecting_state
+  to ssl_connect_3. ossl_connect_common will then return to the caller, as a
+  multi handle is in use. Eventually, the client code will call
+  curl_multi_fdset to obtain an updated fdset to select or epoll on. For https
+  requests, curl_multi_fdset will cause https_getsock to be called.
+  https_getsock will only return a socket handle if the connecting_state is
+  ssl_connect_2_reading or ssl_connect_2_writing.  Therefore, the client will
+  never obtain a valid fdset, and thus not drive the multi handle, resulting
+  in a hang.
+
+  (http://curl.haxx.se/bug/view.cgi?id=3000052)
+
+- Sebastian V reported bug #3000056 identifying a problem with redirect
+  following. It showed that when curl followed redirects it didn't properly
+  ignore the response body of the 30X response if that response was using
+  compressed Content-Encoding!
+
+  (http://curl.haxx.se/bug/view.cgi?id=3000056)
+  
+Daniel Stenberg (12 May 2010)
+- Howard Chu brought support for RTMP. This is powered by the underlying
+  librtmp library. It supports a range of variations and "sub-protocols"
+  within the RTMP family.
+
+- Pavel Raiskup brought support for FTP directory wildcard matching to allow
+  selective downloading. To provide that, a set of new options were added:
+
+   CURLOPT_WILDCARDMATCH
+   CURLOPT_CHUNK_BGN_FUNCTION
+   CURLOPT_CHUNK_END_FUNCTION
+   CURLOPT_CHUNK_DATA
+   CURLOPT_FNMATCH_FUNCTION
+
+  There were also a set of new tests added (574 - 577) to verify this.
+
+Kamil Dudka (11 May 2010)
+- CRL support in libcurl-NSS has been completely broken. Now it works. Original
+  bug report: https://bugzilla.redhat.com/581926
+
+Daniel Stenberg (7 May 2010)
+- Dirk Manske reported a regression. When connecting with the multi interface,
+  there were situations where libcurl wouldn't store connect time correctly as
+  it used to (and is documented to) do.
+
+  Using his fine sample program we could repeat it, and I wrote up test case
+  573 using that code. The problem does not easily show itself using the local
+  test suite though.
+
+  The fix, also as suggested by Dirk, is a bit on the ugly side as it adds yet
+  another call to Curl_verboseconnect() and setting the TIMER_CONNECT time.
+  That situation is subject for some closer inspection in the future.
+
+- Howard Chu split the I/O handling functions into private handlers.
+    
+  Howard Chu brought the bulk work of this patch that properly moves out the
+  sending and recving of data to the parts of the code that are properly
+  responsible for the various ways of doing so.
+  
+  Daniel Stenberg assisted with polishing a few bits and fixed some minor
+  flaws in the original patch.
+  
+  Another upside of this patch is that we now abuse CURLcodes less with the
+  "magic" -1 return codes and instead use CURLE_AGAIN more consistently.
+
+Daniel Stenberg (5 May 2010)
+- Hoi-Ho Chan introduced support for using the PolarSSL library. You control
+  this with the new configure option --with-polarssl.
+
+Daniel Stenberg (29 Apr 2010)
+- Ben Greear made telnet a lot better/easier to use by an application:
+
+  The main change is to allow input from user-specified methods, when they are
+  specified with CURLOPT_READFUNCTION.  All calls to fflush(stdout) in
+  telnet.c were removed, which makes using 'curl telnet://foo.com' painful
+  since prompts and other data are not always returned to the user promptly.
+  Use 'curl --no-buffer telnet://foo.com' instead.  In general, the user
+  should have their CURLOPT_WRITEFUNCTION do a fflush for interactive use.
+
+  Also fix assumption that reading from stdin never returns < 0.
+  Old code could crash in that case.
+
+  Call progress functions in telnet main loop.
+
+Daniel Stenberg (26 Apr 2010)
+- Make use of the libssh2_init/exit functions that libssh2 added in version
+  1.2.5. Using them will improve how libcurl works in threaded situations when
+  SCP and SFTP are transfered.
+
+Daniel Stenberg (25 Apr 2010)
+- Based on work by Kamil Dudka, I've introduced the new configure option
+  --enable-threaded-resolver. When used, the configure script will check for
+  pthreads and if around, it will build libcurl to use pthreads to do name
+  resolving in a threaded manner. Note that this is just a fix to offer an
+  option that can enable the code that already included. The threader resolver
+  code was mostly added on Jan 26 2010.
+
+Daniel Stenberg (24 Apr 2010)
+- Alex Bligh introduced the --proto and -proto-redir options that limit what
+  protocols curl accepts for the requests and when following redirects.
+
+Kamil Dudka (24 Apr 2010)
+- Fixed test536 in order to not fail with threaded DNS resolver and tweaked
+  comments in certain examples using curl_multi_fdset().
+
+- Fixed SSL handshake timeout underflow in libcurl-NSS, which caused test405
+  to hang on a slow machine.
+
+Daniel Stenberg (21 Apr 2010)
+- The -O option caused curl to crash on windows and DOS due to the tool
+  writing out of boundary memory.
+
+Yang Tse (20 Apr 2010)
+- Ruslan Gazizov detected that MSVC makefiles were using wsock32.lib instead
+  of ws2_32.lib, this generated linking issues on MSVC IPv6 enabled builds
+  that were done using those makefiles.
+
+Daniel Stenberg (19 Apr 2010)
+- -J/--remote-header-name didn't strip trailing carriage returns or linefeeds
+  properly, so they could be used in the file name.
+
+Daniel Stenberg (16 Apr 2010)
+- Jerome Vouillon made the GnuTLS SSL handshake phase non-blocking.
+
+- The recent overhaul of the SSL recv function made the GnuTLS specific code
+  treat a zero returned from gnutls_record_recv() as an error, and this caused
+  our HTTPS test cases to fail. We leave it to upper layer code to detect if
+  an EOF is a problem or not.
+
+- I reverted the resolver fix from yesterday and instead removed all uses of
+  AI_CANONNAME all over libcurl and made the only user of that info (krb5.c)
+  use the host name from the URL instead. No reverse resolving is a good
+  thing.
+
+- Paul Howarth made configure properly detect GSS "on ancient Linux distros"
+  by editing in which order we use headers to detect GSS.
+
+Daniel Stenberg (15 Apr 2010)
+- Rainer Canavan filed bug report #2987196 that identified libcurl doing
+  unnecesary reverse name lookups in many cases when built to use IPv4 and
+  getaddrinfo(). The logic for ipv6 is now used for ipv4 too.
+
+  (http://curl.haxx.se/bug/view.cgi?id=2963679)
+
 Version 7.20.1 (14 April 2010)
 
 Daniel Stenberg (9 Apr 2010)

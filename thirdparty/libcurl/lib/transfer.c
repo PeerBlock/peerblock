@@ -194,7 +194,8 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
       /* \n will become \r\n later on */
       endofline_native  = "\n";
       endofline_network = "\x0a";
-    } else {
+    }
+    else {
       endofline_native  = "\r\n";
       endofline_network = "\x0d\x0a";
     }
@@ -219,21 +220,20 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
     if(data->set.prefer_ascii) {
       /* translate the protocol and data */
       length = nread;
-    } else {
+    }
+    else {
       /* just translate the protocol portion */
       length = strlen(hexbuffer);
     }
     res = Curl_convert_to_network(data, data->req.upload_fromhere, length);
     /* Curl_convert_to_network calls failf if unsuccessful */
-    if(res != CURLE_OK) {
+    if(res)
       return(res);
-    }
 #endif /* CURL_DOES_CONVERSIONS */
 
-    if((nread - hexlen) == 0) {
+    if((nread - hexlen) == 0)
       /* mark this as done once this chunk is transfered */
       data->req.upload_done = TRUE;
-    }
 
     nread+=(int)strlen(endofline_native); /* for the added end of line */
   }
@@ -340,11 +340,11 @@ static void read_rewind(struct connectdata *conn,
 
     show = CURLMIN(conn->buf_len - conn->read_pos, sizeof(buf)-1);
     if(conn->master_buffer) {
-        memcpy(buf, conn->master_buffer + conn->read_pos, show);
-        buf[show] = '\0';
+      memcpy(buf, conn->master_buffer + conn->read_pos, show);
+      buf[show] = '\0';
     }
     else {
-        buf[0] = '\0';
+      buf[0] = '\0';
     }
 
     DEBUGF(infof(conn->data,
@@ -376,12 +376,11 @@ static CURLcode readwrite_data(struct SessionHandle *data,
   *done = FALSE;
 
   /* This is where we loop until we have read everything there is to
-     read or we get a EWOULDBLOCK */
+     read or we get a CURLE_AGAIN */
   do {
     size_t buffersize = data->set.buffer_size?
       data->set.buffer_size : BUFSIZE;
     size_t bytestoread = buffersize;
-    int readrc;
 
     if(k->size != -1 && !k->header) {
       /* make sure we don't read "too much" if we can help it since we
@@ -394,14 +393,11 @@ static CURLcode readwrite_data(struct SessionHandle *data,
 
     if(bytestoread) {
       /* receive data from the network! */
-      readrc = Curl_read(conn, conn->sockfd, k->buf, bytestoread, &nread);
+      result = Curl_read(conn, conn->sockfd, k->buf, bytestoread, &nread);
 
-      /* subzero, this would've blocked */
-      if(0 > readrc)
+      /* read would've blocked */
+      if(CURLE_AGAIN == result)
         break; /* get out of loop */
-
-      /* get the CURLcode from the int */
-      result = (CURLcode)readrc;
 
       if(result>0)
         return result;
@@ -623,22 +619,22 @@ static CURLcode readwrite_data(struct SessionHandle *data,
             /* The 'excess' amount below can't be more than BUFSIZE which
                always will fit in a size_t */
             infof(data,
-                "Rewinding stream by : %zu"
-                " bytes on url %s (size = %" FORMAT_OFF_T
-                ", maxdownload = %" FORMAT_OFF_T
-                ", bytecount = %" FORMAT_OFF_T ", nread = %zd)\n",
-                excess, data->state.path,
-                k->size, k->maxdownload, k->bytecount, nread);
+                  "Rewinding stream by : %zu"
+                  " bytes on url %s (size = %" FORMAT_OFF_T
+                  ", maxdownload = %" FORMAT_OFF_T
+                  ", bytecount = %" FORMAT_OFF_T ", nread = %zd)\n",
+                  excess, data->state.path,
+                  k->size, k->maxdownload, k->bytecount, nread);
             read_rewind(conn, excess);
           }
           else {
             infof(data,
-                "Excess found in a non pipelined read:"
-                " excess = %zu"
-                ", size = %" FORMAT_OFF_T
-                ", maxdownload = %" FORMAT_OFF_T
-                ", bytecount = %" FORMAT_OFF_T "\n",
-                excess, k->size, k->maxdownload, k->bytecount);
+                  "Excess found in a non pipelined read:"
+                  " excess = %zu"
+                  ", size = %" FORMAT_OFF_T
+                  ", maxdownload = %" FORMAT_OFF_T
+                  ", bytecount = %" FORMAT_OFF_T "\n",
+                  excess, k->size, k->maxdownload, k->bytecount);
           }
         }
 
@@ -738,7 +734,7 @@ static CURLcode readwrite_data(struct SessionHandle *data,
 
       /* Parse the excess data */
       k->str += nread;
-      nread = excess;
+      nread = (ssize_t)excess;
 
       result = Curl_rtsp_rtp_readwrite(data, conn, &nread, &readmore);
       if(result)
@@ -1067,7 +1063,8 @@ CURLcode Curl_readwrite(struct connectdata *conn,
         failf(data, "Operation timed out after %ld milliseconds with %"
               FORMAT_OFF_T " out of %" FORMAT_OFF_T " bytes received",
               Curl_tvdiff(k->now, k->start), k->bytecount, k->size);
-      } else {
+      }
+      else {
         failf(data, "Operation timed out after %ld milliseconds with %"
               FORMAT_OFF_T " bytes received",
               Curl_tvdiff(k->now, k->start), k->bytecount);
@@ -1225,7 +1222,7 @@ long Curl_sleep_time(curl_off_t rate_bps, curl_off_t cur_rate_bps,
    */
   if(rv > 0x7fffffff)
     rv = 0x7fffffff;
-  
+
   return (long)rv;
 }
 
@@ -2009,12 +2006,7 @@ CURLcode Curl_retry_request(struct connectdata *conn,
   return CURLE_OK;
 }
 
-/*
- * Curl_perform() is the internal high-level function that gets called by the
- * external curl_easy_perform() function. It inits, performs and cleans up a
- * single file transfer.
- */
-CURLcode Curl_perform(struct SessionHandle *data)
+static CURLcode Curl_do_perform(struct SessionHandle *data)
 {
   CURLcode res;
   CURLcode res2;
@@ -2049,6 +2041,15 @@ CURLcode Curl_perform(struct SessionHandle *data)
       res = Curl_do(&conn, &do_done);
 
       if(res == CURLE_OK) {
+        if(conn->data->set.wildcardmatch) {
+          if(conn->data->wildcard.state == CURLWC_DONE ||
+             conn->data->wildcard.state == CURLWC_SKIP) {
+            /* keep connection open for application to use the socket */
+            conn->bits.close = FALSE;
+            res = Curl_done(&conn, CURLE_OK, FALSE);
+            break;
+          }
+        }
         res = Transfer(conn); /* now fetch that URL please */
         if((res == CURLE_OK) || (res == CURLE_RECV_ERROR)) {
           bool retry = FALSE;
@@ -2056,13 +2057,12 @@ CURLcode Curl_perform(struct SessionHandle *data)
           if(rc)
             res = rc;
           else
-            retry = (bool)(newurl?TRUE:FALSE);
+            retry = (newurl?TRUE:FALSE);
 
           if(retry) {
+            /* we know (newurl != NULL) at this point */
             res = CURLE_OK;
             follow = FOLLOW_RETRY;
-            if (!newurl)
-              res = CURLE_OUT_OF_MEMORY;
           }
           else if (res == CURLE_OK) {
             /*
@@ -2113,9 +2113,9 @@ CURLcode Curl_perform(struct SessionHandle *data)
         /* Curl_do() failed, clean up left-overs in the done-call, but note
            that at some cases the conn pointer is NULL when Curl_do() failed
            and the connection cache is very small so only call Curl_done() if
-           conn is still "alive".
-        */
-        res2 = Curl_done(&conn, res, FALSE);
+           conn is still "alive". */
+        /* ignore return code since we already have an error to return */
+        (void)Curl_done(&conn, res, FALSE);
 
       /*
        * Important: 'conn' cannot be used here, since it may have been closed
@@ -2166,10 +2166,43 @@ CURLcode Curl_perform(struct SessionHandle *data)
 }
 
 /*
+ * Curl_perform() is the internal high-level function that gets called by the
+ * external curl_easy_perform() function. It inits, performs and cleans up a
+ * single file transfer.
+ */
+CURLcode Curl_perform(struct SessionHandle *data)
+{
+  CURLcode res;
+  if(!data->set.wildcardmatch)
+    return Curl_do_perform(data);
+
+  /* init main wildcard structures */
+  res = Curl_wildcard_init(&data->wildcard);
+  if(res)
+    return res;
+
+  res = Curl_do_perform(data);
+  if(res) {
+    Curl_wildcard_dtor(&data->wildcard);
+    return res;
+  }
+
+  /* wildcard loop */
+  while(!res && data->wildcard.state != CURLWC_DONE)
+    res = Curl_do_perform(data);
+
+  Curl_wildcard_dtor(&data->wildcard);
+
+  /* wildcard download finished or failed */
+  data->wildcard.state = CURLWC_INIT;
+  return res;
+}
+
+/*
  * Curl_setup_transfer() is called to setup some basic properties for the
  * upcoming transfer.
  */
-CURLcode
+void
 Curl_setup_transfer(
   struct connectdata *conn, /* connection data */
   int sockindex,            /* socket index to read from or -1 */
@@ -2214,9 +2247,8 @@ Curl_setup_transfer(
   /* we want header and/or body, if neither then don't do this! */
   if(k->getheader || !data->set.opt_no_body) {
 
-    if(conn->sockfd != CURL_SOCKET_BAD) {
+    if(conn->sockfd != CURL_SOCKET_BAD)
       k->keepon |= KEEP_RECV;
-    }
 
     if(conn->writesockfd != CURL_SOCKET_BAD) {
       /* HTTP 1.1 magic:
@@ -2246,5 +2278,4 @@ Curl_setup_transfer(
     } /* if(conn->writesockfd != CURL_SOCKET_BAD) */
   } /* if(k->getheader || !data->set.opt_no_body) */
 
-  return CURLE_OK;
 }

@@ -137,6 +137,7 @@ void idn_free (void *ptr); /* prototype from idn-free.h, not provided by
 #include "http_ntlm.h"
 #include "socks.h"
 #include "rtsp.h"
+#include "curl_rtmp.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -149,11 +150,6 @@ void idn_free (void *ptr); /* prototype from idn-free.h, not provided by
 static long ConnectionKillOne(struct SessionHandle *data);
 static void conn_free(struct connectdata *conn);
 static void signalPipeClose(struct curl_llist *pipeline, bool pipe_broke);
-
-#ifdef CURL_DISABLE_VERBOSE_STRINGS
-#define verboseconnect(x)  do { } while (0)
-#endif
-
 
 /*
  * Protocol table.
@@ -187,10 +183,10 @@ static const struct Curl_handler * const protocols[] = {
 
 #ifndef CURL_DISABLE_LDAP
   &Curl_handler_ldap,
-#endif
-
-#if !defined(CURL_DISABLE_LDAP) && defined(HAVE_LDAP_SSL)
+#if (defined(USE_OPENLDAP) && defined(USE_SSL)) || \
+   (!defined(USE_OPENLDAP) && defined(HAVE_LDAP_SSL))
   &Curl_handler_ldaps,
+#endif
 #endif
 
 #ifndef CURL_DISABLE_FILE
@@ -229,6 +225,15 @@ static const struct Curl_handler * const protocols[] = {
 
 #ifndef CURL_DISABLE_RTSP
   &Curl_handler_rtsp,
+#endif
+
+#ifdef USE_LIBRTMP
+  &Curl_handler_rtmp,
+  &Curl_handler_rtmpt,
+  &Curl_handler_rtmpe,
+  &Curl_handler_rtmpte,
+  &Curl_handler_rtmps,
+  &Curl_handler_rtmpts,
 #endif
 
   (struct Curl_handler *) NULL
@@ -690,6 +695,8 @@ CURLcode Curl_init_userdefined(struct UserDefined *set)
 
   /* use fread as default function to read input */
   set->fread_func = (curl_read_callback)fread;
+  set->is_fread_set = 0;
+  set->is_fwrite_set = 0;
 
   set->seek_func = ZERO_NULL;
   set->seek_client = ZERO_NULL;
@@ -763,6 +770,10 @@ CURLcode Curl_init_userdefined(struct UserDefined *set)
   res = setstropt(&set->str[STRING_SSL_CAPATH], (char *) CURL_CA_PATH);
 #endif
 
+  set->wildcardmatch  = FALSE;
+  set->chunk_bgn      = ZERO_NULL;
+  set->chunk_end      = ZERO_NULL;
+
   return res;
 }
 
@@ -831,6 +842,9 @@ CURLcode Curl_open(struct SessionHandle **curl)
     data->progress.flags |= PGRS_HIDE;
     data->state.current_speed = -1; /* init to negative == impossible */
 
+    data->wildcard.state = CURLWC_INIT;
+    data->wildcard.filelist = NULL;
+    data->set.fnmatch = ZERO_NULL;
     /* This no longer creates a connection cache here. It is instead made on
        the first call to curl_easy_perform() or when the handle is added to a
        multi stack. */
@@ -1825,18 +1839,26 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
      * Set data write callback
      */
     data->set.fwrite_func = va_arg(param, curl_write_callback);
-    if(!data->set.fwrite_func)
+    if(!data->set.fwrite_func) {
+      data->set.is_fwrite_set = 0;
       /* When set to NULL, reset to our internal default function */
       data->set.fwrite_func = (curl_write_callback)fwrite;
+    }
+    else
+      data->set.is_fwrite_set = 1;
     break;
   case CURLOPT_READFUNCTION:
     /*
      * Read data callback
      */
     data->set.fread_func = va_arg(param, curl_read_callback);
-    if(!data->set.fread_func)
+    if(!data->set.fread_func) {
+      data->set.is_fread_set = 0;
       /* When set to NULL, reset to our internal default function */
       data->set.fread_func = (curl_read_callback)fread;
+    }
+    else
+      data->set.is_fread_set = 1;
     break;
   case CURLOPT_SEEKFUNCTION:
     /*
@@ -2441,12 +2463,30 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
     data->set.fwrite_rtp = va_arg(param, curl_write_callback);
     break;
   case CURLOPT_PRECONNECT:
-	data->set.preconnect = va_arg(param, curl_preconnect_callback);
-	break;
+    data->set.preconnect = va_arg(param, curl_preconnect_callback);
+    break;
   case CURLOPT_PRECONNECTDATA:
-	data->set.preconnect_client = va_arg(param, void *);
-	break;
+    data->set.preconnect_client = va_arg(param, void *);
+    break;
 
+  case CURLOPT_WILDCARDMATCH:
+    data->set.wildcardmatch = (bool)(0 != va_arg(param, long));
+    break;
+  case CURLOPT_CHUNK_BGN_FUNCTION:
+    data->set.chunk_bgn = va_arg(param, curl_chunk_bgn_callback);
+    break;
+  case CURLOPT_CHUNK_END_FUNCTION:
+    data->set.chunk_end = va_arg(param, curl_chunk_end_callback);
+    break;
+  case CURLOPT_FNMATCH_FUNCTION:
+    data->set.fnmatch = va_arg(param, curl_fnmatch_callback);
+    break;
+  case CURLOPT_CHUNK_DATA:
+    data->wildcard.customptr = va_arg(param, void *);
+    break;
+  case CURLOPT_FNMATCH_DATA:
+    data->set.fnmatch_data = va_arg(param, void *);
+    break;
   default:
     /* unknown tag and its companion, just ignore: */
     result = CURLE_FAILED_INIT; /* correct this */
@@ -3176,11 +3216,12 @@ static CURLcode ConnectPlease(struct SessionHandle *data,
  * verboseconnect() displays verbose information after a connect
  */
 #ifndef CURL_DISABLE_VERBOSE_STRINGS
-static void verboseconnect(struct connectdata *conn)
+void Curl_verboseconnect(struct connectdata *conn)
 {
-  infof(conn->data, "Connected to %s (%s) port %ld (#%ld)\n",
-        conn->bits.proxy ? conn->proxy.dispname : conn->host.dispname,
-        conn->ip_addr_str, conn->port, conn->connectindex);
+  if(conn->data->set.verbose)
+    infof(conn->data, "Connected to %s (%s) port %ld (#%ld)\n",
+          conn->bits.proxy ? conn->proxy.dispname : conn->host.dispname,
+          conn->ip_addr_str, conn->port, conn->connectindex);
 }
 #endif
 
@@ -3271,9 +3312,7 @@ CURLcode Curl_protocol_connect(struct connectdata *conn,
   if(!conn->bits.tcpconnect) {
 
     Curl_pgrsTime(data, TIMER_CONNECT); /* connect done */
-
-    if(data->set.verbose)
-      verboseconnect(conn);
+    Curl_verboseconnect(conn);
   }
 
   if(!conn->bits.protoconnstart) {
@@ -4140,7 +4179,7 @@ static CURLcode parse_url_userpass(struct SessionHandle *data,
      * set user/passwd, but doing that first adds more cases here :-(
      */
 
-    conn->bits.userpwd_in_url = 1;
+    conn->bits.userpwd_in_url = TRUE;
     if(data->set.use_netrc != CURL_NETRC_REQUIRED) {
       /* We could use the one in the URL */
 
@@ -4714,7 +4753,7 @@ static CURLcode create_conn(struct SessionHandle *data,
     proxy = NULL;
   }
   /* proxy must be freed later unless NULL */
-  if(proxy && *proxy) {
+  if(proxy) {
     long bits = conn->protocol & (PROT_HTTPS|PROT_SSL);
 
     if((conn->proxytype == CURLPROXY_HTTP) ||
@@ -4757,6 +4796,11 @@ static CURLcode create_conn(struct SessionHandle *data,
     return result;
   }
 
+  conn->recv[FIRSTSOCKET] = Curl_recv_plain;
+  conn->send[FIRSTSOCKET] = Curl_send_plain;
+  conn->recv[SECONDARYSOCKET] = Curl_recv_plain;
+  conn->send[SECONDARYSOCKET] = Curl_send_plain;
+
   /***********************************************************************
    * file: is a special case in that it doesn't need a network connection
    ***********************************************************************/
@@ -4786,9 +4830,8 @@ static CURLcode create_conn(struct SessionHandle *data,
         return result;
       }
 
-      result = Curl_setup_transfer(conn, -1, -1, FALSE,
-                                   NULL, /* no download */
-                                   -1, NULL); /* no upload */
+      Curl_setup_transfer(conn, -1, -1, FALSE, NULL, /* no download */
+                          -1, NULL); /* no upload */
     }
 
     return result;
@@ -4993,8 +5036,8 @@ static CURLcode setup_conn(struct connectdata *conn,
       Curl_pgrsTime(data, TIMER_APPCONNECT); /* we're connected already */
       conn->bits.tcpconnect = TRUE;
       *protocol_done = TRUE;
-      if(data->set.verbose)
-        verboseconnect(conn);
+      Curl_verboseconnect(conn);
+      Curl_updateconninfo(conn, conn->sock[FIRSTSOCKET]);
     }
     /* Stop the loop now */
     break;

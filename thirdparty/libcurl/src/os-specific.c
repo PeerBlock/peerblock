@@ -24,7 +24,7 @@
 #include <curl/curl.h>
 
 #define ENABLE_CURLX_PRINTF
-#include "../lib/curlx.h"
+#include "curlx.h"
 
 #include "os-specific.h"
 
