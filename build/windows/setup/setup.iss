@@ -19,7 +19,7 @@
 ;
 ;
 ; Requirements:
-; *Inno Setup QuickStart Pack v5.3.9(+): http://www.jrsoftware.org/isdl.php#qsp
+; *Inno Setup QuickStart Pack v5.3.10(+): http://www.jrsoftware.org/isdl.php#qsp
 
 
 #include "..\..\..\src\peerblock\version_parsed.h"
@@ -47,7 +47,7 @@ AppPublisher=PeerBlock, LLC
 AppCopyright=Copyright © 2009-2010, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/support
-AppUpdatesURL=http://www.peerblock.com/
+AppUpdatesURL=http://www.peerblock.com/releases
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
 VersionInfoCopyright=Copyright © 2009-2010, PeerBlock, LLC
