@@ -41,7 +41,8 @@ Configuration::Configuration() :
 	BlinkOnBlock(OnHttpBlock), NotifyOnBlock(Never), CleanupType(Delete), TempAllowingHttpShort(false),
 	TempAllowingHttpLong(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
-	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true), MaxHistorySize(100000000) {
+	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true),
+	MaxHistorySize(100000000), HistoryCheckInterval(100) {
 		HistoryColumns[0]=64;
 		HistoryColumns[1]=128;
 		HistoryColumns[2]=124;
@@ -499,6 +500,8 @@ bool Configuration::Load()
 			this->ArchivePath=p;
 
 		GetChild(logging, "MaxHistorySize", this->MaxHistorySize);
+
+		GetChild(logging, "HistoryCheckInterval", this->HistoryCheckInterval);
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config tracelogging element");
@@ -811,6 +814,8 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(logging, "ArchivePath", this->ArchivePath.directory_str());
 
 		InsertChild(logging, "MaxHistorySize", this->MaxHistorySize);
+
+		InsertChild(logging, "HistoryCheckInterval", this->HistoryCheckInterval);
 	}
 
 	{

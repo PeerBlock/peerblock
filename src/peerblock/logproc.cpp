@@ -303,7 +303,7 @@ public:
 private:
 	void _Commit(bool force) {
 		mutex::scoped_lock lock(this->mutex);
-		static __int64 currentinserted = 99;
+		static unsigned int currentinserted = g_config.HistoryCheckInterval;
 		bool needvacuum = false;
 
 		if(!this->dbqueue.empty()) {
@@ -358,7 +358,7 @@ private:
 				// limit the historydb size
 				if ((g_config.LogBlocked || g_config.LogAllowed) && g_config.CleanupType != None && g_config.MaxHistorySize > 0)
 				{
-					if (currentinserted >= 100)
+					if (currentinserted >= g_config.HistoryCheckInterval)
 					{
 						TRACEI("checking _tstat64");
 

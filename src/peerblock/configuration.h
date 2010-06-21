@@ -199,6 +199,7 @@ struct Configuration {
 	tstring UpdateProxy;
 	long UpdateProxyType;
 	__int64 MaxHistorySize;	// 0 = never cleanup, >0 = size in bytes
+	unsigned int HistoryCheckInterval; // number to blocks before checking whether to archive or not
 
 	bool TracelogEnabled;
 	int TracelogLevel;
