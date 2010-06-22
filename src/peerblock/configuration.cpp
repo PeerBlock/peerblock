@@ -42,7 +42,7 @@ Configuration::Configuration() :
 	TempAllowingHttpLong(false),
 	TracelogEnabled(true), TracelogLevel(TRACELOG_LEVEL_DEFAULT), LastVersionRun(0),
 	ArchivePath(_T("archives")), StartMinimized(false), ColorCode(true),
-	MaxHistorySize(100000000), HistoryCheckInterval(100) {
+	MaxHistorySize(100000000), HistoryCheckInterval(10000) {
 		HistoryColumns[0]=64;
 		HistoryColumns[1]=128;
 		HistoryColumns[2]=124;
