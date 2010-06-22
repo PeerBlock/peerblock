@@ -211,6 +211,8 @@
 #define IDS_PREVREL341TEXT_MAX			265
 #define IDS_PREVREL341TEXT_BOTH			266
 #define IDS_PORTSETTINGS                267
+#define IDS_PREVREL411TEXT_WEBEX		268
+#define IDS_PREVREL411TEXT_BOGON		269
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003
