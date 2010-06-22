@@ -256,6 +256,72 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		}
 	}
 
+
+	//--------------------------------------------------
+	// Update Bluetack Webexploit/Forumspam merged list to new individual lists, and cw_bogon list
+	// to the most frequently updated one, cidr_bogon
+
+	if (prevRelease < 411)
+	{
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for Bluetack Webexploit/Forumspam list (r411)");
+
+		bool bOldUrlFound = false;
+		vector<DynamicList> tempList;
+		ListUrls listUrls;
+		listUrls.Init();
+
+		// check each list in configured lists
+		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
+		{
+			DynamicList *list = &(g_config.DynamicLists[i]);
+			LISTNAME listId = listUrls.FindListNum(list->Url);
+			if (listId == LISTNAME_BT_WEBEX_FSPAM)
+			{
+				TRACEW("[mainproc] [PerformPrevRelUpdates]    Updating Bluetack Webexploit/Forumspam merged list to new individual lists");
+				int result = MessageBox(_hwnd, IDS_PREVREL411TEXT_WEBEX, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+
+				DynamicList * newList = new DynamicList;
+				newList->Url = listUrls.GetBestUrl(LISTNAME_BT_WEBEXPLOIT);
+				newList->Enabled = list->Enabled;
+				newList->Description = listUrls.GetListDesc(LISTNAME_BT_WEBEXPLOIT);
+				tempList.push_back(*newList);
+
+				DynamicList * newList2 = new DynamicList;
+				newList2->Url = listUrls.GetBestUrl(LISTNAME_BT_FORUMSPAM);
+				newList2->Enabled = list->Enabled;
+				newList2->Description = listUrls.GetListDesc(LISTNAME_BT_FORUMSPAM);
+				tempList.push_back(*newList2);
+			}
+			else if (listId == LISTNAME_CW_BOGON)
+			{
+				TRACEW("[mainproc] [PerformPrevRelUpdates]    Updating CW Bogon list to CIDR Bogon");
+				int result = MessageBox(_hwnd, IDS_PREVREL411TEXT_BOGON, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+
+				DynamicList * newList = new DynamicList;
+				newList->Url = listUrls.GetBestUrl(LISTNAME_CIDR_BOGON);
+				newList->Enabled = list->Enabled;
+				newList->Description = listUrls.GetListDesc(LISTNAME_CIDR_BOGON);
+				tempList.push_back(*newList);
+			}
+			else
+			{
+				// not LISTNAME_BT_WEBEX_FSPAM or LISTNAME_CIDR_BOGON
+				tempList.push_back(*list);
+			}
+		}
+
+		// Rebuild list, checking for duplicates.
+		g_config.DynamicLists.clear();
+		for(vector<DynamicList>::size_type i = 0; i < tempList.size(); ++i)
+		{
+			if (std::find(g_config.DynamicLists.begin(), g_config.DynamicLists.end(), tempList[i]) == g_config.DynamicLists.end())
+			{
+				g_config.DynamicLists.push_back(tempList[i]);
+			}
+		}
+
+	} // end of webex/forumspam update (r411)
+
 }; // End of PerformPrevRelUpdates()
 
 

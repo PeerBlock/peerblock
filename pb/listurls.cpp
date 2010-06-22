@@ -445,6 +445,20 @@ bool ListUrls::Init()
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://www.bluetack.co.uk/config/webexploit-forumspam.zip", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_BT_WEBEX_FSPAM].push_back(ListData(L"http://iblocklist.com/list.php?list=bimsvyvtgxeelunveyal", LISTFLAG_WRONG));
 
+		Lists[LISTNAME_BT_WEBEXPLOIT].push_back(ListData(L"Web Exploit (Bluetack)"));
+		Lists[LISTNAME_BT_WEBEXPLOIT].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/web-exploit"));
+		Lists[LISTNAME_BT_WEBEXPLOIT].push_back(ListData(L"http://list.iblocklist.com/?list=ghlzqtqxnzctvvajwwag", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_WEBEXPLOIT].push_back(ListData(L"http://www.bluetack.co.uk/config/webexploit.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_WEBEXPLOIT].push_back(ListData(L"http://www.bluetack.co.uk/config/webexploit.zip", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_WEBEXPLOIT].push_back(ListData(L"http://iblocklist.com/list.php?list=ghlzqtqxnzctvvajwwag", LISTFLAG_WRONG));
+
+		Lists[LISTNAME_BT_FORUMSPAM].push_back(ListData(L"Forum Spam (Bluetack)"));
+		Lists[LISTNAME_BT_FORUMSPAM].push_back(ListData(L"http://list.iblocklist.com/lists/bluetack/forum-spam"));
+		Lists[LISTNAME_BT_FORUMSPAM].push_back(ListData(L"http://list.iblocklist.com/?list=ficutxiwawokxlcyoeye", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_BT_FORUMSPAM].push_back(ListData(L"http://www.bluetack.co.uk/config/forumspam.gz", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_FORUMSPAM].push_back(ListData(L"http://www.bluetack.co.uk/config/forumspam.zip", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_BT_FORUMSPAM].push_back(ListData(L"http://iblocklist.com/list.php?list=ficutxiwawokxlcyoeye", LISTFLAG_WRONG));
+
 		// DCHA Lists
 
 		Lists[LISTNAME_DCHA_FAKER].push_back(ListData(L"Faker (DHCA)"));
@@ -540,6 +554,10 @@ bool ListUrls::Init()
 		Lists[LISTNAME_CIDR_BOGON].push_back(ListData(L"http://list.iblocklist.com/lists/cidr-report/bogon"));
 		Lists[LISTNAME_CIDR_BOGON].push_back(ListData(L"http://list.iblocklist.com/?list=cr_bogon", LISTFLAG_UNFRIENDLY));
 		Lists[LISTNAME_CIDR_BOGON].push_back(ListData(L"http://iblocklist.com/list.php?list=cr_bogon", LISTFLAG_WRONG));
+
+		Lists[LISTNAME_CW_BOGON].push_back(ListData(L"Bogon (CW)"));
+		Lists[LISTNAME_CW_BOGON].push_back(ListData(L"http://list.iblocklist.com/?list=cw_bogon"));
+		Lists[LISTNAME_CW_BOGON].push_back(ListData(L"http://iblocklist.com/list.php?list=cw_bogon", LISTFLAG_WRONG));
 
 		// iBlocklist Service Lists
 
