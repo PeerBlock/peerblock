@@ -143,10 +143,13 @@ begin
   RemoveDir(ExpandConstant('{app}\lists\'));
   DeleteFile(ExpandConstant('{app}\cache.p2b'));
   DeleteFile(ExpandConstant('{app}\history.db'));
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak.failed'));
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak.tmp'));
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.failed'));
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.tmp'));
   DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
   DeleteFile(ExpandConstant('{app}\peerblock.log'));
-  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak.tmp'));
-  DeleteFile(ExpandConstant('{app}\peerblock.conf.tmp'));
+  DeleteFile(ExpandConstant('{app}\pg2.conf.failed'));
 end;
 
 

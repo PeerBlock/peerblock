@@ -452,7 +452,14 @@ bool Configuration::Load()
 				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]  * - Error: [%1%] (\"%2%\") at row:[%3%] col:[%4%]")) % 
 					doc.ErrorId() % doc.ErrorDesc() % doc.ErrorRow() % doc.ErrorCol() );
 				TRACEBUFE(strBuf);
-				//throw runtime_error("unable to parse configuration");
+
+				// copy over to .failed
+				path failedFile;
+				failedFile = itr->file_str();
+				failedFile = failedFile.file_str() + L".failed";
+				path::copy(*itr, failedFile, true);
+				strBuf = boost::str(tformat(_T("[Configuration] [Load]    - Copied failed-parsing config-file to: [%1%]")) % failedFile.file_str() );
+				TRACEBUFE(strBuf);
 				continue;
 			}
 		}
