@@ -410,26 +410,64 @@ bool Configuration::Load()
 	TRACEI("[Configuration] [Load]  > Entering routine.");
 
 	TiXmlDocument doc;
+
+	const path pb=path::base_dir()/_T("peerblock.conf");
+	const path oldpb=path::base_dir()/_T("peerblock.conf.bak");
+	const path pg2=path::base_dir()/_T("pg2.conf");
+
+	vector<path> files;
+	files.push_back(pb);
+	files.push_back(oldpb);
+	files.push_back(pg2);
+
+	bool loaded = false;
+
+	for(vector<path>::iterator itr = files.begin(); itr != files.end() && !loaded; ++itr)
 	{
-		HANDLE fp = NULL;
-		HANDLE map = NULL;
-		const void *view = NULL;
+		{
+			HANDLE fp = NULL;
+			HANDLE map = NULL;
+			const void *view = NULL;
+			if (!LoadFile((*itr).file_str().c_str(), &fp, &map, &view))	// first try to find a PeerBlock file
+			{
+				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]    WARNING:  Unable to load configuration file [%1%]")) % 
+					(*itr).file_str().c_str() );
+				TRACEBUFW(strBuf);
+				continue;
+			}
 
-		const path pb=path::base_dir()/_T("peerblock.conf");
-		const path oldpb=path::base_dir()/_T("peerblock.conf.bak");
-		const path pg2=path::base_dir()/_T("pg2.conf");
+			tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]    Loaded configuration file [%1%]")) % 
+				(*itr).file_str().c_str() );
+			TRACEBUFI(strBuf);
 
-		if (LoadFile(pb.file_str().c_str(), &fp, &map, &view))	// first try to find a PeerBlock file
+			boost::shared_ptr<void> fp_safe(fp, CloseHandle);
+			boost::shared_ptr<void> map_safe(map, CloseHandle);
+			boost::shared_ptr<const void> view_safe(view, UnmapViewOfFile);
+
+			doc.Parse((const char*)view);
+
+			if(doc.Error()) 
+			{
+				TRACEE("[Configuration] [Load]  * ERROR:  Can't parse xml document");
+				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]  * - Error: [%1%] (\"%2%\") at row:[%3%] col:[%4%]")) % 
+					doc.ErrorId() % doc.ErrorDesc() % doc.ErrorRow() % doc.ErrorCol() );
+				TRACEBUFE(strBuf);
+				//throw runtime_error("unable to parse configuration");
+				continue;
+			}
+		}
+
+		if (*itr == pb)
 		{
 			TRACEI("[Configuration] [Load]    found peerblock configuration file");
 		}
-		else if (LoadFile(oldpb.file_str().c_str(), &fp, &map, &view))	// try the last-known-good one
+		else if (*itr == oldpb)
 		{
 			TRACEW("[Configuration] [Load]    using last-known-good configuration file");
 			MessageBox(NULL, IDS_CONFERRTEXT, IDS_CONFERR, MB_ICONWARNING|MB_OK);
 			g_config.Save(_T("peerblock.conf"));	// save restored config to regular file
 		}
-		else if (LoadFile(pg2.file_str().c_str(), &fp, &map, &view))	// fall back to old PG2 version
+		else if (*itr == pg2)
 		{
 			TRACEI("[Configuration] [Load]    found old-style pg2 configuration file");
 		}
@@ -439,17 +477,14 @@ bool Configuration::Load()
 			return false;
 		}
 
-		boost::shared_ptr<void> fp_safe(fp, CloseHandle);
-		boost::shared_ptr<void> map_safe(map, CloseHandle);
-		boost::shared_ptr<const void> view_safe(view, UnmapViewOfFile);
+		loaded = true;
+	}
 
-		doc.Parse((const char*)view);
-
-		if(doc.Error()) 
-		{
-			TRACEE("[Configuration] [Load]    ERROR:  Can't parse configuration");
-			throw runtime_error("unable to parse configuration");
-		}
+	if (!loaded)
+	{
+		// can't find anything, return false so caller can run the startup-wizard
+		TRACEW("[Configuration] [Load]    ERROR:  No configuration file loaded!");
+		return false;
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config root element");
