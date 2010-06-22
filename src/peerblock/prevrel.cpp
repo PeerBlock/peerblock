@@ -263,7 +263,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 
 	if (prevRelease < 411)
 	{
-		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for Bluetack Webexploit/Forumspam list (r411)");
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for Bluetack Webexploit/Forumspam, cr_bogon, or default lists (r411)");
 
 		bool bOldUrlFound = false;
 		vector<DynamicList> tempList;
@@ -303,9 +303,34 @@ void PerformPrevRelUpdates(HWND _hwnd)
 				newList->Description = listUrls.GetListDesc(LISTNAME_CIDR_BOGON);
 				tempList.push_back(*newList);
 			}
+			else if ( listId == LISTNAME_BT_LEVEL1 || listId == LISTNAME_BT_ADS || 
+					  listId == LISTNAME_BT_SPY || listId == LISTNAME_BT_EDU )
+			{
+				// Make sure Default Lists are set to Block, not Allow.  This will also take care
+				// of any misconfigured PG2 lists, and is especially important since the PeerBlock
+				// List Manager has no easy way to set lists to Block instead of Allow, nor will
+				// it show you that it's an Allow list.
+
+				if (list->Type == List::Allow)
+				{
+					tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    Updating list:[%1%] from type:[Allow] to type:[Block]")) % list->Description );
+					TRACEBUFW(strBuf);
+
+					DynamicList * newList = new DynamicList;
+					newList->Url = list->Url;
+					newList->Enabled = list->Enabled;
+					newList->Description = list->Description;
+					newList->Type = List::Block;
+					tempList.push_back(*newList);
+				}
+				else
+				{
+					tempList.push_back(*list);
+				}
+			}
 			else
 			{
-				// not LISTNAME_BT_WEBEX_FSPAM or LISTNAME_CIDR_BOGON
+				// not LISTNAME_BT_WEBEX_FSPAM, LISTNAME_CIDR_BOGON, or a default list
 				tempList.push_back(*list);
 			}
 		}
