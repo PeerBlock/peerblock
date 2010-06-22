@@ -822,7 +822,6 @@ void Configuration::Save(const TCHAR * _filename)
 	{
 		TiXmlElement *settings=InsertChild(root, "Settings");
 
-		InsertChild(settings, "Block", this->Block);
 		InsertChild(settings, "AllowLocal", this->AllowLocal);
 		InsertChild(settings, "CacheCrc", this->CacheCrc);
 		InsertChild(settings, "BlinkOnBlock", this->BlinkOnBlock);
