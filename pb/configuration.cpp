@@ -777,7 +777,6 @@ void Configuration::Save(const TCHAR * _filename)
 	{
 		TiXmlElement *settings=InsertChild(root, "Settings");
 
-		InsertChild(settings, "Block", this->Block);
 		InsertChild(settings, "BlockHttp", this->BlockHttp);
 		InsertChild(settings, "AllowLocal", this->AllowLocal);
 		InsertChild(settings, "CacheCrc", this->CacheCrc);
