@@ -97,7 +97,7 @@ INT_PTR CALLBACK CreateList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 			HANDLE_MSG(hwnd, WM_DESTROY, CreateList_OnDestroy);
 			case WM_DIALOG_ICON_REFRESH:
 				RefreshDialogIcon(g_hCreateListDlg);
-				return 1;	
+				return 1;
 			default: return 0;
 		}
 	}

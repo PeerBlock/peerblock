@@ -57,7 +57,7 @@ BOOL PreventSetUnhandledExceptionFilter()
 	if (hKernel32 == NULL) return FALSE;
 	void *pOrgEntry = GetProcAddress(hKernel32, "SetUnhandledExceptionFilter");
 	if(pOrgEntry == NULL) return FALSE;
- 
+
 	DWORD dwOldProtect = 0;
 	SIZE_T jmpSize = 5;
 #ifdef _M_X64
@@ -113,7 +113,7 @@ BOOL PreventSetUnhandledExceptionFilter()
 /// </summary>
 /// <remarks>
 ///   See (http://www.codeproject.com/KB/debug/postmortemdebug_standalone1.aspx) for more details 
-///	  on this implementation.
+///   on this implementation.
 /// </remarks>
 //
 LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo) 
@@ -164,6 +164,3 @@ LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
 	return EXCEPTION_EXECUTE_HANDLER;
 
 }; // End of UnhandledExceptionFilter()
-
-
-

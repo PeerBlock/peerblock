@@ -137,7 +137,7 @@ bool LoadList(path file, p2p::list &list)
 					zip.OpenCurrentFile();
 
 					pair<boost::shared_array<char>,size_t> buf=zip.ReadCurrentFile();
-					
+
 					zip.CloseCurrentFile();
 
 					list.load(istrstream((const char*)buf.first.get(), (streamsize)buf.second));
@@ -173,9 +173,9 @@ bool LoadList(path file, p2p::list &list)
 			ISzAlloc aitemp;
 			aitemp.Alloc=SzAllocTemp;
 			aitemp.Free=SzFreeTemp;
-			
+
 			CArchiveDatabaseEx db;
-			
+
 			InitCrcTable();
 			SzArDbExInit(&db);
 
@@ -289,7 +289,7 @@ vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list)
 			return i;
 		}
 	}
-	
+
 	return -1;
 
 } // End of FindUrl()
@@ -421,7 +421,7 @@ public:
 			block.save(TSTRING_MBS((path::base_dir()/_T("cache.p2b")).c_str()), p2p::list::file_p2b);
 			save=false;
 		}
-		else {	
+		else {
 			TRACEI("[GenCacheFuncs] [Process]    default");
 			if(needupdate && hwnd)
 			{

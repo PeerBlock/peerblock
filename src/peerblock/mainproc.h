@@ -49,7 +49,6 @@ void SendDialogIconRefreshMessage();
 void SetBlockHttp(bool block, unsigned int time = 0);
 void Shutdown();
 
-
 extern TabData g_tabs[];
 extern boost::shared_ptr<pbfilter> g_filter;
 extern DWORD g_blinkstart;

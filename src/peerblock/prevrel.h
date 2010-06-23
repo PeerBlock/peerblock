@@ -21,5 +21,4 @@
 
 #pragma once
 
-
 void PerformPrevRelUpdates(HWND hwnd);

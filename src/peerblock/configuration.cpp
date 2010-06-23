@@ -401,9 +401,9 @@ bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const v
 ///   Attempts to load the config-file.  Returns true if successful, false if not
 /// </summary>
 /// <remarks>
-///	  If we're unsuccessful, the caller will assume this is the first time we've run the program
-///	  and will run through the startup-wizard.
-///	</remarks>
+///   If we're unsuccessful, the caller will assume this is the first time we've run the program
+///   and will run through the startup-wizard.
+/// </remarks>
 //
 bool Configuration::Load() 
 {
@@ -567,12 +567,12 @@ bool Configuration::Load()
 		GetChild(windowing, "ListManager", this->ListManagerWindowPos);
 		GetChild(windowing, "ListEditor", this->ListEditorWindowPos);
 		GetChild(windowing, "History", this->HistoryWindowPos);
-		
+
 		GetChild(windowing, "StartMinimized", this->StartMinimized);
 		GetChild(windowing, "ShowSplash", this->ShowSplash);
 		GetChild(windowing, "StayHidden", this->StayHidden);
 		GetChild(windowing, "HideOnClose", this->HideOnClose);
-		
+
 		GetChild(windowing, "HideMain", this->WindowHidden);
 		GetChild(windowing, "AlwaysOnTop", this->AlwaysOnTop);
 		GetChild(windowing, "HideTrayIcon", this->HideTrayIcon);
@@ -711,7 +711,7 @@ bool Configuration::Load()
 							try {
 								USHORT s = boost::lexical_cast<USHORT>(start);
 								USHORT e = s;
-								
+
 								if (end)
 									e = boost::lexical_cast<USHORT>(end);
 
@@ -787,7 +787,7 @@ bool Configuration::Load()
 				}
 
 				this->DynamicLists.push_back(l);
-			}	
+			}
 		}
 	}
 
@@ -901,7 +901,6 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(windowing, "HideMain", this->WindowHidden);
 		InsertChild(windowing, "AlwaysOnTop", this->AlwaysOnTop);
 		InsertChild(windowing, "HideTrayIcon", this->HideTrayIcon);
-		
 
 		{
 			TiXmlElement *hcol=InsertChild(windowing, "HistoryColumns");
@@ -958,7 +957,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
 		InsertChild(updates, "UpdateInterval", this->UpdateInterval);
 		InsertChild(updates, "UpdateCountdown", this->UpdateCountdown);
-		
+
 		{
 			TiXmlElement *proxy=InsertChild(updates, "UpdateProxy", this->UpdateProxy);
 			proxy->SetAttribute("Type", (this->UpdateProxyType==CURLPROXY_HTTP)?"http":"socks5");

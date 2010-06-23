@@ -158,7 +158,7 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			TRACEI("[portprofileproc] [PortProfile_OnCommand]  < IDOK");
 			EndDialog(hwnd, IDOK);
 
-		} break;	// End of IDOK
+		} break; // End of IDOK
 
 		case IDCANCEL:
 		{

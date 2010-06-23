@@ -39,7 +39,7 @@ pbfilter::pbfilter()
 	m_ipfltdrv.load(IPFILTER_NAME, IPFILTER_PATH);
 	TRACEI("[pbfilter_nt] [pbfilter]    starting IpFilterDriver");
 	m_ipfltdrv.start(false);
-	
+
 	wstring p = L"\\??\\" + (path::base_dir() / PBFILTER_PATH).file_str();
 
 	m_filter.removable = true; // so it can be removed if there's a path mismatch.
@@ -64,7 +64,7 @@ pbfilter::pbfilter()
 
 pbfilter::~pbfilter() {
 	stop_thread();
-	
+
 	m_filter.removable = true;	// let's delete the driver-service wrapper
 	m_filter.close();
 

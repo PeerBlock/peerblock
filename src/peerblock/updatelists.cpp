@@ -800,7 +800,7 @@ public:
 
 									if(list) {
 										tstring str;
-										
+
 										if(data->errbuf[0])
 										{
 											tstring strBuf = boost::str(tformat(
@@ -1209,7 +1209,7 @@ static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, 
 /// <remarks>
 ///   Callers of this routine are expected to have first acquired the g_lastudpatelock, to ensure
 ///   that nobody else is attempting to check for updates (or check the timer) while a list-update
-///	  is already in progress.
+///   is already in progress.
 /// </remarks>
 //
 int UpdateLists(HWND parent) 
@@ -1243,7 +1243,7 @@ int UpdateLists(HWND parent)
 		time(&g_config.LastUpdate);
 	}
 	else if(parent) 
-	{	
+	{
 		// restoring update-window?
 		TRACEI("[UpdateLists]    g_updater not null, found parent, creating dialog-box");
 		ShowWindow(g_updater, SW_SHOW);

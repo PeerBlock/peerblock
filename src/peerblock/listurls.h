@@ -1,9 +1,3 @@
-//================================================================================================
-//  listurls.h
-//
-//  Contains all known lists, for duplicate/sanity-checking purposes.
-//================================================================================================
-
 /*
 	Copyright (C) 2010 PeerBlock, LLC
 
@@ -22,6 +16,14 @@
 	3. This notice may not be removed or altered from any source distribution.
 
 */
+
+
+//================================================================================================
+//  listurls.h
+//
+//  Contains all known lists, for duplicate/sanity-checking purposes.
+//================================================================================================
+
 
 #pragma once
 
@@ -179,7 +181,7 @@ public:
 	LISTNAME FindListNum(wstring url);
 	LISTFLAGS CheckUrl(wstring url, LISTNAME num=LISTNAME_COUNT, HWND listman=NULL);
 	wstring GetListDesc(LISTNAME url_num);
-	
+
 };
 
 
@@ -202,5 +204,3 @@ public:
 // - not iblocklist url
 // - wrong url (i.e. desc-url, not update-url)
 // - list already added, maybe under a different URL
-
-

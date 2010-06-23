@@ -1,9 +1,3 @@
-//================================================================================================
-//  listurls.cpp
-//
-//  Contains all known lists, for duplicate/sanity-checking purposes.
-//================================================================================================
-
 /*
 	Copyright (C) 2010 PeerBlock, LLC
 
@@ -23,8 +17,15 @@
 
 */
 
-#include "stdafx.h"
 
+//================================================================================================
+//  listurls.cpp
+//
+//  Contains all known lists, for duplicate/sanity-checking purposes.
+//================================================================================================
+
+
+#include "stdafx.h"
 #include "listurls.h"
 
 
@@ -769,5 +770,3 @@ bool ListUrls::Init()
 	return true;
 
 } // End of Init()
-
-

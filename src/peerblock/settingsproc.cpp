@@ -173,7 +173,7 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 				SendDlgItemMessage(hwnd, IDC_MAXHISTORYSIZESPIN, UDM_SETRANGE, 0, (LPARAM)MAKELONG(9999, 0));
 
 				HWND logallowed = GetDlgItem(hwnd, IDC_LOGALLOWED);
-				
+
 				tstring str = LoadString(IDS_LOGNONE);
 				ComboBox_AddString(logallowed, str.c_str());
 
@@ -322,11 +322,11 @@ static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wPara
 							if(IsDlgButtonChecked(hwnd, IDC_STARTWITHWINDOWS)==BST_CHECKED) {
 								TCHAR dir[MAX_PATH];
 								DWORD len=GetModuleFileName(NULL, dir, MAX_PATH);
-			
+
 								if(len) RegSetValueEx(key, _T("PeerBlock"), 0, REG_SZ, (LPBYTE)dir, (len+1)*sizeof(TCHAR));
 							}
 							else RegDeleteValue(key, _T("PeerBlock"));
-			
+
 							RegCloseKey(key);
 						}
 					} break;

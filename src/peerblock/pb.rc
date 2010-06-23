@@ -422,7 +422,7 @@ BEGIN
     EDITTEXT        IDC_AUTOCLOSETIME,137,96,27,14,ES_AUTOHSCROLL | WS_DISABLED
     CONTROL         "",IDC_AUTOCLOSETIMESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,157,97,10,14
     LTEXT           "Seconds",IDC_STATIC,171,96,29,14,SS_CENTERIMAGE
-	CONTROL			"Update at startup", IDC_UPDATE_AT_STARTUP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 217 , 96, 119, 14
+    CONTROL         "Update at startup", IDC_UPDATE_AT_STARTUP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 217 , 96, 119, 14
     GROUPBOX        "Miscellaneous",IDC_STATIC,5,123,333,28
     CONTROL         "Always hide tray icon",IDC_HIDETRAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,135,84,10
     CONTROL         "Minimize to tray on close",IDC_HIDEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,135,94,10
@@ -729,8 +729,8 @@ BEGIN
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
         MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
         MENUITEM SEPARATOR
-        MENUITEM "&Help",						ID_TRAY_HELP
-        MENUITEM "&Support",					ID_TRAY_SUPPORT
+        MENUITEM "&Help",                       ID_TRAY_HELP
+        MENUITEM "&Support",                    ID_TRAY_SUPPORT
         MENUITEM "&About",                      ID_TRAY_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_TRAY_EXIT
@@ -823,7 +823,7 @@ BEGIN
     IDS_UPDATINGLISTS       "Updating Lists..."
     IDS_LISTSUPTODATE       "Last Updated %1%"
     IDS_PGALREADYRUNNING    "PeerGuardian2 is already running!"
-    IDS_PGALREADYRUNNINGTEXT	"PeerGuardian2 is currently running on your system.  Running both PG2 and PeerBlock at the same time is not supported, and is really just a bad idea in general.  Please close PeerGuardian2 and run PeerBlock again."
+    IDS_PGALREADYRUNNINGTEXT "PeerGuardian2 is currently running on your system.  Running both PG2 and PeerBlock at the same time is not supported, and is really just a bad idea in general.  Please close PeerGuardian2 and run PeerBlock again."
 END
 
 STRINGTABLE 
@@ -919,7 +919,7 @@ BEGIN
     IDS_ABORTED             "Aborted"
     IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
     IDS_UNEXPCONTACTINGWHY  "Unexpected Response Contacting URL: %1%"
-	IDS_DNLISTFAILEDVERIFY  "List verification failed: 0 elements"
+    IDS_DNLISTFAILEDVERIFY  "List verification failed: 0 elements"
     IDS_CLOSEX              "&Close - %1%"
     IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerBlock to bring it back."
     IDS_HIDING              "Hiding PeerBlock"
@@ -963,7 +963,7 @@ BEGIN
     IDS_FILEOPENERR         "Unable to open file"
     IDS_FILEOPENERRTEXT     "Unable to open the file at:\r\n%1%\r\n\r\nCheck to make sure you have permissions to write to that location."
     IDS_NEEDSVCSERR         "Required services not running"
-	IDS_NEEDSVCSERRTEXT     "One or more of the following Windows Services are not running:\r\n\r\nBase Filtering Engine\r\nIPsec Policy Agent\r\nIKE and AuthIP IPsec Keyring Modules\r\n\r\nPlease verify that these Windows Services have not been disabled, and are running.\r\n\r\nSee http://www.peerblock.com/required-services for more information."
+    IDS_NEEDSVCSERRTEXT     "One or more of the following Windows Services are not running:\r\n\r\nBase Filtering Engine\r\nIPsec Policy Agent\r\nIKE and AuthIP IPsec Keyring Modules\r\n\r\nPlease verify that these Windows Services have not been disabled, and are running.\r\n\r\nSee http://www.peerblock.com/required-services for more information."
     IDS_CONFERR             "Configuration File Error"
     IDS_CONFERRTEXT         "The PeerBlock configuration file is missing or corrupt.\r\n\r\nPeerBlock will use the last known good configuration file, but any recent changes you made may be lost.  You should check the settings panel to make sure they are correct."
     IDS_LOGALLOWED          "Log Allowed"
@@ -977,33 +977,33 @@ BEGIN
     IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%"
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
     IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
-	IDS_EXITWHILEBLOCKING	"Are you sure you want to exit PeerBlock?"
-	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting Peerblock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
+    IDS_EXITWHILEBLOCKING   "Are you sure you want to exit PeerBlock?"
+    IDS_EXITWHILEBLOCKINGTEXT "PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting Peerblock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
 END
 
 // List sanity-checking messages
 STRINGTABLE 
 BEGIN
-	IDS_LISTSAN_TITLE		"List URL Problem Detected"
-	IDS_LISTSAN_UNFRIENDLY	"PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iblocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
-	IDS_LISTSAN_NOTIBL		"This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this lists's URL to an iblocklist.com hosted one?"
-	IDS_LISTSAN_WRONG		"This URL is not a valid list.  Did you use the ""List Description"" link from iblocklist.com instead of the ""Update URL"" link?\r\n\r\nPeerBlock will update this list's URL to a correct one."
-	IDS_LISTSAN_DEFAULT		"This URL refers to one of the Default Lists: ""%1%"".\r\n\r\nPeerBlock is activating that list instead of adding this new one."
-	IDS_LISTSAN_DEFAULT_NIBL	"This URL refers to one of the Default Lists: ""%1%"", and is a non-iblocklist.com hosted URL.\r\n\r\nAllow PeerBlock to activate that Default List using its standard URL instead of this new one?"
-	IDS_LISTSAN_EXACTDUPE	"This list URL has already been added to PeerBlock.  To prevent problems while updating lists, multiple instances of the same URL is disallowed.\r\n\r\nPeerBlock will ignore this new URL."
-	IDS_LISTSAN_DEFDUPE		"The list ""%1%"" has already been added, as one of the Default Lists.\r\n\r\nTo prevent problems while updating lists, multiple URLs for the same list is strongly not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
-	IDS_LISTSAN_DIFFDUPE	"The list ""%1%"" has already been added, under a different URL.  To prevent problems while updating lists, multiple URLs for the same list is not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
+    IDS_LISTSAN_TITLE       "List URL Problem Detected"
+    IDS_LISTSAN_UNFRIENDLY  "PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iblocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
+    IDS_LISTSAN_NOTIBL      "This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this lists's URL to an iblocklist.com hosted one?"
+    IDS_LISTSAN_WRONG       "This URL is not a valid list.  Did you use the ""List Description"" link from iblocklist.com instead of the ""Update URL"" link?\r\n\r\nPeerBlock will update this list's URL to a correct one."
+    IDS_LISTSAN_DEFAULT     "This URL refers to one of the Default Lists: ""%1%"".\r\n\r\nPeerBlock is activating that list instead of adding this new one."
+    IDS_LISTSAN_DEFAULT_NIBL "This URL refers to one of the Default Lists: ""%1%"", and is a non-iblocklist.com hosted URL.\r\n\r\nAllow PeerBlock to activate that Default List using its standard URL instead of this new one?"
+    IDS_LISTSAN_EXACTDUPE   "This list URL has already been added to PeerBlock.  To prevent problems while updating lists, multiple instances of the same URL is disallowed.\r\n\r\nPeerBlock will ignore this new URL."
+    IDS_LISTSAN_DEFDUPE     "The list ""%1%"" has already been added, as one of the Default Lists.\r\n\r\nTo prevent problems while updating lists, multiple URLs for the same list is strongly not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
+    IDS_LISTSAN_DIFFDUPE    "The list ""%1%"" has already been added, under a different URL.  To prevent problems while updating lists, multiple URLs for the same list is not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_PREVREL				"Updating PeerBlock"
-    IDS_PREVREL268TEXT		"PeerBlock now makes use of new ""friendly"" names for iblocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
-    IDS_PREVREL341TEXT_DEL	"PeerBlock is updating your History settings to 'Remove every 7 days'.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
-    IDS_PREVREL341TEXT_MAX	"PeerBlock is updating your History settings to use a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
-    IDS_PREVREL341TEXT_BOTH	"PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
-    IDS_PREVREL411TEXT_WEBEX	"The Bluetack ""Webexploit-Forumspam"" list has been split into two separate lists by the list authors (Bluetack), and is no longer being updated.  PeerBlock is updating your config to use these two new lists instead of the old merged one."
-    IDS_PREVREL411TEXT_BOGON	"The CompleteWhois Bogon list has been abandoned by its list-author, and has not been updated since March 2009.  PeerBlock is updating your config to use the most frequently updated Bogon list, CIDR Bogon."
+    IDS_PREVREL             "Updating PeerBlock"
+    IDS_PREVREL268TEXT      "PeerBlock now makes use of new ""friendly"" names for iblocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
+    IDS_PREVREL341TEXT_DEL  "PeerBlock is updating your History settings to 'Remove every 7 days'.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
+    IDS_PREVREL341TEXT_MAX  "PeerBlock is updating your History settings to use a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
+    IDS_PREVREL341TEXT_BOTH "PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
+    IDS_PREVREL411TEXT_WEBEX "The Bluetack ""Webexploit-Forumspam"" list has been split into two separate lists by the list authors (Bluetack), and is no longer being updated.  PeerBlock is updating your config to use these two new lists instead of the old merged one."
+    IDS_PREVREL411TEXT_BOGON "The CompleteWhois Bogon list has been abandoned by its list-author, and has not been updated since March 2009.  PeerBlock is updating your config to use the most frequently updated Bogon list, CIDR Bogon."
 END
 
 #endif    // English (U.S.) resources

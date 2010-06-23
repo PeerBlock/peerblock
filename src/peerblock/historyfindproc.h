@@ -29,12 +29,12 @@
 #define HFN_SEARCH 1
 
 #define HFM_RANGE		(1)
-#define HFM_SOURCE	(1<<1)
+#define HFM_SOURCE		(1<<1)
 #define HFM_DEST		(1<<2)
 #define HFM_FROM		(1<<3)
 #define HFM_TO			(1<<4)
 #define HFM_PROTOCOL	(1<<5)
-#define HFM_ACTION	(1<<6)
+#define HFM_ACTION		(1<<6)
 
 struct HFM_SEARCHINFO {
 	int iMask;

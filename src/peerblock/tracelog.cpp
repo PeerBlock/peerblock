@@ -44,7 +44,7 @@ static boost::shared_ptr<thread> g_tracelogthread;
 //
 /// <summary>
 ///   Takes all queued-up tracelog messages, formats them, and writes them out to the configured
-///	  logfile.
+///   logfile.
 /// </summary>
 //
 void TraceLog::ProcessMessages()
@@ -52,7 +52,7 @@ void TraceLog::ProcessMessages()
 	// reset "wake up" event
 
 
-    //////////-----------------------------------------------------------------
+	//////////-----------------------------------------------------------------
 	// Process all messages
 
 	TracelogEntry * tlEnt = NULL;
@@ -84,7 +84,7 @@ void TraceLog::ProcessMessages()
 	LogFile.flush();
 
 
-    //////////-----------------------------------------------------------------
+	//////////-----------------------------------------------------------------
 	// Done!
 
 	return;
@@ -145,11 +145,11 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 			// signal Logging Thread that it has something to do
 			ProcessMessages();	// TODO:  This should be its own real thread...
 
-			// done!			
-            if (!ReleaseMutex(LoggingMutex)) 
-            { 
+			// done!
+			if (!ReleaseMutex(LoggingMutex)) 
+			{ 
 				return;
-            } 
+			} 
 
 			break;
 
@@ -170,7 +170,6 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 	}
 
 
-
 } // End of LogMessage()
 
 
@@ -183,7 +182,7 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 //
 /// <summary>
 ///   Logs an error message to the tracelog, including a second line with error number and 
-///	  description.
+///   description.
 /// </summary>
 //
 void TraceLog::LogErrorMessage(tstring _location, tstring _buf, DWORD _err)
@@ -297,17 +296,17 @@ void TraceLog::StartLogging()
 ///   Stops logging, and closes the file we were using.
 /// </summary>
 /// <remarks>
-///	  This routine is generally called when we need to relinquish control of a file, for example
-///	  so that it can be deleted out from under us.  A call to TraceLog::StartLogging() will be
-///	  required to start logging back up again.  No messages will be logged while we're in Stopped
-///	  mode, though a future version of TraceLog (i.e. a dedicated log-writer thread) should be
-///	  able to better handle queueing of messages while we're stopped...
+///   This routine is generally called when we need to relinquish control of a file, for example
+///   so that it can be deleted out from under us.  A call to TraceLog::StartLogging() will be
+///   required to start logging back up again.  No messages will be logged while we're in Stopped
+///   mode, though a future version of TraceLog (i.e. a dedicated log-writer thread) should be
+///   able to better handle queueing of messages while we're stopped...
 /// </remarks>
 //
 void TraceLog::StopLogging()
 {
 	TRACEI("[TraceLog] [StopLogging]    stopping logging");
-	ResetEvent(LoggingReady);	// Sets signalled to FALSE, so noone else will try logging	
+	ResetEvent(LoggingReady); // Sets signalled to FALSE, so noone else will try logging	
 	if (LogFile.is_open())
 	{
 //		TRACEI("[TraceLog] [StopLogging]    closing file");
@@ -362,8 +361,7 @@ TraceLog::TraceLog()
 //
 TraceLog::~TraceLog()
 {
-	ResetEvent(LoggingReady);	// Sets signalled to FALSE, so noone else will try logging
-
+	ResetEvent(LoggingReady); // Sets signalled to FALSE, so noone else will try logging
 
 
 	// Looks like the boost::lockfree stuff still isn't quite ready for primetime...
@@ -392,7 +390,6 @@ TraceLog::~TraceLog()
 	//	}
 	//}
 
-	LogFile.close();            // Close file
+	LogFile.close(); // Close file
 
 } // End of ~TraceLog() destructor
-

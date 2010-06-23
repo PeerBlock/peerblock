@@ -111,7 +111,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			CloseServiceHandle(manager);
 			throw win32_error("QueryServiceConfig", err);
 		}
-		err = 0;	// reset error-code, so that nobody else accidentally trips over it.
+		err = 0; // reset error-code, so that nobody else accidentally trips over it.
 
 		QUERY_SERVICE_CONFIG *qsc = (QUERY_SERVICE_CONFIG*)malloc(bytes);
 		if(!qsc) 
@@ -379,7 +379,7 @@ bool driver::isrunning()
 		CloseServiceHandle(manager);
 		throw win32_error("QueryServiceStatus", err);
 	}
-	
+
 	CloseServiceHandle(service);
 	CloseServiceHandle(manager);
 
@@ -429,7 +429,7 @@ void driver::start(bool _gethandle)
 			do
 			{
 				TRACEW("[driver] [start]    experiencing ERROR_SERVICE_DATABASE_LOCKED condition; waiting 10 seconds and trying again");
-				Sleep(10000);	// 10 seconds
+				Sleep(10000); // 10 seconds
 				err = 0;
 
 				if (!StartService(service, 0, NULL) && (err = GetLastError()) != ERROR_SERVICE_ALREADY_RUNNING)
@@ -487,7 +487,7 @@ void driver::start(bool _gethandle)
 	}
 	else
 	{
-		m_stoppable = false;	// should only be false for MS IpFilterDriver
+		m_stoppable = false; // should only be false for MS IpFilterDriver
 		TRACEI("[driver] [start]    flagging driver as not stoppable");
 	}
 

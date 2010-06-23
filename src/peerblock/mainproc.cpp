@@ -35,7 +35,7 @@ static const UINT WM_PB_TRAY=WM_APP+2;
 static const UINT TRAY_ID=1;
 static const UINT TIMER_BLINKTRAY=1;
 static const UINT TIMER_PROCESSDB=2;
-static const UINT TIMER_TEMPALLOWHTTP=3;	// used to "Allow HTTP for X Minutes" 
+static const UINT TIMER_TEMPALLOWHTTP=3; // used to "Allow HTTP for X Minutes" 
 
 bool g_trayactive;
 NOTIFYICONDATA g_nid={0};
@@ -80,7 +80,7 @@ void SendDialogIconRefreshMessage()
 //
 /// <summary>
 ///   Selects the correct icon we should be using, based on whether we're enabled/disabled, 
-///	  allowing HTTP and whether we're allowed to use a yellow "warning" icon.
+///   allowing HTTP and whether we're allowed to use a yellow "warning" icon.
 /// </summary>
 //
 HICON DetermineIcon()
@@ -132,7 +132,7 @@ void SetBlock(bool block)
 	TRACEBUFI(strBuf);
 	g_config.Block=block;
 	g_filter->setblock(block);
-	
+
 	g_nid.hIcon = DetermineIcon();
 	if(g_trayactive) Shell_NotifyIcon(NIM_MODIFY, &g_nid);
 
@@ -197,7 +197,7 @@ void SetBlockHttp(bool _block, unsigned int _time)
 	{
 		tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]    setting temp-http timer to [%1%] minutes")) % _time );
 		TRACEBUFI(strBuf);
-		SetTimer(g_main, TIMER_TEMPALLOWHTTP, _time * 60 * 1000, NULL);	// _time minutes
+		SetTimer(g_main, TIMER_TEMPALLOWHTTP, _time * 60 * 1000, NULL); // _time minutes
 		if (_time < 30) 
 		{
 			g_config.TempAllowingHttpShort = true;
@@ -208,7 +208,7 @@ void SetBlockHttp(bool _block, unsigned int _time)
 			g_config.TempAllowingHttpLong = true;
 			g_config.TempAllowingHttpShort = false;
 		}
-				
+
 	}
 
 	if (_time <= 0 || _block)
@@ -315,7 +315,7 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if(g_trayactive) {
 				g_trayactive=false;
 				Shell_NotifyIcon(NIM_DELETE, &g_nid);
-				
+
 				if(g_config.FirstHide) {
 					g_config.FirstHide=false;
 					MessageBox(hwnd, IDS_HIDINGTEXT, IDS_HIDING, MB_ICONINFORMATION|MB_OK);
@@ -645,12 +645,12 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 		{
 			mutex::scoped_lock lock(g_lastupdatelock);
-			UpdateLists(hwnd);	// needs internet connection
+			UpdateLists(hwnd); // needs internet connection
 		}
 
 		LoadLists(hwnd);
 	}
-	else if(g_filter)	// HACK: This should allow us to block at startup, even if we don't update
+	else if(g_filter) // HACK: This should allow us to block at startup, even if we don't update
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    not updating at startup");
 		p2p::list allow;
@@ -695,7 +695,7 @@ static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 		DeferWindowPos(dwp, g_tabs[i].Tab, NULL, rc.left, rc.top, rc.right-rc.left, rc.bottom-rc.top, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
 
 	EndDeferWindowPos(dwp);
-	
+
 	if(state==SIZE_RESTORED) {
 		SaveWindowPosition(hwnd, g_config.WindowPos);
 	}
@@ -714,7 +714,6 @@ static string format_ipport(unsigned int ip, unsigned short port) {
 
 static boost::shared_ptr<thread> g_dbthread;
 static spinlock g_processlock;
-
 
 
 static void Main_ProcessDb() 
@@ -825,7 +824,7 @@ static void Main_ProcessDb()
 				g_con.executenonquery(_T("vacuum;"));
 
 				// HACK:  For some reason, vacuum doesn't do anything if we call it prior to commit(),
-				//		  and commit() throws an exception if we call it twice, so we're doing it this way.
+				//        and commit() throws an exception if we call it twice, so we're doing it this way.
 
 				// finally delete the peerblock.log file
 				path pathLog = path::base_dir()/L"peerblock.log";

@@ -46,7 +46,7 @@ pbfilter::pbfilter() {
 pbfilter::~pbfilter() {
 	stop_thread();
 	remove_callout();
-	m_filter.removable = true;	// let's delete the driver-service wrapper
+	m_filter.removable = true; // let's delete the driver-service wrapper
 	m_filter.close();
 }
 

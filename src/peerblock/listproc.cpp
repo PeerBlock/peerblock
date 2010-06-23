@@ -177,7 +177,7 @@ static unsigned int ParseIp(LPCTSTR str)
 
 		return ip;
 	}
-	
+
 	tstring strBuf = boost::str(tformat(_T("[listproc] [ParseIp]    string [%1%] is not an IPv4 address")) % str );
 	TRACEBUFD(strBuf);
 
@@ -243,7 +243,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 				g_subctrl=CreateWindow(WC_IPADDRESS, NULL, WS_CHILD|WS_VISIBLE|WS_BORDER|CBS_DROPDOWNLIST,
 					rc.left-4, rc.top-4, rc.right-rc.left+8, rc.bottom-rc.top+8, list, (HMENU)IDC_SUBCTRL, GetModuleHandle(NULL), NULL);
-				
+
 				SetWindowFont(g_subctrl, GetStockFont(DEFAULT_GUI_FONT), FALSE);
 
 				SetFocus(g_subctrl);
@@ -435,7 +435,7 @@ static void List_OnDestroy(HWND hwnd)
 static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) 
 {
 	LVCOLUMN lvc={0};
-	
+
 	lvc.mask=LVCF_FMT|LVCF_WIDTH|LVCF_TEXT|LVCF_SUBITEM;
 	lvc.fmt=LVCFMT_LEFT;
 	lvc.cx=iWidth;
@@ -646,7 +646,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						fi.iStart=0;
 					}
 				}
-				
+
 				SetWindowLongPtr(hwnd, DWLP_MSGRESULT, -1);
 				return -1;
 
@@ -721,7 +721,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 							TRACEV("[listproc] [List_OnNotify]    + subitem: not 0");
 							g_subctrl=CreateWindow(WC_IPADDRESS, NULL, WS_CHILD|WS_VISIBLE|WS_BORDER|CBS_DROPDOWNLIST,
 								rc.left-4, rc.top-4, rc.right-rc.left+8, rc.bottom-rc.top+8, nmh->hwndFrom, (HMENU)IDC_SUBCTRL, GetModuleHandle(NULL), NULL);
-							
+
 							SetWindowFont(g_subctrl, GetStockFont(DEFAULT_GUI_FONT), FALSE);
 
 							SendMessage(g_subctrl, IPM_SETADDRESS, 0, ParseIp(buf));
@@ -753,13 +753,13 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						ListView_GetItemText(nmh->hwndFrom, index, 2, end, 16);
 
 						l.insert(p2p::range(TSTRING_WCHAR(name), ParseIp(start), ParseIp(end)));
-						
+
 						indexes.push(index);
 					}
 
 					HMENU menu=LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_LISTCONTEXT));
 					HMENU context=GetSubMenu(menu, 0);
-					
+
 					{
 						List *l=(List*)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
 

@@ -122,7 +122,7 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 						r.action=(r.type!=HistoryRow::allowed)?g_blocked.c_str():g_allowed.c_str();
 
 						if(r.name==_T("n/a")) r.name.clear();
-						
+
 						switch(reader.getint(6)) {
 							case IPPROTO_ICMP: r.protocol=_T("ICMP"); break;
 							case IPPROTO_IGMP: r.protocol=_T("IGMP"); break;
@@ -134,7 +134,7 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 							case IPPROTO_ND: r.protocol=_T("NetDisk"); break;
 							default: r.protocol=_T("Unknown"); break;
 						}
-						
+
 						r.full=true;
 					}
 				}
@@ -217,7 +217,7 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 						const HistoryRow &row=g_rows[cd->nmcd.dwItemSpec];
 
 						Color c;
-						
+
 						switch(row.type) {
 							case HistoryRow::allowed:
 								c=g_config.AllowedColor;
@@ -248,7 +248,7 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
 		return 0;
 	}
-	
+
 	return CallWindowProc(g_tabproc, hwnd, msg, wParam, lParam);
 }
 
@@ -268,7 +268,7 @@ static void History_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 			GetLocalTime(&st);
 
 			HWND caltabs=GetDlgItem(hwnd, IDC_CALTABS);
-			
+
 			if(TabCtrl_GetCurSel(caltabs)!=0) {
 				TabCtrl_SetCurSel(caltabs, 0);
 
@@ -338,7 +338,7 @@ static void History_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) {
 
 static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	LVCOLUMN lvc={0};
-	
+
 	lvc.mask=LVCF_FMT|LVCF_WIDTH|LVCF_TEXT|LVCF_SUBITEM;
 	lvc.fmt=LVCFMT_LEFT;
 	lvc.cx=iWidth;
@@ -379,7 +379,7 @@ static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	name=LoadString(IDS_CALENDAR);
 	tci.pszText=(LPTSTR)name.c_str();
 	TabCtrl_InsertItem(caltabs, 0, &tci);
-	
+
 	name=LoadString(IDS_SEARCH);
 	tci.pszText=(LPTSTR)name.c_str();
 	TabCtrl_InsertItem(caltabs, 1, &tci);
@@ -622,7 +622,7 @@ static void History_PerformSearch(HWND hwnd) {
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		return;
 	}
-	
+
 	boost::shared_array<HistoryRow> nrows(new HistoryRow[rows.size()]);
 
 	for(vector<long long>::size_type i=0; i<rows.size(); ++i)
@@ -633,7 +633,7 @@ static void History_PerformSearch(HWND hwnd) {
 	rows.clear();
 
 	ListView_SetItemCount(g_list, g_rowcount);
-	
+
 	SendMessage(g_list, WM_SETREDRAW, TRUE, 0);
 	InvalidateRect(g_list, NULL, FALSE);
 }
@@ -722,7 +722,7 @@ static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 					p2p::range r(name_wchar, allowip, allowip);
 
 					++nListItemsProcessedCounter;
-		
+
 					// The appropriate action will be taken depending on which menu item was selected
 					switch(ret) {
 						case ID_LIST_ALLOWFOR15MIN:

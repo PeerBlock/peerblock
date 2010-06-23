@@ -65,7 +65,7 @@ private:
 	HWND hwnd,log;
 	mutex mutex;
 	bool usedb;
-	
+
 	static tstring format_ipport(const sockaddr &addr) {
 		TRACEV("[LogFilterAction] [format_ipport]  > Entering routine.");
 		TCHAR buf[256];
@@ -137,7 +137,7 @@ public:
 		TRACEV("[LogFilterAction] [operator()]  > Entering routine.");
 		unsigned int sourceip, destip;
 		unsigned int destport;
-		
+
 		if(action.src.addr.sa_family == AF_INET) {
 			TRACEV("[LogFilterAction] [operator()]    src AF_INET");
 			sourceip = htonl(action.src.addr4.sin_addr.s_addr);
@@ -735,7 +735,7 @@ static void Log_OnDestroy(HWND hwnd)
 
 static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 	LVCOLUMN lvc={0};
-	
+
 	lvc.mask=LVCF_FMT|LVCF_WIDTH|LVCF_TEXT|LVCF_SUBITEM;
 	lvc.fmt=LVCFMT_LEFT;
 	lvc.cx=iWidth;
@@ -852,7 +852,7 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 				break;
 			case CDDS_ITEMPREPAINT: {
 				Color c;
-				
+
 				switch((int)cd->nmcd.lItemlParam) {
 					case 0:
 						c=g_config.AllowedColor;
@@ -1088,13 +1088,13 @@ static void Log_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	int midwidth=cx-20-(rc.right-rc.left)*2;
 	int halfwidth=(midwidth-5)/2;
-	
+
 	HDWP dwp=BeginDeferWindowPos(11);
 
 	DeferWindowPos(dwp, enable, NULL, 5, 5, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, lists, NULL, 5, 10+(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, update, NULL, 5, 15+(rc.bottom-rc.top)*2, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
-	
+
 	DeferWindowPos(dwp, http, NULL, cx-5-(rc.right-rc.left), 5, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, history, NULL, cx-5-(rc.right-rc.left), 10+(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, clear, NULL, cx-5-(rc.right-rc.left), 15+(rc.bottom-rc.top)*2, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);

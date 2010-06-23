@@ -99,24 +99,24 @@ struct PortRange
 
 struct PortProfile 
 {
-	tstring Name;                  // name of profile
-	bool Enabled;                  // true to use this profile
-	PortType Type;                 // source/destination port check
-	std::vector<PortRange> Ports;  // ports in profile
+	tstring Name;					// name of profile
+	bool Enabled;					// true to use this profile
+	PortType Type;					// source/destination port check
+	std::vector<PortRange> Ports;	// ports in profile
 };
 
 struct PortSet 
 {
 	// allow common protocols for destination
-	bool AllowHttp;    // 80, 443
-	bool AllowFtp;     // 21
-	bool AllowSmtp;    // 25
-	bool AllowPop3;    // 110
+	bool AllowHttp;		// 80, 443
+	bool AllowFtp;		// 21
+	bool AllowSmtp;		// 25
+	bool AllowPop3;		// 110
 
 	std::set<USHORT> DestinationPorts;
 	std::set<USHORT> SourcePorts;
 
-	std::vector<PortProfile> Profiles;	// list of profiles
+	std::vector<PortProfile> Profiles; // list of profiles
 
 	bool IsHttpBlocked()
 	{
@@ -194,11 +194,11 @@ struct Configuration {
 	NotifyType BlinkOnBlock, NotifyOnBlock;
 	unsigned short UpdateInterval, LogSize, CleanupInterval;
 	short UpdateCountdown;
-	DWORD RecentBlockWarntime;	// time (in sec) we want to see blocked activity ending before we'll exit without warning
+	DWORD RecentBlockWarntime; // time (in sec) we want to see blocked activity ending before we'll exit without warning
 	CleanType CleanupType;
 	tstring UpdateProxy;
 	long UpdateProxyType;
-	__int64 MaxHistorySize;	// 0 = never cleanup, >0 = size in bytes
+	__int64 MaxHistorySize; // 0 = never cleanup, >0 = size in bytes
 	unsigned int HistoryCheckInterval; // number to blocks before checking whether to archive or not
 
 	bool TracelogEnabled;

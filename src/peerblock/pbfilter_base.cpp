@@ -173,7 +173,7 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 		//TRACEV("[pbfilter_base] [setranges]    about to acquire mutex");
 		//mutex::scoped_lock lock(m_lock);
 		//TRACEV("[pbfilter_base] [setranges]    acquired mutex");
-		
+
 		pbr->labelsid = block ? (m_blocklabelsid + 1) : (m_allowlabelsid + 1);
 
 		ret = m_filter.write(IOCTL_PEERBLOCK_SETRANGES, pbr, pbrsize);
@@ -193,7 +193,7 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 	}
 
 	free(pbr);
-	
+
 	TRACEV("[pbfilter_base] [setranges]  < Leaving routine.");
 
 	if(ret != ERROR_SUCCESS) {

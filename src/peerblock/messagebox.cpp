@@ -54,9 +54,9 @@ static const char *g_bugport="50005";
 
 
 // TODO:  Break this out into a wrapper around a base function that simply accepts a string input.
-//		  This way, we will be able to report whatever we want, regardless of whether it's a
-//		  complete exception or not.  Need to check on the code that's actually handling these
-//		  sorts of problem-reports, to see what it's expecting.
+//        This way, we will be able to report whatever we want, regardless of whether it's a
+//        complete exception or not.  Need to check on the code that's actually handling these
+//        sorts of problem-reports, to see what it's expecting.
 static void ReportException(const exception *ex, const char *file, int line) 
 {
 /*	TRACEC("Reporting exception to bugs.phoenixlabs.org:50005");

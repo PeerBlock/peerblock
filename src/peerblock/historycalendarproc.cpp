@@ -54,7 +54,7 @@ static INT_PTR HistoryCalendar_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 
 		NMDAYSTATE *ds=(NMDAYSTATE*)nmh;
 		ds->prgDayState=mds;
-		
+
 		sqlite3_try_lock lock(g_con);
 
 		if(lock.is_locked()) {

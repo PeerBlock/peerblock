@@ -67,7 +67,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
 		{
 			// if it's a peerguardian list
-			DynamicList *list = &(g_config.DynamicLists[i]);	
+			DynamicList *list = &(g_config.DynamicLists[i]);
 			if (list->Url.find(_T("http://peerguardian.sourceforge.net/lists/")) != string::npos)
 			{
 				// swap it out
@@ -348,5 +348,3 @@ void PerformPrevRelUpdates(HWND _hwnd)
 	} // end of webex/forumspam update (r411)
 
 }; // End of PerformPrevRelUpdates()
-
-

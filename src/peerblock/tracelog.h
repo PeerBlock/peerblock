@@ -71,7 +71,7 @@ private:
 
 public:
 	HANDLE LoggingReady;
-	HANDLE LoggingMutex;	// TODO:  Change this to PG2 mutex-object
+	HANDLE LoggingMutex; // TODO:  Change this to PG2 mutex-object
 
 	void LogMessage(tstring messsage, TracelogLevel level);
 	void LogErrorMessage(tstring location, tstring buf, DWORD err);
@@ -79,7 +79,7 @@ public:
 	void SetLoglevel(TRACELOG_LEVEL level);
 	void StartLogging();
 	void StopLogging();
-	
+
 	void ProcessMessages();
 
 	TraceLog();
@@ -87,21 +87,20 @@ public:
 };
 
 
-#define TRACEC(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_CRITICAL);
-#define TRACEE(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_ERROR);
-#define TRACEW(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_WARNING);
-#define TRACES(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_SUCCESS);
-#define TRACEI(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_INFO);
-#define TRACEV(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_VERBOSE);
-#define TRACED(msg) 	g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_DEBUG);
+#define TRACEC(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_CRITICAL);
+#define TRACEE(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_ERROR);
+#define TRACEW(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_WARNING);
+#define TRACES(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_SUCCESS);
+#define TRACEI(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_INFO);
+#define TRACEV(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_VERBOSE);
+#define TRACED(msg)		g_tlog.LogMessage(_T(msg), TRACELOG_LEVEL_DEBUG);
 
-#define TRACEBUFC(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_CRITICAL);
-#define TRACEBUFE(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_ERROR);
-#define TRACEBUFW(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_WARNING);
-#define TRACEBUFS(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_SUCCESS);
-#define TRACEBUFI(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_INFO);
-#define TRACEBUFV(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_VERBOSE);
-#define TRACEBUFD(msg) 	g_tlog.LogMessage(msg, TRACELOG_LEVEL_DEBUG);
+#define TRACEBUFC(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_CRITICAL);
+#define TRACEBUFE(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_ERROR);
+#define TRACEBUFW(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_WARNING);
+#define TRACEBUFS(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_SUCCESS);
+#define TRACEBUFI(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_INFO);
+#define TRACEBUFV(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_VERBOSE);
+#define TRACEBUFD(msg)	g_tlog.LogMessage(msg, TRACELOG_LEVEL_DEBUG);
 
-#define TRACEERR(loc, buf, err) 	g_tlog.LogErrorMessage(_T(loc), buf, err);
-
+#define TRACEERR(loc, buf, err)		g_tlog.LogErrorMessage(_T(loc), buf, err);

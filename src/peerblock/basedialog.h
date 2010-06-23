@@ -41,7 +41,7 @@ static void RefreshDialogIcon(HWND hDialog)
 {
 	// Load peerblock icon in the dialog titlebar
 	HICON hIcon = NULL;
-	
+
 	if (g_config.Block == false)
 		hIcon = LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_DISABLED));
 	else if(g_config.Block == true && g_config.PortSet.IsHttpBlocked() == false)
@@ -49,11 +49,11 @@ static void RefreshDialogIcon(HWND hDialog)
 	else
 		hIcon = LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_MAIN));
 
-    if (hIcon != NULL)
-    {
+	if (hIcon != NULL)
+	{
 		::SendMessage(hDialog, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 		::SendMessage(hDialog, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-    }
+	}
 
 } // End of RefreshDialogIcon()
 

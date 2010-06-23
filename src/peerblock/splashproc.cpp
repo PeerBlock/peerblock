@@ -73,7 +73,7 @@ static BOOL Splash_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	int ppix = GetDeviceCaps(dc, LOGPIXELSX);
 	int ppiy = GetDeviceCaps(dc, LOGPIXELSY);
 	ReleaseDC(NULL, dc);
-	
+
 	int width, height;
 	g_img->get_Width((OLE_XSIZE_HIMETRIC*)&width);
 	g_img->get_Height((OLE_YSIZE_HIMETRIC*)&height);

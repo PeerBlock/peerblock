@@ -37,7 +37,7 @@ std::wstring mbstowcs(const std::string &str) {
 std::string wcstombs(const std::wstring &str) {
 	int len = WideCharToMultiByte(CP_ACP, 0, str.c_str(), (int)str.length(), NULL, 0, NULL, NULL);
 	if(len == -1) throw win32_error("WideCharToMultiByte");
-	
+
 	boost::scoped_array<char> buf(new char[len]);
 
 	len = WideCharToMultiByte(CP_ACP, 0, str.c_str(), (int)str.length(), buf.get(), len, NULL, NULL);

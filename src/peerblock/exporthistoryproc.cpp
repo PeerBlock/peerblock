@@ -161,7 +161,7 @@ public:
 		}
 
 		int ret;
-		
+
 		try {
 			lock.enter();
 			ret=g_con.executeint(cquery);
@@ -264,7 +264,7 @@ static void ExportHistory_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNo
 					data.ProcessFunc=boost::bind(&ExportFuncs::Process, &funcs);
 
 					DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LOADING), hwnd, Loading_DlgProc, (LPARAM)&data);
-					
+
 					EndDialog(hwnd, IDOK);
 				}
 				else {

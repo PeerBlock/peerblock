@@ -58,7 +58,6 @@ static bool CheckOS() {
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 
-
 	//TODO: save version info
 
 	tstring strOsName;
@@ -121,8 +120,8 @@ static bool CheckOS() {
 //
 /// <summary>
 ///   Initial starting point of the app.  Performs some quick sanity-checking and then starts up
-///	  a different thread (serviced by the Main_DlgProc() routine in mainproc.cpp) to handle all 
-///	  the "real" work.
+///   a different thread (serviced by the Main_DlgProc() routine in mainproc.cpp) to handle all 
+///   the "real" work.
 /// </summary>
 //
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) 

@@ -1,9 +1,3 @@
-//================================================================================================
-//  addlistproc.cpp
-//
-//  Implements the window that pops up when you click the Add button in the List Manager.
-//================================================================================================
-
 /*
 	Copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
@@ -25,6 +19,12 @@
 	3. This notice may not be removed or altered from any source distribution.
 
 */
+
+//================================================================================================
+//  addlistproc.cpp
+//
+//  Implements the window that pops up when you click the Add button in the List Manager.
+//================================================================================================
 
 
 //////////---------------------------------------------------------------------
@@ -268,7 +268,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 
 				StaticList *l=new StaticList;
 				l->File=file;
-				
+
 				*list=l;
 				addedList = true;
 			}
@@ -367,7 +367,7 @@ INT_PTR CALLBACK AddList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 			HANDLE_MSG(hwnd, WM_DESTROY, AddList_OnDestroy);
 			case WM_DIALOG_ICON_REFRESH:
 				RefreshDialogIcon(g_hAddListDlg);
-				return 1;	
+				return 1;
 			default: return 0;
 		}
 	}

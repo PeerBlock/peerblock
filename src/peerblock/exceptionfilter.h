@@ -31,6 +31,5 @@ typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE hProcess, DWORD dwPid, HANDLE hF
 									);
 
 
-
 LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo);
 BOOL PreventSetUnhandledExceptionFilter();

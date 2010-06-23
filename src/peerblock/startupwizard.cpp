@@ -41,7 +41,7 @@ static INT_PTR CALLBACK First_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 			}
 		} break;
 	}
-	
+
 	return FALSE;
 }
 

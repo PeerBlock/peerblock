@@ -33,7 +33,7 @@ using namespace std;
 
 static INT_PTR g_ret;
 static const UINT ID_CONTEXT_MAKESTATIC=200;
-vector<DynamicList> g_deflists;	// temporary storage of default lists
+vector<DynamicList> g_deflists; // temporary storage of default lists
 
 HWND g_hListsDlg = NULL;
 
@@ -87,7 +87,7 @@ static vector<DynamicList>::size_type FindInDefLists(tstring _url)
 			return i;
 		}
 	}
-	
+
 	return -1;
 
 } // End of FindInDefLists()
@@ -119,7 +119,7 @@ static void Lists_OnClose(HWND hwnd)
 		ListView_GetItem(list, &lvi);
 
 		List *l=(List*)lvi.lParam;
-		
+
 		bool checked=(ListView_GetCheckState(list, i)!=0);
 
 		if(l->Enabled!=checked) 
@@ -224,7 +224,7 @@ static void InsertItem(HWND list, int index, List &plist)
 static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) 
 {
 	LVCOLUMN lvc={0};
-	
+
 	lvc.mask=LVCF_FMT|LVCF_WIDTH|LVCF_TEXT|LVCF_SUBITEM;
 	lvc.fmt=LVCFMT_LEFT;
 	lvc.cx=iWidth;
@@ -484,7 +484,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				}
 
 				HWND list=GetDlgItem(hwnd, IDC_LIST);
-				
+
 				LVFINDINFO lvfi;
 				lvfi.flags=LVFI_STRING;
 				lvfi.psz=s.c_str();
@@ -987,9 +987,9 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 							InsertMenuItem(context, 1, TRUE, &info);
 						}
 					}
-					
+
 					InsertMenu(context, 0, MF_BYPOSITION|MF_SEPARATOR, 0, NULL);
-					
+
 					buf=LoadString(IDS_OPEN);
 					info.wID=IDC_OPEN;
 					info.dwTypeData=(LPTSTR)buf.c_str();

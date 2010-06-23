@@ -193,7 +193,7 @@ INT_PTR CALLBACK EditList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 			HANDLE_MSG(hwnd, WM_DESTROY, EditList_OnDestroy);
 			case WM_DIALOG_ICON_REFRESH:
 				RefreshDialogIcon(hwnd);
-				return 1;	
+				return 1;
 			default: return 0;
 		}
 	}
