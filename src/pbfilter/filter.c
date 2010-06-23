@@ -143,7 +143,7 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 
 		KeReleaseSpinLock(&g_internal->rangeslock, irq);
 	}
-	
+
 	if(!range) {
 		pbn.action = 2;
 	}

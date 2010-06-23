@@ -42,9 +42,9 @@ static ULONG CheckRanges(PBNOTIFICATION *pbn, ULONG ip) {
 	const PBIPRANGE *range;
 	KIRQL irq;
 	ULONG action = 2;
-		
+
 	KeAcquireSpinLock(&g_internal->rangeslock, &irq);
-	
+
 	if(g_internal->allowedcount) {
 		range = inranges(g_internal->allowedranges, g_internal->allowedcount, ip);
 		if(range) {
@@ -73,7 +73,8 @@ static ULONG CheckRanges(PBNOTIFICATION *pbn, ULONG ip) {
 	return action;
 }
 
-static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAddr6, USHORT srcPort, ULONG destAddr, const IN6_ADDR *destAddr6, USHORT destPort) {
+static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAddr6, USHORT srcPort, ULONG destAddr, const IN6_ADDR *destAddr6, USHORT destPort) 
+{
 	if(!srcAddr6) {
 		pbn->source.addr4.sin_family = AF_INET;
 		pbn->source.addr4.sin_addr.s_addr = NTOHL(srcAddr);
@@ -115,7 +116,7 @@ static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_AD
 }
 
 static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-											 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+									VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	ULONG protocol, localAddr, remoteAddr;
 	USHORT localPort, remotePort;
@@ -151,7 +152,7 @@ static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADD
 
 	pbn.action = CheckRanges(&pbn, remoteAddr);
 	pbn.protocol = protocol;
-	
+
 	FillAddrs(&pbn, remoteAddr, remoteAddr6, remotePort, localAddr, localAddr6, localPort);
 
 	Notification_Send(&g_internal->queue, &pbn);
@@ -191,7 +192,7 @@ static NTSTATUS ClassifyV4Accept(const FWPS_INCOMING_VALUES0* inFixedValues, con
 }
 
 static NTSTATUS ClassifyV6Connect(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-											 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+									 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	const IN6_ADDR *localAddr, *remoteAddr;
 	const FAKEV6ADDR *fakeremoteAddr;
@@ -257,7 +258,7 @@ static NTSTATUS ClassifyV6Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 }
 
 static NTSTATUS ClassifyV6Accept(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-											VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+									VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	const IN6_ADDR *localAddr, *remoteAddr;
 	const FAKEV6ADDR *fakeremoteAddr;
@@ -322,11 +323,12 @@ static NTSTATUS ClassifyV6Accept(const FWPS_INCOMING_VALUES0* inFixedValues, con
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS NTAPI NullNotify(FWPS_CALLOUT_NOTIFY_TYPE notifyType, const GUID *filterKey, const FWPS_FILTER0 *filter) {
+static NTSTATUS NTAPI NullNotify(FWPS_CALLOUT_NOTIFY_TYPE notifyType, const GUID *filterKey, const FWPS_FILTER0 *filter) 
+{
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS InstallCallouts(PDEVICE_OBJECT device) 
+static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 {
 	FWPS_CALLOUT0 c = {0};
 	NTSTATUS ret;
@@ -335,7 +337,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	c.notifyFn = NullNotify;
 
 	// IPv4 connect filter.
-	
+
 	c.calloutKey = PBWFP_CONNECT_CALLOUT_V4;
 	c.classifyFn = ClassifyV4Connect;
 
@@ -345,7 +347,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	DbgPrint("Installed V4 connect callout: %d\n", ret);
 
 	// IPv4 accept filter.
-	
+
 	c.calloutKey = PBWFP_ACCEPT_CALLOUT_V4;
 	c.classifyFn = ClassifyV4Accept;
 
@@ -355,7 +357,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	DbgPrint("Installed V4 accept callout: %d\n", ret);
 
 	// IPv6 connect filter.
-	
+
 	c.calloutKey = PBWFP_CONNECT_CALLOUT_V6;
 	c.classifyFn = ClassifyV6Connect;
 
@@ -365,7 +367,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	DbgPrint("Installed V6 connect callout: %d\n", ret);
 
 	// IPv6 accept filter.
-	
+
 	c.calloutKey = PBWFP_ACCEPT_CALLOUT_V6;
 	c.classifyFn = ClassifyV6Accept;
 

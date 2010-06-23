@@ -24,7 +24,6 @@
 #pragma warning(push)
 #pragma warning(disable:4103)
 #include <wdm.h>
-//#include <ntddk.h>
 #pragma warning(pop)
 
 #include "internal.h"
@@ -104,7 +103,7 @@ void Notification_Send(NOTIFICATION_QUEUE *queue, const PBNOTIFICATION *notifica
 			InsertTailList(&queue->notification_list, &notifynode->entry);
 			++queue->queued;
 		}
-		
+
 		KeReleaseSpinLock(&queue->lock, irq);
 	}
 	else 
@@ -176,7 +175,7 @@ NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 
 		return STATUS_BUFFER_TOO_SMALL;
 	}
-	
+
 	KeAcquireSpinLock(&queue->lock, &irq);
 
 	if(IsListEmpty(&queue->notification_list)) 
@@ -204,7 +203,7 @@ NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 #pragma warning(pop)
 
 		IoReleaseCancelSpinLock(crirq);
-		
+
 		KeReleaseSpinLock(&queue->lock, irq);
 
 		return STATUS_PENDING;
@@ -217,7 +216,7 @@ NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 		RtlCopyMemory(notification, &notifynode->notification, sizeof(PBNOTIFICATION));
 		ExFreeToNPagedLookasideList(&queue->lookaside, notifynode);
 		--queue->queued;
-		
+
 		KeReleaseSpinLock(&queue->lock, irq);
 
 		irp->IoStatus.Status = STATUS_SUCCESS;

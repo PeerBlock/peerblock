@@ -40,7 +40,7 @@ const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip) {
 	while(0 < count) {
 		int count2 = count >> 1;
 		const PBIPRANGE *mid = iter + count2;
-		
+
 		if(mid->start < ip) {
 			iter = mid + 1;
 			count -= count2 + 1;
@@ -195,7 +195,8 @@ void SetSourcePorts(const USHORT *ports, USHORT count)
 	}
 }
 
-int __cdecl CompareUShort(const void * a, const void * b) {
+int __cdecl CompareUShort(const void * a, const void * b) 
+{
 	return ( *(USHORT*)a - *(USHORT*)b );
 }
 

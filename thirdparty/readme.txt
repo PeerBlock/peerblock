@@ -5,6 +5,7 @@ Website:  http://www.7-zip.org
 Boost version 1.43
 License:  Boost Software License
 Website:  http://www.boost.org
+Notes:    We currently include only the needed Boost files.
 
 libcurl version 7.21.0
 License:  MIT/X derivate license

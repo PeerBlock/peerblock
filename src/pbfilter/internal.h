@@ -60,19 +60,19 @@
 typedef struct __ip_header {
 	UCHAR		iphVerLen;		// Version and length 
 	UCHAR		ipTOS;			// Type of service 
-	USHORT	ipLength;		// Total datagram length 
-	USHORT	ipID;				// Identification 
-	USHORT	ipFlags;			// Flags
+	USHORT		ipLength;		// Total datagram length 
+	USHORT		ipID;			// Identification 
+	USHORT		ipFlags;		// Flags
 	UCHAR		ipTTL;			// Time to live 
 	UCHAR		ipProtocol;		// Protocol 
-	USHORT	ipChecksum;		// Header checksum 
+	USHORT		ipChecksum;		// Header checksum 
 	ULONG		ipSource;		// Source address 
 	ULONG		ipDestination;	// Destination address 
 } IP_HEADER;
 
 typedef struct __tcp_header {
-	USHORT	sourcePort;
-	USHORT	destinationPort;
+	USHORT		sourcePort;
+	USHORT		destinationPort;
 	ULONG		sequence;
 	ULONG		ack;
 } TCP_HEADER, UDP_HEADER;
@@ -116,7 +116,7 @@ typedef struct __pb_internal {
 	USHORT sourceportcount;
 
 	int block;
-	
+
 	UINT32 connect4;
 	UINT32 accept4;
 	UINT32 connect6;
