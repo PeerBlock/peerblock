@@ -212,6 +212,7 @@
 #define IDS_PREVREL341TEXT_BOTH			266
 #define IDS_PREVREL411TEXT_WEBEX		267
 #define IDS_PREVREL411TEXT_BOGON		268
+#define IDS_VERIFYING					269
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003

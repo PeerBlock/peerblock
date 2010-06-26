@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
@@ -161,7 +161,15 @@ bool LoadList(path file, p2p::list &list)
 			CFileInStream is;
 
 			is.File=_tfopen(file.c_str(), _T("rb"));
-			if(!is.File) throw zip_error("unable to open file");
+			if(!is.File) 
+			{
+				errno_t err = 0;
+			    _get_errno(&err);
+	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on _tfopen 7z file [%2%]")) 
+					% err % file.c_str());
+				TRACEBUFE(strBuf);
+				throw zip_error("unable to open file");
+			}
 
 			is.InStream.Read = SzFileReadImp;
 			is.InStream.Seek = SzFileSeekImp;
@@ -182,6 +190,9 @@ bool LoadList(path file, p2p::list &list)
 			SZ_RESULT res=SzArchiveOpen(&is.InStream, &db, &ai, &aitemp);
 			if(res!=SZ_OK) {
 				fclose(is.File);
+	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzArchiveOpen 7z file [%2%]")) 
+					% res % file.c_str());
+				TRACEBUFE(strBuf);
 				throw zip_error("SzArchiveOpen");
 			}
 
@@ -194,6 +205,9 @@ bool LoadList(path file, p2p::list &list)
 				if(res!=SZ_OK) {
 					SzArDbExFree(&db, ai.Free);
 					fclose(is.File);
+	   				tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzExtract 7z file [%2%]")) 
+						% res % file.c_str());
+					TRACEBUFE(strBuf);
 					throw zip_error("SzExtract");
 				}
 
@@ -202,6 +216,7 @@ bool LoadList(path file, p2p::list &list)
 				}
 				catch(...) {
 					ai.Free(outbuf);
+					TRACEV("[LoadList]  * ERROR:  Exception caught while performing 7z list.load()");
 					throw;
 				}
 

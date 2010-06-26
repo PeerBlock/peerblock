@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
@@ -628,6 +628,11 @@ public:
 										if(data->list) 
 										{
 											TRACEV("[UpdateThread] [_Process]    data is a list");
+											const tstring str = LoadString(IDS_VERIFYING);
+											lvi.iItem = data->index;
+											lvi.iSubItem = 2;
+											lvi.pszText = (LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
 											try 
 											{
 												// Verify that list is useful
@@ -673,6 +678,22 @@ public:
 											{
 												ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 												data->list->FailedUpdate=true;
+
+												try
+												{
+													// copy over to .failed
+													path failedFile;
+													failedFile = data->tempfile.file_str();
+													failedFile = failedFile.file_str().substr(0, failedFile.file_str().find_last_of(L"."));
+													failedFile = failedFile.file_str() + L".failed";
+													path::move(data->tempfile, failedFile, true);
+													tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    Copied exception-throwing list to: [%1%]")) % failedFile.file_str() );
+													TRACEBUFW(strBuf);
+												}
+												catch(...)
+												{
+													TRACEW("[UpdateThread] [_Process]    Couldn't copy exception-throwing list to .failed");
+												}
 											}
 											
 
