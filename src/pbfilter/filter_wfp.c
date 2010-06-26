@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
@@ -333,7 +333,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	FWPS_CALLOUT0 c = {0};
 	NTSTATUS ret;
 
-	DbgPrint("pbfilter:  > Entering InstallCallouts()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering InstallCallouts()\n");
 	c.notifyFn = NullNotify;
 
 	// IPv4 connect filter.
@@ -344,7 +344,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	ret = FwpsCalloutRegister0(device, &c, &g_internal->connect4);
 	if(!NT_SUCCESS(ret)) return ret;
 
-	DbgPrint("Installed V4 connect callout: %d\n", ret);
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    Installed V4 connect callout: %d\n", ret);
 
 	// IPv4 accept filter.
 
@@ -354,7 +354,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	ret = FwpsCalloutRegister0(device, &c, &g_internal->accept4);
 	if(!NT_SUCCESS(ret)) return ret;
 
-	DbgPrint("Installed V4 accept callout: %d\n", ret);
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    Installed V4 accept callout: %d\n", ret);
 
 	// IPv6 connect filter.
 
@@ -364,7 +364,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	ret = FwpsCalloutRegister0(device, &c, &g_internal->connect6);
 	if(!NT_SUCCESS(ret)) return ret;
 
-	DbgPrint("Installed V6 connect callout: %d\n", ret);
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    Installed V6 connect callout: %d\n", ret);
 
 	// IPv6 accept filter.
 
@@ -374,9 +374,9 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 	ret = FwpsCalloutRegister0(device, &c, &g_internal->accept6);
 	if(!NT_SUCCESS(ret)) return ret;
 
-	DbgPrint("Installed V6 accept callout: %d\n", ret);
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    Installed V6 accept callout: %d\n", ret);
 
-	DbgPrint("pbfilter:  < Leaving InstallCallouts()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < Leaving InstallCallouts()\n");
 	return ret;
 }
 
@@ -384,34 +384,34 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 
 static NTSTATUS Driver_OnCreate(PDEVICE_OBJECT device, PIRP irp) 
 {
-	DbgPrint("pbfilter:  > Entering Driver_OnCreate()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering Driver_OnCreate()\n");
 	irp->IoStatus.Status = STATUS_SUCCESS;
 	irp->IoStatus.Information = 0;
 
-	DbgPrint("pbfilter:    completing IRP\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    completing IRP\n");
 	IoCompleteRequest(irp, IO_NO_INCREMENT);
-	DbgPrint("pbfilter:  < Leaving Driver_OnCreate()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < Leaving Driver_OnCreate()\n");
 	return STATUS_SUCCESS;
 }
 
 static NTSTATUS Driver_OnCleanup(PDEVICE_OBJECT device, PIRP irp) 
 {
-	DbgPrint("pbfilter:  > Entering Driver_OnCleanup()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering Driver_OnCleanup()\n");
 
-	DbgPrint("pbfilter:    resetting internal block/allow lists\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    resetting internal block/allow lists\n");
 	g_internal->block = 0;
 	SetRanges(NULL, 0);
 	SetRanges(NULL, 1);
 
-	DbgPrint("pbfilter:    removing notificationqueue\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    removing notificationqueue\n");
 	DestroyNotificationQueue(&g_internal->queue);
 
-	DbgPrint("pbfilter:    completing IRP\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    completing IRP\n");
 	irp->IoStatus.Status = STATUS_SUCCESS;
 	irp->IoStatus.Information = 0;
 	IoCompleteRequest(irp, IO_NO_INCREMENT);
 
-	DbgPrint("pbfilter:  < Leaving Driver_OnCleanup()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < Leaving Driver_OnCleanup()\n");
 	return STATUS_SUCCESS;
 }
 
@@ -430,18 +430,18 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 	switch(controlcode) 
 	{
 		case IOCTL_PEERBLOCK_HOOK:
-			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HOOK\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_HOOK\n");
 			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) 
 			{
-				DbgPrint("pbfilter:    setting block\n");
+				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting block\n");
 				g_internal->block = *(int*)irp->AssociatedIrp.SystemBuffer;
 			}
 			else 
 			{
-				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
+				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR: IOCTL_PEERBLOCK_HOOK, invalid parameter\n");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
 			break;
 
 		case IOCTL_PEERBLOCK_SETRANGES: 
@@ -449,21 +449,21 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 			PBRANGES *ranges;
 			ULONG inputlen;
 
-			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_SETRANGES\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETRANGES\n");
 			ranges = irp->AssociatedIrp.SystemBuffer;
 			inputlen = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
 			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) 
 			{
-				DbgPrint("pbfilter:    setting ranges\n");
+				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting ranges\n");
 				SetRanges(ranges, ranges->block);
 			}
 			else 
 			{
-				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
+				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR: IOCTL_PEERBLOCK_SETRANGES, invalid parameter\n");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_SETRANGES\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETRANGES\n");
 		} break;
 
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
@@ -474,12 +474,12 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 			USHORT *ports;
 			ULONG count;
 
-			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
 			SetDestinationPorts(ports, (USHORT) (count / sizeof(USHORT)));
-			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
 
 		} break;
 
@@ -488,12 +488,12 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 			USHORT *ports;
 			ULONG count;
 
-			DbgPrint("pbfilter:    > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
 			ports = irp->AssociatedIrp.SystemBuffer;
 			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
 			SetSourcePorts(ports, (USHORT) (count / sizeof(USHORT)));
-			DbgPrint("pbfilter:    < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
 
 		} break;
 
@@ -512,37 +512,37 @@ static void Driver_OnUnload(PDRIVER_OBJECT driver)
 	UNICODE_STRING devlink;
 	NTSTATUS status;
 
-	DbgPrint("pbfilter:  > Entering Driver_OnUnload()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering Driver_OnUnload()\n");
 
-	DbgPrint("pbfilter:    unregistering callouts\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    unregistering callouts\n");
 
 	if(g_internal->connect4) {
 		status = FwpsCalloutUnregisterById0(g_internal->connect4);
-		DbgPrint("Unregistered V4 connect: %d\n", status);
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    unregistered V4 connect: %d\n", status);
 	}
 
 	if(g_internal->accept4) {
 		status = FwpsCalloutUnregisterById0(g_internal->accept4);
-		DbgPrint("Unregistered V4 accept: %d\n", status);
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    unregistered V4 accept: %d\n", status);
 	}
 
 	if(g_internal->connect6) {
 		status = FwpsCalloutUnregisterById0(g_internal->connect6);
-		DbgPrint("Unregistered V6 connect: %d\n", status);
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    unregistered V6 connect: %d\n", status);
 	}
 
 	if(g_internal->accept6) {
 		status = FwpsCalloutUnregisterById0(g_internal->accept6);
-		DbgPrint("Unregistered V6 accept: %d\n", status);
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    unregistered V6 accept: %d\n", status);
 	}
 
-	DbgPrint("pbfilter:    deleting devobj\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    deleting devobj\n");
 
 	RtlInitUnicodeString(&devlink, DOS_DEVICE_NAME);
 	IoDeleteSymbolicLink(&devlink);
 	IoDeleteDevice(driver->DeviceObject);
 
-	DbgPrint("pbfilter:  < Leaving Driver_OnUnload()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < Leaving Driver_OnUnload()\n");
 }
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) 
@@ -553,8 +553,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 	//DbgBreakPoint();
 
-	DbgPrint("pbfilter:  > Entering DriverEntry()\n");
-	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_WARNING_LEVEL, "pbfilter:  > Entering DriverEntry()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering DriverEntry()\n");
 	RtlInitUnicodeString(&devicename, NT_DEVICE_NAME);
 
 	status = IoCreateDevice(driver, sizeof(PBINTERNAL), &devicename, FILE_DEVICE_PEERBLOCK, 0, FALSE, &device);
@@ -563,18 +562,18 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 	{
 		UNICODE_STRING devicelink;
 
-		DbgPrint("pbfilter:    created driver\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    created driver\n");
 		RtlInitUnicodeString(&devicelink, DOS_DEVICE_NAME);
 		status=IoCreateSymbolicLink(&devicelink, &devicename);
 
-		DbgPrint("pbfilter:    setting up functions\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting up functions\n");
 		driver->MajorFunction[IRP_MJ_CREATE] =
 		driver->MajorFunction[IRP_MJ_CLOSE] = Driver_OnCreate;
 		driver->MajorFunction[IRP_MJ_CLEANUP] = Driver_OnCleanup;
 		driver->MajorFunction[IRP_MJ_DEVICE_CONTROL] = Driver_OnDeviceControl;
 		driver->DriverUnload = Driver_OnUnload;
 
-		DbgPrint("pbfilter:    initializing internal data\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    initializing internal data\n");
 
 		device->Flags |= DO_BUFFERED_IO;
 
@@ -598,17 +597,17 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		g_internal->connect6 = 0;
 		g_internal->accept6 = 0;
 
-		DbgPrint("pbfilter:    installing callouts...\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    installing callouts...\n");
 		status = InstallCallouts(device);
-		DbgPrint("pbfilter:    ...callouts installed\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    ...callouts installed\n");
 	}
 
 	if(!NT_SUCCESS(status)) 
 	{
-		DbgPrint("pbfilter:  * ERROR encountered - unloading driver\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR [%d] encountered - unloading driver\n", status);
 		Driver_OnUnload(driver);
 	}
 
-	DbgPrint("pbfilter:  < Leaving DriverEntry()\n");
+	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < Leaving DriverEntry()\n");
 	return status;
 }

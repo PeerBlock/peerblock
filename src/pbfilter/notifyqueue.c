@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
@@ -133,7 +133,7 @@ static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp)
 	LIST_ENTRY *iter;
 	int found = 0;
 
-	DbgPrint("Canceling IRP...\n");
+	DbgPrint("pbfilter:    Canceling IRP...\n");
 
 	KeAcquireSpinLock(&queue->lock, &irq);
 	for(iter = queue->irp_list.Flink; iter != &queue->irp_list; iter = iter->Flink) 
@@ -152,7 +152,7 @@ static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp)
 	// if it wasn't found, it has already been dequeued and handled.
 	if(found) 
 	{
-		DbgPrint("IRP found, completing.\n");
+		DbgPrint("pbfilter:    IRP found, completing.\n");
 
 		irp->IoStatus.Status = STATUS_CANCELLED;
 		irp->IoStatus.Information = 0;
