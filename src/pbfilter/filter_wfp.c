@@ -32,10 +32,8 @@
 
 #include <ntddk.h>
 #include <ntstrsafe.h>
-
 #include <fwpmk.h>
 #include <fwpsk.h>
-
 #include "internal.h"
 
 static ULONG CheckRanges(PBNOTIFICATION *pbn, ULONG ip) {

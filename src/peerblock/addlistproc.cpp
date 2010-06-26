@@ -1,5 +1,11 @@
+//================================================================================================
+//  addlistproc.cpp
+//
+//  Implements the window that pops up when you click the Add button in the List Manager.
+//================================================================================================
+
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
@@ -20,21 +26,9 @@
 
 */
 
-//================================================================================================
-//  addlistproc.cpp
-//
-//  Implements the window that pops up when you click the Add button in the List Manager.
-//================================================================================================
-
-
-//////////---------------------------------------------------------------------
-// Includes
-
 #include "stdafx.h"
 #include "resource.h"
-
 #include "listurls.h"
-
 using namespace std;
 
 

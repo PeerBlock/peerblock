@@ -27,9 +27,8 @@
 #pragma warning(pop)
 
 #include <ntddk.h>
-#include "internal.h"
-
 #include <stdlib.h>
+#include "internal.h"
 
 PBINTERNAL *g_internal;
 

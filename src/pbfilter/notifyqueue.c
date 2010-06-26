@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
 	This software is provided 'as-is', without any express or implied

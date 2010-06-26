@@ -1,3 +1,10 @@
+//================================================================================================
+//  portprofile.cpp
+//
+//  This file contains all the routines used to handle the editing of port sets: the window that
+//  pops up after you click the "Ports" button on the Settings screen.
+//================================================================================================
+
 /*
 	Copyright (C) 2009-2010 PeerBlock, LLC
 
@@ -18,14 +25,6 @@
 	3. This notice may not be removed or altered from any source distribution.
 
 */
-
-//================================================================================================
-//  portprofile.cpp
-//
-//  This file contains all the routines used to handle the editing of port sets: the window that
-//  pops up after you click the "Ports" button on the Settings screen.
-//================================================================================================
-
 
 #include "stdafx.h"
 #include "resource.h"
