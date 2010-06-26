@@ -916,6 +916,7 @@ BEGIN
     IDS_STATUS              "Status"
     IDS_DOWNLOADING         "Downloading"
     IDS_NONEAVAILABLE       "None available"
+    IDS_VERIFYING			"Verifying"
     IDS_ABORTED             "Aborted"
     IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
     IDS_UNEXPCONTACTINGWHY  "Unexpected Response Contacting URL: %1%"
