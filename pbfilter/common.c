@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
@@ -68,40 +68,41 @@ void SetRanges(const PBRANGES *ranges, int block)
 	ULONG ncount, labelsid;
 	KIRQL irq;
 
-	DbgPrint("pbfilter:  > SetRanges");
+	DbgPrint("pbfilter:  > SetRanges\n");
 	if(ranges && ranges->count > 0) 
 	{
-		DbgPrint("pbfilter:    found some ranges");
+		DbgPrint("pbfilter:    found some ranges\n");
 		ncount = ranges->count;
 		labelsid = ranges->labelsid;
 
-		DbgPrint("pbfilter:    allocating memory from nonpaged pool");
+		DbgPrint("pbfilter:    allocating memory from nonpaged pool\n");
 		nranges = ExAllocatePoolWithTag(NonPagedPool, ranges->count * sizeof(PBIPRANGE), '02GP');
 		if (nranges == NULL)
 		{
 			DbgPrint("pbfilter:    ERROR: SetRanges() can't allocate nranges memory from NonPagedPool!!");
+			DbgPrint("  count:[%d], size:[%d]\n", ranges->count, sizeof(PBIPRANGE));
 			return;
 		}
 
-		DbgPrint("pbfilter:    copying ranges into driver");
+		DbgPrint("pbfilter:    copying ranges into driver\n");
 		RtlCopyMemory(nranges, ranges->ranges, ranges->count * sizeof(PBIPRANGE));
-		DbgPrint("pbfilter:    done setting up new ranges");
+		DbgPrint("pbfilter:    done setting up new ranges\n");
 	}
 	else 
 	{
-		DbgPrint("pbfilter:    no ranges specified");
+		DbgPrint("pbfilter:    no ranges specified\n");
 		ncount = 0;
 		labelsid = 0xFFFFFFFF;
 		nranges = NULL;
 	}
 
-	DbgPrint("pbfilter:    acquiring rangeslock...");
+	DbgPrint("pbfilter:    acquiring rangeslock...\n");
 	KeAcquireSpinLock(&g_internal->rangeslock, &irq);
-	DbgPrint("pbfilter:    ...rangeslock acquired");
+	DbgPrint("pbfilter:    ...rangeslock acquired\n");
 
 	if(block) 
 	{
-		DbgPrint("pbfilter:    block list");
+		DbgPrint("pbfilter:    block list\n");
 		oldranges = g_internal->blockedcount ? g_internal->blockedranges : NULL;
 
 		g_internal->blockedcount = ncount;
@@ -110,7 +111,7 @@ void SetRanges(const PBRANGES *ranges, int block)
 	}
 	else 
 	{
-		DbgPrint("pbfilter:    allow list");
+		DbgPrint("pbfilter:    allow list\n");
 		oldranges = g_internal->allowedcount ? g_internal->allowedranges : NULL;
 
 		g_internal->allowedcount = ncount;
@@ -118,15 +119,15 @@ void SetRanges(const PBRANGES *ranges, int block)
 		g_internal->allowedlabelsid = labelsid;
 	}
 
-	DbgPrint("pbfilter:    releasing rangeslock...");
+	DbgPrint("pbfilter:    releasing rangeslock...\n");
 	KeReleaseSpinLock(&g_internal->rangeslock, irq);
-	DbgPrint("pbfilter:    ...rangeslock released");
+	DbgPrint("pbfilter:    ...rangeslock released\n");
 
 	if(oldranges) {
-		DbgPrint("pbfilter:    freeing oldranges");
+		DbgPrint("pbfilter:    freeing oldranges\n");
 		ExFreePoolWithTag(oldranges, '02GP');
 	}
-	DbgPrint("pbfilter:  < SetRanges");
+	DbgPrint("pbfilter:  < SetRanges\n");
 }
 
 void SetPorts(const ULONG *ports, ULONG count) 
@@ -141,7 +142,7 @@ void SetPorts(const ULONG *ports, ULONG count)
 		nports = (ULONG*) ExAllocatePoolWithTag(NonPagedPool, sizeof(ULONG) * count, 'tPBP');
 		if (nports == NULL)
 		{
-			DbgPrint("pbfilter:    ERROR: SetPorts() can't allocate nports memory from NonPagedPool!!");
+			DbgPrint("pbfilter:    ERROR: SetPorts() can't allocate nports memory from NonPagedPool!!\n");
 			return;
 		}
 		RtlCopyMemory(nports, ports, sizeof(ULONG) * count);

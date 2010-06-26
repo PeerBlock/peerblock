@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2004-2005 Cory Nelson
+	Original code copyright (C) 2004-2005 Cory Nelson
 	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
@@ -209,35 +209,35 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 	switch(controlcode) 
 	{
 		case IOCTL_PEERBLOCK_HOOK:
-			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HOOK");
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HOOK\n");
 			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) 
 			{
 				int *hook=(int*)irp->AssociatedIrp.SystemBuffer;
-				DbgPrint("pbfilter:    setting filter...");
+				DbgPrint("pbfilter:    setting filter...\n");
 				setfilter((*hook)?filter_cb:NULL);
-				DbgPrint("pbfilter:    ...filter set");
+				DbgPrint("pbfilter:    ...filter set\n");
 			}
 			else 
 			{
-				DbgPrint("pbfilter:  * ERROR: invalid parameter");
+				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
 				irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK");
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
 			break;
 
 		case IOCTL_PEERBLOCK_HTTP:
 			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_HTTP");
 			if(irp->AssociatedIrp.SystemBuffer!=NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength==sizeof(int)) 
 			{
-				DbgPrint("pbfilter:    setting blockhttp");
+				DbgPrint("pbfilter:    setting blockhttp\n");
 				g_internal->blockhttp=*((int*)irp->AssociatedIrp.SystemBuffer);
 			}
 			else 
 			{
-				DbgPrint("pbfilter:  * ERROR: invalid parameter");
+				DbgPrint("pbfilter:  * ERROR: invalid parameter\n");
 				irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HTTP");
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_HTTP\n");
 			break;
 
 		case IOCTL_PEERBLOCK_SETRANGES: 
@@ -245,21 +245,21 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 			PBRANGES *ranges;
 			ULONG inputlen;
 
-			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_SETRANGES");
+			DbgPrint("pbfilter:  > IOCTL_PEERBLOCK_SETRANGES\n");
 			ranges = irp->AssociatedIrp.SystemBuffer;
 			inputlen = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
 			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) 
 			{
-				DbgPrint("pbfilter:    calling SetRanges()");
+				DbgPrint("pbfilter:    calling SetRanges()\n");
 				SetRanges(ranges, ranges->block);
 			}
 			else 
 			{
-				DbgPrint("pbfilter:  * Error: STATUS_INVALID_PARAMETER");
+				DbgPrint("pbfilter:  * Error: STATUS_INVALID_PARAMETER\n");
 				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
 			}
-			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_SETRANGES");
+			DbgPrint("pbfilter:  < IOCTL_PEERBLOCK_SETRANGES\n");
 		} break;
 
 		case IOCTL_PEERBLOCK_GETNOTIFICATION:
@@ -280,7 +280,7 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 		} break;
 
 		default:
-			DbgPrint("pbfilter:  * ERROR: invalid parameter for IOCTL!");
+			DbgPrint("pbfilter:  * ERROR: invalid parameter for IOCTL!\n");
 			irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 	}
 
