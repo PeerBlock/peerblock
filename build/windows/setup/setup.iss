@@ -69,9 +69,9 @@ MinVersion=0,5.0.2195
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
-WizardImageFile=icons\WizModernImage.bmp
-WizardSmallImageFile=icons\WizModernSmallImage.bmp
-SetupIconFile=icons\pb.ico
+WizardImageFile=WizardImageFile.bmp
+WizardSmallImageFile=WizardSmallImageFile.bmp
+SetupIconFile=..\..\..\src\peerblock\pb.ico
 DirExistsWarning=no
 EnableDirDoesntExistWarning=no
 AllowNoIcons=yes

@@ -16,6 +16,7 @@ Notes:    The version PeerBlock is using is slightly modified.  See here:
 miniunzip version 1.01h
 License:  Zlib License
 Website:  http://www.winimage.com/zLibDll/minizip.html
+Notes:    We currently include only the needed files.
 
 SQLite version 3.6.23.1
 License:  Public Domain
