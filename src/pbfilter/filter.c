@@ -81,6 +81,11 @@ static void setfilter(PacketFilterExtensionPtr fn)
 			DbgPrint("pbfilter:    no file to dereference\n");
 		}
 	}
+	else
+	{
+		DbgPrint("pbfilter:  * ERROR: unable to get IpFltDrv DevObj, status:[0x%lX]\n", status);
+	}
+
 	DbgPrint("pbfilter:  < Leaving setfilter()\n");
 }
 
@@ -355,11 +360,11 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 	if(!NT_SUCCESS(status))
 	{
-		DbgPrint("pbfilter:  * ERROR: couldn't create device, status:[%d] . . . unloading\n", status);
+		DbgPrint("pbfilter:  * ERROR: couldn't create device, status:[0x%lX] . . . unloading\n", status);
 		drv_unload(driver);
 	}
 
-	DbgPrint("pbfilter:  < Leaving DriverEntry(), status:[%d]\n", status);
+	DbgPrint("pbfilter:  < Leaving DriverEntry(), status:[0x%lX]\n", status);
 
 	return status;
 }
