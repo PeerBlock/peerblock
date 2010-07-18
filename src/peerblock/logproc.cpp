@@ -1124,6 +1124,8 @@ static void Log_OnTimer(HWND hwnd, UINT id)
 	switch(id) 
 	{
 		case TIMER_UPDATE:
+		{
+			bool hasupdate = false;
 			TRACEV("[LogProc] [Log_OnTimer]    TIMER_UPDATE");
 
 			{
@@ -1133,10 +1135,14 @@ static void Log_OnTimer(HWND hwnd, UINT id)
 					TRACEI("[LogProc] [Log_OnTimer]    performing automated update of program/lists");
 					UpdateLists(NULL);
 
-					UpdateStatus(hwnd);
+					// prevent deadlock if UpdateStatus is called here
+					hasupdate = true;
 				}
 			}
-			break;
+
+			if (hasupdate)
+				UpdateStatus(hwnd);
+		} break;
 
 		case TIMER_TEMPALLOW:
 			TRACEV("[LogProc] [Log_OnTimer]    TIMER_TEMPALLOW");
