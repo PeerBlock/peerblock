@@ -547,11 +547,6 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM
 /// <param name="hwnd">
 ///   Parent's hwnd, if any.
 /// </param>
-/// <remarks>
-///   Note that this routine can cause the lists to be updated, if it detects that too much time 
-///   has passed.  Because of this it is important that callers NOT have g_lastupdatelock 
-///   acquired as we will be using it.
-/// </remarks>
 //
 static void UpdateStatus(HWND hwnd) 
 {
@@ -609,17 +604,6 @@ static void UpdateStatus(HWND hwnd)
 		if(dur<604800) 
 		{
 			TRACEV("[LogProc] [UpdateStatus]    dur < 604800");
-			TCHAR buf[64];
-			_tcsftime(buf, 64, _T("%#x"), localtime(&g_config.LastUpdate));
-
-			lastupdate=boost::str(tformat(LoadString(IDS_LISTSUPTODATE))%buf);
-		}
-		else if(dur>=g_config.UpdateInterval*86400 && (g_config.UpdatePeerBlock || g_config.UpdateLists)) 
-		{
-			TRACEI("[LogProc] [UpdateStatus]    need to update lists");
-			UpdateLists(hwnd);
-			TRACEI("[LogProc] [UpdateStatus]    lists updated");
-
 			TCHAR buf[64];
 			_tcsftime(buf, 64, _T("%#x"), localtime(&g_config.LastUpdate));
 
@@ -1148,10 +1132,10 @@ static void Log_OnTimer(HWND hwnd, UINT id)
 				{
 					TRACEI("[LogProc] [Log_OnTimer]    performing automated update of program/lists");
 					UpdateLists(NULL);
+
+					UpdateStatus(hwnd);
 				}
 			}
-
-			UpdateStatus(hwnd);
 			break;
 
 		case TIMER_TEMPALLOW:
