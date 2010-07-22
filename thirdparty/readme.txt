@@ -26,7 +26,7 @@ SQLitePlus version 050616
 License:  zlib License
 Website:  http://int64.org/projects/sqlite-c-wrapper
 
-TinyXml version 2.6.1
+TinyXml version 2.6.1 cvs 06062010
 License:  zlib License
 Website:  http://www.grinninglizard.com/tinyxml
 
