@@ -611,7 +611,7 @@ static void UpdateStatus(HWND hwnd)
 		}
 		else {
 			TRACEV("[LogProc] [UpdateStatus]    didn't update lists");
-			lastupdate=boost::str(tformat(LoadString(IDS_LISTSNOTUPTODATE))%(dur/604800));
+			lastupdate=boost::str(tformat(LoadString(IDS_LISTSNOTUPTODATE))%(dur/86400));
 		}
 	}
 	else {
