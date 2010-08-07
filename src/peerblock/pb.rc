@@ -101,20 +101,20 @@ BEGIN
     PUSHBUTTON      "&Edit",IDC_EDIT,233,194,50,14,WS_DISABLED
     PUSHBUTTON      "&View",IDC_OPEN,5,194,50,14,WS_DISABLED
     PUSHBUTTON      "&Create List",IDC_CREATE,60,194,50,14
-    GROUPBOX        "Default Lists", IDC_DEFGROUP, 6, 2, 332, 74
-    AUTOCHECKBOX    "P2P", IDC_P2PLIST, 13, 15, 50, 10
-    AUTOCHECKBOX    "Spyware", IDC_SPYLIST, 13, 30, 50, 10
-    AUTOCHECKBOX    "Advertising", IDC_ADSLIST, 13, 45, 50, 10
-    AUTOCHECKBOX    "Education", IDC_EDULIST, 13, 60, 50, 10
+    GROUPBOX        "Default Lists",IDC_DEFGROUP,6,2,332,74
+    AUTOCHECKBOX    "P2P",IDC_P2PLIST,13,15,50,10
+    AUTOCHECKBOX    "Spyware",IDC_SPYLIST,13,30,50,10
+    AUTOCHECKBOX    "Advertising",IDC_ADSLIST,13,45,50,10
+    AUTOCHECKBOX    "Education",IDC_EDULIST,13,60,50,10
     PUSHBUTTON      "View",IDC_OPENP2P,80,15,30,10,WS_DISABLED
     PUSHBUTTON      "View",IDC_OPENSPY,80,30,30,10,WS_DISABLED
     PUSHBUTTON      "View",IDC_OPENADS,80,45,30,10,WS_DISABLED
     PUSHBUTTON      "View",IDC_OPENEDU,80,60,30,10,WS_DISABLED
-    LTEXT           "Anti-P2P organizations", IDC_STATIC, 138, 16, 150, 8, SS_LEFT
-    LTEXT           "Malicious spyware and adware servers", IDC_STATIC, 138, 31, 150, 8, SS_LEFT
-    LTEXT           "Advertising and data tracker servers", IDC_STATIC, 138, 46, 150, 8, SS_LEFT
-    LTEXT           "Educational institutions and universities", IDC_STATIC, 138, 61, 150, 8, SS_LEFT
-    LTEXT           "(More lists available at iblocklist.com...)", IDC_MORELISTS, 108, 182, 200, 8, SS_LEFT
+    LTEXT           "Anti-P2P organizations",IDC_STATIC,138,16,150,8,SS_LEFT
+    LTEXT           "Malicious spyware and adware servers",IDC_STATIC,138,31,150,8,SS_LEFT
+    LTEXT           "Advertising and data tracker servers",IDC_STATIC,138,46,150,8,SS_LEFT
+    LTEXT           "Educational institutions and universities",IDC_STATIC,138,61,150,8,SS_LEFT
+    LTEXT           "(More lists available at iblocklist.com...)",IDC_MORELISTS,108,182,200,8,SS_LEFT
 END
 
 IDD_CREATELIST DIALOGEX 0, 0, 295, 121
@@ -422,7 +422,7 @@ BEGIN
     EDITTEXT        IDC_AUTOCLOSETIME,137,96,27,14,ES_AUTOHSCROLL | WS_DISABLED
     CONTROL         "",IDC_AUTOCLOSETIMESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,157,97,10,14
     LTEXT           "Seconds",IDC_STATIC,171,96,29,14,SS_CENTERIMAGE
-    CONTROL         "Update at startup", IDC_UPDATE_AT_STARTUP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 217 , 96, 119, 14
+    CONTROL         "Update at startup",IDC_UPDATE_AT_STARTUP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,217,96,119,14
     GROUPBOX        "Miscellaneous",IDC_STATIC,5,123,333,28
     CONTROL         "Always hide tray icon",IDC_HIDETRAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,135,84,10
     CONTROL         "Minimize to tray on close",IDC_HIDEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,135,94,10
@@ -433,19 +433,19 @@ IDD_EDITPORTS DIALOGEX 0, 0, 344, 213
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Default Ports (applies to all profiles)", IDC_DEFGROUP, 5, 5, 332, 74
-    AUTOCHECKBOX    "80, 443 (HTTP, HTTPS - web traffic)", IDC_HTTPPORT, 13, 18, 200, 10
-    AUTOCHECKBOX    "21 (FTP - FTP transfer)", IDC_FTPPORT, 13, 33, 200, 10
-    AUTOCHECKBOX    "25 (SMTP - outgoing mail)", IDC_SMTPPORT, 13, 48, 200, 10
+    GROUPBOX        "Default Ports (applies to all profiles)",IDC_DEFGROUP,5,5,332,74
+    AUTOCHECKBOX    "80, 443 (HTTP, HTTPS - web traffic)",IDC_HTTPPORT,13,18,200,10
+    AUTOCHECKBOX    "21 (FTP - FTP transfer)",IDC_FTPPORT,13,33,200,10
+    AUTOCHECKBOX    "25 (SMTP - outgoing mail)",IDC_SMTPPORT,13,48,200,10
     AUTOCHECKBOX    "110 (POP3 - incoming mail)", IDC_POP3PORT, 13, 63, 200, 10
     CONTROL         "",IDC_PORTS,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,85,334,98
     PUSHBUTTON      "&Add",IDC_ADD,178,194,50,14
     PUSHBUTTON      "&Edit",IDC_EDIT,233,194,50,14,WS_DISABLED
-	PUSHBUTTON      "Remove",IDC_REMOVE,289,194,50,14,WS_DISABLED
+    PUSHBUTTON      "Remove",IDC_REMOVE,289,194,50,14,WS_DISABLED
 END
 
 IDD_PORTPROFILE DIALOGEX 0, 0, 250, 300
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU 
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Port Profile"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -706,7 +706,7 @@ END
 // remains consistent on all systems.
 IDI_MAIN                ICON                    "pb.ico"
 IDI_DISABLED            ICON                    "pb_disabled.ico"
-IDI_HTTPDISABLED        ICON                    "pb_httpdisabled.ico" 
+IDI_HTTPDISABLED        ICON                    "pb_httpdisabled.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -916,7 +916,7 @@ BEGIN
     IDS_STATUS              "Status"
     IDS_DOWNLOADING         "Downloading"
     IDS_NONEAVAILABLE       "None available"
-    IDS_VERIFYING			"Verifying"
+    IDS_VERIFYING           "Verifying"
     IDS_ABORTED             "Aborted"
     IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
     IDS_UNEXPCONTACTINGWHY  "Unexpected Response Contacting URL: %1%"
@@ -1021,3 +1021,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+
