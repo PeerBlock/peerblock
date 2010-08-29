@@ -24,7 +24,21 @@
 #include "resource.h"
 using namespace std;
 
-static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+static void SettingsProc_OnSize(HWND hwnd, UINT state, int cx, int cy)
+{
+	HWND save=GetDlgItem(hwnd, IDC_SAVE);
+
+	RECT rc;
+	GetWindowRect(save, &rc);
+
+	HDWP dwp = BeginDeferWindowPos(3);
+
+	DeferWindowPos(dwp, save, NULL, 7, cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
+
+	EndDeferWindowPos(dwp);
+}
+
+INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		switch(msg) {
 			case WM_COMMAND:
@@ -157,6 +171,10 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 						}
 						else g_config.NotifyOnBlock=Never;
 						break;
+					case IDC_SAVE:
+						TRACEI("[settingsproc] [SettingsFirst_DlgProc]    saving configuration, at user request");
+						g_config.Save();
+						break;
 				}
 				break;
 			case WM_INITDIALOG: {
@@ -272,8 +290,9 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_HTTPTEXT), g_config.HttpColor.Text);
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_HTTPBG), g_config.HttpColor.Background);
 
-				//TODO: notification window
-				ShowWindow(GetDlgItem(hwnd, IDC_NOTIFYWINDOW), SW_HIDE);
+				RECT rc;
+				GetClientRect(hwnd, &rc);
+				SendMessage(hwnd, WM_SIZE, 0, MAKELONG(rc.right-rc.left, rc.bottom-rc.top));
 			} break;
 			case WM_NOTIFY: {
 				const CPNM_SETCOLOR *sc=(const CPNM_SETCOLOR*)lParam;
@@ -298,6 +317,7 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 						break;
 				}
 			} break;
+			HANDLE_MSG(hwnd, WM_SIZE, SettingsProc_OnSize);
 		}
 		return 0;
 	}
@@ -311,7 +331,7 @@ static INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam
 	}
 }
 
-static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPARAM) {
+INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		switch(msg) {
 			case WM_COMMAND:
@@ -437,6 +457,10 @@ static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wPara
 					case IDC_UPDATE_AT_STARTUP:
 						g_config.UpdateAtStartup=(IsDlgButtonChecked(hwnd, IDC_UPDATE_AT_STARTUP) == BST_CHECKED);
 						break;
+					case IDC_SAVE:
+						TRACEI("[settingsproc] [SettingsSecond_DlgProc]    saving configuration, at user request");
+						g_config.Save();
+						break;
 				}
 				break;
 			case WM_INITDIALOG: {
@@ -513,100 +537,12 @@ static INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wPara
 			
 					RegCloseKey(key);
 				}
-			} break;
-		}
-		return 0;
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
-	}
-}
-
-PageData g_pages[]={
-	{ MAKEINTRESOURCE(IDD_SETTINGS_FIRST), SettingsFirst_DlgProc },
-	{ MAKEINTRESOURCE(IDD_SETTINGS_SECOND), SettingsSecond_DlgProc }
-};
-static const size_t g_pagecount=sizeof(g_pages)/sizeof(PageData);
-static size_t g_curpage=0;
-
-static void Settings_SetPage(HWND hwnd) {
-	HWND back=GetDlgItem(hwnd, IDC_BACK);
-	HWND next=GetDlgItem(hwnd, IDC_NEXT);
-
-	EnableWindow(back, g_curpage!=0);
-	EnableWindow(next, g_curpage!=(g_pagecount-1));
-
-	SetWindowPos(g_pages[g_curpage].hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW);
-
-	for(size_t i=0; i<g_pagecount; i++)
-		if(i!=g_curpage) ShowWindow(g_pages[i].hwnd, SW_HIDE);
-}
-
-INT_PTR CALLBACK Settings_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			case WM_SIZE: {
-				const int cx=LOWORD(lParam);
-				const int cy=HIWORD(lParam);
-
-				HWND save=GetDlgItem(hwnd, IDC_SAVE);
-				HWND left=GetDlgItem(hwnd, IDC_BACK);
-				HWND right=GetDlgItem(hwnd, IDC_NEXT);
-
-				int bw, bh;
-				{
-					RECT rc;
-					GetWindowRect(left, &rc);
-
-					bw=rc.right-rc.left;
-					bh=rc.bottom-rc.top;
-				}
-
-				HDWP dwp=BeginDeferWindowPos(3+(int)g_pagecount);
-
-				DeferWindowPos(dwp, save, NULL, 7, cy-7-bh, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
-				DeferWindowPos(dwp, left, NULL, cx-14-bw*2, cy-7-bh, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
-				DeferWindowPos(dwp, right, NULL, cx-7-bw, cy-7-bh, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
-
-				const int h=cy-7-bh;
-
-				for(size_t i=0; i<g_pagecount; i++)
-					DeferWindowPos(dwp, g_pages[i].hwnd, NULL, 0, 0, cx, h, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOMOVE);
-
-				EndDeferWindowPos(dwp);
-			} break;
-			case WM_COMMAND: {
-				switch(LOWORD(wParam)) {
-					case IDC_SAVE:
-						TRACEI("[settingsproc] [Settings_DlgProc]    saving configuration, at user request");
-						g_config.Save();
-						break;
-					case IDC_BACK:
-						--g_curpage;
-						Settings_SetPage(hwnd);
-						break;
-					case IDC_NEXT:
-						++g_curpage;
-						Settings_SetPage(hwnd);
-						break;
-				}
-			} break;
-			case WM_INITDIALOG: {
-				for(size_t i=0; i<g_pagecount; i++) {
-					PageData &page=g_pages[i];
-					page.hwnd=CreateDialog(GetModuleHandle(NULL), page.lpTemplate, hwnd, page.lpDlgProc);
-				}
 
 				RECT rc;
 				GetClientRect(hwnd, &rc);
-
 				SendMessage(hwnd, WM_SIZE, 0, MAKELONG(rc.right-rc.left, rc.bottom-rc.top));
 			} break;
+			HANDLE_MSG(hwnd, WM_SIZE, SettingsProc_OnSize);
 		}
 		return 0;
 	}

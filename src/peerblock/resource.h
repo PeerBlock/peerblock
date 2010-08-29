@@ -6,8 +6,6 @@
 #define IDS_EXCEPTION                   102
 #define IDS_LOG                         103
 #define IDD_LOG                         103
-#define IDS_SETTINGS                    104
-#define IDD_SETTINGS                    104
 #define IDS_TIME                        105
 #define IDI_MAIN                        106
 #define IDS_RANGE                       106
@@ -274,7 +272,6 @@
 #define IDC_BUTTON2                     1082
 #define IDC_PREV                        1082
 #define IDC_HISTORY                     1082
-#define IDC_BACK                        1082
 #define IDC_STARTWITHWINDOWS            1083
 #define IDC_SHOWSPLASH                  1084
 #define IDC_STARTMINIMIZED              1085
@@ -371,6 +368,8 @@
 #define IDC_DESTINATIONPORT             1207
 #define IDC_SOURCEPORT                  1208
 #define IDC_BOTHPORT                    1209
+#define IDS_SETTINGS_FIRST              1210
+#define IDS_SETTINGS_SECOND             1211
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002

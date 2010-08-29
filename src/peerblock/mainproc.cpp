@@ -50,7 +50,8 @@ boost::shared_ptr<pbfilter> g_filter;
 
 TabData g_tabs[]={
 	{ IDS_LOG, MAKEINTRESOURCE(IDD_LOG), Log_DlgProc },
-	{ IDS_SETTINGS, MAKEINTRESOURCE(IDD_SETTINGS), Settings_DlgProc },
+	{ IDS_SETTINGS_FIRST, MAKEINTRESOURCE(IDD_SETTINGS_FIRST), SettingsFirst_DlgProc },
+	{ IDS_SETTINGS_SECOND, MAKEINTRESOURCE(IDD_SETTINGS_SECOND), SettingsSecond_DlgProc },
 	{ IDS_PORTSETTINGS, MAKEINTRESOURCE(IDD_EDITPORTS), EditPorts_DlgProc }
 };
 static const size_t g_tabcount=sizeof(g_tabs)/sizeof(TabData);
@@ -221,7 +222,7 @@ void SetBlockHttp(bool _block, unsigned int _time)
 
 	// cleanup
 	SendMessage(g_tabs[0].Tab, WM_LOG_HOOK, 0, 0);
-	SendMessage(g_tabs[2].Tab, WM_PORTSETTINGSCHANGE, 0, 0);
+	SendMessage(g_tabs[3].Tab, WM_PORTSETTINGSCHANGE, 0, 0);
 	TRACEV("[mainproc] [SetBlockHttp]  < Leaving routine.");
 
 } // End of SetBlockHttp()
@@ -307,7 +308,7 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			SetWindowPos(hwnd, g_config.AlwaysOnTop?HWND_TOPMOST:HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
 
 			// kinda hackish
-			CheckDlgButton(g_pages[1].hwnd, IDC_ONTOP, g_config.AlwaysOnTop?BST_CHECKED:BST_UNCHECKED);
+			CheckDlgButton(g_tabs[2].Tab, IDC_ONTOP, g_config.AlwaysOnTop?BST_CHECKED:BST_UNCHECKED);
 			break;
 
 		case ID_TRAY_HIDETRAYICON:

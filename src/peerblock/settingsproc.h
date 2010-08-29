@@ -23,13 +23,5 @@
 
 #include <windows.h>
 
-struct PageData {
-	LPCTSTR lpTemplate;
-	DLGPROC lpDlgProc;
-
-	HWND hwnd;
-};
-
-INT_PTR CALLBACK Settings_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-extern PageData g_pages[];
+INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
