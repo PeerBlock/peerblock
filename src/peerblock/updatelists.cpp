@@ -890,8 +890,6 @@ public:
 						}
 					}
 
-					delete data;
-
 					curl_easy_cleanup(handles[i]);
 				}
 				TRACES("[UpdateThread] [_Process]    Done updating.");
@@ -901,6 +899,10 @@ public:
 
 			curl_multi_cleanup(multi);
 			curl_global_cleanup();
+
+			for (vector<HandleData *>::size_type i = 0; i < hdata.size(); i++) {
+				delete hdata[i];
+			}
 
 			if(!aborted && updatepb && MessageBox(hwnd, IDS_PBUPDATETEXT, IDS_PBUPDATE, MB_ICONQUESTION|MB_YESNO)==IDYES)
 			{
