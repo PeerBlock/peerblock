@@ -27,6 +27,7 @@
 var
   PGPath: String;
   WinVer: TWindowsVersion;
+  is_update: Boolean;
 const
   installer_mutex_name = 'peerblock_setup_mutex';
   PGUninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
@@ -59,6 +60,12 @@ begin
 end;
 
 
+function IsUpdate(): Boolean;
+begin
+  Result := is_update;
+end;
+
+
 // Check if PeerBlock is configured to run on startup,
 // looking for the old registry value "PeerGuardian"
 function OldStartupCheck(): Boolean;
@@ -79,6 +86,19 @@ begin
   Result := False;
   if FileExists(ExpandConstant('{app}\peerblock.conf')) then
   Result := True;
+end;
+
+
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  if IsUpdate then begin
+    Case PageID of
+      // Hide the license page
+      wpLicense: Result := True;
+    else
+      Result := False;
+    end;
+  end;
 end;
 
 

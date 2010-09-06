@@ -19,7 +19,7 @@
 ;
 ;
 ; Requirements:
-; *Inno Setup QuickStart Pack v5.3.9(+): http://www.jrsoftware.org/isdl.php#qsp
+; *Inno Setup QuickStart Pack v5.3.10(+): http://www.jrsoftware.org/isdl.php#qsp
 
 
 #define dummy Exec("versioninfo_setup.bat","","",1,SW_HIDE)
@@ -48,7 +48,7 @@ AppPublisher=PeerBlock, LLC
 AppCopyright=Copyright © 2009-2010, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/support
-AppUpdatesURL=http://www.peerblock.com/
+AppUpdatesURL=http://www.peerblock.com/releases
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
 VersionInfoCopyright=Copyright © 2009-2010, PeerBlock, LLC
@@ -170,7 +170,7 @@ Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: Pe
 
 
 [Run]
-Filename: {app}\peerblock.exe; Description: {cm:LaunchProgram,PeerBlock}; Flags: nowait postinstall skipifsilent runascurrentuser
+Filename: {app}\peerblock.exe; Description: {cm:LaunchProgram,PeerBlock}; WorkingDir: {app}; Flags: nowait postinstall skipifsilent runascurrentuser
 Filename: http://www.peerblock.com/; Description: {cm:run_visit_website}; Flags: nowait postinstall skipifsilent shellexec runascurrentuser unchecked
 
 
@@ -205,8 +205,8 @@ Name: {group}\ReadMe.lnk; Type: files
 Name: {group}\Uninstall.lnk; Type: files
 
 ; While we are at it, delete any shortcut which is not selected
-Name: {userdesktop}\PeerBlock.lnk; Type: files; Tasks: NOT desktopicon
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Tasks: NOT quicklaunchicon
+Name: {userdesktop}\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('desktopicon') AND IsUpdate()
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon') AND IsUpdate()
 
 
 [Code]
@@ -229,6 +229,9 @@ begin
       Result := False;
   end else begin
     CreateMutex(installer_mutex_name);
+
+    is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
+
   end;
 end;
 
@@ -289,3 +292,4 @@ begin
     RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock');
   end;
 end;
+
