@@ -169,7 +169,7 @@ Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: Pe
 
 
 [Run]
-Filename: {app}\peerblock.exe; Description: {cm:LaunchProgram,PeerBlock}; Flags: nowait postinstall skipifsilent runascurrentuser
+Filename: {app}\peerblock.exe; Description: {cm:LaunchProgram,PeerBlock}; WorkingDir: {app}; Flags: nowait postinstall skipifsilent runascurrentuser
 Filename: http://www.peerblock.com/; Description: {cm:run_visit_website}; Flags: nowait postinstall skipifsilent shellexec runascurrentuser unchecked
 
 
@@ -291,3 +291,4 @@ begin
     RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock');
   end;
 end;
+
