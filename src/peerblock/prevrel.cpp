@@ -347,4 +347,30 @@ void PerformPrevRelUpdates(HWND _hwnd)
 
 	} // end of webex/forumspam update (r411)
 
+
+	//--------------------------------------------------
+	// Delete history.db if it's too large
+
+	if (prevRelease < 454)
+	{
+		// check for filesize of history.db
+		TRACEI("[mainproc] [PerformPrevRelUpdates]    checking size of history.db (r454)");
+
+		struct _stat64 fileStat;
+		path history_file = path::base_dir()/_T("history.db");
+		int ret = _tstat64( history_file.c_str(), &fileStat );
+
+		if (ret == 0)
+		{
+			// if it's too-large, delete it outright
+			if (fileStat.st_size > g_config.MaxHistorySize*1.5) // 150 MB, by default
+			{
+				TRACEW("[mainproc] [PerformPrevRelUpdates]    Too-large history.db file detected!");
+				path::remove(history_file);
+				TRACEW("[mainproc] [PerformPrevRelUpdates]    Deleted history.db");
+			}
+		}
+
+	} // end of delete too-large history.db (r454)
+
 }; // End of PerformPrevRelUpdates()
