@@ -363,7 +363,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		if (ret == 0)
 		{
 			// if it's too-large, delete it outright
-			if (fileStat.st_size > MaxHistorySize*1.5) // 150 MB, by default
+			if (fileStat.st_size > g_config.MaxHistorySize*1.5) // 150 MB, by default
 			{
 				TRACEW("[mainproc] [PerformPrevRelUpdates]    Too-large history.db file detected!");
 				path::remove(history_file);
