@@ -543,7 +543,13 @@ bool ListUrls::Init()
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://iblocklist.com/list.php?list=tzmtqbbsgbtfxainogvm", LISTFLAG_WRONG));
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://www.atma.es/atma.p2p", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://www.ataca.me/atma.p2p", LISTFLAG_NOT_IBL));
+		Lists[LISTNAME_ATMA].push_back(ListData(L"http://galinux.myftp.org/atma.p2p", LISTFLAG_NOT_IBL));
 		Lists[LISTNAME_ATMA].push_back(ListData(L"http://galinux.myftp.org/blacklist.p2p", LISTFLAG_NOT_IBL));
+
+		Lists[LISTNAME_ZEUS].push_back(ListData(L"ZeuS (Abuse)"));
+		Lists[LISTNAME_ZEUS].push_back(ListData(L"http://list.iblocklist.com/lists/abuse/zeus"));
+		Lists[LISTNAME_ZEUS].push_back(ListData(L"http://list.iblocklist.com/?list=ynkdjqsjyfmilsgbogqf", LISTFLAG_UNFRIENDLY));
+		Lists[LISTNAME_ZEUS].push_back(ListData(L"http://iblocklist.com/list.php?list=ynkdjqsjyfmilsgbogqf", LISTFLAG_WRONG));
 
 		Lists[LISTNAME_PB_RAPIDSHARE].push_back(ListData(L"RapidShare (PB)"));
 		Lists[LISTNAME_PB_RAPIDSHARE].push_back(ListData(L"http://list.iblocklist.com/lists/peerblock/rapidshare"));
