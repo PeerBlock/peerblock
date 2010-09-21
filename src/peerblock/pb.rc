@@ -776,7 +776,7 @@ IDR_LICENSE             TEXT                    "about.txt"
 
 STRINGTABLE 
 BEGIN
-    IDS_EXCEPTION           "Exception Occured"
+    IDS_EXCEPTION           "Exception Occurred"
     IDS_LOG                 "Protection"
     IDS_SETTINGS_FIRST      "Settings 1"
     IDS_SETTINGS_SECOND     "Settings 2"
@@ -827,7 +827,7 @@ BEGIN
     IDS_SPY                 "Spyware"
     IDS_EDU                 "Educational"
     IDS_COPYXTOCLIPBOARD    "Copy %1% to clipboard"
-    IDS_INVALIDAPPID        "Error: Invalid Application ID recieved"
+    IDS_INVALIDAPPID        "Error: Invalid Application ID received"
     IDS_ERROR               "Error: %1%"
 END
 
@@ -856,16 +856,16 @@ BEGIN
     IDS_BLOCKED             "Blocked"
     IDS_ALLOWED             "Allowed"
     IDS_HTTPERROR           "Update Error"
-    IDS_HTTPERRORTEXT       "An error occured while contacting the server.\r\n(code: %1%)"
+    IDS_HTTPERRORTEXT       "An error occurred while contacting the server.\r\n(code: %1%)"
     IDS_MAKESTATIC          "Make &static..."
     IDS_REMOVE              "Remove"
-    IDS_MAKESTATICTEXT      "Making a list static will save it to a local file on your computer.  This will allow you to edit it, but you will no longer be able to recieve updates for it.\r\nDo you want to continue?"
+    IDS_MAKESTATICTEXT      "Making a list static will save it to a local file on your computer.  This will allow you to edit it, but you will no longer be able to receive updates for it.\r\nDo you want to continue?"
     IDS_WARNING             "Warning"
     IDS_NEEDADMINTEXT       "PeerBlock requires Administrator privileges to run."
     IDS_NEEDADMIN           "Administrator privileges required"
     IDS_INVALIDURL          "Invalid URL"
     IDS_INVALIDURLTEXT      "The given URL is not valid.  Did you forget a http:// ?"
-    IDS_UNCAUGHTTEXT        "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_UNCAUGHTTEXT        "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
     IDS_UNCAUGHT            "Uncaught exception"
     IDS_PBUPDATE            "Update Available"
     IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
@@ -882,10 +882,10 @@ BEGIN
     IDS_ENABLE              "Enable"
     IDS_BLOCKHTTP           "Block HTTP"
     IDS_ALLOWHTTP           "Allow HTTP"
-    IDS_STARTUP_LAST        "Lastly, we recommend that you read the PeerBlock manual to get acquainted with the subtilties and tweaks available.  Always remember: the best way to protect your privacy on P2P is to not use it at all!  While PeerBlock will provide a lot of protection, the lists are not 100% foolproof and should not be treated as such."
+    IDS_STARTUP_LAST        "Lastly, we recommend that you read the PeerBlock manual to get acquainted with the subtleties and tweaks available.  Always remember: the best way to protect your privacy on P2P is to not use it at all!  While PeerBlock will provide a lot of protection, the lists are not 100% foolproof and should not be treated as such."
     IDS_STARTUP_LISTS       "The selection of lists depends on your personal preference.  If you're only using P2P software, the P2P list should be sufficient.  We recommend that you block HTTP and manually allow sites of interest.  You will be able to change these settings later in the List Manager."
     IDS_STARTUP_OPTIMIZATION 
-                            "If you can live with some ranges collapsing, aggressive mode will lower memory and CPU usage.  It may, however, cause incorrect range names to be reported in the log.  We recommend normal opptimization until you get familiar with how it works.  You will be able to change these settings later, in the Settings tab."
+                            "If you can live with some ranges collapsing, aggressive mode will lower memory and CPU usage.  It may, however, cause incorrect range names to be reported in the log.  We recommend normal optimization until you get familiar with how it works.  You will be able to change these settings later, in the Settings tab."
     IDS_STARTUP_UPDATES     "We recommend that you check both PeerBlock and lists for updates at least every other day to ensure you have the latest protection.  Lists will only be downloaded if changes are detected, so it won't use up much bandwidth.  You will be able to change these settings later in the Settings tab."
     IDS_HTTPBLOCKS          "HTTP Blocks"
     IDS_ALLBLOCKS           "All Blocks"
@@ -929,10 +929,10 @@ BEGIN
     IDS_RESTOREBACKUP       "Restore Backup"
     IDS_RESTORING           "Restoring Backup..."
     IDS_BACKINGUP           "Backing up..."
-    IDS_EXCEPTIONTEXT       "An exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_EXCEPTIONTEXT       "An exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
     IDS_SEARCH              "Search"
     IDS_CALENDAR            "Calendar"
-    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
+    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
 END
 
 STRINGTABLE 

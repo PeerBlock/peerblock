@@ -2,7 +2,7 @@
 License:  GNU LGPL
 Website:  http://www.7-zip.org
 
-Boost version 1.43
+Boost version 1.44
 License:  Boost Software License
 Website:  http://www.boost.org
 Notes:    We currently include only the needed Boost files.
