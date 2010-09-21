@@ -1007,6 +1007,14 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 		else if(nmh->code==NM_DBLCLK && ListView_GetSelectedCount(nmh->hwndFrom)==1)
 			SendMessage(GetDlgItem(hwnd, IDC_EDIT), BM_CLICK, 0, 0);
 	}
+	else if (nmh->idFrom == IDC_MORELISTS)
+	{
+		if (nmh->code == NM_CLICK || nmh->code == NM_RETURN)
+		{
+			TRACEI("[listsproc] [Lists_OnNotify]    user clicked the iblocklist link");
+			ShellExecute(NULL, NULL, _T("http://iblocklist.com/lists.php"), NULL, NULL, SW_SHOWNORMAL);
+		}
+	}
 	else if(nmh->code==PSN_SETACTIVE)
 		PropSheet_SetWizButtons(nmh->hwndFrom, PSWIZB_BACK|PSWIZB_NEXT);
 	return FALSE;
