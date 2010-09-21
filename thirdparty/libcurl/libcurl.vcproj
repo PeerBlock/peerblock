@@ -5,7 +5,7 @@
 	Name="libcurl"
 	ProjectGUID="{8ADB2B86-8213-41EE-9438-D3F8A7A37C33}"
 	RootNamespace="libcurl"
-	Keyword="ManagedCProj"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

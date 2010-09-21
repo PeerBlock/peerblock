@@ -5,7 +5,7 @@
 	Name="miniunzip"
 	ProjectGUID="{CCE1D62B-CF3B-4705-A24E-75BE18963C99}"
 	RootNamespace="miniunzip"
-	Keyword="ManagedCProj"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

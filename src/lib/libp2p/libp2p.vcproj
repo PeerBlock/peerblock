@@ -5,7 +5,7 @@
 	Name="libp2p"
 	ProjectGUID="{679324FC-D0B7-4C3E-97A7-F84059D4B7C9}"
 	RootNamespace="libp2p"
-	Keyword="ManagedCProj"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

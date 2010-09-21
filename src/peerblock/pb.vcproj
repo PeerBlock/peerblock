@@ -5,7 +5,7 @@
 	Name="peerblock"
 	ProjectGUID="{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
 	RootNamespace="peerblock"
-	Keyword="ManagedCProj"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

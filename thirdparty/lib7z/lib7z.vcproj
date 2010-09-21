@@ -5,7 +5,7 @@
 	Name="lib7z"
 	ProjectGUID="{ACEF1C3B-0490-47CE-BD75-F90A19F71C97}"
 	RootNamespace="lib7z"
-	Keyword="ManagedCProj"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

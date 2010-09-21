@@ -5,7 +5,7 @@
 	Name="sqlite3"
 	ProjectGUID="{ED1837D6-2439-45A1-8554-449647FF770B}"
 	RootNamespace="sqlite3"
-	Keyword="ManagedCProj"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
