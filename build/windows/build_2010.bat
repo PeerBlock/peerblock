@@ -12,6 +12,12 @@ ECHO:Example: H:\progs\WinDDK\6001.18002
 GOTO :ErrorDetected
 )
 
+IF NOT DEFINED VS100COMNTOOLS (
+COLOR 0C
+ECHO:Visual Studio 2010 NOT FOUND!!!
+GOTO :ErrorDetected
+)
+
 IF "%1" == "" (
 SET BUILDTYPE=Rebuild
 ) ELSE (
