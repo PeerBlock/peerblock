@@ -126,23 +126,23 @@ Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: 
 
 
 [Files]
-; Win2K files
-Source: ..\Win32\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is2K()
-Source: ..\Win32\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is2K()
+; 2K/XP 32bit files
+Source: ..\Win32\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: ..\Win32\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 
-; WinXP x64 files
-Source: ..\x64\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsXP64()
-Source: ..\x64\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsXP64()
+; XP 64bit files
+Source: ..\x64\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: ..\x64\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 
-; Vista files
-Source: ..\Win32\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista()
-Source: ..\Win32\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista()
+; Vista/7 32bit files
+Source: ..\Win32\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
+Source: ..\Win32\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
 
-; Vista x64 files
-Source: ..\x64\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: IsVista64()
-Source: ..\x64\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: IsVista64()
+; Vista/7 64bit files
+Source: ..\x64\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
+Source: ..\x64\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
 
-; Copy PG settings and custom lists only if PG is installed and the user has choosed to do so
+; Copy PG settings and custom lists only if PG is installed and the user has chosen to do so
 Source: {code:GetPGPath}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 Source: {code:GetPGPath}\*.p2p; DestDir: {app}; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 Source: {code:GetPGPath}\lists\*.p2b; DestDir: {app}\lists; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
@@ -239,7 +239,7 @@ function InitializeUninstall(): Boolean;
 begin
   Result := True;
   // Create a mutex for the installer.
-  // If it's already running display a message and stop installation
+  // If the installer is already running display a message and stop installation
   if CheckForMutexes(installer_mutex_name) then begin
     if not WizardSilent() then
       MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
@@ -291,4 +291,3 @@ begin
     RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock');
   end;
 end;
-

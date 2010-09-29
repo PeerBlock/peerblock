@@ -131,16 +131,16 @@ begin
 
   // get the uninstall string of the old app
   if RegQueryStringValue(HKLM, PGUninstallKey, 'UninstallString', sUnInstallString) then begin
-      if sUnInstallString <> '' then begin
-          sUnInstallString := RemoveQuotes(sUnInstallString);
-          if Exec(sUnInstallString, '/SILENT /VERYSILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
-              Result := 4
-          else
-              Result := 3;
-          end else
-              Result := 2;
+    if sUnInstallString <> '' then begin
+      sUnInstallString := RemoveQuotes(sUnInstallString);
+      if Exec(sUnInstallString, '/SILENT /VERYSILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+        Result := 4
+      else
+        Result := 3;
+      end else
+        Result := 2;
   end else
-      Result := 1;
+    Result := 1;
 end;
 
 
@@ -183,36 +183,4 @@ begin
     PostMessage(Wnd, 18, 0, 0); // WM_QUIT
   end;
   UninstallPG;
-end;
-
-
-///////////////////////////////////////////
-//  Functions to check Windows versions  //
-///////////////////////////////////////////
-
-function Is2K(): Boolean;
-begin
-  GetWindowsVersionEx(WinVer);
-  Result := WinVer.NTPlatform and (WinVer.Major < 6) and not Is64BitInstallMode;
-end;
-
-
-function IsXP64(): Boolean;
-begin
-  GetWindowsVersionEx(WinVer);
-  Result := WinVer.NTPlatform and (WinVer.Major < 6) and Is64BitInstallMode;
-end;
-
-
-function IsVista(): Boolean;
-begin
-  GetWindowsVersionEx(WinVer);
-  Result := WinVer.NTPlatform and (WinVer.Major >= 6) and not Is64BitInstallMode;
-end;
-
-
-function IsVista64(): Boolean;
-begin
-  GetWindowsVersionEx(WinVer);
-  Result := WinVer.NTPlatform and (WinVer.Major >= 6) and Is64BitInstallMode;
 end;
