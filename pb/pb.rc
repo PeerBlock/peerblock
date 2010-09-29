@@ -113,7 +113,7 @@ BEGIN
     LTEXT           "Malicious spyware and adware servers", IDC_STATIC, 138, 31, 150, 8, SS_LEFT
     LTEXT           "Advertising and data tracker servers", IDC_STATIC, 138, 46, 150, 8, SS_LEFT
     LTEXT           "Educational institutions and universities", IDC_STATIC, 138, 61, 150, 8, SS_LEFT
-    CONTROL         "More lists available at <a>I-Blocklist</a>",IDC_MORELISTS,"SysLink",WS_TABSTOP,108,182,200,8
+    LTEXT           "(More lists available at iblocklist.com...)", IDC_MORELISTS, 108, 182, 200, 8, SS_LEFT
 END
 
 IDD_CREATELIST DIALOGEX 0, 0, 295, 121
