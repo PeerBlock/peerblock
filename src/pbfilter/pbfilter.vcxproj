@@ -179,7 +179,6 @@
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\i386;$(PB_DDK_DIR)\lib\wlh\i386</AdditionalLibraryDirectories>
-      <EnableUAC>false</EnableUAC>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -259,7 +258,6 @@
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;libcntpr.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\w2k\i386</AdditionalLibraryDirectories>
-      <EnableUAC>false</EnableUAC>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Native</SubSystem>
@@ -344,7 +342,6 @@
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\i386;$(PB_DDK_DIR)\lib\wlh\i386</AdditionalLibraryDirectories>
-      <EnableUAC>true</EnableUAC>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Native</SubSystem>
@@ -426,7 +423,6 @@
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\i386;$(PB_DDK_DIR)\lib\wlh\i386</AdditionalLibraryDirectories>
-      <EnableUAC>false</EnableUAC>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>

@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "peerblock", "..\..\src\peerblock\pb.vcxproj", "{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libp2p", "..\..\src\lib\libp2p\libp2p.vcxproj", "{679324FC-D0B7-4C3E-97A7-F84059D4B7C9}"
