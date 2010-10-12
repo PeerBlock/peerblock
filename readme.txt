@@ -9,9 +9,9 @@ PeerBlock currently supports Windows 2000, XP, 2003, Vista, 2008, and 7 in
 
 Source Code
 -----------
-PeerBlock is available freely under a zlib License (license.txt).  Please 
-make sure you understand it well before messing with the included source.  
-Though not required, we would love to hear from you at the PeerBlock forums 
+PeerBlock is available freely under a zlib License (license.txt).  Please
+make sure you understand it well before messing with the included source.
+Though not required, we would love to hear from you at the PeerBlock forums
 if you use it.
 
 
@@ -43,9 +43,9 @@ Jason Casimir                       Contributor
 A. Jesse Harper (DarC / DisCoStu)   Contributor
 
 Test Team:
-2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), LANsquared, opus,
-Praeses (PraesesZA), RavenSoft, Tran Dinh Thien (Tippy / Thikku), Uzerrr,
-zerocoolxp
+2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), KindOne (ineedalifetoday),
+LANsquared, opus, Praeses (PraesesZA), RavenSoft, Tran Dinh Thien (Tippy/Thikku),
+Uzerrr, ZeroCoolXP
 
 Documentation:
 Nathan van der Velden (hoodadilly)  Documentation
@@ -61,6 +61,6 @@ LANsquared                          Hosting
 PeerGuardian 2 Credits
 ----------------------
 PeerBlock is based upon the earlier PeerGuardian 2 work.  Many thanks to Cory
-Nelson and his Phoenix Labs crew (http://www.phoenixlabs.org) for creating 
+Nelson and his Phoenix Labs crew (http://www.phoenixlabs.org) for creating
 PG2, and for making it open-source so that after they abandoned it we could
 pick it up and resurrect it!
