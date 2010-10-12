@@ -39,7 +39,7 @@ A. Jesse Harper (DarC / DisCoStu)   Contributor
 Test Team:
 2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), KindOne (ineedalifetoday),
 LANsquared, opus, Praeses (PraesesZA), RavenSoft, Tran Dinh Thien (Tippy/Thikku),
-Uzerrr, zerocoolxp
+Uzerrr, ZeroCoolXP
 
 Documentation:
 Nathan van der Velden (hoodadilly)  Documentation
