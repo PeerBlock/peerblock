@@ -633,11 +633,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\curl_gethostname.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_gethostname.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\curl_hmac.h"
 				>
 			</File>
 			<File
 				RelativePath=".\lib\curl_ldap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_md4.h"
 				>
 			</File>
 			<File
@@ -766,6 +778,14 @@
 			</File>
 			<File
 				RelativePath=".\lib\getinfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\gopher.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\gopher.h"
 				>
 			</File>
 			<File
@@ -914,6 +934,10 @@
 			</File>
 			<File
 				RelativePath=".\lib\llist.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\md4.c"
 				>
 			</File>
 			<File

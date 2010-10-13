@@ -5,9 +5,9 @@ Website:  http://www.7-zip.org
 Boost version 1.44
 License:  Boost Software License
 Website:  http://www.boost.org
-Notes:    We currently include only the needed Boost files.
+Notes:    We currently include only the needed files.
 
-libcurl version 7.21.0
+libcurl version 7.21.2
 License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl
 Notes:    The version PeerBlock is using is slightly modified.  See here:

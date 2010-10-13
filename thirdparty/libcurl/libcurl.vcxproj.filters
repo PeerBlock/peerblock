@@ -357,6 +357,15 @@
     <ClInclude Include="src\writeout.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="lib\curl_gethostname.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl_md4.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\gopher.h">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\amigaos.c">
@@ -655,6 +664,15 @@
     </ClCompile>
     <ClCompile Include="src\writeout.c">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_gethostname.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\gopher.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\md4.c">
+      <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
