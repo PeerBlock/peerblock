@@ -781,7 +781,7 @@ IDR_LICENSE             TEXT                    "about.txt"
 
 STRINGTABLE 
 BEGIN
-    IDS_EXCEPTION           "Exception Occured"
+    IDS_EXCEPTION           "Exception Occurred"
     IDS_LOG                 "Protection"
     IDS_SETTINGS            "Settings"
     IDS_TIME                "Time"
@@ -830,7 +830,7 @@ BEGIN
     IDS_SPY                 "Spyware"
     IDS_EDU                 "Educational"
     IDS_COPYXTOCLIPBOARD    "Copy %1% to clipboard"
-    IDS_INVALIDAPPID        "Error: Invalid Application ID recieved"
+    IDS_INVALIDAPPID        "Error: Invalid Application ID received"
     IDS_ERROR               "Error: %1%"
 END
 
@@ -859,16 +859,16 @@ BEGIN
     IDS_BLOCKED             "Blocked"
     IDS_ALLOWED             "Allowed"
     IDS_HTTPERROR           "Update Error"
-    IDS_HTTPERRORTEXT       "An error occured while contacting the server.\r\n(code: %1%)"
+    IDS_HTTPERRORTEXT       "An error occurred while contacting the server.\r\n(code: %1%)"
     IDS_MAKESTATIC          "Make &static..."
     IDS_REMOVE              "Remove"
-    IDS_MAKESTATICTEXT      "Making a list static will save it to a local file on your computer.  This will allow you to edit it, but you will no longer be able to recieve updates for it.\r\nDo you want to continue?"
+    IDS_MAKESTATICTEXT      "Making a list static will save it to a local file on your computer.  This will allow you to edit it, but you will no longer be able to receive updates for it.\r\nDo you want to continue?"
     IDS_WARNING             "Warning"
     IDS_NEEDADMINTEXT       "PeerBlock requires Administrator privileges to run."
     IDS_NEEDADMIN           "Administrator privileges required"
     IDS_INVALIDURL          "Invalid URL"
     IDS_INVALIDURLTEXT      "The given URL is not valid.  Did you forget a http:// ?"
-    IDS_UNCAUGHTTEXT        "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_UNCAUGHTTEXT        "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
     IDS_UNCAUGHT            "Uncaught exception"
     IDS_PBUPDATE            "Update Available"
     IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
@@ -885,10 +885,10 @@ BEGIN
     IDS_ENABLE              "Enable"
     IDS_BLOCKHTTP           "Block HTTP"
     IDS_ALLOWHTTP           "Allow HTTP"
-    IDS_STARTUP_LAST        "Lastly, we recommend that you read the PeerBlock manual to get acquainted with the subtilties and tweaks available.  Always remember: the best way to protect your privacy on P2P is to not use it at all!  While PeerBlock will provide a lot of protection, the lists are not 100% foolproof and should not be treated as such."
+    IDS_STARTUP_LAST        "Lastly, we recommend that you read the PeerBlock manual to get acquainted with the subtleties and tweaks available.  Always remember: the best way to protect your privacy on P2P is to not use it at all!  While PeerBlock will provide a lot of protection, the lists are not 100% foolproof and should not be treated as such."
     IDS_STARTUP_LISTS       "The selection of lists depends on your personal preference.  If you're only using P2P software, the P2P list should be sufficient.  We recommend that you block HTTP and manually allow sites of interest.  You will be able to change these settings later in the List Manager."
     IDS_STARTUP_OPTIMIZATION 
-                            "If you can live with some ranges collapsing, aggressive mode will lower memory and CPU usage.  It may, however, cause incorrect range names to be reported in the log.  We recommend normal opptimization until you get familiar with how it works.  You will be able to change these settings later, in the Settings tab."
+                            "If you can live with some ranges collapsing, aggressive mode will lower memory and CPU usage.  It may, however, cause incorrect range names to be reported in the log.  We recommend normal optimization until you get familiar with how it works.  You will be able to change these settings later, in the Settings tab."
     IDS_STARTUP_UPDATES     "We recommend that you check both PeerBlock and lists for updates at least every other day to ensure you have the latest protection.  Lists will only be downloaded if changes are detected, so it won't use up much bandwidth.  You will be able to change these settings later in the Settings tab."
     IDS_HTTPBLOCKS          "HTTP Blocks"
     IDS_ALLBLOCKS           "All Blocks"
@@ -932,10 +932,10 @@ BEGIN
     IDS_RESTOREBACKUP       "Restore Backup"
     IDS_RESTORING           "Restoring Backup..."
     IDS_BACKINGUP           "Backing up..."
-    IDS_EXCEPTIONTEXT       "An exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_EXCEPTIONTEXT       "An exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
     IDS_SEARCH              "Search"
     IDS_CALENDAR            "Calendar"
-    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occured!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
+    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
 END
 
 STRINGTABLE 
@@ -968,15 +968,15 @@ BEGIN
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
     IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
 	IDS_EXITWHILEBLOCKING	"Are you sure you want to exit PeerBlock?"
-	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting Peerblock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
+	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting PeerBlock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
 END
 
 // List sanity-checking messages
 STRINGTABLE 
 BEGIN
 	IDS_LISTSAN_TITLE		"List URL Problem Detected"
-	IDS_LISTSAN_UNFRIENDLY	"PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iblocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
-	IDS_LISTSAN_NOTIBL		"This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this lists's URL to an iblocklist.com hosted one?"
+	IDS_LISTSAN_UNFRIENDLY	"PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iBlocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
+	IDS_LISTSAN_NOTIBL		"This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this list's URL to an iblocklist.com hosted one?"
 	IDS_LISTSAN_WRONG		"This URL is not a valid list.  Did you use the ""List Description"" link from iblocklist.com instead of the ""Update URL"" link?\r\n\r\nPeerBlock will update this list's URL to a correct one."
 	IDS_LISTSAN_DEFAULT		"This URL refers to one of the Default Lists: ""%1%"".\r\n\r\nPeerBlock is activating that list instead of adding this new one."
 	IDS_LISTSAN_DEFAULT_NIBL	"This URL refers to one of the Default Lists: ""%1%"", and is a non-iblocklist.com hosted URL.\r\n\r\nAllow PeerBlock to activate that Default List using its standard URL instead of this new one?"
@@ -988,7 +988,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_PREVREL				"Updating PeerBlock"
-    IDS_PREVREL268TEXT		"PeerBlock now makes use of new ""friendly"" names for iblocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
+    IDS_PREVREL268TEXT		"PeerBlock now makes use of new ""friendly"" names for iBlocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than Bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
     IDS_PREVREL341TEXT_DEL	"PeerBlock is updating your History settings to 'Remove every 7 days'.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
     IDS_PREVREL341TEXT_MAX	"PeerBlock is updating your History settings to use a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
     IDS_PREVREL341TEXT_BOTH	"PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
