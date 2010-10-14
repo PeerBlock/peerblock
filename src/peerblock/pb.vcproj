@@ -1199,11 +1199,11 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\about.txt"
+				RelativePath=".\res\about.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\pb.ico"
+				RelativePath=".\res\pb.ico"
 				>
 			</File>
 			<File
@@ -1211,15 +1211,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\pb_disabled.ico"
+				RelativePath=".\res\pb_disabled.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\pb_httpdisabled.ico"
+				RelativePath=".\res\pb_httpdisabled.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\splash_logo.jpg"
+				RelativePath=".\res\splash_logo.jpg"
 				>
 			</File>
 		</Filter>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -271,19 +271,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="about.txt">
+    <None Include="res\pb.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="pb.ico">
+    <None Include="res\pb_disabled.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="pb_disabled.ico">
+    <None Include="res\pb_httpdisabled.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="pb_httpdisabled.ico">
+    <None Include="res\splash_logo.jpg">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="splash_logo.jpg">
+    <None Include="res\about.txt">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

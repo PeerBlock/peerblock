@@ -552,11 +552,11 @@
     <ClInclude Include="zipfile.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="about.txt" />
-    <None Include="pb.ico" />
-    <None Include="pb_disabled.ico" />
-    <None Include="pb_httpdisabled.ico" />
-    <None Include="splash_logo.jpg" />
+    <None Include="res\about.txt" />
+    <None Include="res\pb.ico" />
+    <None Include="res\pb_disabled.ico" />
+    <None Include="res\pb_httpdisabled.ico" />
+    <None Include="res\splash_logo.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="pb.rc" />
