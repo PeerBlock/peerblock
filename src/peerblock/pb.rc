@@ -965,15 +965,15 @@ BEGIN
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
     IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
     IDS_EXITWHILEBLOCKING   "Are you sure you want to exit PeerBlock?"
-    IDS_EXITWHILEBLOCKINGTEXT "PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting Peerblock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
+    IDS_EXITWHILEBLOCKINGTEXT "PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting PeerBlock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
 END
 
 // List sanity-checking messages
 STRINGTABLE 
 BEGIN
     IDS_LISTSAN_TITLE       "List URL Problem Detected"
-    IDS_LISTSAN_UNFRIENDLY  "PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iblocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
-    IDS_LISTSAN_NOTIBL      "This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this lists's URL to an iblocklist.com hosted one?"
+    IDS_LISTSAN_UNFRIENDLY  "PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iBlocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
+    IDS_LISTSAN_NOTIBL      "This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this list's URL to an iblocklist.com hosted one?"
     IDS_LISTSAN_WRONG       "This URL is not a valid list.  Did you use the ""List Description"" link from iblocklist.com instead of the ""Update URL"" link?\r\n\r\nPeerBlock will update this list's URL to a correct one."
     IDS_LISTSAN_DEFAULT     "This URL refers to one of the Default Lists: ""%1%"".\r\n\r\nPeerBlock is activating that list instead of adding this new one."
     IDS_LISTSAN_DEFAULT_NIBL "This URL refers to one of the Default Lists: ""%1%"", and is a non-iblocklist.com hosted URL.\r\n\r\nAllow PeerBlock to activate that Default List using its standard URL instead of this new one?"
@@ -985,7 +985,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_PREVREL             "Updating PeerBlock"
-    IDS_PREVREL268TEXT      "PeerBlock now makes use of new ""friendly"" names for iblocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
+    IDS_PREVREL268TEXT      "PeerBlock now makes use of new ""friendly"" names for iBlocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than Bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
     IDS_PREVREL341TEXT_DEL  "PeerBlock is updating your History settings to 'Remove every 7 days'.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
     IDS_PREVREL341TEXT_MAX  "PeerBlock is updating your History settings to use a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
     IDS_PREVREL341TEXT_BOTH "PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
