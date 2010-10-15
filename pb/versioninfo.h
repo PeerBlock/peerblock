@@ -31,7 +31,7 @@
 //#define PB_RELTYPE_DEV
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 1006090$WCREV$	// PB_REV
+#define BUILDDATE 1010100$WCREV$	// PB_REV
 
 #define PB_VER_BUILDNUM $WCREV$
 
