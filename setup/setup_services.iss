@@ -1,24 +1,26 @@
 (*
-;	Source: http://tinyurl.com/ybwjpuq
-;	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+;  Source: http://tinyurl.com/ybwjpuq
+;  PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
 ;
-;	This software is provided 'as-is', without any express or implied
-;	warranty.  In no event will the authors be held liable for any damages
-;	arising from the use of this software.
+;  This software is provided 'as-is', without any express or implied
+;  warranty.  In no event will the authors be held liable for any damages
+;  arising from the use of this software.
 ;
-;	Permission is granted to anyone to use this software for any purpose,
-;	including commercial applications, and to alter it and redistribute it
-;	freely, subject to the following restrictions:
+;  Permission is granted to anyone to use this software for any purpose,
+;  including commercial applications, and to alter it and redistribute it
+;  freely, subject to the following restrictions:
 ;
-;	1. The origin of this software must not be misrepresented; you must not
-;		claim that you wrote the original software. If you use this software
-;		in a product, an acknowledgment in the product documentation would be
-;		appreciated but is not required.
-;	2. Altered source versions must be plainly marked as such, and must not be
-;		misrepresented as being the original software.
-;	3. This notice may not be removed or altered from any source distribution.
+;  1. The origin of this software must not be misrepresented; you must not
+;     claim that you wrote the original software. If you use this software
+;     in a product, an acknowledgment in the product documentation would be
+;     appreciated but is not required.
+;  2. Altered source versions must be plainly marked as such, and must not be
+;     misrepresented as being the original software.
+;  3. This notice may not be removed or altered from any source distribution.
 ;
+;  $Id$
 *)
+
 
 [Code]
 // Various service related functions
@@ -36,35 +38,35 @@ type
     HANDLE = cardinal;
 
 const
-    SERVICE_QUERY_CONFIG        = $1;
-    SERVICE_CHANGE_CONFIG       = $2;
-    SERVICE_QUERY_STATUS        = $4;
-    SERVICE_START               = $10;
-    SERVICE_STOP                = $20;
-    SERVICE_ALL_ACCESS          = $f01ff;
-    SC_MANAGER_ALL_ACCESS       = $f003f;
-    SERVICE_KERNEL_DRIVER       = $1;
-    SERVICE_WIN32_OWN_PROCESS   = $10;
-    SERVICE_WIN32_SHARE_PROCESS = $20;
-    SERVICE_WIN32               = $30;
-    SERVICE_INTERACTIVE_PROCESS = $100;
-    SERVICE_BOOT_START          = $0;
-    SERVICE_SYSTEM_START        = $1;
-    SERVICE_AUTO_START          = $2;
-    SERVICE_DEMAND_START        = $3;
-    SERVICE_DISABLED            = $4;
-    SERVICE_DELETE              = $10000;
-    SERVICE_CONTROL_STOP        = $1;
-    SERVICE_CONTROL_PAUSE       = $2;
-    SERVICE_CONTROL_CONTINUE    = $3;
-    SERVICE_CONTROL_INTERROGATE = $4;
-    SERVICE_STOPPED             = $1;
-    SERVICE_START_PENDING       = $2;
-    SERVICE_STOP_PENDING        = $3;
-    SERVICE_RUNNING             = $4;
-    SERVICE_CONTINUE_PENDING    = $5;
-    SERVICE_PAUSE_PENDING       = $6;
-    SERVICE_PAUSED              = $7;
+    SERVICE_QUERY_CONFIG            = $1;
+    SERVICE_CHANGE_CONFIG           = $2;
+    SERVICE_QUERY_STATUS            = $4;
+    SERVICE_START                   = $10;
+    SERVICE_STOP                    = $20;
+    SERVICE_ALL_ACCESS              = $f01ff;
+    SC_MANAGER_ALL_ACCESS           = $f003f;
+    SERVICE_KERNEL_DRIVER           = $1;
+    SERVICE_WIN32_OWN_PROCESS       = $10;
+    SERVICE_WIN32_SHARE_PROCESS     = $20;
+    SERVICE_WIN32                   = $30;
+    SERVICE_INTERACTIVE_PROCESS     = $100;
+    SERVICE_BOOT_START              = $0;
+    SERVICE_SYSTEM_START            = $1;
+    SERVICE_AUTO_START              = $2;
+    SERVICE_DEMAND_START            = $3;
+    SERVICE_DISABLED                = $4;
+    SERVICE_DELETE                  = $10000;
+    SERVICE_CONTROL_STOP            = $1;
+    SERVICE_CONTROL_PAUSE           = $2;
+    SERVICE_CONTROL_CONTINUE        = $3;
+    SERVICE_CONTROL_INTERROGATE     = $4;
+    SERVICE_STOPPED                 = $1;
+    SERVICE_START_PENDING           = $2;
+    SERVICE_STOP_PENDING            = $3;
+    SERVICE_RUNNING                 = $4;
+    SERVICE_CONTINUE_PENDING        = $5;
+    SERVICE_PAUSE_PENDING           = $6;
+    SERVICE_PAUSED                  = $7;
 
 // #######################################################################################
 // nt based service utilities
@@ -105,9 +107,9 @@ begin
             MsgBox(ExpandConstant('{cm:msg_servicemanager}'), mbError, MB_OK)
     end
     else begin
-            MsgBox(ExpandConstant('{cm:msg_servicemanager2}'), mbError, MB_OK)
-            Result := 0;
-    end
+        MsgBox(ExpandConstant('{cm:msg_servicemanager2}'), mbError, MB_OK)
+        Result := 0;
+    end;
 end;
 
 
@@ -128,7 +130,7 @@ begin
             CloseServiceHandle(hService)
         end;
         CloseServiceHandle(hSCM)
-    end
+    end;
 end;
 
 
@@ -146,7 +148,7 @@ begin
             CloseServiceHandle(hService)
         end;
         CloseServiceHandle(hSCM)
-    end
+    end;
 end;
 
 
@@ -204,5 +206,5 @@ begin
             CloseServiceHandle(hService)
             end;
         CloseServiceHandle(hSCM)
-    end
+    end;
 end;
