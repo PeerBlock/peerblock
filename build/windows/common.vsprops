@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="common"
+	OutputDirectory="$(SolutionDir)Intermediate\lib\$(ConfigurationName) $(PlatformName)\"
+	IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		EnableFunctionLevelLinking="true"
+		WarningLevel="3"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		OutputFile="$(OutDir)\$(ProjectName).lib"
+	/>
+</VisualStudioPropertySheet>
