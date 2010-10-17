@@ -22,10 +22,11 @@
 ; *Inno Setup QuickStart Pack v5.3.11(+): http://www.jrsoftware.org/isdl.php#qsp
 
 
+#define VS2010 = False
+
 #include "..\..\..\src\peerblock\version_parsed.h"
 
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
-
 
 ; Uncomment one of the #define simple_app_version and comment all other
 ; E.g. 1.0+
@@ -36,6 +37,19 @@
 ;#define simple_app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
 
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
+
+;workaround in order to be able to build the MSVC2010 installer through cmd; we define VS2010build=True for that.
+#ifdef VS2010build
+  #define VS2010 = True
+#endif
+
+#if VS2010
+  #define sse_required = False
+  #define sse2_required = True
+#else
+  #define sse_required = False
+  #define sse2_required = False
+#endif
 
 
 [Setup]
@@ -61,11 +75,19 @@ DefaultGroupName=PeerBlock
 LicenseFile=..\..\..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=.
+#if VS2010
+OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_MSVC2010
+#else
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}
+#endif
 Compression=lzma2/max
 InternalCompressLevel=max
 SolidCompression=yes
+#if VS2010
+MinVersion=0,5.1.2600
+#else
 MinVersion=0,5.0.2195
+#endif
 UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
@@ -112,6 +134,9 @@ Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: 
 
 
 [Files]
+; For CPU detection
+Source: WinCPUID.dll; Flags: dontcopy noencryption
+
 ; 2K/XP 32bit files
 Source: ..\Win32\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 Source: ..\Win32\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
@@ -198,6 +223,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 // Include custom installer code
 #include 'setup_custom_code.iss'
 #include 'setup_services.iss'
+#include "setup_cpu_detection.iss"
 
 ///////////////////////////////////////////
 //  Inno Setup functions and procedures  //
@@ -214,6 +240,26 @@ begin
       Result := False;
   end else begin
     CreateMutex(installer_mutex_name);
+
+  // Acquire CPU information
+  CPUCheck;
+
+  if NOT HasSupportedCPU() then begin
+    Result := False;
+    MsgBox(CustomMessage('msg_unsupported_cpu'), mbError, MB_OK);
+  end;
+
+  #if sse2_required
+  if Result AND NOT Is_SSE2_Supported() then begin
+    Result := False;
+    MsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK);
+  end;
+  #elif sse_required
+  if Result AND NOT Is_SSE_Supported() then begin
+    Result := False;
+    MsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK);
+  end;
+  #endif
 
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
 
