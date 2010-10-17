@@ -271,6 +271,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\about.txt">
+      <Filter>Resource Files</Filter>
+    </None>
     <None Include="res\pb.ico">
       <Filter>Resource Files</Filter>
     </None>
@@ -281,9 +284,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\splash_logo.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\about.txt">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

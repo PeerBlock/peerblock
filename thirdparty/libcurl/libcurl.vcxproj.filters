@@ -2,45 +2,57 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
-      <UniqueIdentifier>{4e3c9d81-31dc-43e3-bd04-ec6c5c3f5705}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include">
-      <UniqueIdentifier>{8ec47e0e-985f-4f34-8857-0a29e99f6a77}</UniqueIdentifier>
+      <UniqueIdentifier>{93db2b8d-ffd0-42e3-9bea-4855f4189a75}</UniqueIdentifier>
     </Filter>
     <Filter Include="lib">
-      <UniqueIdentifier>{31a51ff8-c93d-4eec-aa7b-82300c729c70}</UniqueIdentifier>
+      <UniqueIdentifier>{a588500a-5734-4c88-a78b-935741b1dab0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{8b99be73-b6d5-45f3-ad18-e9b5f1e39b0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\curl\curl.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\config-amigaos.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\curlbuild.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\config-mac.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\curlrules.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\config-riscos.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\curlver.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\config-win32.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\easy.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\curlutil.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\mprintf.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\getpass.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\multi.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\homedir.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\stdcheaders.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\hugehelp.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\typecheck-gcc.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\os-specific.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\types.h">
-      <Filter>include</Filter>
+    <ClInclude Include="src\setup.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\urlglob.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\version.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\writeenv.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\writeout.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="lib\amigaos.h">
       <Filter>lib</Filter>
@@ -93,10 +105,16 @@
     <ClInclude Include="lib\curl_fnmatch.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\curl_gethostname.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="lib\curl_hmac.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\curl_ldap.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl_md4.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\curl_md5.h">
@@ -148,6 +166,9 @@
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\getinfo.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\gopher.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\gtls.h">
@@ -237,13 +258,13 @@
     <ClInclude Include="lib\sendf.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\setup-os400.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="lib\setup.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\setup_once.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\setup-os400.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\share.h">
@@ -315,59 +336,65 @@
     <ClInclude Include="lib\wildcard.h">
       <Filter>lib</Filter>
     </ClInclude>
-    <ClInclude Include="src\config-amigaos.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\curl.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\config-mac.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\curlbuild.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\config-riscos.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\curlrules.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\config-win32.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\curlver.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\curlutil.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\easy.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\getpass.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\mprintf.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\homedir.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\multi.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\hugehelp.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\stdcheaders.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\os-specific.h">
-      <Filter>src</Filter>
+    <ClInclude Include="include\curl\typecheck-gcc.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\setup.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\urlglob.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\version.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\writeenv.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\writeout.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\curl_gethostname.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\curl_md4.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\gopher.h">
-      <Filter>lib</Filter>
+    <ClInclude Include="include\curl\types.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\curlutil.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\getpass.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\homedir.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hugehelp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\os-specific.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urlglob.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\writeenv.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\writeout.c">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="lib\amigaos.c">
       <Filter>lib</Filter>
     </ClCompile>
@@ -387,6 +414,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\curl_fnmatch.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_gethostname.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\curl_memrchr.c">
@@ -432,6 +462,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\getinfo.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\gopher.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\gtls.c">
@@ -501,6 +534,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\llist.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\md4.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\md5.c">
@@ -636,42 +672,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\wildcard.c">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curlutil.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\getpass.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\homedir.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hugehelp.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\os-specific.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\urlglob.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\writeenv.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\writeout.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\curl_gethostname.c">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\gopher.c">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\md4.c">
       <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>

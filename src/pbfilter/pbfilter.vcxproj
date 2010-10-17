@@ -100,9 +100,13 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\windows\common.props" />
+    <Import Project="..\..\build\windows\release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\windows\common.props" />
+    <Import Project="..\..\build\windows\release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -112,9 +116,13 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\windows\common.props" />
+    <Import Project="..\..\build\windows\release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\windows\common.props" />
+    <Import Project="..\..\build\windows\release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -123,44 +131,32 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Intermediate\obj\$(Configuration) $(Platform)\$(ProjectName)\</IntDir>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Intermediate\obj\$(Configuration) $(Platform)\$(ProjectName)\</IntDir>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">false</LinkIncremental>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">$(SolutionDir)Intermediate\obj\$(Configuration) $(Platform)\$(ProjectName)\</IntDir>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|x64'">$(SolutionDir)Intermediate\obj\$(Configuration) $(PlatformName)\$(ProjectName)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|x64'">false</LinkIncremental>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|x64'">$(SolutionDir)Intermediate\obj\$(Configuration) $(Platform)\$(ProjectName)\</IntDir>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|x64'">false</GenerateManifest>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'">.sys</TargetExt>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">.sys</TargetExt>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">.sys</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.sys</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|Win32'">.sys</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">.sys</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.sys</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug (Vista)|x64'">.sys</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.sys</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|x64'">.sys</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.sys</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -185,7 +181,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\i386;$(PB_DDK_DIR)\lib\wlh\i386</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -224,7 +220,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;libcntpr.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64;$(PB_DDK_DIR)\lib\wnet\amd64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -241,21 +237,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_X86_;_WIN2K_COMPAT_SLIST_USAGE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
-      <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>StdCall</CallingConvention>
@@ -264,14 +252,12 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;libcntpr.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\w2k\i386</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Native</SubSystem>
       <Driver>Driver</Driver>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <EntryPointSymbol>DriverEntry</EntryPointSymbol>
       <RandomizedBaseAddress>
       </RandomizedBaseAddress>
@@ -285,20 +271,12 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_AMD64_;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
@@ -307,14 +285,12 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;libcntpr.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wnet\amd64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Native</SubSystem>
       <Driver>Driver</Driver>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <EntryPointSymbol>DriverEntry</EntryPointSymbol>
       <RandomizedBaseAddress>
       </RandomizedBaseAddress>
@@ -325,21 +301,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (Vista)|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_X86_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>StdCall</CallingConvention>
@@ -348,14 +316,12 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\i386;$(PB_DDK_DIR)\lib\wlh\i386</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Native</SubSystem>
       <Driver>Driver</Driver>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <EntryPointSymbol>DriverEntry</EntryPointSymbol>
       <RandomizedBaseAddress>
       </RandomizedBaseAddress>
@@ -369,20 +335,12 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_AMD64_;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
@@ -391,14 +349,12 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Native</SubSystem>
       <Driver>Driver</Driver>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <EntryPointSymbol>DriverEntry</EntryPointSymbol>
       <RandomizedBaseAddress>
       </RandomizedBaseAddress>
@@ -429,7 +385,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\i386;$(PB_DDK_DIR)\lib\wlh\i386</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -468,7 +424,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).sys</OutputFile>
+      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(PB_DDK_DIR)\lib\crt\amd64;$(PB_DDK_DIR)\lib\wlh\amd64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
