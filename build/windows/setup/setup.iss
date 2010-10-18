@@ -22,6 +22,7 @@
 ; *Inno Setup QuickStart Pack v5.3.11(+): http://www.jrsoftware.org/isdl.php#qsp
 
 
+; Define "VS2010 = True" if you built the VS2010 build or use "build_2010.bat"
 #define VS2010 = False
 
 #include "..\..\..\src\peerblock\version_parsed.h"

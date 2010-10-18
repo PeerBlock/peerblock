@@ -1,4 +1,6 @@
 // $Id$
+// The script is taken from the ffdshow-tryouts installer
+// http://sourceforge.net/projects/ffdshow-tryout/
 
 [Code]
 Type
