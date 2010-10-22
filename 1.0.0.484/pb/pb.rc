@@ -1,0 +1,1012 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+#include "versioninfo_parsed.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+#define IDC_STATIC -1
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 0, 0, 358, 225
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "PeerBlock"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TABS,"SysTabControl32",0x0,7,7,344,211
+END
+
+IDD_LOG DIALOGEX 0, 0, 340, 151
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,60,330,86
+    PUSHBUTTON      "&Clear Log",IDC_CLEAR,277,41,58,14
+    PUSHBUTTON      "View &History",IDC_HISTORY,277,23,58,14
+    PUSHBUTTON      "List Manager",IDC_LISTS,5,23,58,14
+    PUSHBUTTON      "Check Updates",IDC_UPDATE,5,41,58,14
+    CTEXT           "Blocking 1000000 IPs",IDC_ENABLED_STATUS,66,5,101,14,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "HTTP is blocked",IDC_HTTP_STATUS,176,5,96,14,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "22 lists: 14 up-to-date - 3 failed to update - 5 deselected",IDC_UPDATE_STATUS,66,23,206,14,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "Last updated Saturday March 19th, 2005",IDC_LAST_UPDATE,66,41,206,14,SS_CENTERIMAGE | SS_SUNKEN
+    PUSHBUTTON      "Enable",IDC_ENABLE,5,5,58,14
+    PUSHBUTTON      "Block HTTP",IDC_HTTP,277,5,58,14
+END
+
+IDD_SETTINGS DIALOGEX 0, 0, 343, 205
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "&Save",IDC_SAVE,5,186,50,14
+    PUSHBUTTON      "&Next ->",IDC_NEXT,288,186,50,14
+    PUSHBUTTON      "<- &Back",IDC_BACK,233,186,50,14,WS_DISABLED
+END
+
+IDD_LISTS DIALOGEX 0, 0, 344, 213
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "List Manager"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,82,334,98
+    PUSHBUTTON      "Remove",IDC_REMOVE,289,194,50,14,WS_DISABLED
+    PUSHBUTTON      "&Add",IDC_ADD,178,194,50,14
+    PUSHBUTTON      "&Edit",IDC_EDIT,233,194,50,14,WS_DISABLED
+    PUSHBUTTON      "&View",IDC_OPEN,5,194,50,14,WS_DISABLED
+    PUSHBUTTON      "&Create List",IDC_CREATE,60,194,50,14
+    GROUPBOX        "Default Lists", IDC_DEFGROUP, 6, 2, 332, 74
+    AUTOCHECKBOX    "P2P", IDC_P2PLIST, 13, 15, 50, 10
+    AUTOCHECKBOX    "Spyware", IDC_SPYLIST, 13, 30, 50, 10
+    AUTOCHECKBOX    "Advertising", IDC_ADSLIST, 13, 45, 50, 10
+    AUTOCHECKBOX    "Education", IDC_EDULIST, 13, 60, 50, 10
+    PUSHBUTTON      "View",IDC_OPENP2P,80,15,30,10,WS_DISABLED
+    PUSHBUTTON      "View",IDC_OPENSPY,80,30,30,10,WS_DISABLED
+    PUSHBUTTON      "View",IDC_OPENADS,80,45,30,10,WS_DISABLED
+    PUSHBUTTON      "View",IDC_OPENEDU,80,60,30,10,WS_DISABLED
+    LTEXT           "Anti-P2P organizations", IDC_STATIC, 138, 16, 150, 8, SS_LEFT
+    LTEXT           "Malicious spyware and adware servers", IDC_STATIC, 138, 31, 150, 8, SS_LEFT
+    LTEXT           "Advertising and data tracker servers", IDC_STATIC, 138, 46, 150, 8, SS_LEFT
+    LTEXT           "Educational institutions and universities", IDC_STATIC, 138, 61, 150, 8, SS_LEFT
+    LTEXT           "(More lists available at iblocklist.com...)", IDC_MORELISTS, 108, 182, 200, 8, SS_LEFT
+END
+
+IDD_CREATELIST DIALOGEX 0, 0, 295, 121
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create List"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,184,100,50,14,WS_DISABLED
+    PUSHBUTTON      "&Cancel",IDCANCEL,238,100,50,14
+    EDITTEXT        IDC_FILE,14,55,212,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Browse",IDC_BROWSE,231,55,50,14
+    CONTROL         "B&lock",IDC_BLOCK,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,95,32,10
+    CONTROL         "&Allow",IDC_ALLOW,"Button",BS_AUTORADIOBUTTON,59,95,33,10
+    GROUPBOX        "Type",IDC_STATIC,7,82,93,32
+    GROUPBOX        "Description",IDC_STATIC,7,7,281,32
+    EDITTEXT        IDC_DESCRIPTION,14,17,267,14,ES_AUTOHSCROLL
+    GROUPBOX        "File",IDC_STATIC,7,45,281,30
+END
+
+IDD_UPDATELISTS DIALOGEX 0, 0, 268, 185
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Updating"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",0x1,5,146,258,14
+    PUSHBUTTON      "&Abort",IDC_ABORT,141,166,50,14
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,5,258,135
+    DEFPUSHBUTTON   "&Close",IDC_CLOSE,86,166,50,14,WS_DISABLED
+END
+
+IDD_SPLASH DIALOGEX 0, 0, 252, 189
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_PICTURE,"Static",SS_BITMAP | SS_CENTERIMAGE,0,0,252,188
+END
+
+IDD_STARTUP_LAST DIALOGEX 0, 0, 317, 242
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "Completing the PeerBlock Startup Wizard",IDC_TITLE,14,7,304,35
+    LTEXT           "The Wizard is complete, and you're ready to run PeerBlock.",IDC_STATIC,18,42,305,28
+    GROUPBOX        "Recommendation",IDC_STATIC,15,173,328,48
+    LTEXT           "Text too long, so -> IDS_STARTUP_LAST",IDC_RECOMMEND,22,183,312,35
+    LTEXT           "To continue, click Finish.",IDC_STATIC,205,248,86,8
+END
+
+IDD_STARTUP_FIRST DIALOGEX 0, 0, 300, 242
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "Welcome to the PeerBlock Startup Wizard",IDC_TITLE,14,7,304,35
+    LTEXT           "It looks like this is your first time running PeerBlock.  This Wizard will help you customize things to run exactly how you want them.",IDC_STATIC,18,42,305,28
+    LTEXT           "To continue, click Next.",IDC_STATIC,205,248,76,8
+END
+
+IDD_STARTUP_LISTS DIALOGEX 0, 0, 317, 211
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "P2P",IDC_P2P,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,7,78,10
+    CONTROL         "Ads",IDC_ADS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,20,78,10
+    CONTROL         "Spyware",IDC_SPYWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,33,78,10
+    CONTROL         "Educational",IDC_EDUCATIONAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,46,78,10
+    CONTROL         "Import/Create Lists",IDC_CUSTOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,59,78,10
+    LTEXT           "Anti-P2P organizations",IDC_STATIC,107,7,220,10,SS_CENTERIMAGE
+    LTEXT           "Advertising and data tracker servers",IDC_STATIC,107,20,220,10,SS_CENTERIMAGE
+    LTEXT           "Malicious spyware and adware servers",IDC_STATIC,107,33,220,10,SS_CENTERIMAGE
+    LTEXT           "Educational institutions and universities",IDC_STATIC,107,46,220,10,SS_CENTERIMAGE
+    LTEXT           "Import or create your own custom lists",IDC_STATIC,107,59,220,10,SS_CENTERIMAGE
+    CONTROL         "Always Allow HTTP",IDC_BLOCKHTTP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,92,90,10
+    LTEXT           "Always allows connections on port 80 and 443, even if they are in your blocklists.  While these ports are usually used for web browsing, other programs often use them too.",IDC_STATIC,107,85,220,30
+    GROUPBOX        "Recommendation",IDC_STATIC,7,131,328,48
+    LTEXT           "Text too long, so -> IDS_STARTUP_LISTS",IDC_RECOMMEND,14,142,312,34
+    LTEXT           "To continue, click Next.",IDC_STATIC,198,205,76,8
+END
+
+IDD_STARTUP_UPDATES DIALOGEX 0, 0, 317, 211
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_DISABLED
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "How often do you want to check for updates?",IDC_STATIC,14,17,148,8
+    LTEXT           "What do you want to update?",IDC_STATIC,14,68,97,8
+    CONTROL         "Every day",IDC_EVERYDAY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,28,49,14
+    CONTROL         "Every other day",IDC_EVERYOTHERDAY,"Button",BS_AUTORADIOBUTTON,73,28,68,14
+    CONTROL         "Every week",IDC_EVERYWEEK,"Button",BS_AUTORADIOBUTTON,151,28,53,14
+    CONTROL         "Every",IDC_EVERYXDAYS,"Button",BS_AUTORADIOBUTTON,214,28,35,14
+    EDITTEXT        IDC_CUSTOM,251,28,30,14,ES_AUTOHSCROLL | ES_READONLY | ES_NUMBER
+    LTEXT           "Days",IDC_STATIC,287,28,17,14,SS_CENTERIMAGE
+    CONTROL         "",IDC_CUSTOMSPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,272,28,11,14
+    CONTROL         "PeerBlock",IDC_PEERBLOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,82,59,10
+    CONTROL         "Lists",IDC_LISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,84,82,30,10
+    GROUPBOX        "Schedule",IDC_STATIC,7,7,328,43
+    GROUPBOX        "Update",IDC_STATIC,7,58,328,41
+    GROUPBOX        "Recommendation",IDC_STATIC,7,131,328,48
+    LTEXT           "Text to long, so -> IDS_STARTUP_UPDATES",IDC_RECOMMEND,14,142,312,34
+    LTEXT           "To continue, click Next.",IDC_STATIC,198,205,76,8
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 277, 180
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "About PeerBlock"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,220,159,50,14
+    PUSHBUTTON      "Launch &Homepage",IDC_HOMEPAGE,7,159,75,14
+    PUSHBUTTON      "Launch &Forums",IDC_FORUMS,87,159,66,14
+    EDITTEXT        IDC_LICENSE,7,7,263,146,ES_MULTILINE | ES_READONLY | WS_VSCROLL
+END
+
+IDD_EDITLIST DIALOGEX 0, 0, 295, 139
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit List"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,184,118,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,238,118,50,14
+    CONTROL         "File:",IDC_ADDFILE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,55,31,14
+    EDITTEXT        IDC_FILE,51,55,175,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Browse",IDC_BROWSE,231,55,50,14
+    CONTROL         "URL:",IDC_ADDURL,"Button",BS_AUTORADIOBUTTON,15,74,31,14
+    CONTROL         "Block",IDC_BLOCK,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,114,32,10
+    CONTROL         "Allow",IDC_ALLOW,"Button",BS_AUTORADIOBUTTON,59,114,33,10
+    GROUPBOX        "Type",IDC_STATIC,7,100,93,32
+    GROUPBOX        "Description",IDC_STATIC,7,7,281,32
+    EDITTEXT        IDC_DESCRIPTION,14,17,267,14,ES_AUTOHSCROLL
+    GROUPBOX        "Location",IDC_STATIC,7,45,281,50
+    COMBOBOX        IDC_URL,51,74,230,87,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_LIST DIALOGEX 0, 0, 372, 206
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "List"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,24,358,156
+    PUSHBUTTON      "&Cancel",IDCANCEL,315,185,50,14
+    PUSHBUTTON      "&Save",IDOK,259,185,50,14
+    PUSHBUTTON      "&Add",IDC_ADD,7,185,50,14
+    PUSHBUTTON      "&Remove",IDC_REMOVE,63,185,50,14
+    EDITTEXT        IDC_SEARCH,37,7,122,14,ES_AUTOHSCROLL
+    LTEXT           "Search:",IDC_SEARCHTEXT,7,7,26,14,SS_CENTERIMAGE
+    DEFPUSHBUTTON   "Find &Next",IDC_NEXT,163,7,50,14
+END
+
+IDD_LOADING DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_DLGFRAME
+CAPTION "Loading..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",0x1,7,7,172,14
+END
+
+IDD_ADDLIST DIALOGEX 0, 0, 295, 139
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add List"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,184,118,50,14,WS_DISABLED
+    PUSHBUTTON      "Cancel",IDCANCEL,238,118,50,14
+    CONTROL         "Add File:",IDC_ADDFILE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,55,44,14
+    EDITTEXT        IDC_FILE,63,55,163,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Browse",IDC_BROWSE,231,55,50,14
+    CONTROL         "Add URL:",IDC_ADDURL,"Button",BS_AUTORADIOBUTTON,15,74,46,14
+    CONTROL         "Block",IDC_BLOCK,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,17,114,32,10
+    CONTROL         "Allow",IDC_ALLOW,"Button",BS_AUTORADIOBUTTON,59,114,33,10
+    GROUPBOX        "Type",IDC_STATIC,7,100,93,32
+    GROUPBOX        "Description",IDC_STATIC,7,7,281,32
+    EDITTEXT        IDC_DESCRIPTION,14,17,267,14,ES_AUTOHSCROLL
+    GROUPBOX        "Location",IDC_STATIC,7,45,281,50
+    COMBOBOX        IDC_URL,63,74,218,87,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_HISTORY DIALOGEX 0, 0, 474, 251
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "History"
+MENU IDR_HISTORYMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TABS,"SysTabControl32",0x0,5,5,317,241
+    PUSHBUTTON      "&Today",IDC_TODAY,341,118,50,14
+    PUSHBUTTON      "&Close",IDCLOSE,407,118,50,14
+    CONTROL         "",IDC_CALTABS,"SysTabControl32",0x0,330,5,139,108
+END
+
+IDD_HISTORY_EXPORT DIALOGEX 0, 0, 298, 135
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Export History"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,187,114,50,14,WS_DISABLED
+    PUSHBUTTON      "Cancel",IDCANCEL,241,114,50,14
+    GROUPBOX        "Criteria",IDC_STATIC,7,7,284,56
+    GROUPBOX        "Output File",IDC_STATIC,7,72,284,32
+    EDITTEXT        IDC_FILE,14,83,215,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Browse",IDC_BROWSE,233,83,50,14
+    CONTROL         "From",IDC_FROM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,19,42,15
+    CONTROL         "",IDC_FROMDATE,"SysDateTimePick32",DTS_RIGHTALIGN | WS_DISABLED | WS_TABSTOP,65,19,69,15
+    CONTROL         "To",IDC_TO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,163,19,42,15
+    CONTROL         "",IDC_TODATE,"SysDateTimePick32",DTS_RIGHTALIGN | WS_DISABLED | WS_TABSTOP,215,19,69,15
+    CONTROL         "Protocol",IDC_PROTOCOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,42,42,12
+    COMBOBOX        IDC_PROTOCOLLIST,65,42,69,87,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Action",IDC_ACTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,163,42,42,12
+    COMBOBOX        IDC_ACTIONLIST,215,42,69,87,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_HISTORY_CALENDAR DIALOGEX 0, 0, 140, 100
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_CALENDAR,"SysMonthCal32",MCS_DAYSTATE | WS_TABSTOP,0,0,140,100
+END
+
+IDD_HISTORY_FIND DIALOGEX 0, 0, 153, 164
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "From",IDC_FROM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,67,56,15
+    CONTROL         "",IDC_FROMDATE,"SysDateTimePick32",DTS_RIGHTALIGN | WS_DISABLED | WS_TABSTOP,64,67,84,15
+    CONTROL         "To",IDC_TO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,88,56,15
+    CONTROL         "",IDC_TODATE,"SysDateTimePick32",DTS_RIGHTALIGN | WS_DISABLED | WS_TABSTOP,64,88,84,15
+    CONTROL         "Protocol",IDC_PROTOCOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,109,56,12
+    COMBOBOX        IDC_PROTOCOLLIST,64,109,84,87,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Action",IDC_ACTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,127,56,12
+    COMBOBOX        IDC_ACTIONLIST,64,127,84,87,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Organization",IDC_RANGE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,5,56,14
+    EDITTEXT        IDC_RANGENAME,64,5,84,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "Source",IDC_SOURCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,25,56,15
+    CONTROL         "",IDC_SOURCEIP,"SysIPAddress32",WS_TABSTOP,64,25,84,15
+    CONTROL         "Destination",IDC_DEST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,46,56,15
+    CONTROL         "",IDC_DESTIP,"SysIPAddress32",WS_TABSTOP,64,46,84,15
+    PUSHBUTTON      "&Search",IDC_FIND,98,145,50,14
+END
+
+IDD_SETTINGS_FIRST DIALOGEX 0, 0, 343, 181
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Log Window",IDC_STATIC,5,5,333,69
+    LTEXT           "Log:",IDC_STATIC,13,17,15,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_LOGSIZE,32,17,36,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_LOGSIZESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,61,17,10,14
+    LTEXT           "Lines",IDC_STATIC,76,17,17,14,SS_CENTERIMAGE
+    CONTROL         "Show allowed connections",IDC_SHOWALLOWED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,119,17,99,14
+    CONTROL         "Color code log window",IDC_COLORCODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,243,17,87,14
+    LTEXT           "Allowed:",IDC_STATIC,13,37,28,8
+    LTEXT           "Blocked:",IDC_STATIC,106,38,28,8
+    LTEXT           "Blocked HTTP:",IDC_STATIC,207,38,46,8
+    GROUPBOX        "History",IDC_STATIC,5,78,333,51
+    COMBOBOX        IDC_CLEANUP,149,89,95,87,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Every",IDC_STATIC,251,88,20,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_CLEANUPTIME,275,88,30,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "",IDC_CLEANUPTIMESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,301,88,11,14
+    LTEXT           "Days",IDC_STATIC,313,88,17,14,SS_CENTERIMAGE
+    LTEXT           "Archive to:",IDC_STATIC,15,108,36,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_ARCHIVETO,57,108,107,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "&Browse",IDC_BROWSE,169,108,50,14,WS_DISABLED
+    LTEXT           "History size",IDC_STATIC,230,108,50,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_MAXHISTORYSIZE,275,108,30,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "",IDC_MAXHISTORYSIZESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,301,108,11,14
+    LTEXT           "MB",IDC_STATIC,313,108,17,14,SS_CENTERIMAGE
+    GROUPBOX        "Notification",IDC_STATIC,5,134,333,31
+    CONTROL         "Notify On",IDC_NOTIFY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,145,45,12
+    COMBOBOX        IDC_NOTIFYON,61,145,68,73,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Blink tray icon",IDC_BLINKTRAY,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,153,145,60,12
+//	PUSHBUTTON      "Port settings", IDC_EDITPORTS,223,144,60,14,WS_TABSTOP
+    CONTROL         "Display notification window",IDC_NOTIFYWINDOW,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,225,145,102,12
+    LTEXT           "Text:",IDC_STATIC,19,47,18,8
+    LTEXT           "Background:",IDC_STATIC,19,58,41,8
+    LTEXT           "Text:",IDC_STATIC,113,47,18,8
+    LTEXT           "Background:",IDC_STATIC,113,58,41,8
+    LTEXT           "Text:",IDC_STATIC,215,47,18,8
+    LTEXT           "Background:",IDC_STATIC,215,58,41,8
+    CONTROL         "Custom1",IDC_ATEXT,"PB_ColorPicker",WS_TABSTOP,67,47,22,8,WS_EX_CLIENTEDGE
+    CONTROL         "Custom1",IDC_ABG,"PB_ColorPicker",WS_TABSTOP,67,58,22,8,WS_EX_CLIENTEDGE
+    CONTROL         "Custom1",IDC_BTEXT,"PB_ColorPicker",WS_TABSTOP,161,47,22,8,WS_EX_CLIENTEDGE
+    CONTROL         "Custom1",IDC_BBG,"PB_ColorPicker",WS_TABSTOP,161,58,22,8,WS_EX_CLIENTEDGE
+    CONTROL         "Custom1",IDC_HTTPTEXT,"PB_ColorPicker",WS_TABSTOP,263,47,22,8,WS_EX_CLIENTEDGE
+    CONTROL         "Custom1",IDC_HTTPBG,"PB_ColorPicker",WS_TABSTOP,263,58,22,8,WS_EX_CLIENTEDGE
+    COMBOBOX        IDC_LOGALLOWED,12,89,104,87,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_SETTINGS_SECOND DIALOGEX 0, 0, 343, 181
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Startup",IDC_STATIC,5,5,333,28
+    CONTROL         "Start with Windows",IDC_STARTWITHWINDOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,16,78,10
+    CONTROL         "Always start hidden",IDC_STARTMINIMIZED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,16,79,10
+    CONTROL         "Show splash",IDC_SHOWSPLASH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,214,16,55,10
+    GROUPBOX        "Updates",IDC_STATIC,5,42,333,75
+    CONTROL         "Check PeerBlock",IDC_CHECKPB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,53,81,14
+    CONTROL         "Check Lists",IDC_CHECKLISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,106,53,51,14
+    CONTROL         "Auto-update every",IDC_AUTOUPDATE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,198,53,77,14
+    EDITTEXT        IDC_AUTOUPDATETIME,278,53,28,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "",IDC_AUTOUPDATETIMESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,301,53,10,14
+    LTEXT           "Days",IDC_STATIC,313,53,17,14,SS_CENTERIMAGE
+    CONTROL         "Use proxy:",IDC_USEPROXY,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,76,51,10
+    EDITTEXT        IDC_PROXYHOST,67,75,129,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Type:",IDC_STATIC,221,75,20,14,SS_CENTERIMAGE
+    CONTROL         "HTTP",IDC_HTTP,"Button",BS_AUTORADIOBUTTON | WS_DISABLED | WS_GROUP,249,75,33,14
+    CONTROL         "Socks5",IDC_SOCKS5,"Button",BS_AUTORADIOBUTTON | WS_DISABLED,291,75,38,14
+    CONTROL         "Auto-close update window after",IDC_AUTOCLOSE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,96,119,14
+    EDITTEXT        IDC_AUTOCLOSETIME,137,96,27,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "",IDC_AUTOCLOSETIMESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,157,97,10,14
+    LTEXT           "Seconds",IDC_STATIC,171,96,29,14,SS_CENTERIMAGE
+	CONTROL			"Update at startup", IDC_UPDATE_AT_STARTUP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 217 , 96, 119, 14
+    GROUPBOX        "Miscellaneous",IDC_STATIC,5,123,333,28
+    CONTROL         "Always hide tray icon",IDC_HIDETRAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,135,84,10
+    CONTROL         "Minimize to tray on close",IDC_HIDEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,135,94,10
+    CONTROL         "Keep PeerBlock on top",IDC_ONTOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,226,135,100,10
+END
+
+IDD_EDITPORTS DIALOGEX 0, 0, 344, 213
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Edit Ports"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Default Ports (applies to all profiles)", IDC_DEFGROUP, 6, 2, 332, 74
+    AUTOCHECKBOX    "80, 443 (HTTP, HTTPS - web traffic)", IDC_HTTPPORT, 13, 15, 200, 10
+    AUTOCHECKBOX    "21 (FTP - FTP transfer)", IDC_FTPPORT, 13, 30, 200, 10
+    AUTOCHECKBOX    "25 (SMTP - outgoing mail)", IDC_SMTPPORT, 13, 45, 200, 10
+    AUTOCHECKBOX    "110 (POP3 - incoming mail)", IDC_POP3PORT, 13, 60, 200, 10
+    CONTROL         "",IDC_PORTS,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,82,334,98
+    PUSHBUTTON      "&Add",IDC_ADD,178,194,50,14
+    PUSHBUTTON      "&Edit",IDC_EDIT,233,194,50,14,WS_DISABLED
+	PUSHBUTTON      "Remove",IDC_REMOVE,289,194,50,14,WS_DISABLED
+END
+
+IDD_PORTPROFILE DIALOGEX 0, 0, 250, 300
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU 
+CAPTION "Port Profile"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Name:",IDC_STATIC,5,5,50,8
+	EDITTEXT        IDC_PORTNAME,5,14,240,14,ES_AUTOHSCROLL
+    LTEXT           "Ports (one entry per line):",IDC_STATIC,5,32,100,8
+	EDITTEXT        IDC_PORTPORTS,5,45,240,230,ES_MULTILINE | ES_WANTRETURN
+	
+    PUSHBUTTON      "&OK",IDOK,140,280,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,195,280,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 351
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_LOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 335
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 146
+    END
+
+    IDD_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 338
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 200
+    END
+
+    IDD_LISTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 339
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 193
+    END
+
+    IDD_CREATELIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    IDD_UPDATELISTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 263
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 180
+    END
+
+    IDD_SPLASH, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 162
+    END
+
+    IDD_STARTUP_LAST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        VERTGUIDE, 103
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 235
+        HORZGUIDE, 42
+        HORZGUIDE, 227
+    END
+
+    IDD_STARTUP_FIRST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        VERTGUIDE, 103
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 235
+        HORZGUIDE, 42
+        HORZGUIDE, 129
+        HORZGUIDE, 227
+    END
+
+    IDD_STARTUP_LISTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        VERTGUIDE, 85
+        VERTGUIDE, 90
+        VERTGUIDE, 103
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 204
+    END
+
+    IDD_STARTUP_UPDATES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        VERTGUIDE, 103
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 204
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 173
+    END
+
+    IDD_EDITLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_LIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 365
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 199
+    END
+
+    IDD_LOADING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_ADDLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 132
+    END
+
+    IDD_HISTORY, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 469
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 246
+    END
+
+    IDD_HISTORY_EXPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 291
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+
+    IDD_HISTORY_FIND, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 148
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_SETTINGS_FIRST, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 338
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_SETTINGS_SECOND, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 338
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 176
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION PB_VER_MAJOR,PB_VER_MINOR,PB_VER_BUGFIX,PB_VER_BUILDNUM
+ PRODUCTVERSION PB_VER_MAJOR,PB_VER_MINOR,PB_VER_BUGFIX,PB_VER_BUILDNUM
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "http://www.peerblock.com"
+            VALUE "CompanyName", "PeerBlock, LLC"
+            VALUE "FileDescription", "PeerBlock"
+            VALUE "FileVersion", MAKE_STR(PB_VER_MAJOR) ", " MAKE_STR(PB_VER_MINOR) ", " MAKE_STR(PB_VER_BUGFIX) ", " MAKE_STR(PB_VER_BUILDNUM)
+            VALUE "InternalName", "PeerBlock"
+            VALUE "LegalCopyright", "Copyright (C) 2009-2010 PeerBlock, LLC"
+            VALUE "OriginalFilename", "peerblock.exe"
+            VALUE "ProductName", "PeerBlock"
+            VALUE "ProductVersion", MAKE_STR(PB_VER_MAJOR) ", " MAKE_STR(PB_VER_MINOR) ", " MAKE_STR(PB_VER_BUGFIX) ", " MAKE_STR(PB_VER_BUILDNUM)
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON                    "pb.ico"
+IDI_DISABLED            ICON                    "pb_disabled.ico"
+IDI_HTTPDISABLED        ICON                    "pb_httpdisabled.ico" 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_TRAYMENU MENU 
+BEGIN
+    POPUP "&Tray"
+    BEGIN
+        MENUITEM "&PeerBlock",                  ID_TRAY_PEERBLOCK, CHECKED
+        MENUITEM SEPARATOR
+        MENUITEM "&Enabled",                    ID_TRAY_ENABLED, CHECKED
+        MENUITEM "&Disabled",                   ID_TRAY_DISABLED
+        MENUITEM SEPARATOR
+        MENUITEM "&Allow HTTP",                 ID_TRAY_BLOCKHTTP
+        MENUITEM "Allow HTTP for 15 min",       ID_TRAY_TEMPALLOWHTTP15
+        MENUITEM "Allow HTTP for 60 min",       ID_TRAY_TEMPALLOWHTTP60
+        MENUITEM SEPARATOR
+        MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
+        MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
+        MENUITEM SEPARATOR
+        MENUITEM "&Help",						ID_TRAY_HELP
+        MENUITEM "&Support",					ID_TRAY_SUPPORT
+        MENUITEM "&About",                      ID_TRAY_ABOUT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_TRAY_EXIT
+    END
+END
+
+IDR_LISTSCONTEXT MENU 
+BEGIN
+    POPUP "Context"
+    BEGIN
+        MENUITEM "E&xport to...",               ID_CONTEXT_EXPORTTO
+        MENUITEM SEPARATOR
+        MENUITEM "&Remove",                     IDC_REMOVE
+    END
+END
+
+IDR_LISTCONTEXT MENU 
+BEGIN
+    POPUP "Context"
+    BEGIN
+        MENUITEM "Allow for 15 &minutes",       ID_CONTEXT_ALLOWFOR15MINUTES
+        MENUITEM "Allow for one &hour",         ID_CONTEXT_ALLOWFORONEHOUR
+        MENUITEM "&Allow permanently",          ID_CONTEXT_ALLOWPERMANENTLY
+    END
+END
+
+IDR_HISTORYMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Export to...",               ID_FILE_EXPORTTO
+        MENUITEM SEPARATOR
+        MENUITEM "C&lear Database",             ID_FILE_CLEARDATABASE
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      ID_FILE_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// BINARY
+//
+
+IDR_SPLASH              BINARY                  "splash_logo.jpg"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXT
+//
+
+IDR_LICENSE             TEXT                    "about.txt"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_EXCEPTION           "Exception Occurred"
+    IDS_LOG                 "Protection"
+    IDS_SETTINGS            "Settings"
+    IDS_TIME                "Time"
+    IDS_RANGE               "Range"
+    IDS_SOURCE              "Source"
+    IDS_DESTINATION         "Destination"
+    IDS_BLOCK               "Block"
+    IDS_ALLOW               "Allow"
+    IDS_FILE                "File"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TYPE                "Type"
+    IDS_DESCRIPTION         "Description"
+    IDS_LISTSNOTUPDATED     "Lists haven't been updated"
+    IDS_DONEUPDATING        "Done Updating"
+    IDS_STARTUPWIZ          "PeerBlock Startup Wizard"
+    IDS_SELECTLISTS         "Select Lists"
+    IDS_SELECTLISTSSUB      "What type of ranges do you want blocked?"
+    IDS_CUSTOMIZELISTS      "Customize Lists"
+    IDS_CUSTOMIZELISTSSUB   "Add any custom lists you want PeerBlock to use."
+    IDS_AUTOUPDATES         "Automatic Updates"
+    IDS_AUTOUPDATESSUB      "Use Automatic Updates to assure you're always using the latest protection."
+    IDS_PBACTIVE            "Blocking %1% IPs"
+    IDS_PBDISABLED          "PeerBlock is Disabled"
+    IDS_UPDATEPB            "PeerBlock Update"
+    IDS_UPDATINGLISTS       "Updating Lists..."
+    IDS_LISTSUPTODATE       "Last Updated %1%"
+    IDS_PGALREADYRUNNING    "PeerGuardian2 is already running!"
+    IDS_PGALREADYRUNNINGTEXT	"PeerGuardian2 is currently running on your system.  Running both PG2 and PeerBlock at the same time is not supported, and is really just a bad idea in general.  Please close PeerGuardian2 and run PeerBlock again."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LISTSNOTUPTODATE    "Lists haven't been updated in %1% days"
+    IDS_ALLOWXFOR15MIN      "Allow %1% for 15 minutes"
+    IDS_ALLOWXPERM          "Allow %1% permanently"
+    IDS_STARTIP             "Starting IP"
+    IDS_ENDIP               "Ending IP"
+    IDS_CLOSE               "&Close"
+    IDS_PBOPEN              "PeerBlock"
+    IDS_PBOPENTEXT          "An instance of PeerBlock or PeerGuardian is already open, please close it before opening another one."
+    IDS_P2P                 "P2P"
+    IDS_ADS                 "Ads"
+    IDS_SPY                 "Spyware"
+    IDS_EDU                 "Educational"
+    IDS_COPYXTOCLIPBOARD    "Copy %1% to clipboard"
+    IDS_INVALIDAPPID        "Error: Invalid Application ID received"
+    IDS_ERROR               "Error: %1%"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATEAVAILABLE     "Update available, see http://www.peerblock.com"
+    IDS_ALLOWXFORONEHOUR    "Allow %1% for one hour"
+    IDS_DOWNLOADINGPCNT     "Downloading - %1%%%"
+    IDS_PERMALLOWS          "Permanent Allows"
+    IDS_STATISTICS          "Statistics"
+    IDS_TOTALBLOCKED        "Total Blocked: %1%"
+    IDS_BLOCKSPERDAY        "Blocks per Day: %1%"
+    IDS_BLOCKSPERHOUR       "Blocks per Hour: %1%"
+    IDS_ERRORCONTACTING     "Error contacting URL"
+    IDS_CLEARLOG            "Clear Log"
+    IDS_NEEDUPDATE          "Need Update"
+    IDS_OPEN                "&View..."
+    IDS_EDIT                "&Edit..."
+    IDS_NEEDUPDATETEXT      "Some lists were not found.\r\nFor your best protection, you should perform an update."
+    IDS_FILENOTFOUND        "File not found"
+    IDS_FILENOTFOUNDTEXT    "Unable to open the list at ""%1%"""
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_BLOCKED             "Blocked"
+    IDS_ALLOWED             "Allowed"
+    IDS_HTTPERROR           "Update Error"
+    IDS_HTTPERRORTEXT       "An error occurred while contacting the server.\r\n(code: %1%)"
+    IDS_MAKESTATIC          "Make &static..."
+    IDS_REMOVE              "Remove"
+    IDS_MAKESTATICTEXT      "Making a list static will save it to a local file on your computer.  This will allow you to edit it, but you will no longer be able to receive updates for it.\r\nDo you want to continue?"
+    IDS_WARNING             "Warning"
+    IDS_NEEDADMINTEXT       "PeerBlock requires Administrator privileges to run."
+    IDS_NEEDADMIN           "Administrator privileges required"
+    IDS_INVALIDURL          "Invalid URL"
+    IDS_INVALIDURLTEXT      "The given URL is not valid.  Did you forget a http:// ?"
+    IDS_UNCAUGHTTEXT        "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_UNCAUGHT            "Uncaught exception"
+    IDS_PBUPDATE            "Update Available"
+    IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ACTION              "Action"
+    IDS_PROTOCOL            "Protocol"
+    IDS_ALL                 "All"
+    IDS_HTTPIS              "HTTP is %1%"
+    IDS_UPDATESTATUS        "%1% Lists: %2% up-to-date - %3% failed updating - %4% disabled"
+    IDS_DISABLE             "Disable"
+    IDS_ENABLE              "Enable"
+    IDS_BLOCKHTTP           "Block HTTP"
+    IDS_ALLOWHTTP           "Allow HTTP"
+    IDS_STARTUP_LAST        "Lastly, we recommend that you read the PeerBlock manual to get acquainted with the subtleties and tweaks available.  Always remember: the best way to protect your privacy on P2P is to not use it at all!  While PeerBlock will provide a lot of protection, the lists are not 100% foolproof and should not be treated as such."
+    IDS_STARTUP_LISTS       "The selection of lists depends on your personal preference.  If you're only using P2P software, the P2P list should be sufficient.  We recommend that you block HTTP and manually allow sites of interest.  You will be able to change these settings later in the List Manager."
+    IDS_STARTUP_OPTIMIZATION 
+                            "If you can live with some ranges collapsing, aggressive mode will lower memory and CPU usage.  It may, however, cause incorrect range names to be reported in the log.  We recommend normal optimization until you get familiar with how it works.  You will be able to change these settings later, in the Settings tab."
+    IDS_STARTUP_UPDATES     "We recommend that you check both PeerBlock and lists for updates at least every other day to ensure you have the latest protection.  Lists will only be downloaded if changes are detected, so it won't use up much bandwidth.  You will be able to change these settings later in the Settings tab."
+    IDS_HTTPBLOCKS          "HTTP Blocks"
+    IDS_ALLBLOCKS           "All Blocks"
+    IDS_GENCACHE            "Generating List Cache..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONNECTING          "Connecting..."
+    IDS_NOUPDATENEEDED      "No update needed"
+    IDS_FINISHED            "Finished"
+    IDS_NOUPDATEAVAIL       "No update available"
+    IDS_TASK                "Task"
+    IDS_STATUS              "Status"
+    IDS_DOWNLOADING         "Downloading"
+    IDS_NONEAVAILABLE       "None available"
+    IDS_VERIFYING			"Verifying"
+    IDS_ABORTED             "Aborted"
+    IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
+    IDS_UNEXPCONTACTINGWHY  "Unexpected Response Contacting URL: %1%"
+	IDS_DNLISTFAILEDVERIFY  "List verification failed: 0 elements"
+    IDS_CLOSEX              "&Close - %1%"
+    IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerBlock to bring it back."
+    IDS_HIDING              "Hiding PeerBlock"
+    IDS_EXPORTING           "Exporting History..."
+    IDS_BLOCKXFOR15MIN      "Block %1% for 15 minutes"
+    IDS_BLOCKXFORONEHOUR    "Block %1% for one hour"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_BLOCKXPERM          "Block %1% permanently"
+    IDS_PERMBLOCKS          "Permanent Blocks"
+    IDS_CLEARDBTEXT         "This will clear your entire history database.  Do you want to proceed?"
+    IDS_CLEARDB             "Clearing Database"
+    IDS_ERRFILEOPEN         "Error: unable to open temp file"
+    IDS_ERRCURL             "Error: unable to create Curl handle"
+    IDS_BADBACKUPTEXT       "Invalid backup, no recovery data found!"
+    IDS_BADBACKUP           "Could not restore"
+    IDS_RESTOREBACKUPTEXT   "Restoring a backup will delete your current database.\r\nDo you want to continue?"
+    IDS_RESTOREBACKUP       "Restore Backup"
+    IDS_RESTORING           "Restoring Backup..."
+    IDS_BACKINGUP           "Backing up..."
+    IDS_EXCEPTIONTEXT       "An exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_SEARCH              "Search"
+    IDS_CALENDAR            "Calendar"
+    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_HISTORYERR          "History Error"
+    IDS_HISTORYOPEN         "Unable to open history database!\r\nHistory and logging are *DISABLED*"
+    IDS_ARCHIVEREMOVE       "Archive & Remove"
+    IDS_DONOTHING           "Do Nothing"
+    IDS_INVALIDFILETEXT     "The given path does not exist!"
+    IDS_INVALIDFILE         "Invalid Path"
+    IDS_LISTERR             "List Error"
+    IDS_LISTERRTEXT         "PeerBlock is unable to load the list at:\r\n%1%\r\n\r\nThis could be due to an invalid/unrecognized format, or corruption when downloading.\r\n\r\n%2%\r\n%3%"
+    IDS_DRIVERERR           "Driver Error"
+    IDS_DRIVERERRTEXT       "PeerBlock is unable to load the packet filtering driver.\r\nThis could happen if PeerBlock crashed and didn't have a chance to unload the driver, or if the file pbfilter.sys can't be found.\r\n\r\n%1%\r\n%2%"
+    IDS_FILEOPENERR         "Unable to open file"
+    IDS_FILEOPENERRTEXT     "Unable to open the file at:\r\n%1%\r\n\r\nCheck to make sure you have permissions to write to that location."
+    IDS_NEEDSVCSERR         "Required services not running"
+	IDS_NEEDSVCSERRTEXT     "One or more of the following Windows Services are not running:\r\n\r\nBase Filtering Engine\r\nIPsec Policy Agent\r\nIKE and AuthIP IPsec Keyring Modules\r\n\r\nPlease verify that these Windows Services have not been disabled, and are running.\r\n\r\nSee http://www.peerblock.com/required-services for more information."
+    IDS_CONFERR             "Configuration File Error"
+    IDS_CONFERRTEXT         "The PeerBlock configuration file is missing or corrupt.\r\n\r\nPeerBlock will use the last known good configuration file, but any recent changes you made may be lost.  You should check the settings panel to make sure they are correct."
+    IDS_LOGALLOWED          "Log Allowed"
+    IDS_LOGBLOCKED          "Log Blocked"
+    IDS_LOGBOTH             "Log Allowed & Blocked"
+    IDS_LOGNONE             "Log None"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%"
+    IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
+    IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
+	IDS_EXITWHILEBLOCKING	"Are you sure you want to exit PeerBlock?"
+	IDS_EXITWHILEBLOCKINGTEXT	"PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting PeerBlock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
+END
+
+// List sanity-checking messages
+STRINGTABLE 
+BEGIN
+	IDS_LISTSAN_TITLE		"List URL Problem Detected"
+	IDS_LISTSAN_UNFRIENDLY	"PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iBlocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
+	IDS_LISTSAN_NOTIBL		"This URL is not hosted by iblocklist.com.  The PeerBlock team strongly recommends iblocklist.com URLs as they tend to be both faster and much more reliable than other potential URLs.\r\n\r\nAllow PeerBlock to update this list's URL to an iblocklist.com hosted one?"
+	IDS_LISTSAN_WRONG		"This URL is not a valid list.  Did you use the ""List Description"" link from iblocklist.com instead of the ""Update URL"" link?\r\n\r\nPeerBlock will update this list's URL to a correct one."
+	IDS_LISTSAN_DEFAULT		"This URL refers to one of the Default Lists: ""%1%"".\r\n\r\nPeerBlock is activating that list instead of adding this new one."
+	IDS_LISTSAN_DEFAULT_NIBL	"This URL refers to one of the Default Lists: ""%1%"", and is a non-iblocklist.com hosted URL.\r\n\r\nAllow PeerBlock to activate that Default List using its standard URL instead of this new one?"
+	IDS_LISTSAN_EXACTDUPE	"This list URL has already been added to PeerBlock.  To prevent problems while updating lists, multiple instances of the same URL is disallowed.\r\n\r\nPeerBlock will ignore this new URL."
+	IDS_LISTSAN_DEFDUPE		"The list ""%1%"" has already been added, as one of the Default Lists.\r\n\r\nTo prevent problems while updating lists, multiple URLs for the same list is strongly not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
+	IDS_LISTSAN_DIFFDUPE	"The list ""%1%"" has already been added, under a different URL.  To prevent problems while updating lists, multiple URLs for the same list is not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_PREVREL				"Updating PeerBlock"
+    IDS_PREVREL268TEXT		"PeerBlock now makes use of new ""friendly"" names for iBlocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than Bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
+    IDS_PREVREL341TEXT_DEL	"PeerBlock is updating your History settings to 'Remove every 7 days'.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
+    IDS_PREVREL341TEXT_MAX	"PeerBlock is updating your History settings to use a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change this option it is available on the Settings tab."
+    IDS_PREVREL341TEXT_BOTH	"PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
+    IDS_PREVREL411TEXT_WEBEX	"The Bluetack ""Webexploit-Forumspam"" list has been split into two separate lists by the list authors (Bluetack), and is no longer being updated.  PeerBlock is updating your config to use these two new lists instead of the old merged one."
+    IDS_PREVREL411TEXT_BOGON	"The CompleteWhois Bogon list has been abandoned by its list-author, and has not been updated since March 2009.  PeerBlock is updating your config to use the most frequently updated Bogon list, CIDR Bogon."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

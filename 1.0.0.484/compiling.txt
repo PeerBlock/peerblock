@@ -1,0 +1,14 @@
+Base PeerGuardian code copyright (C) 2004-2007 Cory Nelson
+PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+Based on the original work by Tim Leonard
+
+PeerBlock is available freely under a zlib License (license.txt).
+Please make sure you understand it well before messing with the included
+source.  Though not required, we would love to hear from you at the PeerBlock
+forums if you use it.
+
+
+Building
+---------
+See (http://www.peerblock.com/development/compiling) for detailed instructions
+on building PeerBlock.
