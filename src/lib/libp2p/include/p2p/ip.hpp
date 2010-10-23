@@ -25,24 +25,40 @@
 #include <ostream>
 
 namespace p2p {
-	struct ip {
-		union {
-			unsigned int ipl;
-			unsigned char ipb[4];
-		};
-
-		ip() : ipl(0) {}
-		ip(unsigned int ip) : ipl(ip) {}
-		bool operator<(const ip &ip) const { return this->ipl<ip.ipl; }
-		bool operator>(const ip &ip) const { return this->ipl>ip.ipl; }
-		bool operator<=(const ip &ip) const { return this->ipl<=ip.ipl; }
-		bool operator>=(const ip &ip) const { return this->ipl>=ip.ipl; }
-		bool operator==(const ip &ip) const { return this->ipl==ip.ipl; }
-		bool operator!=(const ip &ip) const { return this->ipl!=ip.ipl; }
-
-		ip operator+(unsigned int i) const { return this->ipl+i; }
-		ip operator-(unsigned int i) const { return this->ipl-i; }
+struct ip {
+	union {
+		unsigned int ipl;
+		unsigned char ipb[4];
 	};
+
+	ip() : ipl(0) {}
+	ip(unsigned int ip) : ipl(ip) {}
+	bool operator<(const ip &ip) const {
+		return this->ipl<ip.ipl;
+	}
+	bool operator>(const ip &ip) const {
+		return this->ipl>ip.ipl;
+	}
+	bool operator<=(const ip &ip) const {
+		return this->ipl<=ip.ipl;
+	}
+	bool operator>=(const ip &ip) const {
+		return this->ipl>=ip.ipl;
+	}
+	bool operator==(const ip &ip) const {
+		return this->ipl==ip.ipl;
+	}
+	bool operator!=(const ip &ip) const {
+		return this->ipl!=ip.ipl;
+	}
+
+	ip operator+(unsigned int i) const {
+		return this->ipl+i;
+	}
+	ip operator-(unsigned int i) const {
+		return this->ipl-i;
+	}
+};
 }
 
 #endif

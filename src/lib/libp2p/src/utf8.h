@@ -40,16 +40,16 @@ static wchar_t decode_utf8(InputIterator &iter) {
 	}
 	else if(((*iter)&0x20) == 0) {
 		ret=(
-			(((wchar_t)((*iter++)&0x1F)) << 6) |
-			((wchar_t)((*iter++)&0x3F))
-		);
+				(((wchar_t)((*iter++)&0x1F)) << 6) |
+				((wchar_t)((*iter++)&0x3F))
+			);
 	}
 	else if(((*iter)&0x10) == 0) {
 		ret=(
-			(((wchar_t)((*iter++)&0x0F)) << 12) |
-			(((wchar_t)((*iter++)&0x3F)) << 6) |
-			((wchar_t)((*iter++)&0x3F))
-		);
+				(((wchar_t)((*iter++)&0x0F)) << 12) |
+				(((wchar_t)((*iter++)&0x3F)) << 6) |
+				((wchar_t)((*iter++)&0x3F))
+			);
 	}
 	else throw utf8_error("utf-8 not convertable to utf-16");
 
@@ -71,34 +71,34 @@ static void encode_wchar(InputIterator iter, OutputIterator &dest) {
 	}
 	else if(*iter <= 0x07FF) {
 		*dest = (char)(
-			0xC0 |
-			((*iter & 0x07C0) >> 6)
-		);
+					0xC0 |
+					((*iter & 0x07C0) >> 6)
+				);
 		++dest;
 
 		*dest = (char)(
-			0x80 |
-			(*iter & 0x003F)
-		);
+					0x80 |
+					(*iter & 0x003F)
+				);
 		++dest;
 	}
 	else {
 		*dest = (char)(
-			0xE0 |
-			((*iter & 0xF000) >> 12)
-		);
+					0xE0 |
+					((*iter & 0xF000) >> 12)
+				);
 		++dest;
 
 		*dest = (char)(
-			0x80 |
-			((*iter & 0x0FC0) >> 6)
-		);
+					0x80 |
+					((*iter & 0x0FC0) >> 6)
+				);
 		++dest;
 
 		*dest = (char)(
-			0x80 |
-			(*iter & 0x003F)
-		);
+					0x80 |
+					(*iter & 0x003F)
+				);
 		++dest;
 	}
 }

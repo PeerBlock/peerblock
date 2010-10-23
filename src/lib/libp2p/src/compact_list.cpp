@@ -28,7 +28,9 @@ struct add_pred {
 	unsigned int res;
 
 	add_pred() : res(0) {}
-	void operator()(const range_type &r) { res+=r.second-r.first+1; }
+	void operator()(const range_type &r) {
+		res+=r.second-r.first+1;
+	}
 };
 
 inline static bool operator<(const range_type &left, const range_type &right) {
@@ -47,64 +49,64 @@ inline static bool mergepred(range_type &left, const range_type &right) {
 }
 
 namespace p2p {
-	compact_list::compact_list(const list &l) : _ranges(new range_type[l.size()]),_rangecount((int)l.size()) {
-		size_t i=0;
-		for(list::const_iterator iter=l.begin(); iter!=l.end(); iter++) {
-			range_type &r=_ranges[i++];
-			r.first=iter->start.ipl;
-			r.second=iter->end.ipl;
-		}
-
-		sort(_ranges.get(), _ranges.get()+_rangecount);
-		range_type *r=unique(_ranges.get(), _ranges.get()+_rangecount, mergepred);
-		_rangecount=(int)distance(_ranges.get(), r);
+compact_list::compact_list(const list &l) : _ranges(new range_type[l.size()]),_rangecount((int)l.size()) {
+	size_t i=0;
+	for(list::const_iterator iter=l.begin(); iter!=l.end(); iter++) {
+		range_type &r=_ranges[i++];
+		r.first=iter->start.ipl;
+		r.second=iter->end.ipl;
 	}
 
-	unsigned int compact_list::ip_count() const {
-		add_pred p;
-		for_each<range_type*,add_pred&>(_ranges.get(), _ranges.get()+_rangecount, p);
-		return p.res;
+	sort(_ranges.get(), _ranges.get()+_rangecount);
+	range_type *r=unique(_ranges.get(), _ranges.get()+_rangecount, mergepred);
+	_rangecount=(int)distance(_ranges.get(), r);
+}
+
+unsigned int compact_list::ip_count() const {
+	add_pred p;
+	for_each<range_type*,add_pred&>(_ranges.get(), _ranges.get()+_rangecount, p);
+	return p.res;
+}
+
+const compact_list::range_type *compact_list::operator()(const range &r) const {
+	int high=_rangecount, low=-1, probe;
+
+	while(high-low > 1) {
+		probe=(high+low)/2;
+		if(_ranges[probe].first>r.end.ipl)
+			high=probe;
+		else low=probe;
 	}
 
-	const compact_list::range_type *compact_list::operator()(const range &r) const {
-		int high=_rangecount, low=-1, probe;
+	if(low==-1 || _ranges[low].first>r.end.ipl || r.start.ipl>_ranges[low].second) return NULL;
+	else return &_ranges[low];
+}
 
-		while(high-low > 1) {
-			probe=(high+low)/2;
-			if(_ranges[probe].first>r.end.ipl)
-				high=probe;
-			else low=probe;
-		}
+const compact_list::range_type *compact_list::operator()(const range_type &r) const {
+	int high=_rangecount, low=-1, probe;
 
-		if(low==-1 || _ranges[low].first>r.end.ipl || r.start.ipl>_ranges[low].second) return NULL;
-		else return &_ranges[low];
+	while(high-low > 1) {
+		probe=(high+low)/2;
+		if(_ranges[probe].first>r.second)
+			high=probe;
+		else low=probe;
 	}
 
-	const compact_list::range_type *compact_list::operator()(const range_type &r) const {
-		int high=_rangecount, low=-1, probe;
+	if(low==-1 || _ranges[low].first>r.second || r.first>_ranges[low].second) return NULL;
+	else return &_ranges[low];
+}
 
-		while(high-low > 1) {
-			probe=(high+low)/2;
-			if(_ranges[probe].first>r.second)
-				high=probe;
-			else low=probe;
-		}
+const compact_list::range_type *compact_list::operator()(unsigned int ip) const {
+	int high=_rangecount, low=-1, probe;
 
-		if(low==-1 || _ranges[low].first>r.second || r.first>_ranges[low].second) return NULL;
-		else return &_ranges[low];
+	while(high-low > 1) {
+		probe=(high+low)/2;
+		if(_ranges[probe].first>ip)
+			high=probe;
+		else low=probe;
 	}
 
-	const compact_list::range_type *compact_list::operator()(unsigned int ip) const {
-		int high=_rangecount, low=-1, probe;
-
-		while(high-low > 1) {
-			probe=(high+low)/2;
-			if(_ranges[probe].first>ip)
-				high=probe;
-			else low=probe;
-		}
-
-		if(low==-1 || _ranges[low].first>ip || ip>_ranges[low].second) return NULL;
-		else return &_ranges[low];
-	}
+	if(low==-1 || _ranges[low].first>ip || ip>_ranges[low].second) return NULL;
+	else return &_ranges[low];
+}
 }

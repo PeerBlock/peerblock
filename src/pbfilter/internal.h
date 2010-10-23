@@ -58,16 +58,16 @@
 #pragma pack(push, 1)
 
 typedef struct __ip_header {
-	UCHAR		iphVerLen;		// Version and length 
-	UCHAR		ipTOS;			// Type of service 
-	USHORT		ipLength;		// Total datagram length 
-	USHORT		ipID;			// Identification 
+	UCHAR		iphVerLen;		// Version and length
+	UCHAR		ipTOS;			// Type of service
+	USHORT		ipLength;		// Total datagram length
+	USHORT		ipID;			// Identification
 	USHORT		ipFlags;		// Flags
-	UCHAR		ipTTL;			// Time to live 
-	UCHAR		ipProtocol;		// Protocol 
-	USHORT		ipChecksum;		// Header checksum 
-	ULONG		ipSource;		// Source address 
-	ULONG		ipDestination;	// Destination address 
+	UCHAR		ipTTL;			// Time to live
+	UCHAR		ipProtocol;		// Protocol
+	USHORT		ipChecksum;		// Header checksum
+	ULONG		ipSource;		// Source address
+	ULONG		ipDestination;	// Destination address
 } IP_HEADER;
 
 typedef struct __tcp_header {

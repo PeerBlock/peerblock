@@ -129,9 +129,9 @@ private:
 
 	inline static bool is_semiadjacent(const range &left, const range &right) {
 		return (
-			left.end.ipb[0]==255
-			&& left.end==right.start-2
-		);
+				   left.end.ipb[0]==255
+				   && left.end==right.start-2
+			   );
 	}
 
 public:
@@ -158,7 +158,7 @@ void list::optimize(bool aggressive) {
 static list::file_type get_file_type(list::istream_type &stream) {
 	char buf[6];
 	stream.read(buf, 6);
-	
+
 	stream.putback(buf[5]);
 	stream.putback(buf[4]);
 	stream.putback(buf[3]);
@@ -172,17 +172,17 @@ static list::file_type get_file_type(list::istream_type &stream) {
 
 void list::load(istream_type &stream, file_type type) {
 	switch(type) {
-		case file_auto:
-			this->load(stream, get_file_type(stream));
-			break;
-		case file_p2p:
-			this->_load_p2p(stream);
-			break;
-		case file_p2b:
-			this->_load_p2b(stream);
-			break;
-		default:
-			throw invalid_argument("invalid type");
+	case file_auto:
+		this->load(stream, get_file_type(stream));
+		break;
+	case file_p2p:
+		this->_load_p2p(stream);
+		break;
+	case file_p2b:
+		this->_load_p2b(stream);
+		break;
+	default:
+		throw invalid_argument("invalid type");
 	}
 }
 
@@ -208,17 +208,17 @@ void list::load(const path_type &file, file_type type) {
 void list::save(ostream_type &stream, file_type type) const {
 //	TRACEI("[list] [save]  > Entering routine.");
 	switch(type) {
-		case file_p2p:
+	case file_p2p:
 //			TRACEI("[list] [save]    saving p2p file.");
-			this->_save_p2p(stream);
-			break;
-		case file_p2b:
+		this->_save_p2p(stream);
+		break;
+	case file_p2b:
 //			TRACEI("[list] [save]    saving p2b file.");
-			this->_save_p2b(stream);
-			break;
-		default:
+		this->_save_p2b(stream);
+		break;
+	default:
 //			TRACEE("[list] [save]    ERROR: invalid type of file.");
-			throw invalid_argument("invalid type");
+		throw invalid_argument("invalid type");
 	}
 //	TRACEI("[list] [save]  < Leaving routine.");
 

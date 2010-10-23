@@ -25,10 +25,10 @@
 #include <stdexcept>
 
 namespace p2p {
-	class p2p_error : public std::runtime_error {
-	public:
-		p2p_error(const char *msg) : runtime_error(msg) {}
-	};
+class p2p_error : public std::runtime_error {
+public:
+	p2p_error(const char *msg) : runtime_error(msg) {}
+};
 }
 
 #endif

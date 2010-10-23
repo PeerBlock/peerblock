@@ -43,7 +43,7 @@ typedef union TAG_PBLISTNODE {
 	PBIRPNODE in;
 } PBLISTNODE;
 
-void InitNotificationQueue(NOTIFICATION_QUEUE *queue) 
+void InitNotificationQueue(NOTIFICATION_QUEUE *queue)
 {
 	DbgPrint("pbfilter:  > Entering InitNotificationQueue()\n");
 	InitializeListHead(&queue->irp_list);
@@ -54,22 +54,22 @@ void InitNotificationQueue(NOTIFICATION_QUEUE *queue)
 	DbgPrint("pbfilter:  < Leaving InitNotificationQueue()\n");
 }
 
-void DestroyNotificationQueue(NOTIFICATION_QUEUE *queue) 
+void DestroyNotificationQueue(NOTIFICATION_QUEUE *queue)
 {
 	DbgPrint("pbfilter:  > Entering DestroyNotificationQueue()\n");
 
 	DbgPrint("pbfilter:    freeing notification-list\n");
-	while(!IsListEmpty(&queue->notification_list)) 
+	while(!IsListEmpty(&queue->notification_list))
 	{
 		PBNOTIFYNODE *notifynode = (PBNOTIFYNODE*)RemoveHeadList(&queue->notification_list);
 		ExFreeToNPagedLookasideList(&queue->lookaside, notifynode);
 	}
 
 	DbgPrint("pbfilter:    freeing irp-list\n");
-	while(!IsListEmpty(&queue->irp_list)) 
+	while(!IsListEmpty(&queue->irp_list))
 	{
 		PBIRPNODE *irpnode = (PBIRPNODE*)RemoveHeadList(&queue->irp_list);
-		
+
 		irpnode->irp->IoStatus.Status = STATUS_CANCELLED;
 		irpnode->irp->IoStatus.Information = 0;
 
@@ -83,20 +83,20 @@ void DestroyNotificationQueue(NOTIFICATION_QUEUE *queue)
 	DbgPrint("pbfilter:  < Leaving DestroyNotificationQueue()\n");
 }
 
-void Notification_Send(NOTIFICATION_QUEUE *queue, const PBNOTIFICATION *notification) 
+void Notification_Send(NOTIFICATION_QUEUE *queue, const PBNOTIFICATION *notification)
 {
 	KIRQL irq;
 
 	KeAcquireSpinLock(&queue->lock, &irq);
 
-	if(IsListEmpty(&queue->irp_list)) 
+	if(IsListEmpty(&queue->irp_list))
 	{
-		if(queue->queued < 64) 
+		if(queue->queued < 64)
 		{
 			PBNOTIFYNODE *notifynode;
 
 			notifynode = ExAllocateFromNPagedLookasideList(&queue->lookaside);
-			
+
 			InitializeListHead(&notifynode->entry);
 			RtlCopyMemory(&notifynode->notification, notification, sizeof(PBNOTIFICATION));
 
@@ -106,7 +106,7 @@ void Notification_Send(NOTIFICATION_QUEUE *queue, const PBNOTIFICATION *notifica
 
 		KeReleaseSpinLock(&queue->lock, irq);
 	}
-	else 
+	else
 	{
 		PBIRPNODE *irpnode = (PBIRPNODE*)RemoveHeadList(&queue->irp_list);
 		PBNOTIFICATION *irpnotification = irpnode->irp->AssociatedIrp.SystemBuffer;
@@ -126,7 +126,7 @@ void Notification_Send(NOTIFICATION_QUEUE *queue, const PBNOTIFICATION *notifica
 	}
 }
 
-static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp) 
+static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp)
 {
 	KIRQL irq;
 	NOTIFICATION_QUEUE *queue = &((PBINTERNAL*)device->DeviceExtension)->queue;
@@ -136,10 +136,10 @@ static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp)
 	DbgPrint("pbfilter:    Canceling IRP...\n");
 
 	KeAcquireSpinLock(&queue->lock, &irq);
-	for(iter = queue->irp_list.Flink; iter != &queue->irp_list; iter = iter->Flink) 
+	for(iter = queue->irp_list.Flink; iter != &queue->irp_list; iter = iter->Flink)
 	{
 		PBIRPNODE *irpnode = (PBIRPNODE*)iter;
-		if(irpnode->irp == irp) 
+		if(irpnode->irp == irp)
 		{
 			RemoveEntryList(iter);
 			ExFreeToNPagedLookasideList(&queue->lookaside, irpnode);
@@ -150,7 +150,7 @@ static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp)
 	KeReleaseSpinLock(&queue->lock, irq);
 
 	// if it wasn't found, it has already been dequeued and handled.
-	if(found) 
+	if(found)
 	{
 		DbgPrint("pbfilter:    IRP found, completing.\n");
 
@@ -158,16 +158,16 @@ static void Notification_OnCancel(PDEVICE_OBJECT device, PIRP irp)
 		irp->IoStatus.Information = 0;
 		IoCompleteRequest(irp, IO_NO_INCREMENT);
 	}
-	
+
 	IoReleaseCancelSpinLock(irp->CancelIrql);
 }
 
-NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp) 
+NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 {
 	PIO_STACK_LOCATION irpstack = IoGetCurrentIrpStackLocation(irp);
 	KIRQL irq;
 
-	if(irpstack->Parameters.DeviceIoControl.OutputBufferLength != sizeof(PBNOTIFICATION)) 
+	if(irpstack->Parameters.DeviceIoControl.OutputBufferLength != sizeof(PBNOTIFICATION))
 	{
 		irp->IoStatus.Status = STATUS_BUFFER_TOO_SMALL;
 		irp->IoStatus.Information = 0;
@@ -178,7 +178,7 @@ NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 
 	KeAcquireSpinLock(&queue->lock, &irq);
 
-	if(IsListEmpty(&queue->notification_list)) 
+	if(IsListEmpty(&queue->notification_list))
 	{
 		PBIRPNODE *irpnode;
 		KIRQL crirq;
@@ -208,7 +208,7 @@ NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 
 		return STATUS_PENDING;
 	}
-	else 
+	else
 	{
 		PBNOTIFYNODE *notifynode = (PBNOTIFYNODE*)RemoveHeadList(&queue->notification_list);
 		PBNOTIFICATION *notification = irp->AssociatedIrp.SystemBuffer;

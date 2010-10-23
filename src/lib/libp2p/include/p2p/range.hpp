@@ -27,26 +27,26 @@
 #include <p2p/ip.hpp>
 
 namespace p2p {
-	struct range {
-		typedef std::wstring string_type;
+struct range {
+	typedef std::wstring string_type;
 
-		string_type name;
-		ip start, end;
+	string_type name;
+	ip start, end;
 
-		range() {}
-		range(const string_type &name) : name(name) {}
-		range(const string_type &name, const ip &start, const ip &end) : name(name),start(start),end(end) {}
+	range() {}
+	range(const string_type &name) : name(name) {}
+	range(const string_type &name, const ip &start, const ip &end) : name(name),start(start),end(end) {}
 
-		bool operator<(const range &range) const {
-			return (this->start<range.start) | (this->start==range.start && this->end<range.end);
-		}
-		bool operator>(const range &range) const {
-			return (this->start>range.start) | (this->start==range.start && this->end>range.end);
-		}
-		bool operator==(const range &range) const {
-			return (this->start>=range.start && this->end<=range.end);
-		}
-	};
+	bool operator<(const range &range) const {
+		return (this->start<range.start) | (this->start==range.start && this->end<range.end);
+	}
+	bool operator>(const range &range) const {
+		return (this->start>range.start) | (this->start==range.start && this->end>range.end);
+	}
+	bool operator==(const range &range) const {
+		return (this->start>=range.start && this->end<=range.end);
+	}
+};
 }
 
 #endif

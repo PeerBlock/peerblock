@@ -71,7 +71,7 @@ static ULONG CheckRanges(PBNOTIFICATION *pbn, ULONG ip) {
 	return action;
 }
 
-static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAddr6, USHORT srcPort, ULONG destAddr, const IN6_ADDR *destAddr6, USHORT destPort) 
+static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAddr6, USHORT srcPort, ULONG destAddr, const IN6_ADDR *destAddr6, USHORT destPort)
 {
 	if(!srcAddr6) {
 		pbn->source.addr4.sin_family = AF_INET;
@@ -114,7 +114,7 @@ static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_AD
 }
 
 static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-									VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+								  VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	ULONG protocol, localAddr, remoteAddr;
 	USHORT localPort, remotePort;
@@ -158,7 +158,7 @@ static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADD
 }
 
 static NTSTATUS ClassifyV4Accept(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-											 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+								 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	ULONG protocol, localAddr, remoteAddr;
 	USHORT localPort, remotePort;
@@ -190,7 +190,7 @@ static NTSTATUS ClassifyV4Accept(const FWPS_INCOMING_VALUES0* inFixedValues, con
 }
 
 static NTSTATUS ClassifyV6Connect(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-									 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+								  VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	const IN6_ADDR *localAddr, *remoteAddr;
 	const FAKEV6ADDR *fakeremoteAddr;
@@ -256,7 +256,7 @@ static NTSTATUS ClassifyV6Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 }
 
 static NTSTATUS ClassifyV6Accept(const FWPS_INCOMING_VALUES0* inFixedValues, const FWPS_INCOMING_METADATA_VALUES0* inMetaValues,
-									VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
+								 VOID* packet, const FWPS_FILTER0* filter, UINT64 flowContext, FWPS_CLASSIFY_OUT0* classifyOut)
 {
 	const IN6_ADDR *localAddr, *remoteAddr;
 	const FAKEV6ADDR *fakeremoteAddr;
@@ -321,7 +321,7 @@ static NTSTATUS ClassifyV6Accept(const FWPS_INCOMING_VALUES0* inFixedValues, con
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS NTAPI NullNotify(FWPS_CALLOUT_NOTIFY_TYPE notifyType, const GUID *filterKey, const FWPS_FILTER0 *filter) 
+static NTSTATUS NTAPI NullNotify(FWPS_CALLOUT_NOTIFY_TYPE notifyType, const GUID *filterKey, const FWPS_FILTER0 *filter)
 {
 	return STATUS_SUCCESS;
 }
@@ -380,7 +380,7 @@ static NTSTATUS InstallCallouts(PDEVICE_OBJECT device)
 
 
 
-static NTSTATUS Driver_OnCreate(PDEVICE_OBJECT device, PIRP irp) 
+static NTSTATUS Driver_OnCreate(PDEVICE_OBJECT device, PIRP irp)
 {
 	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering Driver_OnCreate()\n");
 	irp->IoStatus.Status = STATUS_SUCCESS;
@@ -392,7 +392,7 @@ static NTSTATUS Driver_OnCreate(PDEVICE_OBJECT device, PIRP irp)
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS Driver_OnCleanup(PDEVICE_OBJECT device, PIRP irp) 
+static NTSTATUS Driver_OnCleanup(PDEVICE_OBJECT device, PIRP irp)
 {
 	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > Entering Driver_OnCleanup()\n");
 
@@ -413,7 +413,7 @@ static NTSTATUS Driver_OnCleanup(PDEVICE_OBJECT device, PIRP irp)
 	return STATUS_SUCCESS;
 }
 
-static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp) 
+static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 {
 	PIO_STACK_LOCATION irpstack;
 	ULONG controlcode;
@@ -425,78 +425,81 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 	irpstack = IoGetCurrentIrpStackLocation(irp);
 	controlcode = irpstack->Parameters.DeviceIoControl.IoControlCode;
 
-	switch(controlcode) 
+	switch(controlcode)
 	{
-		case IOCTL_PEERBLOCK_HOOK:
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_HOOK\n");
-			if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int)) 
-			{
-				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting block\n");
-				g_internal->block = *(int*)irp->AssociatedIrp.SystemBuffer;
-			}
-			else 
-			{
-				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR: IOCTL_PEERBLOCK_HOOK, invalid parameter\n");
-				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
-			}
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
-			break;
-
-		case IOCTL_PEERBLOCK_SETRANGES: 
+	case IOCTL_PEERBLOCK_HOOK:
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_HOOK\n");
+		if(irp->AssociatedIrp.SystemBuffer != NULL && irpstack->Parameters.DeviceIoControl.InputBufferLength == sizeof(int))
 		{
-			PBRANGES *ranges;
-			ULONG inputlen;
-
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETRANGES\n");
-			ranges = irp->AssociatedIrp.SystemBuffer;
-			inputlen = irpstack->Parameters.DeviceIoControl.InputBufferLength;
-
-			if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count])) 
-			{
-				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting ranges\n");
-				SetRanges(ranges, ranges->block);
-			}
-			else 
-			{
-				DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR: IOCTL_PEERBLOCK_SETRANGES, invalid parameter\n");
-				irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
-			}
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETRANGES\n");
-		} break;
-
-		case IOCTL_PEERBLOCK_GETNOTIFICATION:
-			return Notification_Recieve(&g_internal->queue, irp);
-
-		case IOCTL_PEERBLOCK_SETDESTINATIONPORTS:
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting block\n");
+			g_internal->block = *(int*)irp->AssociatedIrp.SystemBuffer;
+		}
+		else
 		{
-			USHORT *ports;
-			ULONG count;
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR: IOCTL_PEERBLOCK_HOOK, invalid parameter\n");
+			irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
+		}
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_HOOK\n");
+		break;
 
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
-			ports = irp->AssociatedIrp.SystemBuffer;
-			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+	case IOCTL_PEERBLOCK_SETRANGES:
+	{
+		PBRANGES *ranges;
+		ULONG inputlen;
 
-			SetDestinationPorts(ports, (USHORT) (count / sizeof(USHORT)));
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETRANGES\n");
+		ranges = irp->AssociatedIrp.SystemBuffer;
+		inputlen = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-		} break;
-
-		case IOCTL_PEERBLOCK_SETSOURCEPORTS:
+		if(inputlen >= offsetof(PBRANGES, ranges[0]) && inputlen >= offsetof(PBRANGES, ranges[ranges->count]))
 		{
-			USHORT *ports;
-			ULONG count;
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting ranges\n");
+			SetRanges(ranges, ranges->block);
+		}
+		else
+		{
+			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR: IOCTL_PEERBLOCK_SETRANGES, invalid parameter\n");
+			irp->IoStatus.Status = STATUS_INVALID_PARAMETER;
+		}
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETRANGES\n");
+	}
+	break;
 
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
-			ports = irp->AssociatedIrp.SystemBuffer;
-			count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+	case IOCTL_PEERBLOCK_GETNOTIFICATION:
+		return Notification_Recieve(&g_internal->queue, irp);
 
-			SetSourcePorts(ports, (USHORT) (count / sizeof(USHORT)));
-			DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+	case IOCTL_PEERBLOCK_SETDESTINATIONPORTS:
+	{
+		USHORT *ports;
+		ULONG count;
 
-		} break;
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+		ports = irp->AssociatedIrp.SystemBuffer;
+		count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
 
-		default:
-			irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
+		SetDestinationPorts(ports, (USHORT) (count / sizeof(USHORT)));
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETDESTINATIONPORTS\n");
+
+	}
+	break;
+
+	case IOCTL_PEERBLOCK_SETSOURCEPORTS:
+	{
+		USHORT *ports;
+		ULONG count;
+
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+		ports = irp->AssociatedIrp.SystemBuffer;
+		count = irpstack->Parameters.DeviceIoControl.InputBufferLength;
+
+		SetSourcePorts(ports, (USHORT) (count / sizeof(USHORT)));
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < IOCTL_PEERBLOCK_SETSOURCEPORTS\n");
+
+	}
+	break;
+
+	default:
+		irp->IoStatus.Status=STATUS_INVALID_PARAMETER;
 	}
 
 	status = irp->IoStatus.Status;
@@ -505,7 +508,7 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 	return status;
 }
 
-static void Driver_OnUnload(PDRIVER_OBJECT driver) 
+static void Driver_OnUnload(PDRIVER_OBJECT driver)
 {
 	UNICODE_STRING devlink;
 	NTSTATUS status;
@@ -543,7 +546,7 @@ static void Driver_OnUnload(PDRIVER_OBJECT driver)
 	DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  < Leaving Driver_OnUnload()\n");
 }
 
-NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath) 
+NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 {
 	UNICODE_STRING devicename;
 	PDEVICE_OBJECT device = NULL;
@@ -556,7 +559,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 	status = IoCreateDevice(driver, sizeof(PBINTERNAL), &devicename, FILE_DEVICE_PEERBLOCK, 0, FALSE, &device);
 
-	if(NT_SUCCESS(status)) 
+	if(NT_SUCCESS(status))
 	{
 		UNICODE_STRING devicelink;
 
@@ -566,7 +569,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting up functions\n");
 		driver->MajorFunction[IRP_MJ_CREATE] =
-		driver->MajorFunction[IRP_MJ_CLOSE] = Driver_OnCreate;
+			driver->MajorFunction[IRP_MJ_CLOSE] = Driver_OnCreate;
 		driver->MajorFunction[IRP_MJ_CLEANUP] = Driver_OnCleanup;
 		driver->MajorFunction[IRP_MJ_DEVICE_CONTROL] = Driver_OnDeviceControl;
 		driver->DriverUnload = Driver_OnUnload;
@@ -600,7 +603,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    ...callouts installed\n");
 	}
 
-	if(!NT_SUCCESS(status)) 
+	if(!NT_SUCCESS(status))
 	{
 		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_ERROR_LEVEL, "pbfilter:  * ERROR [%d] encountered - unloading driver\n", status);
 		Driver_OnUnload(driver);

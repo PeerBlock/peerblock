@@ -59,14 +59,14 @@ const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip) {
 	return (iter >= ranges && iter->start <= ip && ip <= iter->end) ? iter : NULL;
 }
 
-void SetRanges(const PBRANGES *ranges, int block) 
+void SetRanges(const PBRANGES *ranges, int block)
 {
 	PBIPRANGE *nranges, *oldranges;
 	ULONG ncount, labelsid;
 	KIRQL irq;
 
 	DbgPrint("pbfilter:  > SetRanges\n");
-	if(ranges && ranges->count > 0) 
+	if(ranges && ranges->count > 0)
 	{
 		DbgPrint("pbfilter:    found some ranges\n");
 		ncount = ranges->count;
@@ -85,7 +85,7 @@ void SetRanges(const PBRANGES *ranges, int block)
 		RtlCopyMemory(nranges, ranges->ranges, ranges->count * sizeof(PBIPRANGE));
 		DbgPrint("pbfilter:    done setting up new ranges\n");
 	}
-	else 
+	else
 	{
 		DbgPrint("pbfilter:    no ranges specified\n");
 		ncount = 0;
@@ -97,7 +97,7 @@ void SetRanges(const PBRANGES *ranges, int block)
 	KeAcquireSpinLock(&g_internal->rangeslock, &irq);
 	DbgPrint("pbfilter:    ...rangeslock acquired\n");
 
-	if(block) 
+	if(block)
 	{
 		DbgPrint("pbfilter:    block list\n");
 		oldranges = g_internal->blockedcount ? g_internal->blockedranges : NULL;
@@ -106,7 +106,7 @@ void SetRanges(const PBRANGES *ranges, int block)
 		g_internal->blockedranges = nranges;
 		g_internal->blockedlabelsid = labelsid;
 	}
-	else 
+	else
 	{
 		DbgPrint("pbfilter:    allow list\n");
 		oldranges = g_internal->allowedcount ? g_internal->allowedranges : NULL;
@@ -127,7 +127,7 @@ void SetRanges(const PBRANGES *ranges, int block)
 	DbgPrint("pbfilter:  < SetRanges\n");
 }
 
-void SetDestinationPorts(const USHORT *ports, USHORT count) 
+void SetDestinationPorts(const USHORT *ports, USHORT count)
 {
 	USHORT *oldports = NULL;
 	USHORT *nports = NULL;
@@ -161,7 +161,7 @@ void SetDestinationPorts(const USHORT *ports, USHORT count)
 	}
 }
 
-void SetSourcePorts(const USHORT *ports, USHORT count) 
+void SetSourcePorts(const USHORT *ports, USHORT count)
 {
 	USHORT *oldports = NULL;
 	USHORT *nports = NULL;
@@ -195,7 +195,7 @@ void SetSourcePorts(const USHORT *ports, USHORT count)
 	}
 }
 
-int __cdecl CompareUShort(const void * a, const void * b) 
+int __cdecl CompareUShort(const void * a, const void * b)
 {
 	return ( *(USHORT*)a - *(USHORT*)b );
 }
