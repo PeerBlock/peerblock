@@ -57,8 +57,10 @@ end;
 function IsPGInstalled(): Boolean;
 begin
   Result := False;
-  if RegKeyExists(HKLM, PGUninstallKey) or RegKeyExists(HKCU, PGUninstallKey) then
-  Result := True;
+  if RegKeyExists(HKLM, PGUninstallKey) or RegKeyExists(HKCU, PGUninstallKey) then begin
+    Log('Custom Code: Found PG2 uninstall registry key');
+    Result := True;
+  end;
 end;
 
 
@@ -76,8 +78,10 @@ var
 begin
   Result := False;
   if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian', svalue) then begin
-    if svalue = (ExpandConstant('{app}\peerblock.exe')) then
-    Result := True;
+    if svalue = (ExpandConstant('{app}\peerblock.exe')) then begin
+      Log('Custom Code: Old Startup entry was found');
+      Result := True;
+    end;
   end;
 end;
 
@@ -86,8 +90,10 @@ end;
 function SettingsExist(): Boolean;
 begin
   Result := False;
-  if FileExists(ExpandConstant('{app}\peerblock.conf')) then
-  Result := True;
+  if FileExists(ExpandConstant('{app}\peerblock.conf')) then begin
+    Log('Custom Code: Settings exist');
+    Result := True;
+  end;
 end;
 
 
@@ -108,8 +114,10 @@ end;
 function StartupCheck(): Boolean;
 begin
   Result := False;
-  if RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock') then
-  Result := True;
+  if RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock') then begin
+    Log('Custom Code: PeerBlock is configured to run on startup');
+    Result := True;
+  end;
 end;
 
 
@@ -182,7 +190,11 @@ var
 begin
   Wnd := FindWindowByWindowName('PeerGuardian 2');
   if Wnd <> 0 then begin
+    Log('Custom Code: Trying to kill PG2');
     PostMessage(Wnd, 18, 0, 0); // WM_QUIT
   end;
-  UninstallPG;
+  begin
+    Log('Custom Code: Trying to uninstall PG2');
+    UninstallPG;
+  end;
 end;

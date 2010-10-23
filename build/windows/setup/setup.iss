@@ -177,7 +177,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename
 
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset_settings remove_startup_task; Flags: deletevalue uninsdeletevalue
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset_settings remove_startup_task; Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
 
 
 [Run]
@@ -236,10 +236,13 @@ begin
   // Create a mutex for the installer.
   // If it's already running display a message and stop installation
   if CheckForMutexes(installer_mutex_name) then begin
-    if not WizardSilent() then
-      MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
-      Result := False;
+    if not WizardSilent() then begin
+        Log('Custom Code: Installer is already running');
+        MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
+        Result := False;
+    end;
   end else begin
+    Log('Custom Code: Creating installer`s mutex');
     CreateMutex(installer_mutex_name);
 
   // Acquire CPU information
@@ -247,17 +250,20 @@ begin
 
   if NOT HasSupportedCPU() then begin
     Result := False;
+    Log('Custom Code: Not supported CPU');
     MsgBox(CustomMessage('msg_unsupported_cpu'), mbError, MB_OK);
   end;
 
   #if sse2_required
   if Result AND NOT Is_SSE2_Supported() then begin
     Result := False;
+    Log('Custom Code: Found a non SSE2 capable CPU');
     MsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK);
   end;
   #elif sse_required
   if Result AND NOT Is_SSE_Supported() then begin
     Result := False;
+    Log('Custom Code: Found a non SSE capable CPU');
     MsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK);
   end;
   #endif
@@ -287,19 +293,24 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssInstall then begin
     if IsServiceRunning('pbfilter') then begin
+      Log('Custom Code: pbfilter service is running, will attempt to stop it');
       StopService('pbfilter');
     end;
+    Log('Custom Code: pbfilter service is not running, will attempt to remove pbfilter service');
     RemoveService('pbfilter');
   end;
   if CurStep = ssPostInstall then begin
     // Delete the old PeerBlock's startup registry value
     if OldStartupCheck then begin
+      Log('Custom Code: Removing old startup entry');
       RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
     end;
     if IsTaskSelected('uninstall_pg') then begin
+      Log('Custom Code: User selected to uninstall PeerGuardian');
       KillAndUninstallPG;
     end;
     if IsTaskSelected('reset_settings') then begin
+      Log('Custom Code: User selected to reset settings, calling RemoveUserFiles and RemoveMiscFiles');
       RemoveUserFiles;
       RemoveMiscFiles;
     end;
