@@ -363,7 +363,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release (Vista)|Win32"
+			Name="Release_(Vista)|Win32"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
@@ -445,7 +445,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release (Vista)|x64"
+			Name="Release_(Vista)|x64"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
@@ -527,7 +527,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug (Vista)|Win32"
+			Name="Debug_(Vista)|Win32"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
 			ConfigurationType="1"
@@ -617,7 +617,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug (Vista)|x64"
+			Name="Debug_(Vista)|x64"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
 			ConfigurationType="1"
@@ -732,7 +732,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release (Vista)|Win32"
+					Name="Release_(Vista)|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -740,7 +740,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release (Vista)|x64"
+					Name="Release_(Vista)|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -748,7 +748,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug (Vista)|Win32"
+					Name="Debug_(Vista)|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -756,7 +756,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug (Vista)|x64"
+					Name="Debug_(Vista)|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool

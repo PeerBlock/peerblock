@@ -1,13 +1,29 @@
 @ECHO OFF
-SETLOCAL && CLS
+SETLOCAL
 TITLE Compiling PeerBlock...
 
-REM Check if Windows DDK 6.1 is present in PATH
+SET bool=0
+IF /I "%1"=="help" SET /A bool+=1
+IF /I "%1"=="-help" SET /A bool+=1
+IF /I "%1"=="--help" SET /A bool+=1
+
+IF %bool% GTR 0 (
+TITLE build.bat %1
+ECHO.
+ECHO:Usage:
+ECHO: build.bat [Clean|Build|Rebuild]
+ECHO:Executing "build.bat" will use the defaults: "build.bat Rebuild"
+ECHO.
+ENDLOCAL
+EXIT /B
+)
+
+REM Check if Windows DDK is present in PATH
 IF NOT DEFINED PB_DDK_DIR (
 COLOR 0C
-ECHO:Windows DDK 6.1 path NOT FOUND!!!
-ECHO:Install the Windows DDK 6.1 and set an environment variable named "PB_DDK_DIR"
-ECHO:pointing to the Windows DDK 6.1 installation path.
+ECHO:Windows DDK path NOT FOUND!!!
+ECHO:Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
+ECHO:pointing to the Windows DDK installation path.
 ECHO:Example: H:\progs\WinDDK\6001.18002
 GOTO :ErrorDetected
 )
@@ -29,7 +45,7 @@ TITLE Compiling PeerBlock with MSVC 2008...
 FOR %%A IN ("Win32" "x64"
 ) DO (
 CALL :SubMSVC "Release" %%A
-CALL :SubMSVC "Release (Vista)" %%A
+CALL :SubMSVC "Release_(Vista)" %%A
 )
 
 IF /I "%1" == "Clean" GOTO :END
@@ -38,7 +54,7 @@ REM Sign driver and program
 IF DEFINED PB_CERT (
 TITLE Signing driver and program...
   FOR %%F IN (
-  "Win32\Release" "Win32\Release (Vista)" "x64\Release" "x64\Release (Vista)"
+  "Win32\Release" "Win32\Release_(Vista)" "x64\Release" "x64\Release_(Vista)"
   ) DO (
   PUSHD %%F
   CALL ..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
@@ -97,21 +113,12 @@ ECHO. && ECHO.
 MD "..\..\distribution" >NUL 2>&1
 
 FOR %%L IN (
-"Release" "Release (Vista)"
+"Release" "Release_(Vista)"
 ) DO (
 CALL :SubZipFiles Win32 %%L
 CALL :SubZipFiles x64 %%L
 )
 
-GOTO :AllOK
-
-
-:AllOK
-PUSHD "..\..\distribution"
-DEL/f/a "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
-REN "PeerBlock_r%buildnum%*_Release (Vista).zip"^
- "PeerBlock_r%buildnum%*_Release_(Vista).zip" >NUL 2>&1
-POPD
 GOTO :END
 
 

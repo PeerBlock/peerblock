@@ -39,7 +39,7 @@
 
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 
-;workaround in order to be able to build the MSVC2010 installer through cmd; we define VS2010build=True for that.
+;workaround in order to be able to build the VS2010 installer through cmd; we define VS2010build=True for that.
 #ifdef VS2010build
   #define VS2010 = True
 #endif
@@ -77,7 +77,7 @@ LicenseFile=..\..\..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=.
 #if VS2010
-OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_MSVC2010
+OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_VS2010
 #else
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}
 #endif
@@ -147,12 +147,12 @@ Source: ..\x64\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Chec
 Source: ..\x64\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 
 ; Vista/7 32bit files
-Source: ..\Win32\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
-Source: ..\Win32\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
+Source: ..\Win32\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
+Source: ..\Win32\Release_(Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
 
 ; Vista/7 64bit files
-Source: ..\x64\Release (Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
-Source: ..\x64\Release (Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
+Source: ..\x64\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
+Source: ..\x64\Release_(Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
 
 ; Copy PG settings and custom lists only if PG is installed and the user has chosen to do so
 Source: {code:GetPGPath}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
