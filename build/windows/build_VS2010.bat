@@ -1,4 +1,5 @@
 @ECHO OFF
+SETLOCAL
 
 REM   PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
 
@@ -20,25 +21,25 @@ REM   3. This notice may not be removed or altered from any source distribution.
 
 REM   $Id$
 
-SETLOCAL
-TITLE Compiling PeerBlock...
+IF /I "%1"=="help" GOTO :showhelp
+IF /I "%1"=="-help" GOTO :showhelp
+IF /I "%1"=="--help" GOTO :showhelp
+GOTO :start
 
-SET bool=0
-IF /I "%1"=="help" SET /A bool+=1
-IF /I "%1"=="-help" SET /A bool+=1
-IF /I "%1"=="--help" SET /A bool+=1
-
-IF %bool% GTR 0 (
+:showhelp
 TITLE build_VS2010.bat %1
 ECHO.
-ECHO:Usage:
-ECHO: build_VS2010.bat [Clean^|Build^|Rebuild]
+ECHO:Usage:  build_VS2010.bat [Clean^|Build^|Rebuild]
+ECHO.
 ECHO:Executing "build_VS2010.bat" will use the defaults: "build.bat Rebuild"
 ECHO.
 ENDLOCAL
 EXIT /B
 )
 
+
+:start
+TITLE Compiling PeerBlock...
 REM Check if Windows DDK is present in PATH
 IF NOT DEFINED PB_DDK_DIR (
 COLOR 0C
@@ -75,11 +76,11 @@ REM Sign driver and program
 IF DEFINED PB_CERT (
 TITLE Signing driver and program...
   FOR %%F IN (
-  "Win32\Release" "Win32\Release_(Vista)" "x64\Release" "x64\Release_(Vista)"
+  "bin10\Win32\Release" "bin10\Win32\Release_(Vista)" "bin10\x64\Release" "bin10\x64\Release_(Vista)"
   ) DO (
   PUSHD %%F
-  CALL ..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
-  CALL ..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
+  CALL ..\..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
+  CALL ..\..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
   POPD
   )
 )
@@ -159,8 +160,8 @@ GOTO :EOF
 
 :SubZipFiles
 MD "temp_zip" >NUL 2>&1
-COPY "%1\%~2\peerblock.exe" "temp_zip\" /Y /V
-COPY "%1\%~2\pbfilter.sys" "temp_zip\" /Y /V
+COPY "bin10\%1\%~2\peerblock.exe" "temp_zip\" /Y /V
+COPY "bin10\%1\%~2\pbfilter.sys" "temp_zip\" /Y /V
 COPY "..\..\license.txt" "temp_zip\" /Y /V
 COPY "..\..\doc\readme.rtf" "temp_zip\" /Y /V
 

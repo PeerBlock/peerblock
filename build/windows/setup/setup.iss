@@ -45,9 +45,11 @@
 #endif
 
 #if VS2010
+  #define bindir = '..\bin10'
   #define sse_required = False
   #define sse2_required = True
 #else
+  #define bindir = '..\bin'
   #define sse_required = False
   #define sse2_required = False
 #endif
@@ -131,7 +133,7 @@ Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:t
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck(); Flags: checkedonce unchecked
 Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: checkedonce unchecked
 Name: uninstall_pg; Description: {cm:tsk_uninstall_pg}; GroupDescription: {cm:tsk_other}; Check: IsPGInstalled(); Flags: checkedonce unchecked
-Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT SettingsExist()
+Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
 
 
 [Files]
@@ -139,20 +141,20 @@ Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: 
 Source: WinCPUID.dll; Flags: dontcopy noencryption
 
 ; 2K/XP 32bit files
-Source: ..\Win32\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
-Source: ..\Win32\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: {#bindir}\Win32\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: {#bindir}\Win32\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 
 ; XP 64bit files
-Source: ..\x64\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
-Source: ..\x64\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: {#bindir}\x64\Release\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: {#bindir}\x64\Release\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 
 ; Vista/7 32bit files
-Source: ..\Win32\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
-Source: ..\Win32\Release_(Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
+Source: {#bindir}\Win32\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
+Source: {#bindir}\Win32\Release_(Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
 
 ; Vista/7 64bit files
-Source: ..\x64\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
-Source: ..\x64\Release_(Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
+Source: {#bindir}\x64\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
+Source: {#bindir}\x64\Release_(Vista)\pbfilter.sys; DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode(); MinVersion: 0,6.0
 
 ; Copy PG settings and custom lists only if PG is installed and the user has chosen to do so
 Source: {code:GetPGPath}\pg2.conf; DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall

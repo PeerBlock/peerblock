@@ -21,9 +21,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\..\build\windows\common.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
 			>
@@ -105,9 +105,9 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\..\build\windows\common.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
 			>
@@ -189,7 +189,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
 			CharacterSet="1"
@@ -263,7 +263,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
 			CharacterSet="1"
@@ -338,7 +338,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_(Vista)|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
 			CharacterSet="1"
@@ -412,7 +412,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_(Vista)|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
 			CharacterSet="1"
@@ -487,9 +487,9 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_(Vista)|Win32"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\..\build\windows\common.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
 			>
@@ -571,9 +571,9 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_(Vista)|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)Intermediate\obj\$(ConfigurationName) $(PlatformName)\$(ProjectName)\"
+			OutputDirectory="$(SolutionDir)bin\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\..\build\windows\common.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
 			>
