@@ -136,12 +136,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="shell.c" />
     <ClCompile Include="sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h" />
-    <ClInclude Include="sqlite3ext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

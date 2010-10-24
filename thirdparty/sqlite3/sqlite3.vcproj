@@ -277,10 +277,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\shell.c"
-				>
-			</File>
-			<File
 				RelativePath=".\sqlite3.c"
 				>
 			</File>
@@ -292,10 +288,6 @@
 			>
 			<File
 				RelativePath=".\sqlite3.h"
-				>
-			</File>
-			<File
-				RelativePath=".\sqlite3ext.h"
 				>
 			</File>
 		</Filter>
