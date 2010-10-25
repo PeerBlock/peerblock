@@ -9,8 +9,8 @@
 #ifndef BOOST_LOCKFREE_ATOMIC_INT_HPP
 #define BOOST_LOCKFREE_ATOMIC_INT_HPP
 
-#include <boost/lockfree/prefix.hpp>
-#include <boost/lockfree/cas.hpp>
+#include <boost/lockfree/detail/prefix.hpp>
+#include <boost/cas.hpp>
 #include <boost/noncopyable.hpp>
 
 namespace boost

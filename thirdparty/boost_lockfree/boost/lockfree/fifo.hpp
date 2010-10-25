@@ -15,9 +15,9 @@
 #ifndef BOOST_LOCKFREE_FIFO_HPP_INCLUDED
 #define BOOST_LOCKFREE_FIFO_HPP_INCLUDED
 
-#include <boost/lockfree/tagged_ptr.hpp>
-#include <boost/lockfree/atomic_int.hpp>
-#include <boost/lockfree/freelist.hpp>
+#include <boost/lockfree/detail/tagged_ptr.hpp>
+#include <boost/atomic_int.hpp>
+#include <boost/lockfree/detail/freelist.hpp>
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_pod.hpp>

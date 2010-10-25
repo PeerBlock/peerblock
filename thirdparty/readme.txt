@@ -7,6 +7,10 @@ License:  Boost Software License
 Website:  http://www.boost.org
 Notes:    We currently include only the needed files.
 
+Boost lockfree version unknown
+License:  Boost Software License
+Website:  http://tim.klingt.org/git?p=boost_lockfree.git
+
 libcurl version 7.21.2
 License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl

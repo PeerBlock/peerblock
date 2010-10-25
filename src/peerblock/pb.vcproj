@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WIN32_WINNT=0x0500;WINVER=0x0500"
 				StringPooling="true"
 				ExceptionHandling="2"
@@ -133,7 +133,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="_DEBUG;_WIN32_WINNT=0x0502;WINVER=0x0502;WIN64"
 				StringPooling="true"
 				ExceptionHandling="2"
@@ -215,7 +215,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WIN32_WINNT=0x0500;WINVER=0x0500"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -290,7 +290,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="NDEBUG;_WIN32_WINNT=0x0502;WINVER=0x0502;WIN64"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -364,7 +364,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -439,7 +439,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="NDEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;WIN64"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -514,7 +514,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600"
 				StringPooling="true"
 				ExceptionHandling="2"
@@ -599,7 +599,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
+				AdditionalIncludeDirectories="..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml"
 				PreprocessorDefinitions="_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;WIN64"
 				StringPooling="true"
 				ExceptionHandling="2"

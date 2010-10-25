@@ -152,7 +152,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WIN32_WINNT=0x0500;WINVER=0x0500;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -192,7 +192,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0502;WINVER=0x0502;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -226,7 +226,7 @@
       <Command>update_version.bat</Command>
     </PreBuildEvent>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WIN32_WINNT=0x0500;WINVER=0x0500;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -252,7 +252,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_WIN32_WINNT=0x0502;WINVER=0x0502;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -274,7 +274,7 @@
       <Command>update_version.bat</Command>
     </PreBuildEvent>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -300,7 +300,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -324,7 +324,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -364,7 +364,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
