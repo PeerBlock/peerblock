@@ -11,8 +11,8 @@
 #ifndef BOOST_LOCKFREE_TAGGED_PTR_PTRCOMPRESSION_HPP_INCLUDED
 #define BOOST_LOCKFREE_TAGGED_PTR_PTRCOMPRESSION_HPP_INCLUDED
 
-#include <boost/lockfree/cas.hpp>
-#include <boost/lockfree/branch_hints.hpp>
+#include <boost/cas.hpp>
+#include <boost/lockfree/detail/branch_hints.hpp>
 
 #include <cstddef>              /* for std::size_t */
 
