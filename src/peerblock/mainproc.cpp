@@ -24,6 +24,7 @@
 #include "resource.h"
 #include "tracelog.h"
 #include "prevrel.h"
+#include "versioninfo.h"
 
 using namespace std;
 using namespace sqlite3x;
@@ -592,7 +593,11 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_nid.uCallbackMessage=WM_PB_TRAY;
 	g_nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;	
 	g_nid.hIcon = DetermineIcon();
-	StringCbCopy(g_nid.szTip, sizeof(g_nid.szTip), _T("PeerBlock"));
+
+	tostringstream toss;
+	toss << PB_BLDSTR;
+
+	StringCbCopy(g_nid.szTip, sizeof(g_nid.szTip), toss.str().c_str());
 
 	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden))) 
 	{
