@@ -64,6 +64,9 @@ SET BUILDTYPE=%1
 
 REM Compile PeerBlock with MSVC 2010
 TITLE Compiling PeerBlock with MSVC 2010...
+
+CALL "%VS100COMNTOOLS%vsvars32.bat" >NUL
+
 FOR %%A IN ("Win32" "x64"
 ) DO (
 CALL :SubMSVC "Release" %%A
@@ -152,9 +155,7 @@ EXIT
 
 
 :SubMSVC
-"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" PeerBlock_VS2010.sln^
- /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2 /maxcpucount^
- /consoleloggerparameters:DisableMPLogging;Summary;Verbosity=minimal
+devenv /nologo PeerBlock_VS2010.sln /%BUILDTYPE% "%~1|%~2"
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 GOTO :EOF
 
@@ -171,7 +172,7 @@ START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^
  "license.txt" "readme.rtf" >NUL
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
-ECHO:PeerBlock_r%buildnum%__%1_^%~2_VS2010.zip created successfully!
+ECHO:PeerBlock_r%buildnum%__%1_%~2_VS2010.zip created successfully!
 MOVE /Y "PeerBlock_r%buildnum%__%1_%~2_VS2010.zip" "..\..\..\distribution" >NUL 2>&1
 ECHO.
 POPD
