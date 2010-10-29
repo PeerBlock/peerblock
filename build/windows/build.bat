@@ -1,25 +1,25 @@
 @ECHO OFF
 SETLOCAL
 
-REM   PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
+REM  PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
 
-REM   This software is provided 'as-is', without any express or implied
-REM   warranty.  In no event will the authors be held liable for any damages
-REM   arising from the use of this software.
+REM  This software is provided 'as-is', without any express or implied
+REM  warranty.  In no event will the authors be held liable for any damages
+REM  arising from the use of this software.
 
-REM   Permission is granted to anyone to use this software for any purpose,
-REM   including commercial applications, and to alter it and redistribute it
-REM   freely, subject to the following restrictions:
+REM  Permission is granted to anyone to use this software for any purpose,
+REM  including commercial applications, and to alter it and redistribute it
+REM  freely, subject to the following restrictions:
 
-REM   1. The origin of this software must not be misrepresented; you must not
-REM      claim that you wrote the original software. If you use this software
-REM      in a product, an acknowledgment in the product documentation would be
-REM      appreciated but is not required.
-REM   2. Altered source versions must be plainly marked as such, and must not be
-REM      misrepresented as being the original software.
-REM   3. This notice may not be removed or altered from any source distribution.
+REM  1. The origin of this software must not be misrepresented; you must not
+REM     claim that you wrote the original software. If you use this software
+REM     in a product, an acknowledgment in the product documentation would be
+REM     appreciated but is not required.
+REM  2. Altered source versions must be plainly marked as such, and must not be
+REM     misrepresented as being the original software.
+REM  3. This notice may not be removed or altered from any source distribution.
 
-REM   $Id$
+REM  $Id$
 
 IF /I "%1"=="help" GOTO :showhelp
 IF /I "%1"=="-help" GOTO :showhelp
@@ -97,8 +97,8 @@ SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
 SET "I_=Inno Setup"
 SET "A_=%I_% 5"
 FOR /f "delims=" %%a IN (
-	'REG QUERY "%U_%\%A_%_is1" /v "%I_%: App Path"2^>Nul^|FIND "REG_"') DO (
-	SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
+  'REG QUERY "%U_%\%A_%_is1" /v "%I_%: App Path"2^>Nul^|FIND "REG_"') DO (
+  SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
 
 IF NOT DEFINED InnoSetupPath (
 ECHO. && ECHO.
@@ -129,8 +129,8 @@ TITLE Creating ZIP files...
 
 REM Get the revision number
 FOR /f "tokens=3,4 delims= " %%K IN (
-	'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\version_parsed.h"') DO (
-	SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
+  'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\version_parsed.h"') DO (
+  SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO. && ECHO.
 
 MD "..\..\distribution" >NUL 2>&1
