@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\build\windows\common.vsprops"
+			InheritedPropertySheets="$(SolutionDir)props\common.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -86,7 +86,7 @@
 		<Configuration
 			Name="Debug|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\build\windows\common.vsprops"
+			InheritedPropertySheets="$(SolutionDir)props\common.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -152,7 +152,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
+			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			WholeProgramOptimization="1"
@@ -209,7 +209,7 @@
 		<Configuration
 			Name="Release|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\..\build\windows\common.vsprops;..\..\build\windows\release.vsprops"
+			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			WholeProgramOptimization="1"
