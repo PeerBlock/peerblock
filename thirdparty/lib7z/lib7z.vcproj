@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_SZ_ONE_DIRECTORY;_LZMA_PROB32;_LZMA_LOC_OPT;_LZMA_SYSTEM_SIZE_T;_LZMA_IN_CB;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LZMA_PROB32;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="0"
@@ -109,7 +109,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				PreprocessorDefinitions="_DEBUG;_SZ_ONE_DIRECTORY;_LZMA_PROB32;_LZMA_LOC_OPT;_LZMA_IN_CB;_CRT_SECURE_NO_DEPRECATE;WIN64"
+				PreprocessorDefinitions="_DEBUG;_LZMA_PROB32;_CRT_SECURE_NO_DEPRECATE;WIN64"
 				StringPooling="true"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="0"
@@ -172,7 +172,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SZ_ONE_DIRECTORY;_LZMA_PROB32;_LZMA_LOC_OPT;_LZMA_SYSTEM_SIZE_T;_LZMA_IN_CB;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LZMA_PROB32;_CRT_SECURE_NO_DEPRECATE"
 				WarningLevel="0"
 			/>
 			<Tool
@@ -229,7 +229,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="NDEBUG;_SZ_ONE_DIRECTORY;_LZMA_PROB32;_LZMA_LOC_OPT;_LZMA_IN_CB;_CRT_SECURE_NO_DEPRECATE;WIN64"
+				PreprocessorDefinitions="NDEBUG;_LZMA_PROB32;_CRT_SECURE_NO_DEPRECATE;WIN64"
 				WarningLevel="0"
 				CallingConvention="1"
 			/>
@@ -275,7 +275,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\7zBuffer.c"
+				RelativePath=".\7zBuf.c"
+				>
+			</File>
+			<File
+				RelativePath=".\7zBuf2.c"
 				>
 			</File>
 			<File
@@ -283,15 +287,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\7zDecode.c"
+				RelativePath=".\7zCrcOpt.c"
 				>
 			</File>
 			<File
-				RelativePath=".\7zExtract.c"
+				RelativePath=".\7zDec.c"
 				>
 			</File>
 			<File
-				RelativePath=".\7zHeader.c"
+				RelativePath=".\7zFile.c"
 				>
 			</File>
 			<File
@@ -299,15 +303,79 @@
 				>
 			</File>
 			<File
-				RelativePath=".\7zItem.c"
+				RelativePath=".\7zStream.c"
 				>
 			</File>
 			<File
-				RelativePath=".\7zMethodID.c"
+				RelativePath=".\Alloc.c"
 				>
 			</File>
 			<File
-				RelativePath=".\LzmaDecode.c"
+				RelativePath=".\Bcj2.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Bra.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Bra86.c"
+				>
+			</File>
+			<File
+				RelativePath=".\CpuArch.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Delta.c"
+				>
+			</File>
+			<File
+				RelativePath=".\LzFind.c"
+				>
+			</File>
+			<File
+				RelativePath=".\LzFindMt.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Lzma2Dec.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Lzma86Dec.c"
+				>
+			</File>
+			<File
+				RelativePath=".\LzmaDec.c"
+				>
+			</File>
+			<File
+				RelativePath=".\MtCoder.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Sha256.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Threads.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Xz.c"
+				>
+			</File>
+			<File
+				RelativePath=".\XzCrc64.c"
+				>
+			</File>
+			<File
+				RelativePath=".\XzDec.c"
+				>
+			</File>
+			<File
+				RelativePath=".\XzIn.c"
 				>
 			</File>
 		</Filter>
@@ -317,11 +385,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\7z.h"
+				>
+			</File>
+			<File
 				RelativePath=".\7zAlloc.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zBuffer.h"
+				RelativePath=".\7zBuf.h"
 				>
 			</File>
 			<File
@@ -329,39 +401,79 @@
 				>
 			</File>
 			<File
-				RelativePath=".\7zDecode.h"
+				RelativePath=".\7zFile.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zExtract.h"
+				RelativePath=".\Alloc.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zHeader.h"
+				RelativePath=".\Bcj2.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zIn.h"
+				RelativePath=".\Bra.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zItem.h"
+				RelativePath=".\CpuArch.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zMethodID.h"
+				RelativePath=".\Delta.h"
 				>
 			</File>
 			<File
-				RelativePath=".\7zTypes.h"
+				RelativePath=".\LzFind.h"
 				>
 			</File>
 			<File
-				RelativePath=".\LzmaDecode.h"
+				RelativePath=".\LzFindMt.h"
 				>
 			</File>
 			<File
-				RelativePath=".\LzmaTypes.h"
+				RelativePath=".\LzHash.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Lzma2Dec.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Lzma86.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LzmaDec.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MtCoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RotateDefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sha256.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Threads.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Types.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Xz.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XzCrc64.h"
 				>
 			</File>
 		</Filter>

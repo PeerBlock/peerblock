@@ -84,35 +84,8 @@ static pair<boost::shared_array<char>,size_t> UngzipFile(const path &file) {
 	return make_pair(ret, buf.size());
 }
 
-struct CFileInStream {
-	ISzInStream InStream;
-	FILE *File;
-};
-
 #define kBufferSize 4096
 static Byte g_Buffer[kBufferSize];
-
-SZ_RESULT SzFileReadImp(void *object, void **buffer, size_t maxRequiredSize, size_t *processedSize) {
-	if(maxRequiredSize>kBufferSize) maxRequiredSize=kBufferSize;
-
-	CFileInStream *s=(CFileInStream*)object;
-
-	size_t processedSizeLoc=fread(g_Buffer, 1, maxRequiredSize, s->File);
-
-	*buffer=g_Buffer;
-	if(processedSize!=NULL) *processedSize=processedSizeLoc;
-
-	return SZ_OK;
-}
-
-SZ_RESULT SzFileSeekImp(void *object, CFileSize pos) {
-	CFileInStream *s=(CFileInStream*)object;
-
-	int res=fseek(s->File, (long)pos, SEEK_SET);
-
-	return (!res)?SZ_OK:SZE_FAIL;
-}
-
 
 bool LoadList(path file, p2p::list &list) 
 {
@@ -159,9 +132,9 @@ bool LoadList(path file, p2p::list &list)
 		{
 			TRACEV("[LoadList]    found 7z file");
 			CFileInStream is;
+			CLookToRead lookStream;
 
-			is.File=_tfopen(file.c_str(), _T("rb"));
-			if(!is.File) 
+			if(InFile_OpenW(&is.file, file.c_str()))
 			{
 				errno_t err = 0;
 			    _get_errno(&err);
@@ -171,8 +144,11 @@ bool LoadList(path file, p2p::list &list)
 				throw zip_error("unable to open file");
 			}
 
-			is.InStream.Read = SzFileReadImp;
-			is.InStream.Seek = SzFileSeekImp;
+			FileInStream_CreateVTable(&is);
+			LookToRead_CreateVTable(&lookStream, False);
+
+			lookStream.realStream = &is.s;
+			LookToRead_Init(&lookStream);
 
 			ISzAlloc ai;
 			ai.Alloc=SzAlloc;
@@ -182,29 +158,41 @@ bool LoadList(path file, p2p::list &list)
 			aitemp.Alloc=SzAllocTemp;
 			aitemp.Free=SzFreeTemp;
 
-			CArchiveDatabaseEx db;
+			CSzArEx db;
 
-			InitCrcTable();
-			SzArDbExInit(&db);
+			CrcGenerateTable();
+			SzArEx_Init(&db);
 
-			SZ_RESULT res=SzArchiveOpen(&is.InStream, &db, &ai, &aitemp);
+			SRes res=SzArEx_Open(&db, &lookStream.s, &ai, &aitemp);
 			if(res!=SZ_OK) {
-				fclose(is.File);
+				File_Close(&is.file);
 	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzArchiveOpen 7z file [%2%]")) 
 					% res % file.c_str());
 				TRACEBUFE(strBuf);
 				throw zip_error("SzArchiveOpen");
 			}
 
-			for(unsigned int i=0; i<db.Database.NumFiles; i++) {
-				char *outbuf=NULL;
-				size_t bufsize, offset, processed;
-				unsigned int index;
+			UInt16 *filename = NULL;
 
-				res=SzExtract(&is.InStream, &db, 0, &index, (unsigned char**)&outbuf, &bufsize, &offset, &processed, &ai, &aitemp);
+			for(unsigned int i=0; i<db.db.NumFiles; i++) {
+				char *outbuf = NULL;
+				size_t bufsize = 0;
+				size_t offset = 0, processed = 0;
+				unsigned int index = 0xFFFFFFFF;
+
+				const CSzFileItem *f = db.db.Files + i;
+				if(f->IsDir) continue;
+
+				size_t len = SzArEx_GetFileNameUtf16(&db, i, NULL);
+				SzFree(NULL, filename);
+				filename = (UInt16 *)SzAlloc(NULL, len * sizeof(filename[0]));
+				SzArEx_GetFileNameUtf16(&db, i, filename);
+
+				res=SzArEx_Extract(&db, &lookStream.s, i, &index, (unsigned char**)&outbuf, &bufsize, &offset, &processed, &ai, &aitemp);
 				if(res!=SZ_OK) {
-					SzArDbExFree(&db, ai.Free);
-					fclose(is.File);
+					SzArEx_Free(&db, &ai);
+					SzFree(NULL, filename);
+					File_Close(&is.file);
 	   				tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzExtract 7z file [%2%]")) 
 						% res % file.c_str());
 					TRACEBUFE(strBuf);
@@ -212,19 +200,21 @@ bool LoadList(path file, p2p::list &list)
 				}
 
 				try {
-					list.load(istrstream((const char*)outbuf, (streamsize)processed));
+					list.load(istrstream((const char*)outbuf + offset, (streamsize)processed));
 				}
 				catch(...) {
-					ai.Free(outbuf);
+					IAlloc_Free(&ai, outbuf);
 					TRACEV("[LoadList]  * ERROR:  Exception caught while performing 7z list.load()");
 					throw;
 				}
-
-				ai.Free(outbuf);
+				
+				IAlloc_Free(&ai,outbuf);
 			}
 
-			SzArDbExFree(&db, ai.Free);
-			fclose(is.File);
+			SzArEx_Free(&db, &ai);
+			SzFree(NULL, filename);
+
+			File_Close(&is.file);
 			TRACEV("[LoadList]    done with 7z file");
 		} break;
 

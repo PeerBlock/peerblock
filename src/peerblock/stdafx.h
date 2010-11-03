@@ -29,9 +29,6 @@
 #define CURL_STATICLIB
 #define STRICT
 #define _LZMA_PROB32
-#define _LZMA_LOC_OPT
-#define _LZMA_SYSTEM_SIZE_T
-#define _LZMA_IN_CB
 #define _CRT_SECURE_NO_DEPRECATE
 #define _SCL_SECURE_NO_DEPRECATE
 #define PB_REPORT_BUGS
@@ -99,9 +96,10 @@
 #include <unzip.h>
 
 extern "C" {
+#include <7z.h>
+#include <7zAlloc.h>
 #include <7zCrc.h>
-#include <7zIn.h>
-#include <7zExtract.h>
+#include <7zFile.h>
 }
 
 #include <curl/curl.h>

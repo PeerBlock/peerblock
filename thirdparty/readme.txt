@@ -1,5 +1,5 @@
-7-Zip LZMA SDK version 4.40
-License:  GNU LGPL
+7-Zip LZMA SDK version 9.18 beta
+License:  Public Domain
 Website:  http://www.7-zip.org
 
 Boost version 1.44
