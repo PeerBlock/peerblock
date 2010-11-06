@@ -25,18 +25,18 @@
 #define MAKE_STR(x) DO_MAKE_STR(x)
 
 // only one of these should be uncommented at any given time
-//#define PB_RELTYPE_STABLE
-#define PB_RELTYPE_BETA
+#define PB_RELTYPE_STABLE
+//#define PB_RELTYPE_BETA
 //#define PB_RELTYPE_TEST
 //#define PB_RELTYPE_DEV
 
 // BUILDDATE: YYMMDDnnnn, where YY MM and DD are the year, month, and day of this build, and nnnn is for build-number
-#define BUILDDATE 1010100$WCREV$	// PB_REV
+#define BUILDDATE 1106100$WCREV$	// PB_REV
 
 #define PB_VER_BUILDNUM $WCREV$
 
 #define PB_VER_MAJOR 1
-#define PB_VER_MINOR 0
+#define PB_VER_MINOR 1
 #define PB_VER_BUGFIX 0
 
 #ifdef PB_RELTYPE_STABLE
