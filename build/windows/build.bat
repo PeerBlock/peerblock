@@ -65,8 +65,6 @@ SET BUILDTYPE=%1
 )
 
 REM Compile PeerBlock with MSVC 2008
-TITLE Compiling PeerBlock with MSVC 2008...
-
 CALL "%VS90COMNTOOLS%vsvars32.bat" >NUL
 
 FOR %%A IN ("Win32" "x64"
@@ -129,7 +127,6 @@ POPD
 
 :CreateZips
 REM Create all the zip files ready for distribution
-TITLE Creating ZIP files...
 
 REM Get the revision number
 FOR /f "tokens=3,4 delims= " %%K IN (
@@ -157,11 +154,13 @@ EXIT
 
 
 :SubMSVC
+TITLE Compiling PeerBlock with MSVC 2008 - %~1^|%~2...
 devenv /nologo PeerBlock.sln /%BUILDTYPE% "%~1|%~2"
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 GOTO :EOF
 
 :SubZipFiles
+TITLE Creating ZIP files - %~2 %1...
 MD "temp_zip" >NUL 2>&1
 COPY "bin\%1\%~2\peerblock.exe" "temp_zip\" /Y /V
 COPY "bin\%1\%~2\pbfilter.sys" "temp_zip\" /Y /V
