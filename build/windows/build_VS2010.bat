@@ -1,5 +1,6 @@
 @ECHO OFF
 SETLOCAL
+CD /D %~dp0
 
 REM  PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
 
@@ -22,12 +23,14 @@ REM  3. This notice may not be removed or altered from any source distribution.
 REM  $Id$
 
 IF /I "%1"=="help" GOTO :showhelp
+IF /I "%1"=="/help" GOTO :showhelp
 IF /I "%1"=="-help" GOTO :showhelp
 IF /I "%1"=="--help" GOTO :showhelp
+IF /I "%1"=="/?" GOTO :showhelp
 GOTO :start
 
 :showhelp
-TITLE build_VS2010.bat %1
+TITLE "build_VS2010.bat %1"
 ECHO.
 ECHO:Usage:  build_VS2010.bat [Clean^|Build^|Rebuild]
 ECHO.
@@ -41,12 +44,13 @@ EXIT /B
 :start
 TITLE Compiling PeerBlock...
 REM Check if Windows DDK is present in PATH
+
 IF NOT DEFINED PB_DDK_DIR (
 COLOR 0C
 ECHO:Windows DDK path NOT FOUND!!!
 ECHO:Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
 ECHO:pointing to the Windows DDK installation path.
-ECHO:Example: H:\progs\WinDDK\6001.18002
+ECHO:Example: C:\WinDDK\6001.18002
 GOTO :ErrorDetected
 )
 
