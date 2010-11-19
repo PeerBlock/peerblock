@@ -1,4 +1,4 @@
-7-Zip LZMA SDK version 9.18 beta
+7-Zip LZMA SDK version 9.20
 License:  Public Domain
 Website:  http://www.7-zip.org
 
