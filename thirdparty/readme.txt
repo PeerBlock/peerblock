@@ -2,7 +2,7 @@
 License:  Public Domain
 Website:  http://www.7-zip.org
 
-Boost version 1.44
+Boost version 1.45
 License:  Boost Software License
 Website:  http://www.boost.org
 Notes:    We currently include only the needed files.
