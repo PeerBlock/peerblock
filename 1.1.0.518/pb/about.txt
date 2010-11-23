@@ -1,0 +1,36 @@
+
+
+Base PeerGuardian code copyright (C) 2004-2007 Cory Nelson
+PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+Based on the original work by Tim Leonard
+
+This software is provided 'as-is', without any express or implied warranty.  In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+PeerBlock Credits:
+Mark Bulas (MarkSide) - Lead Developer
+night_stalker_z - Core Team
+XhmikosR - Core Team
+Jason Casimir - Contributor
+A. Jesse Harper (DarC / DisCoStu) - Contributor
+
+Test Team:
+2Ceedz, brandonjm8, gip, Petri Nurmi (Keefa), KindOne (ineedalifetoday), LANsquared, opus, Praeses (PraesesZA), RavenSoft, Tran Dinh Thien (Tippy / Thikku), Uzerrr, ZeroCoolXP
+
+Documentation:
+Nathan van der Velden (hoodadilly) - Documentation
+Martin Eilbeck (Freelandr) - Start with Windows Tutorial
+
+Website:
+Brian Quinn (ss18) - Site Admin
+Rob Robinson (RobrPatty) - Forum Moderator
+Jesse Hall (Jessay) - Web Design
+LANsquared - Hosting
+
+PeerGuardian 2 Credits:
+PeerBlock is based upon the earlier PeerGuardian 2 work.  Many thanks to Cory Nelson and his Phoenix Labs crew (http://www.phoenixlabs.org) for creating  PG2, and for making it open-source so that after they abandoned it we could pick it up and resurrect it!

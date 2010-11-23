@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>PeerBlock FAQ</title>
+</head>
+<ol>
+    <li><a href="#1">What IS PeerBlock?</a></li>
+    <li><a href="#2">How does it do that?</a></li>
+    <li><a href="#3">Where does it get these lists?</a></li>
+    <li><a href="#4">What lists should I use?</a></li>
+    <li><a href="#5">Does this mean my P2P downloading is completely safe now?</a></li>
+    <li><a href="#6">What is PeerBlock's relationship with the old PeerGuardian program?</a></li>
+    <li><a href="#7">Can I run PG2 and PeerBlock at the same time?</a></li>
+    <li><a href="#8">Is there any reason to leave PG2 installed on my system?</a></li>
+    <li><a href="#9">Which version should I run?</a></li>
+    <li><a href="#10">Something I need to access is blocked! What can I do?</a></li>
+    <li><a href="#11">My icon's gone! How do I get it back?</a></li>
+</ol>
+<ol>
+    <li><a name="1" style="font-weight: bold;">What IS PeerBlock?</a><p>
+        The short version is: PeerBlock blocks "known bad" computers from accessing yours,
+        and vice versa. Depending on the lists you have it setup to use, you can block governments,
+        corporations, machines flagged for anti-p2p activites, even entire countries! Whether
+        you're sharing files with Bittorrent or just surfing the web, PeerBlock can help
+        protect you from the bad guys.
+    </p>
+    </li>
+    <li><a name="2" style="font-weight: bold;">How does it do that?</a><p>
+        An IP Address is like a telephone number, or a street address, for your computer
+        - any time you connect to the Internet, your IP address is used to make that connection.
+        If you go to "www.google.com", your computer first translates this to an IP address
+        (e.g. 66.102.1.104), then sends a request to that address for a web-page; when the
+        www.google.com computer receives this message, part of it contains your computer's
+        IP address so that it knows how to send the web-page back to you.
+    </p>
+        <p>
+            PeerBlock is a type of program known as an "IP Filter". It lives way down deep inside
+            the networking code on your computer - the stuff in Windows that actually makes/receives
+            network connections for you - and inspects everything that flows past it. It looks
+            at the IP address this network "packet" is coming from, and compares is against
+            a list of "bad" ip-addresses; if it finds a match, it doesn't let that network packet
+            make it through to the rest of your computer. If also looks at the IP address your
+            network packets are going to, and does the same thing.
+        </p>
+    </li>
+    <li><a name="3" style="font-weight: bold;">Where does it get these lists?</a><p>
+        PeerBlock has a few default lists included, lists that are updated often so that
+        they always contain the most up-to-date information. You can also specify other
+        lists, for example many people enjoy using the lists provided by <a href="http://www.iblocklist.com">
+            iblocklist.com</a>. And you can create your own lists, either "known safe" ip
+        addresses like websites you trust, your company's servers, or gaming servers to
+        which you need to connect; or your own "bad" lists of people you want to block.
+    </p>
+    </li>
+    <li><a name="4" style="font-weight: bold;">What lists should I use?</a><p>
+        That depends on what you want to do with PeerBlock! Do you want to block Ads? Use
+        the built-in "Ads" list. Are you in college and want to protect your doings from
+        the campus Network Police? Use the built-in "Edu" list. Many more blocklists are
+        available, we recommend those available at iblocklist.com.
+    </p>
+    </li>
+    <li><a name="5" style="font-weight: bold;">Does this mean my P2P downloading is completely
+        safe now?</a><p>
+            Not necessarily. While many people do use IP Filtering software like PeerBlock to
+            help "protect" themselves from being sued for copyright infringement, it is not
+            100% protection. In fact some people believe that using blocklists like this are
+            completely useless. Others disagree, and believe that even if it's not 100% safe,
+            it still lets them download files more safely. Sometimes they invoke the "Bear Principle":
+            when running away from an angry bear you don't need to be faster than that bear
+            . . . you only need to be faster than the guy next to you. However, as I seem to
+            remember seeing on the old Peer Guardian site at one point:
+        </p>
+        <p>
+            <em>The only way to be "safe" with P2P downloading is to not share copyrighted content!</em></p>
+        <p>
+            PeerBlock is good at what it does - keeping your computer from "talking" with ip
+            addresses on your configured blocklists. Everything else is up to those blocklists
+            themselves. And heck, even if the blocklists provided 100% coverage of "bad" ip-addresses,
+            and if blocklists were 100% proven to work, there could still be some bugs in the
+            PeerBlock software that may prevent it from working correctly on your machine; we
+            offer no guarantees that it works, and disclaim any and all responsibility for the
+            consequences of your own actions online. If you're sharing copyrighted music/video
+            files and get sued by the relevant organizations, it's not our fault. If you're
+            stuck in a country with an oppressive government and are trying to get out your
+            plans regarding the upcoming revolution, and those in power break down your door
+            and haul you away, it's not our fault. If you're sharing some secret footage of
+            Area 51 and the "Men in Black" come knocking on your door, it's not our fault!</p>
+        <p>
+            If you choose to download copyrighted material from the Internet, be aware that
+            you may be breaking the law.</p>
+        </p> </li>
+    <li><a name="6" style="font-weight: bold;">What is PeerBlock's relationship with the
+        old PeerGuardian program?</a><p>
+            PeerBlock is actually based on the same code used to create PeerGuardian - specifically,
+            the "PG2 RC1 Test3" Vista beta version. That code had a LOT of bugs in it, and hadn't
+            been updated for about two years. So I started up this PeerBlock project to fix
+            all those things that'd been annoying me for so long. A bunch of other people decided
+            to pitch in and help out, some with development, some with testing, and now we're
+            where we are today.</p>
+        <p>
+            So compared with old PeerGuardian software, PeerBlock is much more stable, doesn't
+            require nearly so many hacks/workarounds to get working on Vista/Win7, and is actually
+            under active development . . . so we can (and will!) actually respond to new bug
+            reports or feature requests.
+        </p>
+    </li>
+    <li><a name="7" style="font-weight: bold;">Can I run PG2 and PeerBlock at the same time?</a><p>
+        No! As PeerBlock and PG2 both operate the same way, and in fact share a lot of code,
+        they could conflict with one another and cause all sorts of strange behavior (including
+        Windows crashes). In fact the two programs should not allow themselves to run at
+        the same time, to protect you from these sorts of potential problems.
+    </p>
+    </li>
+    <li><a name="8" style="font-weight: bold;">Is there any reason to leave PG2 installed
+        on my system?</a><p>
+            Only for nostalgia's sake. After you have PeerBlock running well on your system,
+            there really is no point to leaving PG2 installed. Just note that you'll need to
+            close PeerBlock before uninstalling PG2, due to some stuff we had to put in there
+            to prevent PG2 from trying to run at the same time as PeerBlock.
+        </p>
+    </li>
+    <li><a name="9" style="font-weight: bold;">Which version should I run?</a><p>
+        We make two different types of PeerBlock releases available for you to download.
+        Public Releases are released on our main www.peerblock.com website, and are generally
+        considered to be the most stable; these are generally denoted by a version number
+        like "0.9.2" or "1.0.0". Interim Releases are released on our devblog.peerblock.com
+        "Development Blog", are released more frequently, and contain new bugfixes and/or
+        features that have not yet received enough airtime to be considered stable enough
+        for inclusion in a Public Release; these are generally named something like "PeerBlock
+        Interim Release r131".
+    </p>
+        <p>
+            Public Releases are recommended for most users. If you want to help test the "bleeding
+            edge" of PeerBlock development, or if you have encountered a bug in the most recent
+            Public Release that may be fixed in the Interim Release train, you should consider
+            running an Interim Release.
+        </p>
+        <p>
+            Just be aware that PeerBlock will check for new versions of whichever version you're
+            currently running. If you're running a Public Release, PeerBlock will check for
+            new Public Release versions and direct you to the main www.peerblock.com site to
+            download it if one is detected. If you're running an Interim Release, PeerBlock
+            will check for new Interim Release versions and will instead direct you to the devblog.peerblock.com
+            site. Interim Releases are released much more frequently than Public Releases, so
+            if you are on the Interim Release train and find that you're being prompted to download
+            a new version too often you should consider installing a Public Release instead.
+            (No need to uninstall in this case, simply install the Public Release on top of
+            the Interim Release you currently have installed.)
+        </p>
+    </li>
+    <li><a name="10" style="font-weight: bold;">Something I need to access is blocked! What
+        can I do?</a><p>
+            Sometimes the IP addresses programs need to connect to may end up on one of the
+            blocklists you've configured PeerBlock to use. This can cause software to not download
+            new updates, Windows Update to no longer work, programs to lose connectivity to
+            the internet, etc. Luckily this is easy to fix!
+        </p>
+        <p>
+            What you'll need to do first is to identify the IP address(es) to which your software
+            needs to connect. For example, let's say you have a program that needs to connect
+            to the Internet when it starts up, but that program is not working. Open the main
+            PeerBlock window, and then start up your problematic program. In the PeerBlock window
+            you should see some blocked IP addresses logged; right-click on these IP-addresses
+            and select "Allow"! You can temporarily allow them for 15 minutes or 1 hour, or
+            you can allow them permanently.
+        </p>
+        <p>
+            Your "Permanent Allow List" can be edited later by going into the List Manager,
+            selecting the "Permanent Allows" list (lists\permallow.p2b), then clicking the "Open
+            List" button.
+        </p>
+    </li>
+    <li><a name="11" style="font-weight: bold;">My icon's gone! How do I get it back?</a><p>
+        If you select the "Always hide tray icon" option in the Settings panel, the tray
+        icon for PeerBlock will disappear. If you close the main PeerBlock window after
+        this point, you will no longer see any way to reopen PeerBlock and view your logs,
+        change your settings, or exit the program! To bring back the main window, just run
+        a new instance of PeerBlock - this will bring back the main window, from where you
+        can do whatever you need to do.
+    </p>
+    </li>
+</ol>
+</html>

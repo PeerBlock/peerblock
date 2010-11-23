@@ -1,0 +1,32 @@
+P2B (P2P Binary) File Format v3
+
+P2B was created to lighten the load while transfering PeerGuardian blocklists.
+It typically results in files 50% smaller than the P2P format.  Because it is a
+binary format, it is _not_ recommended for general use.
+
+P2B files specify a version number so it may be extended in the future, perhaps
+to hold metadata for IPs (category, region, etc).  Please coordinate with me
+(phrosty@gmail.com) if you wish to do this.
+
+A further improvement in v2 is all range names are in UTF-8 for better
+internationalization.  Parsers will NOT allow ISO-8895-1 or any other invalid
+UTF-8 in range names.
+
+Improvements in v3 are size-related: files are typically 15% smaller than P2B
+v2.
+
+There is a zlib-licensed library for C++ developers who wish to use the P2B
+format available at http://peerguardian.sf.net
+
+The Format (note the C-style escapes):
+
+header     = \xFF\xFF\xFF\xFFP2B
+version    = single byte, currently 0x03
+namecount  = 32-bit integer in network byte order
+name       = null-terminated utf-8 string
+rangecount = 32-bit integer in network byte order
+nameindex  = 32-bit integer in network byte order
+ip         = 32-bit integer in network byte order
+range      = <nameindex><start ip><end ip>
+
+file    = <header><version><namecount><names><rangecount><ranges>
