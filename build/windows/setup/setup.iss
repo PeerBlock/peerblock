@@ -19,11 +19,17 @@
 ;  $Id$
 ;
 ; Requirements:
-; *Inno Setup QuickStart Pack v5.3.11(+): http://www.jrsoftware.org/isdl.php#qsp
+; *Inno Setup QuickStart Pack: http://www.jrsoftware.org/isdl.php#qsp
 
 
 ; Define "VS2010 = True" if you built the VS2010 build or use "build_2010.bat"
 #define VS2010 = False
+
+
+#if VER < 0x05040000
+  #error Update your Inno Setup version
+#endif
+
 
 #include "..\..\..\src\peerblock\version_parsed.h"
 
@@ -130,9 +136,11 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; OnlyBelowVersion: 0,6.01; Flags: unchecked
 Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck(); Flags: checkedonce unchecked
-Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_other}; Check: SettingsExist(); Flags: checkedonce unchecked
 Name: uninstall_pg; Description: {cm:tsk_uninstall_pg}; GroupDescription: {cm:tsk_other}; Check: IsPGInstalled(); Flags: checkedonce unchecked
 Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
+Name: reset_lists; Description: {cm:tsk_reset_lists}; GroupDescription: {cm:tsk_reset}; Check: ListsExist(); Flags: checkedonce unchecked
+Name: reset_logs; Description: {cm:tsk_reset_logs}; GroupDescription: {cm:tsk_reset}; Check: LogsExist(); Flags: checkedonce unchecked
+Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_reset}; Check: SettingsExist(); Flags: checkedonce unchecked
 
 
 [Files]
@@ -227,6 +235,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 #include 'setup_services.iss'
 #include "setup_cpu_detection.iss"
 
+
 ///////////////////////////////////////////
 //  Inno Setup functions and procedures  //
 ///////////////////////////////////////////
@@ -235,7 +244,7 @@ function InitializeSetup(): Boolean;
 begin
   Result := True;
   // Create a mutex for the installer.
-  // If it's already running display a message and stop installation
+  // If it's already running display a message and stop the installation
   if CheckForMutexes(installer_mutex_name) then begin
     if not WizardSilent() then begin
         Log('Custom Code: Installer is already running');
@@ -246,28 +255,28 @@ begin
     Log('Custom Code: Creating installer`s mutex');
     CreateMutex(installer_mutex_name);
 
-  // Acquire CPU information
-  CPUCheck;
+    // Acquire CPU information
+    CPUCheck;
 
-  if NOT HasSupportedCPU() then begin
-    Result := False;
-    Log('Custom Code: Not supported CPU');
-    MsgBox(CustomMessage('msg_unsupported_cpu'), mbError, MB_OK);
-  end;
+    if NOT HasSupportedCPU() then begin
+      Result := False;
+      Log('Custom Code: Not supported CPU');
+      MsgBox(CustomMessage('msg_unsupported_cpu'), mbError, MB_OK);
+    end;
 
-  #if sse2_required
-  if Result AND NOT Is_SSE2_Supported() then begin
-    Result := False;
-    Log('Custom Code: Found a non SSE2 capable CPU');
-    MsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK);
-  end;
-  #elif sse_required
-  if Result AND NOT Is_SSE_Supported() then begin
-    Result := False;
-    Log('Custom Code: Found a non SSE capable CPU');
-    MsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK);
-  end;
-  #endif
+    #if sse2_required
+    if Result AND NOT Is_SSE2_Supported() then begin
+      Result := False;
+      Log('Custom Code: Found a non SSE2 capable CPU');
+      MsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK);
+    end;
+    #elif sse_required
+    if Result AND NOT Is_SSE_Supported() then begin
+      Result := False;
+      Log('Custom Code: Found a non SSE capable CPU');
+      MsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK);
+    end;
+    #endif
 
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
 
@@ -290,6 +299,19 @@ begin
 end;
 
 
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  if IsUpdate then begin
+    Case PageID of
+      // Hide the license page
+      wpLicense: Result := True;
+    else
+      Result := False;
+    end;
+  end;
+end;
+
+
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssInstall then begin
@@ -307,13 +329,20 @@ begin
       RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
     end;
     if IsTaskSelected('uninstall_pg') then begin
-      Log('Custom Code: User selected to uninstall PeerGuardian');
+      Log('Custom Code: User selected to uninstall PeerGuardian, calling KillAndUninstallPG()');
       KillAndUninstallPG;
     end;
+    if IsTaskSelected('reset_lists') then begin
+      Log('Custom Code: User selected to delete the lists, calling RemoveLists()');
+      RemoveLists;
+    end;
+    if IsTaskSelected('reset_logs') then begin
+      Log('Custom Code: User selected to delete the logs calling RemoveLogs()');
+      RemoveLogs;
+    end;
     if IsTaskSelected('reset_settings') then begin
-      Log('Custom Code: User selected to reset settings, calling RemoveUserFiles and RemoveMiscFiles');
-      RemoveUserFiles;
-      RemoveMiscFiles;
+      Log('Custom Code: User selected to reset settings, calling RemoveSettings()');
+      RemoveSettings;
     end;
   end;
 end;
@@ -324,8 +353,10 @@ begin
   if CurUninstallStep = usUninstall then begin
     // When uninstalling, ask the user if they want to delete PeerBlock's logs and settings
     if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-      if MsgBox(ExpandConstant('{cm:msg_DeleteListsSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
-        RemoveUserFiles;
+      if MsgBox(ExpandConstant('{cm:msg_DeleteLogsListsSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then begin
+        RemoveLists;
+        RemoveLogs;
+        RemoveSettings;
       end;
     end;
     StopService('pbfilter');

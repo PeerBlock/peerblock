@@ -104,10 +104,10 @@ begin
     if UsingWinNT() = true then begin
         Result := OpenSCManager('','ServicesActive',SC_MANAGER_ALL_ACCESS);
         if Result = 0 then
-            MsgBox(ExpandConstant('{cm:msg_servicemanager}'), mbError, MB_OK)
+            MsgBox(ExpandConstant('{cm:msg_ServiceManager}'), mbError, MB_OK)
     end
     else begin
-        MsgBox(ExpandConstant('{cm:msg_servicemanager2}'), mbError, MB_OK)
+        MsgBox(ExpandConstant('{cm:msg_ServiceManager2}'), mbError, MB_OK)
         Result := 0;
     end;
 end;

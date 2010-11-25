@@ -70,6 +70,32 @@ begin
 end;
 
 
+function ListsExist(): Boolean;
+var
+  FindRec: TFindRec;
+begin
+  if FindFirst(ExpandConstant('{app}\lists\*.list'), FindRec) then begin
+    Log('Custom Code: Lists exist');
+    Result := True;
+    FindClose(FindRec);
+  end else
+    Result := False;
+end;
+
+
+function LogsExist(): Boolean;
+var
+  FindRec: TFindRec;
+begin
+  if FindFirst(ExpandConstant('{app}\archives\*.log'), FindRec) OR FileExists(ExpandConstant('{app}\peerblock.log')) then begin
+    Log('Custom Code: Logs exist');
+    Result := True;
+    FindClose(FindRec);
+  end else
+    Result := False;
+end;
+
+
 // Check if PeerBlock is configured to run on startup,
 // looking for the old registry value "PeerGuardian"
 function OldStartupCheck(): Boolean;
@@ -93,19 +119,6 @@ begin
   if FileExists(ExpandConstant('{app}\peerblock.conf')) then begin
     Log('Custom Code: Settings exist');
     Result := True;
-  end;
-end;
-
-
-function ShouldSkipPage(PageID: Integer): Boolean;
-begin
-  if IsUpdate then begin
-    Case PageID of
-      // Hide the license page
-      wpLicense: Result := True;
-    else
-      Result := False;
-    end;
   end;
 end;
 
@@ -154,15 +167,37 @@ begin
 end;
 
 
-procedure RemoveUserFiles();
+// Find PeerGuardian's WindowName, kill the process and then uninstall it
+procedure KillAndUninstallPG();
+var
+  Wnd: HWND;
 begin
-  DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
-  RemoveDir(ExpandConstant('{app}\archives\'));
+  Wnd := FindWindowByWindowName('PeerGuardian 2');
+  if Wnd <> 0 then begin
+    Log('Custom Code: Trying to kill PG2');
+    PostMessage(Wnd, 18, 0, 0); // WM_QUIT
+  end;
+  begin
+    Log('Custom Code: Trying to uninstall PG2');
+    UninstallPG;
+  end;
+end;
+
+
+procedure RemoveLists();
+begin
   DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
   DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
-  DeleteFile(ExpandConstant('{app}\peerblock.conf'));
-  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak'));
+  RemoveDir(ExpandConstant('{app}\lists\'));
+end;
+
+
+procedure RemoveLogs();
+begin
+  DelTree(ExpandConstant('{app}\archives\*.log'), False, True, False);
+  DeleteFile(ExpandConstant('{app}\peerblock.log'));
+  RemoveDir(ExpandConstant('{app}\archives\'));
 end;
 
 
@@ -178,23 +213,12 @@ begin
   DeleteFile(ExpandConstant('{app}\peerblock.conf.failed'));
   DeleteFile(ExpandConstant('{app}\peerblock.conf.tmp'));
   DeleteFile(ExpandConstant('{app}\peerblock.dmp'));
-  DeleteFile(ExpandConstant('{app}\peerblock.log'));
   DeleteFile(ExpandConstant('{app}\pg2.conf.failed'));
 end;
 
 
-// Find PeerGuardian's WindowName, kill the process and then uninstall it
-procedure KillAndUninstallPG();
-var
-  Wnd: HWND;
+procedure RemoveSettings();
 begin
-  Wnd := FindWindowByWindowName('PeerGuardian 2');
-  if Wnd <> 0 then begin
-    Log('Custom Code: Trying to kill PG2');
-    PostMessage(Wnd, 18, 0, 0); // WM_QUIT
-  end;
-  begin
-    Log('Custom Code: Trying to uninstall PG2');
-    UninstallPG;
-  end;
+  DeleteFile(ExpandConstant('{app}\peerblock.conf'));
+  DeleteFile(ExpandConstant('{app}\peerblock.conf.bak'));
 end;

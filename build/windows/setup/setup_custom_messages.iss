@@ -22,17 +22,20 @@
 [CustomMessages]
 ; msg=Message, tsk=Task
 ; English
-en.msg_DeleteListsSettings=Do you also want to delete PeerBlock's settings and lists?%nIf you plan on reinstalling PeerBlock you might not want to delete them.
+en.msg_DeleteLogsListsSettings=Do you also want to delete PeerBlock's lists, logs and settings?%nIf you plan on reinstalling PeerBlock you might not want to delete them.
 en.msg_SetupIsRunningWarning=PeerBlock Setup is already running!
-en.msg_servicemanager=The service manager is not available
-en.msg_servicemanager2=Only NT based systems support services
+en.msg_ServiceManager=The service manager is not available
+en.msg_ServiceManager2=Only NT based systems support services
 en.msg_simd_sse=This build of PeerBlock requires a CPU with SSE extension support. Your CPU does not have those capabilities.
 en.msg_simd_sse2=This build of PeerBlock requires a CPU with SSE2 extension support. Your CPU does not have those capabilities.
 en.msg_unsupported_cpu=This build of PeerBlock requires a CPU of type i686 or newer. Your CPU is not supported.
 en.run_visit_website=Visit PeerBlock's Website
 en.tsk_other=Other tasks:
 en.tsk_remove_startup=Remove PeerBlock from Windows startup
-en.tsk_reset_settings=Reset PeerBlock's settings and delete all custom lists
+en.tsk_reset=Cleanup:
+en.tsk_reset_lists=Delete PeerBlock's lists including any custom lists
+en.tsk_reset_logs=Delete PeerBlock's logs
+en.tsk_reset_settings=Reset PeerBlock's settings
 en.tsk_startup=Startup options:
 en.tsk_startup_descr=Start PeerBlock on system startup
 en.tsk_uninstall_pg=Uninstall PeerGuardian after PeerBlock's installation

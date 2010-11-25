@@ -34,7 +34,7 @@
 
 // BUILDDATE: YYMMDDn, where YY MM and DD are the year, month, and day of this build, and n is the
 // leading-0 for automatically-generated three-digit (currently) build-number
-#define BUILDDATE 1010100
+#define BUILDDATE 1011060
 
 #ifdef PB_RELTYPE_STABLE
 	//#define PB_BLDSTR "PeerBlock " STRINGIFY(PB_VER_MAJOR) "." STRINGIFY(PB_VER_MINOR) "." STRINGIFY(PB_VER_BUGFIX)
