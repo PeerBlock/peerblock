@@ -96,6 +96,16 @@ begin
 end;
 
 
+function MiscFilesExist(): Boolean;
+begin
+  Result := False;
+  if FileExists(ExpandConstant('{app}\cache.p2b')) OR FileExists(ExpandConstant('{app}\history.db')) then begin
+    Log('Custom Code: Misc files exist');
+    Result := True;
+  end;
+end;
+
+
 // Check if PeerBlock is configured to run on startup,
 // looking for the old registry value "PeerGuardian"
 function OldStartupCheck(): Boolean;

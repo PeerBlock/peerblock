@@ -138,9 +138,10 @@ Name: startup_task; Description: {cm:tsk_startup_descr}; GroupDescription: {cm:t
 Name: remove_startup_task; Description: {cm:tsk_remove_startup}; GroupDescription: {cm:tsk_startup}; Check: StartupCheck(); Flags: checkedonce unchecked
 Name: uninstall_pg; Description: {cm:tsk_uninstall_pg}; GroupDescription: {cm:tsk_other}; Check: IsPGInstalled(); Flags: checkedonce unchecked
 Name: use_pg_settings; Description: {cm:tsk_use_PG_settings}; GroupDescription: {cm:tsk_other}; Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
-Name: reset_lists; Description: {cm:tsk_reset_lists}; GroupDescription: {cm:tsk_reset}; Check: ListsExist(); Flags: checkedonce unchecked
-Name: reset_logs; Description: {cm:tsk_reset_logs}; GroupDescription: {cm:tsk_reset}; Check: LogsExist(); Flags: checkedonce unchecked
-Name: reset_settings; Description: {cm:tsk_reset_settings}; GroupDescription: {cm:tsk_reset}; Check: SettingsExist(); Flags: checkedonce unchecked
+Name: delete_misc; Description: {cm:tsk_delete_misc}; GroupDescription: {cm:tsk_reset}; Check: MiscFilesExist(); Flags: checkedonce unchecked
+Name: delete_lists; Description: {cm:tsk_delete_lists}; GroupDescription: {cm:tsk_reset}; Check: ListsExist(); Flags: checkedonce unchecked
+Name: delete_logs; Description: {cm:tsk_delete_logs}; GroupDescription: {cm:tsk_reset}; Check: LogsExist(); Flags: checkedonce unchecked
+Name: delete_settings; Description: {cm:tsk_delete_settings}; GroupDescription: {cm:tsk_reset}; Check: SettingsExist(); Flags: checkedonce unchecked
 
 
 [Files]
@@ -186,7 +187,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename
 
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset_settings remove_startup_task; Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: delete_settings remove_startup_task; Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
 
 
 [Run]
@@ -319,7 +320,7 @@ begin
       Log('Custom Code: pbfilter service is running, will attempt to stop it');
       StopService('pbfilter');
     end;
-    Log('Custom Code: pbfilter service is not running, will attempt to remove pbfilter service');
+    Log('Custom Code: pbfilter service is not running, will attempt to remove it');
     RemoveService('pbfilter');
   end;
   if CurStep = ssPostInstall then begin
@@ -332,16 +333,20 @@ begin
       Log('Custom Code: User selected to uninstall PeerGuardian, calling KillAndUninstallPG()');
       KillAndUninstallPG;
     end;
-    if IsTaskSelected('reset_lists') then begin
+    if IsTaskSelected('delete_misc') then begin
+      Log('Custom Code: User selected to delete misc files, calling RemoveMiscFiles()');
+      RemoveMiscFiles;
+    end;
+    if IsTaskSelected('delete_lists') then begin
       Log('Custom Code: User selected to delete the lists, calling RemoveLists()');
       RemoveLists;
     end;
-    if IsTaskSelected('reset_logs') then begin
+    if IsTaskSelected('delete_logs') then begin
       Log('Custom Code: User selected to delete the logs calling RemoveLogs()');
       RemoveLogs;
     end;
-    if IsTaskSelected('reset_settings') then begin
-      Log('Custom Code: User selected to reset settings, calling RemoveSettings()');
+    if IsTaskSelected('delete_settings') then begin
+      Log('Custom Code: User selected to delete settings, calling RemoveSettings()');
       RemoveSettings;
     end;
   end;
