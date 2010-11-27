@@ -33,6 +33,7 @@ en.run_visit_website=Visit PeerBlock's Website
 en.tsk_other=Other tasks:
 en.tsk_remove_startup=Remove PeerBlock from Windows startup
 en.tsk_reset=Delete PeerBlock's files:
+en.tsk_reset_descr=All
 en.tsk_delete_misc=History and misc files
 en.tsk_delete_lists=Lists, including any custom ones
 en.tsk_delete_logs=Logs
