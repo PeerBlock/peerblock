@@ -1,5 +1,5 @@
 @ECHO OFF
-SETLOCAL
+CLS && SETLOCAL
 CD /D %~dp0
 
 REM  PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
@@ -38,14 +38,12 @@ ECHO:Executing "build_VS2010.bat" will use the defaults: "build.bat Rebuild"
 ECHO.
 ENDLOCAL
 EXIT /B
-)
-
 
 :start
-TITLE Compiling PeerBlock...
 REM Check if Windows DDK is present in PATH
 
 IF NOT DEFINED PB_DDK_DIR (
+TITLE Compiling PeerBlock [ERROR]
 COLOR 0C
 ECHO:Windows DDK path NOT FOUND!!!
 ECHO:Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
@@ -55,6 +53,7 @@ GOTO :ErrorDetected
 )
 
 IF NOT DEFINED VS100COMNTOOLS (
+TITLE Compiling PeerBlock [ERROR]
 COLOR 0C
 ECHO:Visual Studio 2010 NOT FOUND!!!
 GOTO :ErrorDetected
@@ -79,7 +78,7 @@ IF /I "%1" == "Clean" GOTO :END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (
-TITLE Signing driver and program...
+TITLE Signing the driver and the program...
   FOR %%F IN (
   "bin10\Win32\Release" "bin10\Win32\Release_(Vista)" "bin10\x64\Release" "bin10\x64\Release_(Vista)"
   ) DO (
