@@ -56,11 +56,11 @@ end;
 // Check if PeerGuardian is installed
 function IsPGInstalled(): Boolean;
 begin
-  Result := False;
   if RegKeyExists(HKLM, PGUninstallKey) or RegKeyExists(HKCU, PGUninstallKey) then begin
     Log('Custom Code: Found PG2 uninstall registry key');
     Result := True;
-  end;
+  end else
+    Result := False;
 end;
 
 
@@ -98,11 +98,11 @@ end;
 
 function MiscFilesExist(): Boolean;
 begin
-  Result := False;
   if FileExists(ExpandConstant('{app}\cache.p2b')) OR FileExists(ExpandConstant('{app}\history.db')) then begin
     Log('Custom Code: Misc files exist');
     Result := True;
-  end;
+  end else
+    Result := False;
 end;
 
 
@@ -112,35 +112,35 @@ function OldStartupCheck(): Boolean;
 var
   svalue: String;
 begin
-  Result := False;
   if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian', svalue) then begin
     if svalue = (ExpandConstant('{app}\peerblock.exe')) then begin
       Log('Custom Code: Old Startup entry was found');
       Result := True;
     end;
-  end;
+  end else
+    Result := False;
 end;
 
 
 // Check if PeerBlock's settings exist
 function SettingsExist(): Boolean;
 begin
-  Result := False;
   if FileExists(ExpandConstant('{app}\peerblock.conf')) then begin
     Log('Custom Code: Settings exist');
     Result := True;
-  end;
+  end else
+    Result := False;
 end;
 
 
 // Check if PeerBlock is configured to run on startup
 function StartupCheck(): Boolean;
 begin
-  Result := False;
   if RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock') then begin
     Log('Custom Code: PeerBlock is configured to run on startup');
     Result := True;
-  end;
+  end else
+    Result := False;
 end;
 
 

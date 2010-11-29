@@ -244,7 +244,6 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 
 function InitializeSetup(): Boolean;
 begin
-  Result := True;
   // Create a mutex for the installer.
   // If it's already running display a message and stop the installation
   if CheckForMutexes(installer_mutex_name) then begin
@@ -282,13 +281,13 @@ begin
 
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
 
+    Result := True;
   end;
 end;
 
 
 function InitializeUninstall(): Boolean;
 begin
-  Result := True;
   // Create a mutex for the installer.
   // If the installer is already running display a message and stop installation
   if CheckForMutexes(installer_mutex_name) then begin
@@ -297,6 +296,7 @@ begin
       Result := False;
   end else begin
     CreateMutex(installer_mutex_name);
+    Result := True;
   end;
 end;
 
@@ -307,6 +307,7 @@ begin
     Case PageID of
       // Hide the license page
       wpLicense: Result := True;
+      wpInfoBefore: Result := True;
     else
       Result := False;
     end;
