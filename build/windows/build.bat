@@ -62,10 +62,20 @@ GOTO :ErrorDetected
 IF "%1" == "" (
 SET BUILDTYPE=Rebuild
 ) ELSE (
-SET BUILDTYPE=%1
+IF /I "%1" == "Build" SET BUILDTYPE=%1 && GOTO :START
+IF /I "%1" == "-Build" SET BUILDTYPE=Build && GOTO :START
+IF /I "%1" == "--Build" SET BUILDTYPE=Build && GOTO :START
+IF /I "%1" == "Clean" SET BUILDTYPE=%1 && GOTO :START
+IF /I "%1" == "-Clean" SET BUILDTYPE=Clean && GOTO :START
+IF /I "%1" == "--Clean" SET BUILDTYPE=Clean && GOTO :START
+IF /I "%1" == "Rebuild" SET BUILDTYPE=%1 && GOTO :START
+IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild && GOTO :START
+IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild && GOTO :START
+ECHO:Unsupported commandline switch!&&GOTO :EndWithError
 )
 
 REM Compile PeerBlock with MSVC 2008
+:START
 CALL "%VS90COMNTOOLS%vsvars32.bat" >NUL
 
 FOR %%A IN ("Win32" "x64"
@@ -75,6 +85,8 @@ CALL :SubMSVC "Release_(Vista)" %%A
 )
 
 IF /I "%1" == "Clean" GOTO :END
+IF /I "%1" == "-Clean" GOTO :END
+IF /I "%1" == "--Clean" GOTO :END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (
