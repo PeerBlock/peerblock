@@ -1,5 +1,5 @@
 @ECHO OFF
-CLS && SETLOCAL
+SETLOCAL
 CD /D %~dp0
 
 REM  PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
@@ -22,14 +22,15 @@ REM  3. This notice may not be removed or altered from any source distribution.
 
 REM  $Id$
 
-IF /I "%1"=="help" GOTO :showhelp
-IF /I "%1"=="/help" GOTO :showhelp
-IF /I "%1"=="-help" GOTO :showhelp
-IF /I "%1"=="--help" GOTO :showhelp
-IF /I "%1"=="/?" GOTO :showhelp
-GOTO :start
+REM check for the help switches
+IF /I "%1"=="help" GOTO :SHOWHELP
+IF /I "%1"=="/help" GOTO :SHOWHELP
+IF /I "%1"=="-help" GOTO :SHOWHELP
+IF /I "%1"=="--help" GOTO :SHOWHELP
+IF /I "%1"=="/?" GOTO :SHOWHELP
+GOTO :CHECK
 
-:showhelp
+:SHOWHELP
 TITLE "build.bat %1"
 ECHO.
 ECHO:Usage:  build.bat [Clean^|Build^|Rebuild]
@@ -39,7 +40,7 @@ ECHO.
 ENDLOCAL
 EXIT /B
 
-:start
+:CHECK
 REM Check if Windows DDK is present in PATH
 
 IF NOT DEFINED PB_DDK_DIR (
@@ -59,19 +60,26 @@ ECHO:Visual Studio 2008 NOT FOUND!!!
 GOTO :ErrorDetected
 )
 
+REM Check for the switches
 IF "%1" == "" (
 SET BUILDTYPE=Rebuild
 ) ELSE (
-IF /I "%1" == "Build" SET BUILDTYPE=%1 && GOTO :START
-IF /I "%1" == "-Build" SET BUILDTYPE=Build && GOTO :START
-IF /I "%1" == "--Build" SET BUILDTYPE=Build && GOTO :START
-IF /I "%1" == "Clean" SET BUILDTYPE=%1 && GOTO :START
-IF /I "%1" == "-Clean" SET BUILDTYPE=Clean && GOTO :START
-IF /I "%1" == "--Clean" SET BUILDTYPE=Clean && GOTO :START
-IF /I "%1" == "Rebuild" SET BUILDTYPE=%1 && GOTO :START
-IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild && GOTO :START
-IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild && GOTO :START
-ECHO:Unsupported commandline switch!&&GOTO :EndWithError
+IF /I "%1" == "Build" SET BUILDTYPE=Build&&GOTO :START
+IF /I "%1" == "/Build" SET BUILDTYPE=Build&&GOTO :START
+IF /I "%1" == "-Build" SET BUILDTYPE=Build&&GOTO :START
+IF /I "%1" == "--Build" SET BUILDTYPE=Build&&GOTO :START
+IF /I "%1" == "Clean" SET BUILDTYPE=Clean&&GOTO :START
+IF /I "%1" == "/Clean" SET BUILDTYPE=Clean&&GOTO :START
+IF /I "%1" == "-Clean" SET BUILDTYPE=Clean&&GOTO :START
+IF /I "%1" == "--Clean" SET BUILDTYPE=Clean&&GOTO :START
+IF /I "%1" == "Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+IF /I "%1" == "/Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+ECHO.
+ECHO:Unsupported commandline switch!
+ECHO:Run "build.bat help" for details about the commandline switches.
+GOTO :EndWithError
 )
 
 REM Compile PeerBlock with MSVC 2008
@@ -84,9 +92,7 @@ CALL :SubMSVC "Release" %%A
 CALL :SubMSVC "Release_(Vista)" %%A
 )
 
-IF /I "%1" == "Clean" GOTO :END
-IF /I "%1" == "-Clean" GOTO :END
-IF /I "%1" == "--Clean" GOTO :END
+IF /I "%BUILDTYPE%" == "Clean" GOTO :END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (
