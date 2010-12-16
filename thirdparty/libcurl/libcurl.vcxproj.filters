@@ -54,6 +54,9 @@
     <ClInclude Include="src\writeout.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\xattr.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="lib\amigaos.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -393,6 +396,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\writeout.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\xattr.c">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="lib\amigaos.c">

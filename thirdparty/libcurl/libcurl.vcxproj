@@ -200,6 +200,7 @@
     <ClInclude Include="src\version.h" />
     <ClInclude Include="src\writeenv.h" />
     <ClInclude Include="src\writeout.h" />
+    <ClInclude Include="src\xattr.h" />
     <ClInclude Include="lib\amigaos.h" />
     <ClInclude Include="lib\arpa_telnet.h" />
     <ClInclude Include="lib\config-amigaos.h" />
@@ -315,6 +316,7 @@
     <ClCompile Include="src\urlglob.c" />
     <ClCompile Include="src\writeenv.c" />
     <ClCompile Include="src\writeout.c" />
+    <ClCompile Include="src\xattr.c" />
     <ClCompile Include="lib\amigaos.c" />
     <ClCompile Include="lib\base64.c" />
     <ClCompile Include="lib\connect.c" />

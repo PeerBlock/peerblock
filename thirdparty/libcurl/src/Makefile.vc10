@@ -1,9 +1,9 @@
 #############################################################
 #
-## Makefile for building curl.exe with MSVC9
-## Use: nmake -f makefile.vc9 [release | debug] [CFG=release-ssl]
+## Makefile for building curl.exe with MSVC10
+## Use: nmake -f makefile.vc10 [release | debug] [CFG=release-ssl]
 ##      (default is release)
-## "nmake -f makefile.vc9 CFG=release-ssl" statically links OpenSSL
+## "nmake -f makefile.vc10 CFG=release-ssl" statically links OpenSSL
 ## into curl.exe producing a standalone SSL-enabled executable.
 ##
 ## Comments to: Troy Engel <tengel@sonic.net>
@@ -28,7 +28,7 @@ MACHINE  = X86
 
 # USE_WINDOWS_SSPI uses windows libraries to allow NTLM authentication
 # without an openssl installation and offers the ability to authenticate
-# using the "current logged in user". Since at least with MSVC9 the sspi.h
+# using the "current logged in user". Since at least with MSVC10 the sspi.h
 # header is broken it is either required to install the Windows SDK,
 # or to fix sspi.h with adding this define at the beginning of sspi.h:
 # #define FreeCredentialHandle FreeCredentialsHandle
@@ -82,7 +82,7 @@ LFLAGS   = /nologo /out:$(PROGRAM_NAME) /subsystem:console /machine:$(MACHINE)
 RESFLAGS = /i../include
 
 # This manifest thing is for VC8, enabled by the maketgz script that
-# builds the VC8 version of this makefile. Left commented out in the VC9
+# builds the VC8 version of this makefile. Left commented out in the VC10
 # version!
 #MANIFESTTOOL = mt -manifest $(PROGRAM_NAME).manifest -outputresource:$(PROGRAM_NAME);1
 

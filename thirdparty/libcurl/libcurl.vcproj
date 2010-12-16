@@ -486,6 +486,14 @@
 				RelativePath=".\src\writeout.h"
 				>
 			</File>
+			<File
+				RelativePath=".\src\xattr.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\xattr.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="lib"
