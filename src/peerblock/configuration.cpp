@@ -998,7 +998,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(portset, "AllowPop3", this->PortSet.AllowPop3);
 
 		TiXmlElement *profiles = InsertChild(portset, "Profiles");
-		for (vector<PortProfile>::const_iterator pfit = this->PortSet.Profiles.begin(); pfit != this->PortSet.Profiles.end(); pfit++) {
+		for (vector<PortProfile>::const_iterator pfit = this->PortSet.Profiles.begin(); pfit != this->PortSet.Profiles.end(); ++pfit) {
 			TiXmlElement *profile = InsertChild(profiles, "Profile");
 
 			PortProfile pf = (PortProfile) *pfit;
@@ -1008,7 +1008,7 @@ void Configuration::Save(const TCHAR * _filename)
 			InsertChild(profile, "Type", pf.Type);
 
 			TiXmlElement *ports = InsertChild(profile, "Ports");
-			for (vector<PortRange>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); pit++) {
+			for (vector<PortRange>::const_iterator pit = pf.Ports.begin(); pit != pf.Ports.end(); ++pit) {
 				TiXmlElement *range = InsertChild(ports, "Range");
 				InsertAttribute(range, (PortRange) *pit);
 			}

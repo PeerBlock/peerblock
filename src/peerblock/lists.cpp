@@ -552,7 +552,7 @@ void LoadLists(HWND parent) {
 			set<unsigned int> locals;
 			GetLocalIps(locals, LOCALIP_ADAPTER|LOCALIP_GATEWAY|LOCALIP_DHCP|LOCALIP_DNS);
 
-			for(set<unsigned int>::const_iterator iter=locals.begin(); iter!=locals.end(); iter++)
+			for(set<unsigned int>::const_iterator iter=locals.begin(); iter!=locals.end(); ++iter)
 				allow.insert(p2p::range(L"", *iter, *iter));
 		}
 

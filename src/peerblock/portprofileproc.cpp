@@ -71,7 +71,7 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	}
 
 	tstringstream ports;
-	for (vector<PortRange>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); iter++) 
+	for (vector<PortRange>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); ++iter) 
 	{
 		PortRange pr = (PortRange) *iter;
 

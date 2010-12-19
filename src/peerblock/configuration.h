@@ -142,11 +142,11 @@ struct PortSet
 				DestinationPorts.insert(110);
 		}
 
-		for (vector<PortProfile>::const_iterator iter = Profiles.begin(); iter != Profiles.end(); iter++) {
+		for (vector<PortProfile>::const_iterator iter = Profiles.begin(); iter != Profiles.end(); ++iter) {
 			PortProfile pp = (PortProfile) *iter;
 
 			if (pp.Enabled) {
-				for (vector<PortRange>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); iter2++) {
+				for (vector<PortRange>::const_iterator iter2 = pp.Ports.begin(); iter2 != pp.Ports.end(); ++iter2) {
 					PortRange pr =(PortRange) *iter2;
 
 					if (pr.Start <= pr.End)

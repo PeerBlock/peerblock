@@ -204,13 +204,13 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 
 
 
-void pbfilter_base::setdestinationports(const std::set<USHORT> ports)
+void pbfilter_base::setdestinationports(const std::set<USHORT> &ports)
 {
 	USHORT *nports = (USHORT*) malloc(sizeof(USHORT) * ports.size());
 	ULONG pcount = 0;
 
 	TRACEI("[pbfilter_base] [setdestinationports]  > Entering routine.");
-	for (set<USHORT>::const_iterator it = ports.begin(); it != ports.end(); it++)
+	for (set<USHORT>::const_iterator it = ports.begin(); it != ports.end(); ++it)
 	{
 		nports[pcount++] = *it;
 		TRACEI("[pbfilter_base] [setdestinationports]    ...iter...");
@@ -230,13 +230,13 @@ void pbfilter_base::setdestinationports(const std::set<USHORT> ports)
 } // End of setdestinationports()
 
 
-void pbfilter_base::setsourceports(const std::set<USHORT> ports)
+void pbfilter_base::setsourceports(const std::set<USHORT> &ports)
 {
 	USHORT *nports = (USHORT*) malloc(sizeof(USHORT) * ports.size());
 	ULONG pcount = 0;
 
 	TRACEI("[pbfilter_base] [setsourceports]  > Entering routine.");
-	for (set<USHORT>::const_iterator it = ports.begin(); it != ports.end(); it++)
+	for (set<USHORT>::const_iterator it = ports.begin(); it != ports.end(); ++it)
 	{
 		nports[pcount++] = *it;
 		TRACEI("[pbfilter_base] [setsourceports]    ...iter...");

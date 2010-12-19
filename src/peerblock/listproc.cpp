@@ -788,7 +788,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 							time_t t=time(NULL)+900;
 
-							for(p2p::list::const_iterator iter=l.begin(); iter!=l.end(); iter++)
+							for(p2p::list::const_iterator iter=l.begin(); iter!=l.end(); ++iter)
 								g_allowlist.push_back(make_pair(t, *iter));
 
 							LoadLists(hwnd);
@@ -803,7 +803,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 							time_t t=time(NULL)+3600;
 
-							for(p2p::list::const_iterator iter=l.begin(); iter!=l.end(); iter++)
+							for(p2p::list::const_iterator iter=l.begin(); iter!=l.end(); ++iter)
 								g_allowlist.push_back(make_pair(t, *iter));
 
 							LoadLists(hwnd);

@@ -77,7 +77,6 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 	m_name = name;
 	m_file = file;
 	m_devfile = devfile;
-	DWORD err = 0;
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if(!manager) throw win32_error("OpenSCManager");
@@ -88,6 +87,8 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 	if(!service) 
 	{
+		DWORD err = 0;
+
 		TRACEERR("[driver] [load(3)]", L"driver not currently installed as service", err = GetLastError());
 
 		err = 0;

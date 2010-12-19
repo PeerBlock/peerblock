@@ -60,7 +60,6 @@ void PerformPrevRelUpdates(HWND _hwnd)
 	{
 		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for old peerguardian-hosted lists, and updating any found to iblocklist.com-hosted ones");
 
-		bool bOldUrlFound = false;
 		vector<DynamicList> tempList;
 
 		// check each list in configured lists
@@ -73,7 +72,6 @@ void PerformPrevRelUpdates(HWND _hwnd)
 				// swap it out
 				tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    found old URL: [%1%]")) % list->Url );
 				TRACEBUFW(strBuf);
-				bOldUrlFound = true;
 
 				if (list->Url.find(_T("ads.php")) != string::npos)
 				{
@@ -162,7 +160,6 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		{
 			TRACEI("[mainproc] [PerformPrevRelUpdates]    user clicked Yes");
 
-			bool bOldUrlFound = false;
 			vector<DynamicList> tempList;
 			ListUrls listUrls;
 			listUrls.Init();
@@ -227,7 +224,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		if (g_config.CleanupType == None && g_config.MaxHistorySize > 0)
 		{
 			TRACEW("[mainproc] [PerformPrevRelUpdates]    CleanupType = None, updating it to Delete every 7 Days");
-			int result = MessageBox(_hwnd, IDS_PREVREL341TEXT_DEL, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+			MessageBox(_hwnd, IDS_PREVREL341TEXT_DEL, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
 			g_config.CleanupType = Delete;
 			g_config.CleanupInterval = 7;
 			g_config.Save();
@@ -235,14 +232,14 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		else if (g_config.MaxHistorySize == 0 && g_config.CleanupType != None)
 		{
 			TRACEW("[mainproc] [PerformPrevRelUpdates]    Max history.db size 0 ('unlimited'), updating it to 100 MB");
-			int result = MessageBox(_hwnd, IDS_PREVREL341TEXT_MAX, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+			MessageBox(_hwnd, IDS_PREVREL341TEXT_MAX, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
 			g_config.MaxHistorySize = 100 * 1000000;	// g_config.MaxHistory is in bytes...
 			g_config.Save();
 		}
 		else if (g_config.MaxHistorySize == 0 && g_config.CleanupType == None)
 		{
 			TRACEW("[mainproc] [PerformPrevRelUpdates]    Changing history.db max size to 100 MB, and CleaupType to Delete every 7 days");
-			int result = MessageBox(_hwnd, IDS_PREVREL341TEXT_BOTH, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+			MessageBox(_hwnd, IDS_PREVREL341TEXT_BOTH, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
 			g_config.CleanupType = Delete;
 			g_config.CleanupInterval = 7;
 			g_config.MaxHistorySize = 100 * 1000000;	// g_config.MaxHistory is in bytes...
@@ -265,7 +262,6 @@ void PerformPrevRelUpdates(HWND _hwnd)
 	{
 		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for Bluetack Webexploit/Forumspam, cr_bogon, or default lists (r411)");
 
-		bool bOldUrlFound = false;
 		vector<DynamicList> tempList;
 		ListUrls listUrls;
 		listUrls.Init();
@@ -278,7 +274,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 			if (listId == LISTNAME_BT_WEBEX_FSPAM)
 			{
 				TRACEW("[mainproc] [PerformPrevRelUpdates]    Updating Bluetack Webexploit/Forumspam merged list to new individual lists");
-				int result = MessageBox(_hwnd, IDS_PREVREL411TEXT_WEBEX, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+				MessageBox(_hwnd, IDS_PREVREL411TEXT_WEBEX, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
 
 				DynamicList * newList = new DynamicList;
 				newList->Url = listUrls.GetBestUrl(LISTNAME_BT_WEBEXPLOIT);
@@ -295,7 +291,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 			else if (listId == LISTNAME_CW_BOGON)
 			{
 				TRACEW("[mainproc] [PerformPrevRelUpdates]    Updating CW Bogon list to CIDR Bogon");
-				int result = MessageBox(_hwnd, IDS_PREVREL411TEXT_BOGON, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+				MessageBox(_hwnd, IDS_PREVREL411TEXT_BOGON, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
 
 				DynamicList * newList = new DynamicList;
 				newList->Url = listUrls.GetBestUrl(LISTNAME_CIDR_BOGON);

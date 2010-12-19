@@ -52,7 +52,7 @@ inline static bool mergepred(range_type &left, const range_type &right) {
 namespace p2p {
 compact_list::compact_list(const list &l) : _ranges(new range_type[l.size()]),_rangecount((int)l.size()) {
 	size_t i=0;
-	for(list::const_iterator iter=l.begin(); iter!=l.end(); iter++) {
+	for(list::const_iterator iter=l.begin(); iter!=l.end(); ++iter) {
 		range_type &r=_ranges[i++];
 		r.first=iter->start.ipl;
 		r.second=iter->end.ipl;

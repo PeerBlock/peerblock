@@ -136,7 +136,7 @@ void list::_save_p2b(ostream &stream) const {
 		vector<wstring> namevec;
 
 		// PERF:  this loop takes AWHILE to run (~20 sec in debug-mode)
-		for(list::const_iterator iter=this->begin(); iter!=this->end(); iter++)
+		for(list::const_iterator iter=this->begin(); iter!=this->end(); ++iter)
 			if(names.find(iter->name)==names.end()) {
 				names[iter->name]=i++;
 				namevec.push_back(iter->name);
@@ -157,7 +157,7 @@ void list::_save_p2b(ostream &stream) const {
 	stream.write((const char*)&i, sizeof(i));
 
 	// PERF:  this loop doesn't take much time (one or two seconds in debug-mode)
-	for(list::const_iterator iter=this->begin(); iter!=this->end(); iter++) {
+	for(list::const_iterator iter=this->begin(); iter!=this->end(); ++iter) {
 		unsigned int name=htonl(names[iter->name]);
 		unsigned int start=htonl(iter->start.ipl);
 		unsigned int end=htonl(iter->end.ipl);

@@ -64,7 +64,7 @@ void list::_load_p2p(istream &stream) {
 }
 
 void list::_save_p2p(ostream &stream) const {
-	for(list::const_iterator iter=this->begin(); iter!=this->end(); iter++) {
+	for(list::const_iterator iter=this->begin(); iter!=this->end(); ++iter) {
 		string name;
 		name.reserve(iter->name.size());
 

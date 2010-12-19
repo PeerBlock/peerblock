@@ -61,7 +61,6 @@ static bool CheckOS() {
 	//TODO: save version info
 
 	tstring strOsName;
-	bool bKnownOs = true;
 
 	if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 1 && osv.wProductType == VER_NT_WORKSTATION )
 		strOsName = _T("Windows 7");
