@@ -80,7 +80,7 @@ static BOOL Splash_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_img->get_Height((OLE_YSIZE_HIMETRIC*)&height);
 
 	width=(ppix*width + HIMETRIC_PER_INCH/2)/HIMETRIC_PER_INCH;
-	height=(ppix*height + HIMETRIC_PER_INCH/2)/HIMETRIC_PER_INCH;
+	height=(ppiy*height + HIMETRIC_PER_INCH/2)/HIMETRIC_PER_INCH;
 
 	RECT rc;
 	GetClientRect(GetDesktopWindow(), &rc);
