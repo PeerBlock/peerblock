@@ -24,6 +24,8 @@
 
 ; Define "VS2010 = True" if you built the VS2010 build or use "build_2010.bat"
 #define VS2010 = False
+; Define "ICL12 = True" if you built the ICL12 build or use "build_icl12.bat"
+#define ICL12  = False
 
 
 #if VER < 0x05040000
@@ -50,8 +52,16 @@
   #define VS2010 = True
 #endif
 
+#ifdef ICL12build
+  #define ICL12 = True
+#endif
+
 #if VS2010
   #define bindir = '..\bin10'
+  #define sse_required = False
+  #define sse2_required = True
+#elif ICL12
+  #define bindir = '..\bin_ICL12'
   #define sse_required = False
   #define sse2_required = True
 #else
@@ -86,13 +96,15 @@ InfoBeforeFile=readme_before.rtf
 OutputDir=.
 #if VS2010
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_VS2010
+#elif ICL12
+OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_ICL12
 #else
 OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}
 #endif
 Compression=lzma2/max
 InternalCompressLevel=max
 SolidCompression=yes
-#if VS2010
+#if VS2010 || ICL12
 MinVersion=0,5.1.2600
 #else
 MinVersion=0,5.0.2195
