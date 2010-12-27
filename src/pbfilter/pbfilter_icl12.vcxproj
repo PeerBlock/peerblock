@@ -198,9 +198,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -264,9 +261,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
     <ClCompile>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -320,9 +314,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
     <ClCompile>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -386,9 +377,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(PB_DDK_DIR)\inc\api;$(PB_DDK_DIR)\inc\crt;$(PB_DDK_DIR)\inc\ddk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
