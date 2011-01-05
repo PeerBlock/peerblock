@@ -1,4 +1,4 @@
-;  PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+;  PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -77,13 +77,13 @@ AppName=PeerBlock
 AppVersion={#= app_version}
 AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 AppPublisher=PeerBlock, LLC
-AppCopyright=Copyright © 2009-2010, PeerBlock, LLC
+AppCopyright=Copyright © 2009-2011, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/support
 AppUpdatesURL=http://www.peerblock.com/releases
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
-VersionInfoCopyright=Copyright © 2009-2010, PeerBlock, LLC
+VersionInfoCopyright=Copyright © 2009-2011, PeerBlock, LLC
 VersionInfoProductName=PeerBlock
 VersionInfoProductVersion={#= app_version}
 VersionInfoVersion={#= app_version}
@@ -300,10 +300,7 @@ end;
 
 function InitializeUninstall(): Boolean;
 begin
-  // Create a mutex for the installer.
-  // If the installer is already running display a message and stop installation
   if CheckForMutexes(installer_mutex_name) then begin
-    if not WizardSilent() then
       MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
       Result := False;
   end else begin

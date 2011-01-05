@@ -2,7 +2,7 @@
 SETLOCAL
 CD /D %~dp0
 
-REM  PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
+REM  PeerBlock copyright (C) 2009-2011 PeerBlock, LLC
 
 REM  This software is provided 'as-is', without any express or implied
 REM  warranty.  In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@ TITLE "build_VS2010.bat %1"
 ECHO.
 ECHO:Usage:  build_VS2010.bat [Clean^|Build^|Rebuild]
 ECHO.
-ECHO:Executing "build_VS2010.bat" will use the defaults: "build.bat Rebuild"
+ECHO:Executing "build_VS2010.bat" will use the defaults: "build_VS2010.bat Rebuild"
 ECHO.
 ENDLOCAL
 EXIT /B
