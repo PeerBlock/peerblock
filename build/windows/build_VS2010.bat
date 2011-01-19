@@ -30,6 +30,7 @@ IF /I "%1"=="--help" GOTO :SHOWHELP
 IF /I "%1"=="/?" GOTO :SHOWHELP
 GOTO :CHECK
 
+
 :SHOWHELP
 TITLE "build_VS2010.bat %1"
 ECHO.
@@ -40,50 +41,53 @@ ECHO.
 ENDLOCAL
 EXIT /B
 
+
 :CHECK
 REM Check if Windows DDK is present in PATH
 
 IF NOT DEFINED PB_DDK_DIR (
-TITLE Compiling PeerBlock [ERROR]
-COLOR 0C
-ECHO:Windows DDK path NOT FOUND!!!
-ECHO:Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
-ECHO:pointing to the Windows DDK installation path.
-ECHO:Example: C:\WinDDK\6001.18002
-GOTO :ErrorDetected
+  TITLE Compiling PeerBlock [ERROR]
+  COLOR 0C
+  ECHO:Windows DDK path NOT FOUND!!!
+  ECHO:Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
+  ECHO:pointing to the Windows DDK installation path.
+  ECHO:Example: C:\WinDDK\6001.18002
+  GOTO :ErrorDetected
 )
 
 IF NOT DEFINED VS100COMNTOOLS (
-TITLE Compiling PeerBlock [ERROR]
-COLOR 0C
-ECHO:Visual Studio 2010 NOT FOUND!!!
-GOTO :ErrorDetected
+  TITLE Compiling PeerBlock [ERROR]
+  COLOR 0C
+  ECHO:Visual Studio 2010 NOT FOUND!!!
+  GOTO :ErrorDetected
 )
 
 REM Check for the switches
 IF "%1" == "" (
-SET BUILDTYPE=Rebuild
+  SET BUILDTYPE=Rebuild
 ) ELSE (
-IF /I "%1" == "Build" SET BUILDTYPE=Build&&GOTO :START
-IF /I "%1" == "/Build" SET BUILDTYPE=Build&&GOTO :START
-IF /I "%1" == "-Build" SET BUILDTYPE=Build&&GOTO :START
-IF /I "%1" == "--Build" SET BUILDTYPE=Build&&GOTO :START
-IF /I "%1" == "Clean" SET BUILDTYPE=Clean&&GOTO :START
-IF /I "%1" == "/Clean" SET BUILDTYPE=Clean&&GOTO :START
-IF /I "%1" == "-Clean" SET BUILDTYPE=Clean&&GOTO :START
-IF /I "%1" == "--Clean" SET BUILDTYPE=Clean&&GOTO :START
-IF /I "%1" == "Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-IF /I "%1" == "/Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-ECHO.
-ECHO:Unsupported commandline switch!
-ECHO:Run "build_VS2010.bat help" for details about the commandline switches.
-GOTO :EndWithError
+  IF /I "%1" == "Build" SET BUILDTYPE=Build&&GOTO :START
+  IF /I "%1" == "/Build" SET BUILDTYPE=Build&&GOTO :START
+  IF /I "%1" == "-Build" SET BUILDTYPE=Build&&GOTO :START
+  IF /I "%1" == "--Build" SET BUILDTYPE=Build&&GOTO :START
+  IF /I "%1" == "Clean" SET BUILDTYPE=Clean&&GOTO :START
+  IF /I "%1" == "/Clean" SET BUILDTYPE=Clean&&GOTO :START
+  IF /I "%1" == "-Clean" SET BUILDTYPE=Clean&&GOTO :START
+  IF /I "%1" == "--Clean" SET BUILDTYPE=Clean&&GOTO :START
+  IF /I "%1" == "Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+  IF /I "%1" == "/Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+  IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+  IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+
+  ECHO.
+  ECHO:Unsupported commandline switch!
+  ECHO:Run "build_VS2010.bat help" for details about the commandline switches.
+  GOTO :EndWithError
 )
 
-REM Compile PeerBlock with MSVC 2010
+
 :START
+REM Compile PeerBlock with MSVC 2010
 CALL "%VS100COMNTOOLS%vsvars32.bat" >NUL
 
 FOR %%A IN ("Win32" "x64"
@@ -96,7 +100,7 @@ IF /I "%BUILDTYPE%" == "Clean" GOTO :END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (
-TITLE Signing the driver and the program...
+  TITLE Signing the driver and the program...
   FOR %%F IN (
   "bin10\Win32\Release" "bin10\Win32\Release_(Vista)" "bin10\x64\Release" "bin10\x64\Release_(Vista)"
   ) DO (
@@ -107,12 +111,14 @@ TITLE Signing the driver and the program...
   )
 )
 
+
 :BuildInstaller
 REM Detect if we are running on 64bit WIN and use Wow6432Node, set the path
 REM of Inno Setup accordingly and compile the installer
-IF "%PROGRAMFILES(x86)%zzz"=="zzz" (SET "U_=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+IF "%PROGRAMFILES(x86)%zzz"=="zzz" (
+  SET "U_=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 ) ELSE (
-SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+  SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
 )
 
 SET "I_=Inno Setup"
@@ -122,9 +128,9 @@ FOR /f "delims=" %%a IN (
   SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
 
 IF NOT DEFINED InnoSetupPath (
-ECHO. && ECHO.
-ECHO:Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
-GOTO :CreateZips
+  ECHO. && ECHO.
+  ECHO:Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
+  GOTO :CreateZips
 )
 
 PUSHD setup
@@ -137,9 +143,9 @@ ECHO.
  /Q /O"..\..\..\distribution" "setup.iss" /DVS2010build
 
 IF %ERRORLEVEL% NEQ 0 (
-GOTO :ErrorDetected
+  GOTO :ErrorDetected
 ) ELSE (
-ECHO:Installer compiled successfully!
+  ECHO:Installer compiled successfully!
 )
 POPD
 
@@ -176,7 +182,8 @@ EXIT
 TITLE Compiling PeerBlock with MSVC 2010 - %~1^|%~2...
 devenv /nologo PeerBlock_VS2010.sln /%BUILDTYPE% "%~1|%~2"
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
-GOTO :EOF
+EXIT /B
+
 
 :SubZipFiles
 TITLE Creating ZIP files - %~2 %1...
@@ -197,15 +204,18 @@ MOVE /Y "PeerBlock_r%buildnum%__%1_%~2_VS2010.zip" "..\..\..\distribution" >NUL 
 ECHO.
 POPD
 RD /S /Q "temp_zip" >NUL 2>&1
-GOTO :EOF
+EXIT /B
+
 
 :SubISPath
 SET InnoSetupPath=%*
-GOTO :EOF
+EXIT /B
+
 
 :SubRevNumber
 SET buildnum=%*
-GOTO :EOF
+EXIT /B
+
 
 :ErrorDetected
 ECHO. && ECHO.

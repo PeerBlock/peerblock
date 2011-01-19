@@ -1,5 +1,5 @@
 (*
-;  PeerBlock copyright (C) 2009-2010 PeerBlock, LLC
+;  PeerBlock copyright (C) 2009-2011 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -47,16 +47,16 @@ begin
   PGPath := '';
   PGUninstallValue := 'Inno Setup: App Path';
 
-  if not RegQueryStringValue(HKLM, PGUninstallKey, PGUninstallValue, PGPath) then
-  RegQueryStringValue(HKCU, PGUninstallKey, PGUninstallValue, PGPath);
-  Result := PGPath;
+  if NOT RegQueryStringValue(HKLM, PGUninstallKey, PGUninstallValue, PGPath) then
+    RegQueryStringValue(HKCU, PGUninstallKey, PGUninstallValue, PGPath);
+    Result := PGPath;
 end;
 
 
 // Check if PeerGuardian is installed
 function IsPGInstalled(): Boolean;
 begin
-  if RegKeyExists(HKLM, PGUninstallKey) or RegKeyExists(HKCU, PGUninstallKey) then begin
+  if RegKeyExists(HKLM, PGUninstallKey) OR RegKeyExists(HKCU, PGUninstallKey) then begin
     Log('Custom Code: Found PG2 uninstall registry key');
     Result := True;
   end else
