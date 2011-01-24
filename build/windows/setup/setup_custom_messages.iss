@@ -26,9 +26,10 @@ en.msg_DeleteLogsListsSettings =Do you also want to delete PeerBlock's lists, lo
 en.msg_SetupIsRunningWarning   =PeerBlock Setup is already running!
 en.msg_ServiceManager          =The service manager is not available
 en.msg_ServiceManager2         =Only NT based systems support services
-en.msg_simd_sse                =This build of PeerBlock requires a CPU with SSE extension support. Your CPU does not have those capabilities.
-en.msg_simd_sse2               =This build of PeerBlock requires a CPU with SSE2 extension support. Your CPU does not have those capabilities.
-en.msg_unsupported_cpu         =This build of PeerBlock requires a CPU of type i686 or newer. Your CPU is not supported.
+#if defined(sse_required) || defined(sse2_required)
+en.msg_simd_sse                =This build of PeerBlock requires a CPU with SSE extension support.%n%nYour CPU does not have those capabilities.
+en.msg_simd_sse2               =This build of PeerBlock requires a CPU with SSE2 extension support.%n%nYour CPU does not have those capabilities.
+#endif
 en.run_visit_website           =Visit PeerBlock's Website
 en.tsk_other                   =Other tasks:
 en.tsk_remove_startup          =Remove PeerBlock from Windows startup

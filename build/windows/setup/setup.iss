@@ -151,7 +151,9 @@ Name: reset\delete_settings; Description: {cm:tsk_delete_settings};   GroupDescr
 
 [Files]
 ; For CPU detection
+#if defined(sse_required) || defined(sse2_required)
 Source: WinCPUID.dll; Flags: dontcopy noencryption
+#endif
 
 ; 2K/XP 32bit files
 Source: {#bindir}\Win32\Release\peerblock.exe;         DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
@@ -170,13 +172,13 @@ Source: {#bindir}\x64\Release_(Vista)\peerblock.exe;   DestDir: {app}; Flags: ig
 Source: {#bindir}\x64\Release_(Vista)\pbfilter.sys;    DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode();     MinVersion: 0,6.0
 
 ; Copy PG settings and custom lists only if PG is installed and the user has chosen to do so
-Source: {code:GetPGPath}\pg2.conf;    DestDir: {app}; DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
-Source: {code:GetPGPath}\*.p2p;       DestDir: {app};                           Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
-Source: {code:GetPGPath}\lists\*.p2b; DestDir: {app}\lists;                     Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
-Source: {code:GetPGPath}\lists\*.p2p; DestDir: {app}\lists;                     Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\pg2.conf;    DestDir: {app};  DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\*.p2p;       DestDir: {app};                            Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\lists\*.p2b; DestDir: {app}\lists;                      Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\lists\*.p2p; DestDir: {app}\lists;                      Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 
-Source: ..\..\..\license.txt;         DestDir: {app};                                                   Flags: ignoreversion
-Source: ..\..\..\doc\readme.rtf;      DestDir: {app};                                                   Flags: ignoreversion
+Source: ..\..\..\license.txt;         DestDir: {app};                                                    Flags: ignoreversion
+Source: ..\..\..\doc\readme.rtf;      DestDir: {app};                                                    Flags: ignoreversion
 
 
 [Icons]
@@ -237,9 +239,11 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 
 [Code]
 // Include custom installer code
-#include 'setup_custom_code.iss'
-#include 'setup_services.iss'
+#include "setup_custom_code.iss"
+#include "setup_services.iss"
+#if defined(sse_required) || defined(sse2_required)
 #include "setup_cpu_detection.iss"
+#endif
 
 
 ///////////////////////////////////////////
@@ -260,14 +264,9 @@ begin
     Log('Custom Code: Creating installer`s mutex');
     CreateMutex(installer_mutex_name);
 
+#if defined(sse_required) || defined(sse2_required)
     // Acquire CPU information
     CPUCheck;
-
-    if NOT HasSupportedCPU() then begin
-      Result := False;
-      Log('Custom Code: Not supported CPU');
-      MsgBox(CustomMessage('msg_unsupported_cpu'), mbError, MB_OK);
-    end;
 
 #if defined(sse2_required)
     if Result AND NOT Is_SSE2_Supported() then begin
@@ -281,6 +280,8 @@ begin
       Log('Custom Code: Found a non SSE capable CPU');
       MsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK);
     end;
+#endif
+
 #endif
 
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
