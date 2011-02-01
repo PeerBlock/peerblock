@@ -50,7 +50,7 @@ static wchar_t decode_utf8(InputIterator &iter) {
 			((wchar_t)((*iter++)&0x3F))
 		);
 	}
-	else throw utf8_error("utf-8 not convertable to utf-16");
+	else throw utf8_error("utf-8 not convertible to utf-16");
 
 	return ret;
 }
