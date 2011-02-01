@@ -292,6 +292,9 @@
     <Manifest>
       <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
     </Manifest>
+    <ResourceCompile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|x64'">
     <PreBuildEvent>
@@ -315,6 +318,9 @@
     <Manifest>
       <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
     </Manifest>
+    <ResourceCompile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|Win32'">
     <PreBuildEvent>
