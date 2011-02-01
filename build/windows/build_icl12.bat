@@ -23,20 +23,20 @@ REM  3. This notice may not be removed or altered from any source distribution.
 REM  $Id$
 
 REM check for the help switches
-IF /I "%1"=="help" GOTO :SHOWHELP
-IF /I "%1"=="/help" GOTO :SHOWHELP
-IF /I "%1"=="-help" GOTO :SHOWHELP
-IF /I "%1"=="--help" GOTO :SHOWHELP
-IF /I "%1"=="/?" GOTO :SHOWHELP
-GOTO :CHECK
+IF /I "%1"=="help" GOTO SHOWHELP
+IF /I "%1"=="/help" GOTO SHOWHELP
+IF /I "%1"=="-help" GOTO SHOWHELP
+IF /I "%1"=="--help" GOTO SHOWHELP
+IF /I "%1"=="/?" GOTO SHOWHELP
+GOTO CHECK
 
 
 :SHOWHELP
 TITLE "build_icl12.bat %1"
 ECHO.
-ECHO:Usage:  build_icl12.bat [Clean^|Build^|Rebuild]
+ECHO Usage:  build_icl12.bat [Clean^|Build^|Rebuild]
 ECHO.
-ECHO:Executing "build_icl12.bat" will use the defaults: "build.bat Rebuild"
+ECHO Executing "build_icl12.bat" will use the defaults: "build.bat Rebuild"
 ECHO.
 ENDLOCAL
 EXIT /B
@@ -48,48 +48,48 @@ REM Check if Windows DDK is present in PATH
 IF NOT DEFINED PB_DDK_DIR (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
-  ECHO:Windows DDK path NOT FOUND!!!
-  ECHO:Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
-  ECHO:pointing to the Windows DDK installation path.
-  ECHO:Example: C:\WinDDK\6001.18002
-  GOTO :ErrorDetected
+  ECHO Windows DDK path NOT FOUND!!!
+  ECHO Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
+  ECHO pointing to the Windows DDK installation path.
+  ECHO Example: C:\WinDDK\6001.18002
+  GOTO ErrorDetected
 )
 
 IF NOT DEFINED VS100COMNTOOLS (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
-  ECHO:Visual Studio 2010 NOT FOUND!!!
-  GOTO :ErrorDetected
+  ECHO Visual Studio 2010 NOT FOUND!!!
+  GOTO ErrorDetected
 )
 
 IF NOT DEFINED ICPP_COMPOSER2011 (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
-  ECHO:ICL12 NOT FOUND!!!
-  GOTO :ErrorDetected
+  ECHO ICL12 NOT FOUND!!!
+  GOTO ErrorDetected
 )
 
 REM Check for the switches
 IF "%1" == "" (
   SET BUILDTYPE=Rebuild
 ) ELSE (
-  IF /I "%1" == "Build" SET BUILDTYPE=Build&&GOTO :START
-  IF /I "%1" == "/Build" SET BUILDTYPE=Build&&GOTO :START
-  IF /I "%1" == "-Build" SET BUILDTYPE=Build&&GOTO :START
-  IF /I "%1" == "--Build" SET BUILDTYPE=Build&&GOTO :START
-  IF /I "%1" == "Clean" SET BUILDTYPE=Clean&&GOTO :START
-  IF /I "%1" == "/Clean" SET BUILDTYPE=Clean&&GOTO :START
-  IF /I "%1" == "-Clean" SET BUILDTYPE=Clean&&GOTO :START
-  IF /I "%1" == "--Clean" SET BUILDTYPE=Clean&&GOTO :START
-  IF /I "%1" == "Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-  IF /I "%1" == "/Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-  IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
-  IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild&&GOTO :START
+  IF /I "%1" == "Build" SET BUILDTYPE=Build&&GOTO START
+  IF /I "%1" == "/Build" SET BUILDTYPE=Build&&GOTO START
+  IF /I "%1" == "-Build" SET BUILDTYPE=Build&&GOTO START
+  IF /I "%1" == "--Build" SET BUILDTYPE=Build&&GOTO START
+  IF /I "%1" == "Clean" SET BUILDTYPE=Clean&&GOTO START
+  IF /I "%1" == "/Clean" SET BUILDTYPE=Clean&&GOTO START
+  IF /I "%1" == "-Clean" SET BUILDTYPE=Clean&&GOTO START
+  IF /I "%1" == "--Clean" SET BUILDTYPE=Clean&&GOTO START
+  IF /I "%1" == "Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
+  IF /I "%1" == "/Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
+  IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
+  IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
 
   ECHO.
-  ECHO:Unsupported commandline switch!
-  ECHO:Run "build_icl12.bat help" for details about the commandline switches.
-  GOTO :EndWithError
+  ECHO Unsupported commandline switch!
+  ECHO Run "build_icl12.bat help" for details about the commandline switches.
+  GOTO EndWithError
 )
 
 
@@ -103,7 +103,7 @@ CALL :SubMSVC "Release" %%A
 CALL :SubMSVC "Release_(Vista)" %%A
 )
 
-IF /I "%BUILDTYPE%" == "Clean" GOTO :END
+IF /I "%BUILDTYPE%" == "Clean" GOTO END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (
@@ -136,23 +136,23 @@ FOR /f "delims=" %%a IN (
 
 IF NOT DEFINED InnoSetupPath (
   ECHO. && ECHO.
-  ECHO:Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
-  GOTO :CreateZips
+  ECHO Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
+  GOTO CreateZips
 )
 
 PUSHD setup
 TITLE Compiling installer...
 ECHO.
-ECHO:Compiling installer...
+ECHO Compiling installer...
 ECHO.
 
 "%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\..\..\bin\windows\sign_driver.cmd" $f "^
  /Q /O"..\..\..\distribution" "setup.iss" /DICL12build
 
 IF %ERRORLEVEL% NEQ 0 (
-  GOTO :ErrorDetected
+  GOTO ErrorDetected
 ) ELSE (
-  ECHO:Installer compiled successfully!
+  ECHO Installer compiled successfully!
 )
 POPD
 
@@ -175,20 +175,20 @@ CALL :SubZipFiles Win32 %%L
 CALL :SubZipFiles x64 %%L
 )
 
-GOTO :END
+GOTO END
 
 
 :END
 TITLE Compiling PeerBlock - Finished!
 ECHO. && ECHO.
 ENDLOCAL && PAUSE
-EXIT
+EXIT /B
 
 
 :SubMSVC
 TITLE Compiling PeerBlock with ICL12 - %~1^|%~2...
 devenv /nologo PeerBlock_icl12.sln /%BUILDTYPE% "%~1|%~2"
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
+IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 EXIT /B
 
 
@@ -204,9 +204,9 @@ PUSHD "temp_zip"
 START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^
  "PeerBlock_r%buildnum%__%1_%~2_icl12.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
-IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
+IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 
-ECHO:PeerBlock_r%buildnum%__%1_%~2_icl12.zip created successfully!
+ECHO PeerBlock_r%buildnum%__%1_%~2_icl12.zip created successfully!
 MOVE /Y "PeerBlock_r%buildnum%__%1_%~2_icl12.zip" "..\..\..\distribution" >NUL 2>&1
 ECHO.
 POPD
@@ -226,7 +226,7 @@ EXIT /B
 
 :ErrorDetected
 ECHO. && ECHO.
-ECHO:Compilation FAILED!!!
+ECHO Compilation FAILED!!!
 ECHO. && ECHO.
 ENDLOCAL
 PAUSE
