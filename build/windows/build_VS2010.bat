@@ -64,20 +64,20 @@ IF NOT DEFINED VS100COMNTOOLS (
 
 REM Check for the switches
 IF "%1" == "" (
-  SET BUILDTYPE=Rebuild
+  SET "BUILDTYPE=Rebuild"
 ) ELSE (
-  IF /I "%1" == "Build" SET BUILDTYPE=Build&&GOTO START
-  IF /I "%1" == "/Build" SET BUILDTYPE=Build&&GOTO START
-  IF /I "%1" == "-Build" SET BUILDTYPE=Build&&GOTO START
-  IF /I "%1" == "--Build" SET BUILDTYPE=Build&&GOTO START
-  IF /I "%1" == "Clean" SET BUILDTYPE=Clean&&GOTO START
-  IF /I "%1" == "/Clean" SET BUILDTYPE=Clean&&GOTO START
-  IF /I "%1" == "-Clean" SET BUILDTYPE=Clean&&GOTO START
-  IF /I "%1" == "--Clean" SET BUILDTYPE=Clean&&GOTO START
-  IF /I "%1" == "Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
-  IF /I "%1" == "/Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
-  IF /I "%1" == "-Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
-  IF /I "%1" == "--Rebuild" SET BUILDTYPE=Rebuild&&GOTO START
+  IF /I "%1" == "Build" SET "BUILDTYPE=Build" & GOTO START
+  IF /I "%1" == "/Build" SET "BUILDTYPE=Build" & GOTO START
+  IF /I "%1" == "-Build" SET "BUILDTYPE=Build" & GOTO START
+  IF /I "%1" == "--Build" SET "BUILDTYPE=Build" & GOTO START
+  IF /I "%1" == "Clean" SET "BUILDTYPE=Clean" & GOTO START
+  IF /I "%1" == "/Clean" SET "BUILDTYPE=Clean" & GOTO START
+  IF /I "%1" == "-Clean" SET "BUILDTYPE=Clean" & GOTO START
+  IF /I "%1" == "--Clean" SET "BUILDTYPE=Clean" & GOTO START
+  IF /I "%1" == "Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
+  IF /I "%1" == "/Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
+  IF /I "%1" == "-Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
+  IF /I "%1" == "--Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
 
   ECHO.
   ECHO Unsupported commandline switch!
@@ -128,7 +128,7 @@ FOR /f "delims=" %%a IN (
   SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
 
 IF NOT DEFINED InnoSetupPath (
-  ECHO. && ECHO.
+  ECHO. & ECHO.
   ECHO Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
   GOTO CreateZips
 )
@@ -157,7 +157,7 @@ REM Get the revision number
 FOR /f "tokens=3,4 delims= " %%K IN (
   'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\version_parsed.h"') DO (
   SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
-ECHO. && ECHO.
+ECHO. & ECHO.
 
 MD "..\..\distribution" >NUL 2>&1
 
@@ -173,8 +173,9 @@ GOTO END
 
 :END
 TITLE Compiling PeerBlock - Finished!
-ECHO. && ECHO.
-ENDLOCAL && PAUSE
+ECHO. & ECHO.
+ENDLOCAL
+PAUSE
 EXIT /B
 
 
@@ -218,9 +219,9 @@ EXIT /B
 
 
 :ErrorDetected
-ECHO. && ECHO.
+ECHO. & ECHO.
 ECHO Compilation FAILED!!!
-ECHO. && ECHO.
+ECHO. & ECHO.
 ENDLOCAL
 PAUSE
 EXIT
