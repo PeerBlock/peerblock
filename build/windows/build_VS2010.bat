@@ -32,11 +32,11 @@ GOTO CHECK
 
 
 :SHOWHELP
-TITLE "build_VS2010.bat %1"
+TITLE "%~nx0 %1"
 ECHO.
-ECHO Usage:  build_VS2010.bat [Clean^|Build^|Rebuild]
+ECHO Usage:  %~nx0 [Clean^|Build^|Rebuild]
 ECHO.
-ECHO Executing "build_VS2010.bat" will use the defaults: "build_VS2010.bat Rebuild"
+ECHO Executing "%~nx0" will use the defaults: "%~nx0 Rebuild"
 ECHO.
 ENDLOCAL
 EXIT /B
@@ -48,7 +48,7 @@ REM Check if Windows DDK is present in PATH
 IF NOT DEFINED PB_DDK_DIR (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
-  ECHO Windows DDK path NOT FOUND!!!
+  ECHO Windows DDK path NOT FOUND!
   ECHO Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
   ECHO pointing to the Windows DDK installation path.
   ECHO Example: C:\WinDDK\6001.18002
@@ -58,7 +58,7 @@ IF NOT DEFINED PB_DDK_DIR (
 IF NOT DEFINED VS100COMNTOOLS (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
-  ECHO Visual Studio 2010 NOT FOUND!!!
+  ECHO Visual Studio 2010 NOT FOUND!
   GOTO ErrorDetected
 )
 
@@ -81,7 +81,7 @@ IF "%1" == "" (
 
   ECHO.
   ECHO Unsupported commandline switch!
-  ECHO Run "build_VS2010.bat help" for details about the commandline switches.
+  ECHO Run "%~nx0 help" for details about the commandline switches.
   GOTO EndWithError
 )
 
@@ -125,11 +125,11 @@ SET "I_=Inno Setup"
 SET "A_=%I_% 5"
 FOR /f "delims=" %%a IN (
   'REG QUERY "%U_%\%A_%_is1" /v "%I_%: App Path"2^>Nul^|FIND "REG_"') DO (
-  SET "InnoSetupPath=%%a"&Call :SubISPath %%InnoSetupPath:*Z=%%)
+  SET "InnoSetupPath=%%a" & Call :SubISPath %%InnoSetupPath:*Z=%%)
 
 IF NOT DEFINED InnoSetupPath (
   ECHO. & ECHO.
-  ECHO Inno Setup IS NOT INSTALLED!!! The installer won't be compiled.
+  ECHO Inno Setup IS NOT INSTALLED! The installer won't be compiled.
   GOTO CreateZips
 )
 
@@ -156,7 +156,7 @@ REM Create all the zip files ready for distribution
 REM Get the revision number
 FOR /f "tokens=3,4 delims= " %%K IN (
   'FINDSTR /I /L /C:"define PB_VER_BUILDNUM" "..\..\src\peerblock\version_parsed.h"') DO (
-  SET "buildnum=%%K"&Call :SubRevNumber %%buildnum:*Z=%%)
+  SET "buildnum=%%K" & Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO. & ECHO.
 
 MD "..\..\distribution" >NUL 2>&1
@@ -220,7 +220,7 @@ EXIT /B
 
 :ErrorDetected
 ECHO. & ECHO.
-ECHO Compilation FAILED!!!
+ECHO Compilation FAILED!
 ECHO. & ECHO.
 ENDLOCAL
 PAUSE
