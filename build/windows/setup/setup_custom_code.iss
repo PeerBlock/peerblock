@@ -28,7 +28,6 @@
 
 var
   PGPath: String;
-  WinVer: TWindowsVersion;
   is_update: Boolean;
 const
   installer_mutex_name = 'peerblock_setup_mutex';

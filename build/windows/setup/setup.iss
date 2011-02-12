@@ -19,7 +19,7 @@
 ;  $Id$
 ;
 ; Requirements:
-; *Inno Setup QuickStart Pack: http://www.jrsoftware.org/isdl.php#qsp
+; *Inno Setup: http://www.jrsoftware.org/isdl.php
 
 
 ; Define "VS2010build" or "ICL12build" based on which build you compiled or use the appropriate batch file
@@ -27,12 +27,13 @@
 ;#define VS2010build
 
 
-#if VER < 0x05040000
+#if VER < 0x05040100
   #error Update your Inno Setup version
 #endif
 
 
-#include "..\..\..\src\peerblock\version_parsed.h"
+; Unfortunately ISPP has a bug with relative paths. That's why we use "foobar\..\"
+#include "foobar\..\..\..\..\src\peerblock\version_parsed.h"
 
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
 
@@ -189,12 +190,14 @@ Name: {group}\Help and Support\Homepage;    Filename: http://www.peerblock.com/
 Name: {group}\Help and Support\ReadMe;      Filename: {app}\readme.rtf;    WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/userguide
 Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock; Filename: {app}\peerblock.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
 
 
 [Registry]
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: PeerBlock; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset\delete_settings remove_startup_task; Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset\delete_settings remove_startup_task;  Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
+; Always delete the startup PeerBlock value when uninstalling
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Flags: uninsdeletevalue
 
 
 [Run]
@@ -374,6 +377,5 @@ begin
     // Always delete the rest of PeerBlock's files
     RemoveMiscFiles;
     RemoveDir(ExpandConstant('{app}'));
-    RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock');
   end;
 end;
