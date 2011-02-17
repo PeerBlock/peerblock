@@ -11,14 +11,15 @@ Boost lockfree version unknown
 License:  Boost Software License
 Website:  http://tim.klingt.org/git?p=boost_lockfree.git
 
-libcurl version 7.21.3
+libcurl version 7.21.4
 License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl
 Notes:    The version PeerBlock is using is slightly modified.  See here:
           (http://code.google.com/p/peerblock/source/detail?r=284)
+          or search the libcurl project for "PeerBlock custom code"
 
 miniunzip version 1.01h
-License:  Zlib License
+License:  zlib License
 Website:  http://www.winimage.com/zLibDll/minizip.html
 Notes:    We currently include only the needed files.
 

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -503,6 +503,9 @@ struct Configurable {
   long low_speed_time;
   bool showerror;
   char *userpwd;
+  char *tls_username;
+  char *tls_password;
+  char *tls_authtype;
   char *proxyuserpwd;
   char *proxy;
   int proxyver;     /* set to CURLPROXY_HTTP* define */
@@ -903,6 +906,9 @@ static void help(void)
     "    --url <URL>     Set URL to work with",
     " -B/--use-ascii     Use ASCII/text transfer",
     " -u/--user <user[:password]> Set server user and password",
+    "    --tlsuser     <user> Set TLS username",
+    "    --tlspassword <string> Set TLS password",
+    "    --tlsauthtype <string> Set TLS authentication type (default SRP)",
     " -A/--user-agent <string> User-Agent to send to server (H)",
     " -v/--verbose       Make the operation more talkative",
     " -V/--version       Show version number and quit",
@@ -1759,6 +1765,10 @@ static int sockoptcallback(void *clientp, curl_socket_t curlfd,
           return 0;
         }
 #endif
+#if !defined(TCP_KEEPIDLE) || !defined(TCP_KEEPINTVL)
+        warnf(clientp, "Keep-alive functionality somewhat crippled due to "
+              "missing support in your operating system!\n");
+#endif
       }
     }
     break;
@@ -1916,6 +1926,9 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
     {"Eh","pubkey",      TRUE},
     {"Ei", "hostpubmd5", TRUE},
     {"Ej","crlfile",     TRUE},
+    {"Ek","tlsuser",     TRUE},
+    {"El","tlspassword", TRUE},
+    {"Em","tlsauthtype", TRUE},
     {"f", "fail",        FALSE},
     {"F", "form",        TRUE},
     {"Fs","form-string", TRUE},
@@ -2450,6 +2463,8 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         break;
       case 'F': /* --resolve */
         err = add2list(&config->resolve, nextarg);
+        if(err)
+          return err;
         break;
       }
       break;
@@ -2742,6 +2757,27 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         /* CRL file */
         GetStr(&config->crlfile, nextarg);
         break;
+      case 'k': /* TLS username */
+        if(curlinfo->features & CURL_VERSION_TLSAUTH_SRP)
+          GetStr(&config->tls_username, nextarg);
+        else
+          return PARAM_LIBCURL_DOESNT_SUPPORT;
+	break;
+      case 'l': /* TLS password */
+        if(curlinfo->features & CURL_VERSION_TLSAUTH_SRP)
+          GetStr(&config->tls_password, nextarg);
+        else
+          return PARAM_LIBCURL_DOESNT_SUPPORT;
+	break;
+      case 'm': /* TLS authentication type */
+        if(curlinfo->features & CURL_VERSION_TLSAUTH_SRP) {
+          GetStr(&config->tls_authtype, nextarg);
+          if (!strequal(config->tls_authtype, "SRP"))
+            return PARAM_LIBCURL_DOESNT_SUPPORT; /* only support TLS-SRP */
+        }
+        else
+          return PARAM_LIBCURL_DOESNT_SUPPORT;
+	break;
       default: /* certificate file */
       {
         char *ptr = strchr(nextarg, ':');
@@ -3120,7 +3156,8 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
           {"SSPI",  CURL_VERSION_SSPI},
           {"krb4", CURL_VERSION_KERBEROS4},
           {"libz", CURL_VERSION_LIBZ},
-          {"CharConv", CURL_VERSION_CONV}
+          {"CharConv", CURL_VERSION_CONV},
+          {"TLS-SRP", CURL_VERSION_TLSAUTH_SRP}
         };
         printf("Features: ");
         for(i=0; i<sizeof(feats)/sizeof(feats[0]); i++) {
@@ -4046,6 +4083,14 @@ static void free_config_fields(struct Configurable *config)
     free(config->hostpubmd5);
   if(config->mail_from)
     free(config->mail_from);
+#ifdef USE_TLS_SRP
+  if(config->tls_authtype)
+    free(config->tls_authtype);
+  if(config->tls_username)
+    free(config->tls_username);
+  if(config->tls_password)
+    free(config->tls_password);
+#endif
 #if defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI)
   if(config->socks5_gssapi_service)
     free(config->socks5_gssapi_service);
@@ -5459,6 +5504,10 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
         if(config->resolve)
           /* new in 7.21.3 */
           my_setopt(curl, CURLOPT_RESOLVE, config->resolve);
+
+        /* TODO: new in ### */
+        curl_easy_setopt(curl, CURLOPT_TLSAUTH_USERNAME, config->tls_username);
+        curl_easy_setopt(curl, CURLOPT_TLSAUTH_PASSWORD, config->tls_password);
 
         retry_numretries = config->req_retry;
 

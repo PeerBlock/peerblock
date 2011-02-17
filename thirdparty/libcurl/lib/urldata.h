@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -119,6 +119,13 @@
 #ifdef USE_QSOSSL
 #include <qsossl.h>
 #endif
+
+#ifdef USE_AXTLS
+#include <axTLS/ssl.h>
+#undef malloc
+#undef calloc
+#undef realloc
+#endif /* USE_AXTLS */
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
@@ -244,6 +251,9 @@ struct ssl_connect_data {
 #ifdef USE_GNUTLS
   gnutls_session session;
   gnutls_certificate_credentials cred;
+#ifdef USE_TLS_SRP
+  gnutls_srp_client_credentials srp_client_cred;
+#endif
   ssl_connect_state connecting_state;
 #endif /* USE_GNUTLS */
 #ifdef USE_POLARSSL
@@ -261,13 +271,16 @@ struct ssl_connect_data {
   char *client_nickname;
   struct SessionHandle *data;
 #ifdef HAVE_PK11_CREATEGENERICOBJECT
-  PK11GenericObject *key;
-  PK11GenericObject *cacert[2];
+  struct curl_llist *obj_list;
 #endif
 #endif /* USE_NSS */
 #ifdef USE_QSOSSL
   SSLHandle *handle;
 #endif /* USE_QSOSSL */
+#ifdef USE_AXTLS
+  SSL_CTX* ssl_ctx;
+  SSL*     ssl;
+#endif /* USE_AXTLS */
 };
 
 struct ssl_config_data {
@@ -289,6 +302,12 @@ struct ssl_config_data {
   void *fsslctxp;        /* parameter for call back */
   bool sessionid;        /* cache session IDs or not */
   bool certinfo;         /* gather lots of certificate info */
+
+#ifdef USE_TLS_SRP
+  char *username; /* TLS username (for, e.g., SRP) */
+  char *password; /* TLS password (for, e.g., SRP) */
+  enum CURL_TLSAUTH authtype; /* TLS authentication type (default SRP) */
+#endif
 };
 
 /* information stored about one single SSL session */
@@ -347,17 +366,29 @@ struct ntlmdata {
 #endif
 };
 
-#ifdef HAVE_GSSAPI
+#ifdef USE_HTTP_NEGOTIATE
 struct negotiatedata {
   /* when doing Negotiate we first need to receive an auth token and then we
      need to send our header */
   enum { GSS_AUTHNONE, GSS_AUTHRECV, GSS_AUTHSENT } state;
   bool gss; /* Whether we're processing GSS-Negotiate or Negotiate */
   const char* protocol; /* "GSS-Negotiate" or "Negotiate" */
+#ifdef HAVE_GSSAPI
   OM_uint32 status;
   gss_ctx_id_t context;
   gss_name_t server_name;
   gss_buffer_desc output_token;
+#else
+#ifdef USE_WINDOWS_SSPI
+  DWORD status;
+  CtxtHandle *context;
+  CredHandle *credentials;
+  char server_name[1024];
+  size_t max_token_length;
+  BYTE *output_token;
+  size_t output_token_length;
+#endif
+#endif
 };
 #endif
 
@@ -468,6 +499,8 @@ struct Curl_async {
   bool done;  /* set TRUE when the lookup is complete */
   int status; /* if done is TRUE, this is the status from the callback */
   void *os_specific;  /* 'struct thread_data' for Windows */
+  int num_pending; /* number of ares_gethostbyname() requests */
+  Curl_addrinfo *temp_ai; /* intermediary result while fetching c-ares parts */
 };
 #endif
 
@@ -799,6 +832,15 @@ struct connectdata {
 
   struct ConnectBits bits;    /* various state-flags for this connection */
 
+ /* connecttime: when connect() is called on the current IP address. Used to
+    be able to track when to move on to try next IP - but only when the multi
+    interface is used. */
+  struct timeval connecttime;
+  /* The two fields below get set in Curl_connecthost */
+  int num_addr; /* number of addresses to try to connect to */
+  long timeoutms_per_addr; /* how long time in milliseconds to spend on
+                              trying to connect to each IP address */
+
   const struct Curl_handler * handler;  /* Connection's protocol handler. */
 
   long ip_version; /* copied from the SessionHandle at creation time */
@@ -1105,7 +1147,7 @@ struct UrlState {
   struct digestdata digest;      /* state data for host Digest auth */
   struct digestdata proxydigest; /* state data for proxy Digest auth */
 
-#ifdef HAVE_GSSAPI
+#ifdef USE_HTTP_NEGOTIATE
   struct negotiatedata negotiate; /* state data for host Negotiate auth */
   struct negotiatedata proxyneg; /* state data for proxy Negotiate auth */
 #endif
@@ -1281,6 +1323,11 @@ enum dupstring {
 #endif
   STRING_MAIL_FROM,
 
+#ifdef USE_TLS_SRP
+  STRING_TLSAUTH_USERNAME,     /* TLS auth <username> */
+  STRING_TLSAUTH_PASSWORD,     /* TLS auth <password> */
+#endif
+
   /* -- end of strings -- */
   STRING_LAST /* not used, just an end-of-list marker */
 };
@@ -1315,7 +1362,9 @@ struct UserDefined {
   unsigned short localport; /* local port number to bind to */
   int localportrange; /* number of additional port numbers to test in case the
                          'localport' one can't be bind()ed */
+// PeerBlock custom code start
   curl_preconnect_callback preconnect; /* function that is called before any connect() */
+// PeerBlock custom code end
   curl_write_callback fwrite_func;   /* function that stores the output */
   curl_write_callback fwrite_header; /* function that stores headers */
   curl_write_callback fwrite_rtp;    /* function that stores interleaved RTP */
@@ -1340,7 +1389,9 @@ struct UserDefined {
   /* function to convert from UTF-8 encoding: */
   curl_conv_callback convfromutf8;
 
+// PeerBlock custom code start
   void *preconnect_client; /* pointer to pass to the preconnect callback */
+// PeerBlock custom code end
   void *progress_client; /* pointer to pass to the progress callback */
   void *ioctl_client;   /* pointer to pass to the ioctl callback */
   long timeout;         /* in milliseconds, 0 means no timeout */

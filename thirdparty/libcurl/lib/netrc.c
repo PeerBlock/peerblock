@@ -50,15 +50,9 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
-/* Debug this single source file with:
-   'make netrc' then run './netrc'!
-
-   Oh, make sure you have a .netrc file too ;-)
- */
-
 /* Get user and password from .netrc when given a machine name */
 
-enum {
+enum host_lookup_state {
   NOTHING,
   HOSTFOUND,    /* the 'machine' keyword was found */
   HOSTCOMPLETE, /* the machine name following the keyword was found too */
@@ -67,11 +61,6 @@ enum {
   HOSTEND /* LAST enum */
 };
 
-/* make sure we have room for at least this size: */
-#define LOGINSIZE 64
-#define PASSWORDSIZE 64
-
-/* returns -1 on failure, 0 if the host is found, 1 is the host isn't found */
 int Curl_parsenetrc(const char *host,
                     char *login,
                     char *password,
@@ -83,7 +72,7 @@ int Curl_parsenetrc(const char *host,
   char *home = NULL;
   bool home_alloc = FALSE;
   bool netrc_alloc = FALSE;
-  int state=NOTHING;
+  enum host_lookup_state state=NOTHING;
 
   char state_login=0;      /* Found a login keyword */
   char state_password=0;   /* Found a password keyword */
@@ -210,6 +199,10 @@ int Curl_parsenetrc(const char *host,
             state_our_login = FALSE;
           }
           break;
+        case HOSTCOMPLETE:
+        case HOSTEND:
+            /* Should not be reached. */
+            DEBUGASSERT(0);
         } /* switch (state) */
 
         tok = strtok_r(NULL, " \t\n", &tok_buf);
@@ -226,20 +219,3 @@ int Curl_parsenetrc(const char *host,
 
   return retcode;
 }
-
-#ifdef _NETRC_DEBUG
-int main(int argc, argv_item_t argv[])
-{
-  char login[64]="";
-  char password[64]="";
-
-  if(argc<2)
-    return -1;
-
-  if(0 == ParseNetrc(argv[1], login, password)) {
-    printf("HOST: %s LOGIN: %s PASSWORD: %s\n",
-           argv[1], login, password);
-  }
-}
-
-#endif

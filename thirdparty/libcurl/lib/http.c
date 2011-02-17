@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -520,7 +520,7 @@ output_auth_headers(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   const char *auth=NULL;
   CURLcode result = CURLE_OK;
-#ifdef HAVE_GSSAPI
+#ifdef USE_HTTP_NEGOTIATE
   struct negotiatedata *negdata = proxy?
     &data->state.proxyneg:&data->state.negotiate;
 #endif
@@ -530,7 +530,7 @@ output_auth_headers(struct connectdata *conn,
   (void)path;
 #endif
 
-#ifdef HAVE_GSSAPI
+#ifdef USE_HTTP_NEGOTIATE
   if((authstatus->picked == CURLAUTH_GSSNEGOTIATE) &&
      negdata->context && !GSS_ERROR(negdata->status)) {
     auth="GSS-Negotiate";
@@ -727,7 +727,7 @@ CURLcode Curl_http_input_auth(struct connectdata *conn,
    *
    */
 
-#ifdef HAVE_GSSAPI
+#ifdef USE_HTTP_NEGOTIATE
   if(checkprefix("GSS-Negotiate", start) ||
       checkprefix("Negotiate", start)) {
     int neg;
@@ -1881,10 +1881,22 @@ static int https_getsock(struct connectdata *conn,
   (void)numsocks;
   return GETSOCK_BLANK;
 }
-#endif
-#endif
-#endif
-#endif
+#else
+#ifdef USE_AXTLS
+static int https_getsock(struct connectdata *conn,
+                         curl_socket_t *socks,
+                         int numsocks)
+{
+  (void)conn;
+  (void)socks;
+  (void)numsocks;
+  return GETSOCK_BLANK;
+}
+#endif /* USE_AXTLS */
+#endif /* USE_POLARSSL */
+#endif /* USE_QSOSSL */
+#endif /* USE_NSS */
+#endif /* USE_SSLEAY || USE_GNUTLS */
 
 /*
  * Curl_http_done() gets called from Curl_done() after a single HTTP request
@@ -2040,9 +2052,17 @@ CURLcode Curl_add_custom_headers(struct connectdata *conn,
 CURLcode Curl_add_timecondition(struct SessionHandle *data,
                                 Curl_send_buffer *req_buffer)
 {
-  struct tm *tm;
+  const struct tm *tm;
   char *buf = data->state.buffer;
   CURLcode result = CURLE_OK;
+  struct tm keeptime;
+
+  result = Curl_gmtime(data->set.timevalue, &keeptime);
+  if(result) {
+    failf(data, "Invalid TIMEVALUE\n");
+    return result;
+  }
+  tm = &keeptime;
 
   /* The If-Modified-Since header family should have their times set in
    * GMT as RFC2616 defines: "All HTTP date/time stamps MUST be
@@ -2050,14 +2070,6 @@ CURLcode Curl_add_timecondition(struct SessionHandle *data,
    * purposes of HTTP, GMT is exactly equal to UTC (Coordinated Universal
    * Time)." (see page 20 of RFC2616).
    */
-
-#ifdef HAVE_GMTIME_R
-  /* thread-safe version */
-  struct tm keeptime;
-  tm = (struct tm *)gmtime_r(&data->set.timevalue, &keeptime);
-#else
-  tm = gmtime(&data->set.timevalue);
-#endif
 
   /* format: "Tue, 15 Nov 1994 12:45:26 GMT" */
   snprintf(buf, BUFSIZE-1,
@@ -2642,7 +2654,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
 #endif
 
   if(data->set.timecondition) {
-      result = Curl_add_timecondition(data, req_buffer);
+    result = Curl_add_timecondition(data, req_buffer);
     if(result)
       return result;
   }
@@ -3711,7 +3723,8 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
         return result;
     }
     else if((k->httpcode >= 300 && k->httpcode < 400) &&
-            checkprefix("Location:", k->p)) {
+            checkprefix("Location:", k->p) &&
+            !data->req.location) {
       /* this is the URL that the server advises us to use instead */
       char *location = Curl_copy_header_value(k->p);
       if (!location)
@@ -3720,7 +3733,6 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
         /* ignore empty data */
         free(location);
       else {
-        DEBUGASSERT(!data->req.location);
         data->req.location = location;
 
         if(data->set.http_follow_location) {

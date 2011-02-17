@@ -369,6 +369,9 @@
     <ClInclude Include="include\curl\types.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="lib\axtls.h">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\curlutil.c">
@@ -678,6 +681,15 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\wildcard.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\axtls.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\http_negotiate_sspi.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\idn_win32.c">
       <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -751,6 +751,9 @@ CURLcode Curl_init_userdefined(struct UserDefined *set)
    */
   set->ssl.verifypeer = TRUE;
   set->ssl.verifyhost = 2;
+#ifdef USE_TLS_SRP
+  set->ssl.authtype = CURL_TLSAUTH_NONE;
+#endif
   set->ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth
                                                       type */
   set->ssl.sessionid = TRUE; /* session ID caching enabled by default */
@@ -1454,8 +1457,8 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
 #ifndef USE_NTLM
     auth &= ~CURLAUTH_NTLM; /* no NTLM without SSL */
 #endif
-#ifndef HAVE_GSSAPI
-    auth &= ~CURLAUTH_GSSNEGOTIATE; /* no GSS-Negotiate without GSSAPI */
+#ifndef USE_HTTP_NEGOTIATE
+    auth &= ~CURLAUTH_GSSNEGOTIATE; /* no GSS-Negotiate without GSSAPI or WINDOWS_SSPI */
 #endif
     if(!auth)
       return CURLE_FAILED_INIT; /* no supported types left! */
@@ -1514,8 +1517,8 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
 #ifndef USE_NTLM
     auth &= ~CURLAUTH_NTLM; /* no NTLM without SSL */
 #endif
-#ifndef HAVE_GSSAPI
-    auth &= ~CURLAUTH_GSSNEGOTIATE; /* no GSS-Negotiate without GSSAPI */
+#ifndef USE_HTTP_NEGOTIATE
+    auth &= ~CURLAUTH_GSSNEGOTIATE; /* no GSS-Negotiate without GSSAPI or WINDOWS_SSPI */
 #endif
     if(!auth)
       return CURLE_FAILED_INIT; /* no supported types left! */
@@ -2527,14 +2530,35 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
     data->set.fnmatch_data = va_arg(param, void *);
     break;
 
+// PeerBlock custom code start
   case CURLOPT_PRECONNECT:
     data->set.preconnect = va_arg(param, curl_preconnect_callback);
     break;
 
   case CURLOPT_PRECONNECTDATA:
     data->set.preconnect_client = va_arg(param, void *);
-    break;
+// PeerBlock custom code end
 
+#ifdef USE_TLS_SRP
+  case CURLOPT_TLSAUTH_USERNAME:
+    result = setstropt(&data->set.str[STRING_TLSAUTH_USERNAME],
+                       va_arg(param, char *));
+    if (data->set.str[STRING_TLSAUTH_USERNAME] && !data->set.ssl.authtype)
+      data->set.ssl.authtype = CURL_TLSAUTH_SRP; /* default to SRP */
+    break;
+  case CURLOPT_TLSAUTH_PASSWORD:
+    result = setstropt(&data->set.str[STRING_TLSAUTH_PASSWORD],
+                       va_arg(param, char *));
+    if (data->set.str[STRING_TLSAUTH_USERNAME] && !data->set.ssl.authtype)
+      data->set.ssl.authtype = CURL_TLSAUTH_SRP; /* default to SRP */
+    break;
+  case CURLOPT_TLSAUTH_TYPE:
+    if (strncmp((char *)va_arg(param, char *), "SRP", strlen("SRP")) == 0)
+      data->set.ssl.authtype = CURL_TLSAUTH_SRP;
+    else
+      data->set.ssl.authtype = CURL_TLSAUTH_NONE;
+    break;
+#endif
   default:
     /* unknown tag and its companion, just ignore: */
     result = CURLE_FAILED_INIT; /* correct this */
@@ -2667,7 +2691,7 @@ CURLcode Curl_disconnect(struct connectdata *conn, bool dead_connection)
       data->state.connc->connects[conn->connectindex] = NULL;
   }
 
-#ifdef USE_LIBIDN
+#if defined(USE_LIBIDN)
   if(conn->host.encalloc)
     idn_free(conn->host.encalloc); /* encoded host name buffer, must be freed
                                       with idn_free() since this was allocated
@@ -2676,6 +2700,14 @@ CURLcode Curl_disconnect(struct connectdata *conn, bool dead_connection)
     idn_free(conn->proxy.encalloc); /* encoded proxy name buffer, must be
                                        freed with idn_free() since this was
                                        allocated by libidn */
+#elif defined(USE_WIN32_IDN)
+  free(conn->host.encalloc); /* encoded host name buffer, must be freed with
+                                idn_free() since this was allocated by
+                                curl_win32_idn_to_ascii */
+  if(conn->proxy.encalloc)
+    free(conn->proxy.encalloc); /* encoded proxy name buffer, must be freed
+                                   with idn_free() since this was allocated by
+                                   curl_win32_idn_to_ascii */
 #endif
 
   Curl_ssl_close(conn, FIRSTSOCKET);
@@ -3377,7 +3409,6 @@ CURLcode Curl_protocol_connect(struct connectdata *conn,
 /*
  * Helpers for IDNA convertions.
  */
-#ifdef USE_LIBIDN
 static bool is_ASCII_name(const char *hostname)
 {
   const unsigned char *ch = (const unsigned char*)hostname;
@@ -3389,6 +3420,7 @@ static bool is_ASCII_name(const char *hostname)
   return TRUE;
 }
 
+#ifdef USE_LIBIDN
 /*
  * Check if characters in hostname is allowed in Top Level Domain.
  */
@@ -3447,13 +3479,12 @@ static void fix_hostname(struct SessionHandle *data,
 
   /* set the name we use to display the host name */
   host->dispname = host->name;
-
+  if(!is_ASCII_name(host->name)) {
 #ifdef USE_LIBIDN
   /*************************************************************
    * Check name for non-ASCII and convert hostname to ACE form.
    *************************************************************/
-  if(!is_ASCII_name(host->name) &&
-      stringprep_check_version(LIBIDN_REQUIRED_VERSION)) {
+  if(stringprep_check_version(LIBIDN_REQUIRED_VERSION)) {
     char *ace_hostname = NULL;
     int rc = idna_to_ascii_lz(host->name, &ace_hostname, 0);
     infof (data, "Input domain encoded as `%s'\n",
@@ -3471,7 +3502,24 @@ static void fix_hostname(struct SessionHandle *data,
       host->name = host->encalloc;
     }
   }
+#elif defined(USE_WIN32_IDN)
+  /*************************************************************
+   * Check name for non-ASCII and convert hostname to ACE form.
+   *************************************************************/
+    char *ace_hostname = NULL;
+    int rc = curl_win32_idn_to_ascii(host->name, &ace_hostname, 0);
+    if(rc == 0)
+      infof(data, "Failed to convert %s to ACE;\n",
+            host->name);
+    else {
+      host->encalloc = ace_hostname;
+      /* change the name pointer to point to the encoded hostname */
+      host->name = host->encalloc;
+    }
+#else
+    infof (data, "IDN support not present, can't parse Unicode (UTF-8) domains");
 #endif
+  }
 }
 
 static void llist_dtor(void *user, void *element)
@@ -4500,7 +4548,7 @@ static CURLcode resolve_server(struct SessionHandle *data,
                                bool *async)
 {
   CURLcode result=CURLE_OK;
-  long timeout_ms = Curl_timeleft(conn, NULL, TRUE);
+  long timeout_ms = Curl_timeleft(data, NULL, TRUE);
 
   /*************************************************************
    * Resolve the name of the server or proxy
@@ -4914,6 +4962,10 @@ static CURLcode create_conn(struct SessionHandle *data,
   data->set.ssl.random_file = data->set.str[STRING_SSL_RANDOM_FILE];
   data->set.ssl.egdsocket = data->set.str[STRING_SSL_EGDSOCKET];
   data->set.ssl.cipher_list = data->set.str[STRING_SSL_CIPHER_LIST];
+#ifdef USE_TLS_SRP
+  data->set.ssl.username = data->set.str[STRING_TLSAUTH_USERNAME];
+  data->set.ssl.password = data->set.str[STRING_TLSAUTH_PASSWORD];
+#endif
 
   if(!Curl_clone_ssl_config(&data->set.ssl, &conn->ssl_config))
     return CURLE_OUT_OF_MEMORY;
@@ -5199,6 +5251,8 @@ CURLcode Curl_done(struct connectdata **connp,
     data->req.location = NULL;
   }
 
+  Curl_async_cancel(conn);
+
   if(conn->dns_entry) {
     Curl_resolv_unlock(data, conn->dns_entry); /* done with this */
     conn->dns_entry = NULL;
@@ -5218,10 +5272,6 @@ CURLcode Curl_done(struct connectdata **connp,
     free(data->state.tempwrite);
     data->state.tempwrite = NULL;
   }
-
-  /* for ares-using, make sure all possible outstanding requests are properly
-     cancelled before we proceed */
-  ares_cancel(data->state.areschannel);
 
   /* if data->set.reuse_forbid is TRUE, it means the libcurl client has
      forced us to close this no matter what we think.
@@ -5356,12 +5406,13 @@ CURLcode Curl_do(struct connectdata **connp, bool *done)
 
           if(result == CURLE_OK) {
             /* ... finally back to actually retry the DO phase */
+            conn = *connp; /* re-assign conn since Curl_reconnect_request
+                              creates a new connection */
             result = conn->handler->do_it(conn, done);
           }
         }
-        else {
+        else
           return result;
-        }
     }
 
     if((result == CURLE_OK) && *done)

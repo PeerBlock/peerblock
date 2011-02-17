@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -322,7 +322,7 @@ static CURLcode AllowServerConnect(struct connectdata *conn)
   curl_socklen_t size = (curl_socklen_t) sizeof(add);
 
   for(;;) {
-    timeout_ms = Curl_timeleft(conn, NULL, TRUE);
+    timeout_ms = Curl_timeleft(data, NULL, TRUE);
 
     if(timeout_ms < 0) {
       /* if a timeout was already reached, bail out */
@@ -1841,14 +1841,14 @@ static CURLcode ftp_state_mdtm_resp(struct connectdata *conn,
          ftpc->file &&
          data->set.get_filetime &&
          (data->info.filetime>=0) ) {
-        struct tm *tm;
         time_t filetime = (time_t)data->info.filetime;
-#ifdef HAVE_GMTIME_R
         struct tm buffer;
-        tm = (struct tm *)gmtime_r(&filetime, &buffer);
-#else
-        tm = gmtime(&filetime);
-#endif
+        const struct tm *tm = &buffer;
+
+        result = Curl_gmtime(filetime, &buffer);
+        if(result)
+          return result;
+
         /* format: "Tue, 15 Nov 1994 12:45:26" */
         snprintf(buf, BUFSIZE-1,
                  "Last-Modified: %s, %02d %s %4d %02d:%02d:%02d GMT\r\n",

@@ -809,9 +809,11 @@ USE_LIBRTMP
 USE_LIBSSH2
 CURL_CA_BUNDLE
 SSL_ENABLED
+USE_AXTLS
 USE_NSS
 HAVE_PK11_CREATEGENERICOBJECT
 USE_POLARSSL
+HAVE_GNUTLS_SRP
 USE_GNUTLS
 RANDOM_FILE
 HAVE_LIBZ_FALSE
@@ -1012,6 +1014,7 @@ with_random
 with_gnutls
 with_polarssl
 with_nss
+with_axtls
 with_ca_bundle
 with_ca_path
 with_libssh2
@@ -1022,6 +1025,7 @@ enable_threaded_resolver
 enable_verbose
 enable_sspi
 enable_crypto_auth
+enable_tls_srp
 enable_cookies
 enable_hidden_symbols
 enable_soname_bump
@@ -1722,6 +1726,8 @@ Optional Features:
   --disable-sspi          Disable SSPI
   --enable-crypto-auth    Enable cryptographic authentication
   --disable-crypto-auth   Disable cryptographic authentication
+  --enable-tls-srp        Enable TLS-SRP authentication
+  --disable-tls-srp       Disable TLS-SRP authentication
   --enable-cookies        Enable cookies support
   --disable-cookies       Disable cookies support
   --enable-hidden-symbols Hide internal symbols in library
@@ -1765,6 +1771,10 @@ Optional Packages:
   --with-nss=PATH         where to look for NSS, PATH points to the
                           installation root (default: /usr/local/)
   --without-nss           disable NSS detection
+  --with-axtls=PATH       Where to look for axTLS, PATH points to the axTLS
+                          installation prefix (default: /usr/local). Ignored
+                          if another SSL engine is selected.
+  --without-axtls         disable axTLS
   --with-ca-bundle=FILE   File name to use as CA bundle
   --without-ca-bundle     Don't use a default CA bundle
   --with-ca-path=DIRECTORY
@@ -3745,12 +3755,13 @@ PKGADD_VENDOR="curl.haxx.se"
 
 
 
-    curl_ssl_msg="no      (--with-{ssl,gnutls,nss,polarssl} )"
+    curl_ssl_msg="no      (--with-{ssl,gnutls,nss,polarssl,axtls} )"
     curl_ssh_msg="no      (--with-libssh2)"
    curl_zlib_msg="no      (--with-zlib)"
    curl_krb4_msg="no      (--with-krb4*)"
     curl_gss_msg="no      (--with-gssapi)"
  curl_spnego_msg="no      (--with-spnego)"
+curl_tls_srp_msg="no      (--enable-tls-srp)"
     curl_res_msg="default (--enable-ares / --enable-threaded-resolver)"
    curl_ipv6_msg="no      (--enable-ipv6)"
     curl_idn_msg="no      (--with-libidn)"
@@ -3761,6 +3772,7 @@ curl_verbose_msg="enabled (--disable-verbose)"
   curl_ldaps_msg="no      (--enable-ldaps)"
    curl_rtsp_msg="no      (--enable-rtsp)"
    curl_rtmp_msg="no      (--with-librtmp)"
+    init_ssl_msg=${curl_ssl_msg}
 
 ALL_LIBS=$LIBS
 
@@ -7906,13 +7918,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:7909: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:7921: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:7912: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:7924: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:7915: output\"" >&5)
+  (eval echo "\"\$as_me:7927: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -9114,7 +9126,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 9117 "configure"' > conftest.$ac_ext
+  echo '#line 9129 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10372,11 +10384,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10375: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10387: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10379: \$? = $ac_status" >&5
+   echo "$as_me:10391: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10711,11 +10723,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10714: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10726: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10718: \$? = $ac_status" >&5
+   echo "$as_me:10730: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10816,11 +10828,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10819: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10831: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10823: \$? = $ac_status" >&5
+   echo "$as_me:10835: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10871,11 +10883,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10874: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10886: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10878: \$? = $ac_status" >&5
+   echo "$as_me:10890: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13237,7 +13249,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 13240 "configure"
+#line 13252 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13333,7 +13345,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 13336 "configure"
+#line 13348 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16473,7 +16485,7 @@ _ACEOF
 $as_echo "yes (large file disabled)" >&6; }
 
 cat >>confdefs.h <<_ACEOF
-#define USE_WIN32_LARGE_FILES 1
+#define USE_WIN32_SMALL_FILES 1
 _ACEOF
 
       ;;
@@ -20321,6 +20333,52 @@ fi
 
 fi
 
+if test "$GNUTLS_ENABLED" = "1"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gnutls_srp_verifier in -lgnutls" >&5
+$as_echo_n "checking for gnutls_srp_verifier in -lgnutls... " >&6; }
+if test "${ac_cv_lib_gnutls_gnutls_srp_verifier+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgnutls  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+#ifdef __cplusplus
+extern "C"
+#endif
+char gnutls_srp_verifier ();
+int main (void)
+{
+return gnutls_srp_verifier ();
+ ;
+ return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_gnutls_gnutls_srp_verifier=yes
+else
+  ac_cv_lib_gnutls_gnutls_srp_verifier=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gnutls_gnutls_srp_verifier" >&5
+$as_echo "$ac_cv_lib_gnutls_gnutls_srp_verifier" >&6; }
+if test "x$ac_cv_lib_gnutls_gnutls_srp_verifier" = x""yes; then :
+
+
+$as_echo "#define HAVE_GNUTLS_SRP 1" >>confdefs.h
+
+     HAVE_GNUTLS_SRP=1
+
+
+fi
+
+fi
+
 
 OPT_POLARSSL=no
 
@@ -20750,11 +20808,106 @@ $as_echo "$as_me: Added $nssprefix/lib$libsuff to LD_LIBRARY_PATH" >&6;}
 
   fi
 fi
-if test "x$OPENSSL_ENABLED$GNUTLS_ENABLED$NSS_ENABLED$POLARSSL_ENABLED" = "x"; then
+OPT_AXTLS=off
+
+
+# Check whether --with-axtls was given.
+if test "${with_axtls+set}" = set; then :
+  withval=$with_axtls; OPT_AXTLS=$withval
+fi
+
+
+if test "$curl_ssl_msg" = "$init_ssl_msg"; then
+  if test X"$OPT_AXTLS" != Xno; then
+        CLEANLDFLAGS="$LDFLAGS"
+    CLEANCPPFLAGS="$CPPFLAGS"
+    CLEANLIBS="$LIBS"
+
+    case "$OPT_AXTLS" in
+    yes)
+            PREFIX_AXTLS=/usr/local
+      LIB_AXTLS="$PREFIX_AXTLS/lib"
+      LDFLAGS="$LDFLAGS -L$LIB_AXTLS"
+      CPPFLAGS="$CPPFLAGS -I$PREFIX_AXTLS/include"
+      ;;
+    off)
+            PREFIX_AXTLS=
+      ;;
+    *)
+            PREFIX_AXTLS=$OPT_AXTLS
+      LIB_AXTLS="$PREFIX_AXTLS/lib"
+      LDFLAGS="$LDFLAGS -L$LIB_AXTLS"
+      CPPFLAGS="$CPPFLAGS -I$PREFIX_AXTLS/include"
+      ;;
+    esac
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ssl_version in -laxtls" >&5
+$as_echo_n "checking for ssl_version in -laxtls... " >&6; }
+if test "${ac_cv_lib_axtls_ssl_version+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-laxtls  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+#ifdef __cplusplus
+extern "C"
+#endif
+char ssl_version ();
+int main (void)
+{
+return ssl_version ();
+ ;
+ return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_axtls_ssl_version=yes
+else
+  ac_cv_lib_axtls_ssl_version=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_axtls_ssl_version" >&5
+$as_echo "$ac_cv_lib_axtls_ssl_version" >&6; }
+if test "x$ac_cv_lib_axtls_ssl_version" = x""yes; then :
+
+      LIBS="-laxtls $LIBS"
+
+$as_echo "#define USE_AXTLS 1" >>confdefs.h
+
+      USE_AXTLS=1
+
+      AXTLS_ENABLED=1
+      USE_AXTLS="yes"
+      curl_ssl_msg="enabled (axTLS)"
+
+
+      LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$LIB_AXTLS"
+      export LD_LIBRARY_PATH
+      { $as_echo "$as_me:${as_lineno-$LINENO}: Added $LIB_AXTLS to LD_LIBRARY_PATH" >&5
+$as_echo "$as_me: Added $LIB_AXTLS to LD_LIBRARY_PATH" >&6;}
+
+else
+
+      LDFLAGS="$CLEANLDFLAGS"
+      CPPFLAGS="$CLEANCPPFLAGS"
+      LIBS="$CLEANLIBS"
+
+fi
+
+  fi
+fi
+
+if test "x$OPENSSL_ENABLED$GNUTLS_ENABLED$NSS_ENABLED$POLARSSL_ENABLED$AXTLS_ENABLED" = "x"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: SSL disabled, you will not be able to use HTTPS, FTPS, NTLM and more." >&5
 $as_echo "$as_me: WARNING: SSL disabled, you will not be able to use HTTPS, FTPS, NTLM and more." >&2;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Use --with-ssl, --with-gnutls, --with-polarssl or --with-nss to address this." >&5
-$as_echo "$as_me: WARNING: Use --with-ssl, --with-gnutls, --with-polarssl or --with-nss to address this." >&2;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Use --with-ssl, --with-gnutls, --with-polarssl, --with-nss or --with-axtls to address this." >&5
+$as_echo "$as_me: WARNING: Use --with-ssl, --with-gnutls, --with-polarssl, --with-nss or --with-axtls to address this." >&2;}
 else
   # SSL is enabled, genericly
 
@@ -34552,7 +34705,8 @@ else
 fi
 
 
-if test "x$enable_shared" = "xyes"; then
+if test "x$ac_cv_native_windows" != "xyes" &&
+   test "x$enable_shared" = "xyes"; then
   build_libhostname=yes
 else
   build_libhostname=no
@@ -34734,6 +34888,40 @@ $as_echo "yes" >&6; }
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable TLS-SRP authentication" >&5
+$as_echo_n "checking whether to enable TLS-SRP authentication... " >&6; }
+# Check whether --enable-tls-srp was given.
+if test "${enable_tls_srp+set}" = set; then :
+  enableval=$enable_tls_srp;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_TLS_SRP 1" >>confdefs.h
+
+       want_tls_srp=no
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       want_tls_srp=yes
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       want_tls_srp=yes
+
+fi
+
+
+if test "$want_tls_srp" = "yes" && test "x$HAVE_GNUTLS_SRP" = "x1"; then
+
+$as_echo "#define USE_TLS_SRP 1" >>confdefs.h
+
+   USE_TLS_SRP=1
+   curl_tls_srp_msg="enabled"
+fi
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable support for cookies" >&5
 $as_echo_n "checking whether to enable support for cookies... " >&6; }
 # Check whether --enable-cookies was given.
@@ -34901,6 +35089,9 @@ if test "x$USE_SSLEAY" = "x1" -o "x$USE_WINDOWS_SSPI" = "x1" \
     -o "x$GNUTLS_ENABLED" = "x1" -o "x$NSS_ENABLED" = "x1"; then
   SUPPORT_FEATURES="$SUPPORT_FEATURES NTLM"
 fi
+if test "x$USE_TLS_SRP" = "x1"; then
+  SUPPORT_FEATURES="$SUPPORT_FEATURES TLS-SRP"
+fi
 
 
 
@@ -34993,7 +35184,7 @@ if test "x$want_curldebug_assumed" = "xyes" &&
   ac_configure_args="$ac_configure_args --enable-curldebug"
 fi
 
-ac_config_files="$ac_config_files Makefile docs/Makefile docs/examples/Makefile docs/libcurl/Makefile include/Makefile include/curl/Makefile src/Makefile lib/Makefile tests/Makefile tests/data/Makefile tests/server/Makefile tests/libtest/Makefile packages/Makefile packages/Win32/Makefile packages/Win32/cygwin/Makefile packages/Linux/Makefile packages/Linux/RPM/Makefile packages/Linux/RPM/curl.spec packages/Linux/RPM/curl-ssl.spec packages/Solaris/Makefile packages/EPM/curl.list packages/EPM/Makefile packages/vms/Makefile packages/AIX/Makefile packages/AIX/RPM/Makefile packages/AIX/RPM/curl.spec curl-config libcurl.pc"
+ac_config_files="$ac_config_files Makefile docs/Makefile docs/examples/Makefile docs/libcurl/Makefile include/Makefile include/curl/Makefile src/Makefile lib/Makefile tests/Makefile tests/data/Makefile tests/server/Makefile tests/libtest/Makefile tests/unit/Makefile packages/Makefile packages/Win32/Makefile packages/Win32/cygwin/Makefile packages/Linux/Makefile packages/Linux/RPM/Makefile packages/Linux/RPM/curl.spec packages/Linux/RPM/curl-ssl.spec packages/Solaris/Makefile packages/EPM/curl.list packages/EPM/Makefile packages/vms/Makefile packages/AIX/Makefile packages/AIX/RPM/Makefile packages/AIX/RPM/curl.spec curl-config libcurl.pc"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -36016,6 +36207,7 @@ do
     "tests/data/Makefile") CONFIG_FILES="$CONFIG_FILES tests/data/Makefile" ;;
     "tests/server/Makefile") CONFIG_FILES="$CONFIG_FILES tests/server/Makefile" ;;
     "tests/libtest/Makefile") CONFIG_FILES="$CONFIG_FILES tests/libtest/Makefile" ;;
+    "tests/unit/Makefile") CONFIG_FILES="$CONFIG_FILES tests/unit/Makefile" ;;
     "packages/Makefile") CONFIG_FILES="$CONFIG_FILES packages/Makefile" ;;
     "packages/Win32/Makefile") CONFIG_FILES="$CONFIG_FILES packages/Win32/Makefile" ;;
     "packages/Win32/cygwin/Makefile") CONFIG_FILES="$CONFIG_FILES packages/Win32/cygwin/Makefile" ;;
@@ -37569,6 +37761,7 @@ _EOF
   krb4 support:    ${curl_krb4_msg}
   GSSAPI support:  ${curl_gss_msg}
   SPNEGO support:  ${curl_spnego_msg}
+  TLS-SRP support: ${curl_tls_srp_msg}
   resolver:        ${curl_res_msg}
   ipv6 support:    ${curl_ipv6_msg}
   IDN support:     ${curl_idn_msg}
@@ -37596,6 +37789,7 @@ $as_echo "$as_me: Configured to build curl/libcurl:
   krb4 support:    ${curl_krb4_msg}
   GSSAPI support:  ${curl_gss_msg}
   SPNEGO support:  ${curl_spnego_msg}
+  TLS-SRP support: ${curl_tls_srp_msg}
   resolver:        ${curl_res_msg}
   ipv6 support:    ${curl_ipv6_msg}
   IDN support:     ${curl_idn_msg}

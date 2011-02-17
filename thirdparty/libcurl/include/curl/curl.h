@@ -166,9 +166,11 @@ struct curl_httppost {
                                        HTTPPOST_CALLBACK posts */
 };
 
+// PeerBlock custom code start
 typedef void (*curl_preconnect_callback)(void *clientp,
                                          struct sockaddr *addr,
                                          int addrlen);
+// PeerBlock custom code end
 
 typedef int (*curl_progress_callback)(void *clientp,
                                       double dltotal,
@@ -1442,12 +1444,23 @@ typedef enum {
 
   /* FNMATCH_FUNCTION user pointer */
   CINIT(FNMATCH_DATA, OBJECTPOINT, 202),
+// PeerBlock custom code start
   /* Called before any connect() happens. */
   CINIT(PRECONNECT, FUNCTIONPOINT, 197),
   CINIT(PRECONNECTDATA, OBJECTPOINT, 198),
+// PeerBlock custom code end
 
   /* send linked-list of name:port:address sets */
   CINIT(RESOLVE, OBJECTPOINT, 203),
+
+  /* Set a username for authenticated TLS */
+  CINIT(TLSAUTH_USERNAME, OBJECTPOINT, 204),
+
+  /* Set a password for authenticated TLS */
+  CINIT(TLSAUTH_PASSWORD, OBJECTPOINT, 205),
+
+  /* Set authentication type for authenticated TLS */
+  CINIT(TLSAUTH_TYPE, OBJECTPOINT, 206),
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
@@ -1543,6 +1556,12 @@ enum {
   CURL_SSLVERSION_SSLv3,
 
   CURL_SSLVERSION_LAST /* never use, keep last */
+};
+
+enum CURL_TLSAUTH {
+  CURL_TLSAUTH_NONE,
+  CURL_TLSAUTH_SRP,
+  CURL_TLSAUTH_LAST /* never use, keep last */
 };
 
 /* symbols to use with CURLOPT_POSTREDIR.
@@ -2050,6 +2069,7 @@ typedef struct {
 #define CURL_VERSION_SSPI      (1<<11) /* SSPI is supported */
 #define CURL_VERSION_CONV      (1<<12) /* character conversions supported */
 #define CURL_VERSION_CURLDEBUG (1<<13) /* debug memory tracking supported */
+#define CURL_VERSION_TLSAUTH_SRP (1<<14) /* TLS-SRP auth is supported */
 
 /*
  * NAME curl_version_info()

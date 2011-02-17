@@ -178,6 +178,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="lib\axtls.h" />
     <ClInclude Include="src\config-amigaos.h" />
     <ClInclude Include="src\config-mac.h" />
     <ClInclude Include="src\config-riscos.h" />
@@ -299,6 +300,9 @@
     <ClInclude Include="include\curl\types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\axtls.c" />
+    <ClCompile Include="lib\http_negotiate_sspi.c" />
+    <ClCompile Include="lib\idn_win32.c" />
     <ClCompile Include="src\curlutil.c" />
     <ClCompile Include="src\getpass.c" />
     <ClCompile Include="src\homedir.c" />

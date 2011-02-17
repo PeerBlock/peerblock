@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -984,7 +984,7 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
       /* we need to wait for the connect state as only then is the start time
          stored, but we must not check already completed handles */
 
-      timeout_ms = Curl_timeleft(easy->easy_conn, &now,
+      timeout_ms = Curl_timeleft(data, &now,
                                  (easy->state <= CURLM_STATE_WAITDO)?
                                  TRUE:FALSE);
 
@@ -1408,6 +1408,7 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
 
     case CURLM_STATE_TOOFAST: /* limit-rate exceeded in either direction */
       /* if both rates are within spec, resume transfer */
+      Curl_pgrsUpdate(easy->easy_conn);
       if( ( (data->set.max_send_speed == 0) ||
             (data->progress.ulspeed < data->set.max_send_speed ))  &&
           ( (data->set.max_recv_speed == 0) ||
@@ -2363,8 +2364,10 @@ static CURLcode addHandleToSendOrPendPipeline(struct SessionHandle *handle,
   if (pipeline == conn->send_pipe && sendhead != conn->send_pipe->head) {
       /* this is a new one as head, expire it */
       conn->writechannel_inuse = FALSE; /* not in use yet */
+#ifdef DEBUGBUILD
       infof(conn->data, "%p is at send pipe head!\n",
             conn->send_pipe->head->ptr);
+#endif
       Curl_expire(conn->send_pipe->head->ptr, 1);
   }
 
@@ -2398,8 +2401,10 @@ static int checkPendPipeline(struct connectdata *conn)
     if(sendhead != conn->send_pipe->head) {
       /* this is a new one as head, expire it */
       conn->writechannel_inuse = FALSE; /* not in use yet */
+#ifdef DEBUGBUILD
       infof(conn->data, "%p is at send pipe head!\n",
             conn->send_pipe->head->ptr);
+#endif
       Curl_expire(conn->send_pipe->head->ptr, 1);
     }
   }
@@ -2428,8 +2433,10 @@ static void moveHandleFromSendToRecvPipeline(struct SessionHandle *handle,
         /* Since there's a new easy handle at the start of the send pipeline,
            set its timeout value to 1ms to make it trigger instantly */
         conn->writechannel_inuse = FALSE; /* not used now */
+#ifdef DEBUGBUILD
         infof(conn->data, "%p is at send pipe head B!\n",
               conn->send_pipe->head->ptr);
+#endif
         Curl_expire(conn->send_pipe->head->ptr, 1);
       }
 
@@ -2565,7 +2572,9 @@ void Curl_expire(struct SessionHandle *data, long milli)
       while(list->size > 0)
         Curl_llist_remove(list, list->tail, NULL);
 
+#ifdef DEBUGBUILD
       infof(data, "Expire cleared\n");
+#endif
       nowp->tv_sec = 0;
       nowp->tv_usec = 0;
     }

@@ -21,7 +21,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -170,6 +170,7 @@ ENABLE_SHARED = @ENABLE_SHARED@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_GNUTLS_SRP = @HAVE_GNUTLS_SRP@
 HAVE_LDAP_SSL = @HAVE_LDAP_SSL@
 HAVE_LIBZ = @HAVE_LIBZ@
 HAVE_LIBZ_FALSE = @HAVE_LIBZ_FALSE@
@@ -237,6 +238,7 @@ SUPPORT_FEATURES = @SUPPORT_FEATURES@
 SUPPORT_PROTOCOLS = @SUPPORT_PROTOCOLS@
 TEST_SERVER_LIBS = @TEST_SERVER_LIBS@
 USE_ARES = @USE_ARES@
+USE_AXTLS = @USE_AXTLS@
 USE_EMBEDDED_ARES_FALSE = @USE_EMBEDDED_ARES_FALSE@
 USE_EMBEDDED_ARES_TRUE = @USE_EMBEDDED_ARES_TRUE@
 USE_GNUTLS = @USE_GNUTLS@
@@ -300,15 +302,19 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
-CMAKE_DIST = CMakeLists.txt CMake/CheckTypeSize.c.in CMake/CheckTypeSize.cmake \
-CMake/CMakeConfigurableFile.in CMake/CurlCheckCSourceCompiles.cmake	       \
-CMake/CurlCheckCSourceRuns.cmake CMake/CurlTests.c CMake/FindOpenSSL.cmake     \
-CMake/FindZLIB.cmake CMake/OtherTests.cmake CMake/Platforms/WindowsCache.cmake \
+CMAKE_DIST = CMakeLists.txt CMake/CMakeConfigurableFile.in		\
+CMake/CurlCheckCSourceCompiles.cmake CMake/CurlCheckCSourceRuns.cmake	\
+CMake/CurlTests.c CMake/FindOpenSSL.cmake CMake/FindZLIB.cmake		\
+CMake/OtherTests.cmake CMake/Platforms/WindowsCache.cmake		\
 CMake/Utilities.cmake include/curl/curlbuild.h.cmake
+
+WINBUILD_DIST = winbuild/BUILD.WINDOWS.txt winbuild/gen_resp_file.bat	\
+winbuild/MakefileBuild.vc winbuild/Makefile.vc
 
 EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in	\
  curl-style.el sample.emacs RELEASE-NOTES buildconf 	\
- libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST)
+ libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST)	\
+ Makefile.msvc.names $(WINBUILD_DIST)
 
 bin_SCRIPTS = curl-config
 SUBDIRS = lib src
@@ -537,7 +543,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/. $(distdir)/CMake $(distdir)/CMake/Platforms $(distdir)/include/curl $(distdir)/m4 $(distdir)/packages/AIX/RPM $(distdir)/packages/EPM $(distdir)/packages/Linux/RPM
+	$(mkdir_p) $(distdir)/. $(distdir)/CMake $(distdir)/CMake/Platforms $(distdir)/include/curl $(distdir)/m4 $(distdir)/packages/AIX/RPM $(distdir)/packages/EPM $(distdir)/packages/Linux/RPM $(distdir)/winbuild
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

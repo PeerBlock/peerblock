@@ -511,6 +511,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\axtls.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\axtls.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\base64.c"
 				>
 			</File>
@@ -835,11 +843,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\http_negotiate_sspi.c"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\http_ntlm.c"
 				>
 			</File>
 			<File
 				RelativePath=".\lib\http_ntlm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\idn_win32.c"
 				>
 			</File>
 			<File

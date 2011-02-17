@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -124,15 +124,17 @@ singleipconnect(struct connectdata *conn,
  * transfer/connection. If the value is negative, the timeout time has already
  * elapsed.
  *
+ * The start time is stored in progress.t_startsingle - as set with
+ * Curl_pgrsTime(..., TIMER_STARTSINGLE);
+ *
  * If 'nowp' is non-NULL, it points to the current time.
  * 'duringconnect' is FALSE if not during a connect, as then of course the
  * connect timeout is not taken into account!
  */
-long Curl_timeleft(struct connectdata *conn,
+long Curl_timeleft(struct SessionHandle *data,
                    struct timeval *nowp,
                    bool duringconnect)
 {
-  struct SessionHandle *data = conn->data;
   int timeout_set = 0;
   long timeout_ms = duringconnect?DEFAULT_CONNECT_TIMEOUT:0;
   struct timeval now;
@@ -658,6 +660,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
   curl_socket_t sockfd = conn->sock[sockindex];
   long allow = DEFAULT_CONNECT_TIMEOUT;
   int error = 0;
+  struct timeval now;
 
   DEBUGASSERT(sockindex >= FIRSTSOCKET && sockindex <= SECONDARYSOCKET);
 
@@ -669,8 +672,10 @@ CURLcode Curl_is_connected(struct connectdata *conn,
     return CURLE_OK;
   }
 
+  now = Curl_tvnow();
+
   /* figure out how long time we have left to connect */
-  allow = Curl_timeleft(conn, NULL, TRUE);
+  allow = Curl_timeleft(data, &now, TRUE);
 
   if(allow < 0) {
     /* time-out, bail out, go home */
@@ -680,9 +685,16 @@ CURLcode Curl_is_connected(struct connectdata *conn,
 
   /* check for connect without timeout as we want to return immediately */
   rc = waitconnect(conn, sockfd, 0);
-  if(WAITCONN_TIMEOUT == rc)
+  if(WAITCONN_TIMEOUT == rc) {
+    if(curlx_tvdiff(now, conn->connecttime) >= conn->timeoutms_per_addr) {
+      infof(data, "After %ldms connect time, move on!\n",
+            conn->timeoutms_per_addr);
+      goto next;
+    }
+
     /* not an error, but also no connection yet */
     return code;
+  }
 
   if(WAITCONN_CONNECTED == rc) {
     if(verifyconnect(sockfd, &error)) {
@@ -715,6 +727,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
     data->state.os_errno = error;
     SET_SOCKERRNO(error);
   }
+  next:
 
   code = trynextip(conn, sockindex, connected);
 
@@ -844,7 +857,7 @@ singleipconnect(struct connectdata *conn,
 
   addr.family = ai->ai_family;
   addr.socktype = conn->socktype;
-  addr.protocol = ai->ai_protocol;
+  addr.protocol = conn->socktype==SOCK_DGRAM?IPPROTO_UDP:ai->ai_protocol;
   addr.addrlen = ai->ai_addrlen;
 
   if(addr.addrlen > sizeof(struct Curl_sockaddr_storage))
@@ -899,9 +912,11 @@ singleipconnect(struct connectdata *conn,
     conn->bits.ipv6 = TRUE;
 #endif
 
+// PeerBlock custom code start
   if(data->set.preconnect) {
     data->set.preconnect(data->set.preconnect_client, ai->ai_addr, ai->ai_addrlen);
   }
+// PeerBlock custom code end
 
   if(data->set.tcp_nodelay)
     tcpnodelay(conn, sockfd);
@@ -917,7 +932,7 @@ singleipconnect(struct connectdata *conn,
                                CURLSOCKTYPE_IPCXN);
     if(error) {
       sclose(sockfd); /* close the socket and bail out */
-      return res;
+      return CURLE_ABORTED_BY_CALLBACK;
     }
   }
 
@@ -932,8 +947,12 @@ singleipconnect(struct connectdata *conn,
   curlx_nonblock(sockfd, TRUE);
 
   /* Connect TCP sockets, bind UDP */
-  if(conn->socktype == SOCK_STREAM)
+  if(conn->socktype == SOCK_STREAM) {
     rc = connect(sockfd, &addr.sa_addr, addr.addrlen);
+    conn->connecttime = Curl_tvnow();
+    if(conn->num_addr > 1)
+      Curl_expire(data, conn->timeoutms_per_addr);
+  }
   else
     rc = 0;
 
@@ -1014,7 +1033,6 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   struct SessionHandle *data = conn->data;
   curl_socket_t sockfd = CURL_SOCKET_BAD;
   int aliasindex;
-  int num_addr;
   Curl_addrinfo *ai;
   Curl_addrinfo *curr_addr;
 
@@ -1025,13 +1043,12 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
    * Figure out what maximum time we have left
    *************************************************************/
   long timeout_ms;
-  long timeout_per_addr;
 
   DEBUGASSERT(sockconn);
   *connected = FALSE; /* default to not connected */
 
   /* get the timeout left */
-  timeout_ms = Curl_timeleft(conn, &before, TRUE);
+  timeout_ms = Curl_timeleft(data, &before, TRUE);
 
   if(timeout_ms < 0) {
     /* a precaution, no need to continue if time already is up */
@@ -1040,18 +1057,14 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   }
 
   /* Max time for each address */
-  num_addr = Curl_num_addresses(remotehost->addr);
-  timeout_per_addr = timeout_ms / num_addr;
+  conn->num_addr = Curl_num_addresses(remotehost->addr);
+  conn->timeoutms_per_addr = timeout_ms / conn->num_addr;
 
   ai = remotehost->addr;
 
   /* Below is the loop that attempts to connect to all IP-addresses we
    * know for the given host. One by one until one IP succeeds.
    */
-
-  if(data->state.used_interface == Curl_if_multi)
-    /* don't hang when doing multi */
-    timeout_per_addr = 0;
 
   /*
    * Connecting with a Curl_addrinfo chain
@@ -1061,7 +1074,10 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
 
     /* start connecting to the IP curr_addr points to */
     CURLcode res =
-      singleipconnect(conn, curr_addr, timeout_per_addr, &sockfd, connected);
+      singleipconnect(conn, curr_addr,
+                      /* don't hang when doing multi */
+                      (data->state.used_interface == Curl_if_multi)?0:
+                      conn->timeoutms_per_addr, &sockfd, connected);
 
     if(res)
       return res;

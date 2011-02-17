@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -355,6 +355,37 @@ static void read_rewind(struct connectdata *conn,
 #endif
 }
 
+/*
+ * Check to see if CURLOPT_TIMECONDITION was met by comparing the time of the
+ * remote document with the time provided by CURLOPT_TIMEVAL
+ */
+bool Curl_meets_timecondition(struct SessionHandle *data, long timeofdoc)
+{
+  if((timeofdoc == 0) || (data->set.timevalue == 0))
+    return TRUE;
+
+  switch(data->set.timecondition) {
+  case CURL_TIMECOND_IFMODSINCE:
+  default:
+    if(timeofdoc <= data->set.timevalue) {
+      infof(data,
+            "The requested document is not new enough\n");
+      data->info.timecond = TRUE;
+      return FALSE;
+    }
+    break;
+  case CURL_TIMECOND_IFUNMODSINCE:
+    if(timeofdoc >= data->set.timevalue) {
+      infof(data,
+            "The requested document is not old enough\n");
+      data->info.timecond = TRUE;
+      return FALSE;
+    }
+    break;
+  }
+
+  return TRUE;
+}
 
 /*
  * Go ahead and do a read if we have a readable socket or if
@@ -518,29 +549,11 @@ static CURLcode readwrite_data(struct SessionHandle *data,
                requested. This seems to be what chapter 13.3.4 of
                RFC 2616 defines to be the correct action for a
                HTTP/1.1 client */
-            if((k->timeofdoc > 0) && (data->set.timevalue > 0)) {
-              switch(data->set.timecondition) {
-              case CURL_TIMECOND_IFMODSINCE:
-              default:
-                if(k->timeofdoc < data->set.timevalue) {
-                  infof(data,
-                        "The requested document is not new enough\n");
-                  *done = TRUE;
-                  data->info.timecond = TRUE;
-                  return CURLE_OK;
-                }
-                break;
-              case CURL_TIMECOND_IFUNMODSINCE:
-                if(k->timeofdoc > data->set.timevalue) {
-                  infof(data,
-                        "The requested document is not old enough\n");
-                  *done = TRUE;
-                  data->info.timecond = TRUE;
-                  return CURLE_OK;
-                }
-                break;
-              } /* switch */
-            } /* two valid time strings */
+
+            if(!Curl_meets_timecondition(data, k->timeofdoc)) {
+              *done = TRUE;
+              return CURLE_OK;
+            }
           } /* we have a time condition */
 
         } /* this is HTTP */
@@ -1064,7 +1077,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
     return result;
 
   if(k->keepon) {
-    if(0 > Curl_timeleft(conn, &k->now, FALSE)) {
+    if(0 > Curl_timeleft(data, &k->now, FALSE)) {
       if(k->size != -1) {
         failf(data, "Operation timed out after %ld milliseconds with %"
               FORMAT_OFF_T " out of %" FORMAT_OFF_T " bytes received",
@@ -1347,7 +1360,7 @@ Transfer(struct connectdata *conn)
          to work with, skip the timeout */
       timeout_ms = 0;
     else {
-      totmp = Curl_timeleft(conn, &k->now, FALSE);
+      totmp = Curl_timeleft(data, &k->now, FALSE);
       if(totmp < 0)
         return CURLE_OPERATION_TIMEDOUT;
       else if(!totmp)
@@ -1382,7 +1395,7 @@ Transfer(struct connectdata *conn)
   return CURLE_OK;
 }
 
-static void loadhostpairs(struct SessionHandle *data)
+static CURLcode loadhostpairs(struct SessionHandle *data)
 {
   struct curl_slist *hostp;
   char hostname[256];
@@ -1393,7 +1406,7 @@ static void loadhostpairs(struct SessionHandle *data)
     if(!hostp->data)
       continue;
     if(hostp->data[0] == '-') {
-      /* mark an entry for removal */
+      /* TODO: mark an entry for removal */
     }
     else if(3 == sscanf(hostp->data, "%255[^:]:%d:%255s", hostname, &port,
                         address)) {
@@ -1416,9 +1429,14 @@ static void loadhostpairs(struct SessionHandle *data)
 
       if(data->share)
         Curl_share_unlock(data, CURL_LOCK_DATA_DNS);
+
+      if(!dns)
+        return CURLE_OUT_OF_MEMORY;
     }
   }
   data->change.resolve = NULL; /* dealt with now */
+
+  return CURLE_OK;
 }
 
 
@@ -1460,31 +1478,33 @@ CURLcode Curl_pretransfer(struct SessionHandle *data)
 
   /* If there is a list of host pairs to deal with */
   if(data->change.resolve)
-    loadhostpairs(data);
+    res = loadhostpairs(data);
 
- /* Allow data->set.use_port to set which port to use. This needs to be
-  * disabled for example when we follow Location: headers to URLs using
-  * different ports! */
-  data->state.allow_port = TRUE;
+  if(!res) {
+    /* Allow data->set.use_port to set which port to use. This needs to be
+     * disabled for example when we follow Location: headers to URLs using
+     * different ports! */
+    data->state.allow_port = TRUE;
 
 #if defined(HAVE_SIGNAL) && defined(SIGPIPE) && !defined(HAVE_MSG_NOSIGNAL)
-  /*************************************************************
-   * Tell signal handler to ignore SIGPIPE
-   *************************************************************/
-  if(!data->set.no_signal)
-    data->state.prev_signal = signal(SIGPIPE, SIG_IGN);
+    /*************************************************************
+     * Tell signal handler to ignore SIGPIPE
+     *************************************************************/
+    if(!data->set.no_signal)
+      data->state.prev_signal = signal(SIGPIPE, SIG_IGN);
 #endif
 
-  Curl_initinfo(data); /* reset session-specific information "variables" */
-  Curl_pgrsStartNow(data);
+    Curl_initinfo(data); /* reset session-specific information "variables" */
+    Curl_pgrsStartNow(data);
 
-  if(data->set.timeout)
-    Curl_expire(data, data->set.timeout);
+    if(data->set.timeout)
+      Curl_expire(data, data->set.timeout);
 
-  if(data->set.connecttimeout)
-    Curl_expire(data, data->set.connecttimeout);
+    if(data->set.connecttimeout)
+      Curl_expire(data, data->set.connecttimeout);
+  }
 
-  return CURLE_OK;
+  return res;
 }
 
 /*
