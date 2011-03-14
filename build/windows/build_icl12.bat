@@ -23,11 +23,11 @@ REM  3. This notice may not be removed or altered from any source distribution.
 REM  $Id$
 
 REM check for the help switches
-IF /I "%1"=="help" GOTO SHOWHELP
-IF /I "%1"=="/help" GOTO SHOWHELP
-IF /I "%1"=="-help" GOTO SHOWHELP
+IF /I "%1"=="help"   GOTO SHOWHELP
+IF /I "%1"=="/help"  GOTO SHOWHELP
+IF /I "%1"=="-help"  GOTO SHOWHELP
 IF /I "%1"=="--help" GOTO SHOWHELP
-IF /I "%1"=="/?" GOTO SHOWHELP
+IF /I "%1"=="/?"     GOTO SHOWHELP
 GOTO CHECK
 
 
@@ -73,17 +73,17 @@ REM Check for the switches
 IF "%1" == "" (
   SET "BUILDTYPE=Rebuild"
 ) ELSE (
-  IF /I "%1" == "Build" SET "BUILDTYPE=Build" & GOTO START
-  IF /I "%1" == "/Build" SET "BUILDTYPE=Build" & GOTO START
-  IF /I "%1" == "-Build" SET "BUILDTYPE=Build" & GOTO START
-  IF /I "%1" == "--Build" SET "BUILDTYPE=Build" & GOTO START
-  IF /I "%1" == "Clean" SET "BUILDTYPE=Clean" & GOTO START
-  IF /I "%1" == "/Clean" SET "BUILDTYPE=Clean" & GOTO START
-  IF /I "%1" == "-Clean" SET "BUILDTYPE=Clean" & GOTO START
-  IF /I "%1" == "--Clean" SET "BUILDTYPE=Clean" & GOTO START
-  IF /I "%1" == "Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
-  IF /I "%1" == "/Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
-  IF /I "%1" == "-Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
+  IF /I "%1" == "Build"     SET "BUILDTYPE=Build"   & GOTO START
+  IF /I "%1" == "/Build"    SET "BUILDTYPE=Build"   & GOTO START
+  IF /I "%1" == "-Build"    SET "BUILDTYPE=Build"   & GOTO START
+  IF /I "%1" == "--Build"   SET "BUILDTYPE=Build"   & GOTO START
+  IF /I "%1" == "Clean"     SET "BUILDTYPE=Clean"   & GOTO START
+  IF /I "%1" == "/Clean"    SET "BUILDTYPE=Clean"   & GOTO START
+  IF /I "%1" == "-Clean"    SET "BUILDTYPE=Clean"   & GOTO START
+  IF /I "%1" == "--Clean"   SET "BUILDTYPE=Clean"   & GOTO START
+  IF /I "%1" == "Rebuild"   SET "BUILDTYPE=Rebuild" & GOTO START
+  IF /I "%1" == "/Rebuild"  SET "BUILDTYPE=Rebuild" & GOTO START
+  IF /I "%1" == "-Rebuild"  SET "BUILDTYPE=Rebuild" & GOTO START
   IF /I "%1" == "--Rebuild" SET "BUILDTYPE=Rebuild" & GOTO START
 
   ECHO.
