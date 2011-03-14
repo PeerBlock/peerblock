@@ -2,7 +2,7 @@
 License:  Public Domain
 Website:  http://www.7-zip.org
 
-Boost version 1.46
+Boost version 1.46.1
 License:  Boost Software License
 Website:  http://www.boost.org
 Notes:    We currently include only the needed files.
@@ -16,9 +16,9 @@ License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl
 Notes:    The version PeerBlock is using is slightly modified.  See here:
           (http://code.google.com/p/peerblock/source/detail?r=284)
-          or search the libcurl project for "PeerBlock custom code"
+          or search the libcurl project for "PeerBlock custom code".
 
-miniunzip version 1.01h
+Miniunzip version 1.01h
 License:  zlib License
 Website:  http://www.winimage.com/zLibDll/minizip.html
 Notes:    We currently include only the needed files.
