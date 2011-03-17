@@ -27,13 +27,12 @@
 ;#define VS2010build
 
 
-#if VER < 0x05040100
+#if VER < 0x05040200
   #error Update your Inno Setup version
 #endif
 
 
-; Unfortunately ISPP has a bug with relative paths. That's why we use "foobar\..\"
-#include "foobar\..\..\..\..\src\peerblock\version_parsed.h"
+#include "..\..\..\src\peerblock\version_parsed.h"
 
 #define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
 
