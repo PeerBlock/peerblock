@@ -40,14 +40,11 @@ const
 
 // Get PeerGuardian's installation path
 function GetPGPath(Default: String): String;
-var
-  PGUninstallValue: String;
 begin
   PGPath := '';
-  PGUninstallValue := 'Inno Setup: App Path';
 
-  if NOT RegQueryStringValue(HKLM, PGUninstallKey, PGUninstallValue, PGPath) then
-    RegQueryStringValue(HKCU, PGUninstallKey, PGUninstallValue, PGPath);
+  if NOT RegQueryStringValue(HKLM, PGUninstallKey, 'Inno Setup: App Path', PGPath) then
+    RegQueryStringValue(HKCU, PGUninstallKey, 'Inno Setup: App Path', PGPath);
     Result := PGPath;
 end;
 

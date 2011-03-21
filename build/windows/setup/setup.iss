@@ -48,21 +48,21 @@
 
 
 #if defined(ICL12build)
-  #define bindir        = '..\bin_ICL12'
+  #define bindir        = "..\bin_ICL12"
   #define sse2_required
 #elif defined(VS2010build)
-  #define bindir        = '..\bin10'
+  #define bindir        = "..\bin10"
   #define sse2_required
 #else
-  #define bindir        = '..\bin'
+  #define bindir        = "..\bin"
 #endif
 
 
 [Setup]
 AppID={{015C5B35-B678-451C-9AEE-821E8D69621C}
 AppName=PeerBlock
-AppVersion={#= app_version}
-AppVerName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
+AppVersion={#app_version}
+AppVerName=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
 AppPublisher=PeerBlock, LLC
 AppCopyright=Copyright © 2009-2011, PeerBlock, LLC
 AppPublisherURL=http://www.peerblock.com/
@@ -72,21 +72,21 @@ AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
 VersionInfoCopyright=Copyright © 2009-2011, PeerBlock, LLC
 VersionInfoProductName=PeerBlock
-VersionInfoProductVersion={#= app_version}
-VersionInfoVersion={#= app_version}
-VersionInfoDescription=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM}) Setup
-VersionInfoTextVersion={#= app_version}
+VersionInfoProductVersion={#app_version}
+VersionInfoVersion={#app_version}
+VersionInfoDescription=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) Setup
+VersionInfoTextVersion={#app_version}
 DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
 LicenseFile=..\..\..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=.
 #if defined(ICL12build)
-OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_ICL12
+OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}_ICL12
 #elif defined(VS2010build)
-OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}_VS2010
+OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}_VS2010
 #else
-OutputBaseFilename=PeerBlock-Setup_v{#= simple_app_version}_r{#= PB_VER_BUILDNUM}
+OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}
 #endif
 Compression=lzma2/max
 SolidCompression=yes
@@ -95,7 +95,7 @@ MinVersion=0,5.1
 #else
 MinVersion=0,5.0
 #endif
-UninstallDisplayName=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
+UninstallDisplayName=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
 WizardImageFile=WizardImageFile.bmp
@@ -127,11 +127,11 @@ Name: en; MessagesFile: compiler:Default.isl
 
 [Messages]
 #if defined(ICL12build)
-BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM}) [ICL12] built on {#= installer_build_date}
+BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) [ICL12] built on {#installer_build_date}
 #elif defined(VS2010build)
-BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM}) [MSVC2010] built on {#= installer_build_date}
+BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
 #else
-BeveledLabel=PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM}) built on {#= installer_build_date}
+BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
 #endif
 
 
@@ -182,14 +182,14 @@ Source: ..\..\..\doc\readme.rtf;      DestDir: {app};                           
 
 
 [Icons]
-Name: {group}\PeerBlock;                    Filename: {app}\peerblock.exe; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
+Name: {group}\PeerBlock;                    Filename: {app}\peerblock.exe; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
 Name: {group}\Uninstall PeerBlock;          Filename: {uninstallexe};      WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 1; Comment: {cm:UninstallProgram,PeerBlock}
 Name: {group}\Help and Support\Forums;      Filename: http://forums.peerblock.com/
 Name: {group}\Help and Support\Homepage;    Filename: http://www.peerblock.com/
 Name: {group}\Help and Support\ReadMe;      Filename: {app}\readme.rtf;    WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/userguide
-Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#= simple_app_version} (r{#= PB_VER_BUILDNUM})
+Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
 
 
 [Registry]
@@ -243,6 +243,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 // Include custom installer code
 #include "setup_custom_code.iss"
 #include "setup_services.iss"
+
 #if defined(sse_required) || defined(sse2_required)
 #include "setup_cpu_detection.iss"
 #endif
