@@ -17,6 +17,7 @@
 		BufferSecurityCheck="true"
 		ExceptionHandling="2"
 		EnableEnhancedInstructionSet="0"
+		WholeProgramOptimization="true"
 		AdditionalOptions="/MP"
 	/>
 	<Tool
@@ -26,5 +27,9 @@
 		OptimizeReferences="2"
 		EnableCOMDATFolding="2"
 		LinkTimeCodeGeneration="1"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		LinkTimeCodeGeneration="true"
 	/>
 </VisualStudioPropertySheet>

@@ -54,7 +54,6 @@
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
 				DebugInformationFormat="3"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -121,7 +120,6 @@
 				WarningLevel="0"
 				DebugInformationFormat="3"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -157,7 +155,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -179,7 +176,6 @@
 				AdditionalIncludeDirectories="include;lib;src;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;_WIN32_WINNT=0x0500"
 				WarningLevel="0"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -215,7 +211,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -239,7 +234,6 @@
 				PreprocessorDefinitions="NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;WIN64;_WIN32_WINNT=0x0502"
 				WarningLevel="0"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -275,7 +269,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -297,7 +290,6 @@
 				AdditionalIncludeDirectories="include;lib;src;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;_WIN32_WINNT=0x0600"
 				WarningLevel="0"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -333,7 +325,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -357,7 +348,6 @@
 				PreprocessorDefinitions="NDEBUG;BUILDING_LIBCURL;CURL_STATICLIB;CURL_DISABLE_TFTP;CURL_DISABLE_TELNET;CURL_DISABLE_LDAP;WIN64;_WIN32_WINNT=0x0600"
 				WarningLevel="0"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

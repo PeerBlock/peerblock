@@ -157,7 +157,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -215,7 +214,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"

@@ -54,7 +54,6 @@
 				EnableFunctionLevelLinking="true"
 				WarningLevel="0"
 				DebugInformationFormat="3"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -121,7 +120,6 @@
 				WarningLevel="0"
 				DebugInformationFormat="3"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -157,7 +155,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -179,7 +176,6 @@
 				AdditionalIncludeDirectories="..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;NOUNCRYPT;_CRT_SECURE_NO_DEPRECATE"
 				WarningLevel="0"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -215,7 +211,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -239,7 +234,6 @@
 				PreprocessorDefinitions="NDEBUG;NOUNCRYPT;_CRT_SECURE_NO_DEPRECATE;WIN64"
 				WarningLevel="0"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

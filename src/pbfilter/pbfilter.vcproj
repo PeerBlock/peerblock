@@ -59,7 +59,6 @@
 				WarnAsError="true"
 				DebugInformationFormat="3"
 				CallingConvention="2"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -148,7 +147,6 @@
 				WarnAsError="true"
 				DebugInformationFormat="3"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -205,7 +203,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -232,7 +229,6 @@
 				WarningLevel="3"
 				WarnAsError="true"
 				CallingConvention="2"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -287,7 +283,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -314,7 +309,6 @@
 				WarningLevel="3"
 				WarnAsError="true"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -369,7 +363,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -396,7 +389,6 @@
 				WarningLevel="3"
 				WarnAsError="true"
 				CallingConvention="2"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -451,7 +443,6 @@
 			InheritedPropertySheets="$(SolutionDir)props\common.vsprops;$(SolutionDir)props\release.vsprops"
 			CharacterSet="1"
 			ManagedExtensions="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -478,7 +469,6 @@
 				WarningLevel="3"
 				WarnAsError="true"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -567,7 +557,6 @@
 				WarnAsError="true"
 				DebugInformationFormat="3"
 				CallingConvention="2"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -657,7 +646,6 @@
 				WarnAsError="true"
 				DebugInformationFormat="3"
 				CallingConvention="1"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
