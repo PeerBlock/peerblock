@@ -179,7 +179,8 @@ EXIT /B
 
 :SubMSVC
 TITLE Compiling PeerBlock with MSVC 2008 - %~1^|%~2...
-devenv /nologo PeerBlock.sln /%BUILDTYPE% "%~1|%~2"
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerBlock.sln^
+ /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2
 IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 EXIT /B
 

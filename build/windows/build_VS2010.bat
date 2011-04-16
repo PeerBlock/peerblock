@@ -179,7 +179,9 @@ EXIT /B
 
 :SubMSVC
 TITLE Compiling PeerBlock with MSVC 2010 - %~1^|%~2...
-devenv /nologo PeerBlock_VS2010.sln /%BUILDTYPE% "%~1|%~2"
+"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" PeerBlock_VS2010.sln^
+ /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2 /maxcpucount^
+ /consoleloggerparameters:DisableMPLogging;Summary;Verbosity=minimal
 IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 EXIT /B
 
