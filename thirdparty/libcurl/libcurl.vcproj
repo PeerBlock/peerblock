@@ -665,6 +665,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\cyassl.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\cyassl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\dict.c"
 				>
 			</File>
@@ -842,6 +850,14 @@
 			</File>
 			<File
 				RelativePath=".\lib\http_ntlm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\http_proxy.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\http_proxy.h"
 				>
 			</File>
 			<File

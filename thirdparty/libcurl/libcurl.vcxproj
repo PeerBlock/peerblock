@@ -206,6 +206,7 @@
     <ClInclude Include="lib\curl_sspi.h" />
     <ClInclude Include="lib\curl_threads.h" />
     <ClInclude Include="lib\curlx.h" />
+    <ClInclude Include="lib\cyassl.h" />
     <ClInclude Include="lib\dict.h" />
     <ClInclude Include="lib\easyif.h" />
     <ClInclude Include="lib\escape.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="lib\http_digest.h" />
     <ClInclude Include="lib\http_negotiate.h" />
     <ClInclude Include="lib\http_ntlm.h" />
+    <ClInclude Include="lib\http_proxy.h" />
     <ClInclude Include="lib\if2ip.h" />
     <ClInclude Include="lib\imap.h" />
     <ClInclude Include="lib\inet_ntop.h" />
@@ -309,6 +311,7 @@
     <ClCompile Include="lib\curl_rtmp.c" />
     <ClCompile Include="lib\curl_sspi.c" />
     <ClCompile Include="lib\curl_threads.c" />
+    <ClCompile Include="lib\cyassl.c" />
     <ClCompile Include="lib\dict.c" />
     <ClCompile Include="lib\easy.c" />
     <ClCompile Include="lib\escape.c" />
@@ -335,6 +338,7 @@
     <ClCompile Include="lib\http_digest.c" />
     <ClCompile Include="lib\http_negotiate.c" />
     <ClCompile Include="lib\http_ntlm.c" />
+    <ClCompile Include="lib\http_proxy.c" />
     <ClCompile Include="lib\if2ip.c" />
     <ClCompile Include="lib\imap.c" />
     <ClCompile Include="lib\inet_ntop.c" />

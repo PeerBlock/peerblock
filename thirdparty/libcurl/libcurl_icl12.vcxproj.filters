@@ -144,6 +144,9 @@
     <ClInclude Include="lib\curlx.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\cyassl.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="lib\dict.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -196,6 +199,9 @@
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\http_ntlm.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\http_proxy.h">
       <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="lib\if2ip.h">
@@ -443,6 +449,9 @@
     <ClCompile Include="lib\curl_threads.c">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="lib\cyassl.c">
+      <Filter>lib</Filter>
+    </ClCompile>
     <ClCompile Include="lib\dict.c">
       <Filter>lib</Filter>
     </ClCompile>
@@ -519,6 +528,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\http_ntlm.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\http_proxy.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\if2ip.c">
