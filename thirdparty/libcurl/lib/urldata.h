@@ -551,7 +551,7 @@ struct SingleRequest {
 
   long headerbytecount;         /* only count received headers */
   long deductheadercount; /* this amount of bytes doesn't count when we check
-                             if anything has been transfered at the end of a
+                             if anything has been transferred at the end of a
                              connection. We use this counter to make only a
                              100 reply (without a following second response
                              code) result in a CURLE_GOT_NOTHING error code */
@@ -582,7 +582,7 @@ struct SingleRequest {
   struct timeval start100;      /* time stamp to wait for the 100 code from */
   enum expect100 exp100;        /* expect 100 continue state */
 
-  int content_encoding;         /* What content encoding. sec 3.5, RFC2616. */
+  int auto_decoding;            /* What content encoding. sec 3.5, RFC2616. */
 
 #define IDENTITY 0              /* No encoding */
 #define DEFLATE 1               /* zlib deflate [RFC 1950 & 1951] */
@@ -778,9 +778,9 @@ struct connectdata {
 
   /* 'primary_ip' and 'primary_port' get filled with peer's numerical
      ip address and port number whenever an outgoing connection is
-     *attemted* from the primary socket to a remote address. When more
+     *attempted* from the primary socket to a remote address. When more
      than one address is tried for a connection these will hold data
-     for the last attempt. When the connection is actualy established
+     for the last attempt. When the connection is actually established
      these are updated with data which comes directly from the socket. */
 
   char primary_ip[MAX_IPADR_LEN];
@@ -837,18 +837,19 @@ struct connectdata {
                                 well be the same we read from.
                                 CURL_SOCKET_BAD disables */
 
-  /** Dynamicly allocated strings, may need to be freed before this **/
-  /** struct is killed.                                             **/
+  /** Dynamicly allocated strings, MUST be freed before this **/
+  /** struct is killed.                                      **/
   struct dynamically_allocated_data {
-    char *proxyuserpwd; /* free later if not NULL! */
-    char *uagent; /* free later if not NULL! */
-    char *accept_encoding; /* free later if not NULL! */
-    char *userpwd; /* free later if not NULL! */
-    char *rangeline; /* free later if not NULL! */
-    char *ref; /* free later if not NULL! */
-    char *host; /* free later if not NULL */
-    char *cookiehost; /* free later if not NULL */
-    char *rtsp_transport; /* free later if not NULL */
+    char *proxyuserpwd;
+    char *uagent;
+    char *accept_encoding;
+    char *userpwd;
+    char *rangeline;
+    char *ref;
+    char *host;
+    char *cookiehost;
+    char *rtsp_transport;
+    char *te; /* TE: request header */
   } allocptr;
 
   int sec_complete; /* if kerberos is enabled for this connection */
@@ -996,8 +997,8 @@ struct Progress {
                     force redraw at next call */
   curl_off_t size_dl; /* total expected size */
   curl_off_t size_ul; /* total expected size */
-  curl_off_t downloaded; /* transfered so far */
-  curl_off_t uploaded; /* transfered so far */
+  curl_off_t downloaded; /* transferred so far */
+  curl_off_t uploaded; /* transferred so far */
 
   curl_off_t current_speed; /* uses the currently fastest transfer */
 
@@ -1461,6 +1462,7 @@ struct UserDefined {
   bool hide_progress;    /* don't use the progress meter */
   bool http_fail_on_error;  /* fail on HTTP error codes >= 300 */
   bool http_follow_location; /* follow HTTP redirects */
+  bool http_transfer_encoding; /* request compressed HTTP transfer-encoding */
   bool http_disable_hostname_check_before_authentication;
   bool include_header;   /* include received protocol headers in data output */
   bool http_set_referer; /* is a custom referer used */

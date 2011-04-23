@@ -957,6 +957,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\non-ascii.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\non-ascii.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\nonblock.c"
 				>
 			</File>

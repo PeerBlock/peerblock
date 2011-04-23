@@ -76,7 +76,6 @@
 #include <curl/curl.h>
 #include "transfer.h"
 #include "sendf.h"
-#include "easyif.h" /* for Curl_convert_... prototypes */
 #include "formdata.h"
 #include "progress.h"
 #include "curl_base64.h"
@@ -100,6 +99,7 @@
 #include "rtsp.h"
 #include "http_proxy.h"
 #include "warnless.h"
+#include "non-ascii.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -1014,17 +1014,15 @@ CURLcode Curl_add_buffer_send(Curl_send_buffer *in,
 
   DEBUGASSERT(size > included_body_bytes);
 
-#ifdef CURL_DOES_CONVERSIONS
   res = Curl_convert_to_network(conn->data, ptr, headersize);
   /* Curl_convert_to_network calls failf if unsuccessful */
-  if(res != CURLE_OK) {
+  if(res) {
     /* conversion failed, free memory and return to the caller */
     if(in->buffer)
       free(in->buffer);
     free(in);
     return res;
   }
-#endif /* CURL_DOES_CONVERSIONS */
 
   if(conn->handler->protocol & CURLPROTO_HTTPS) {
     /* We never send more than CURL_MAX_WRITE_SIZE bytes in one single chunk
@@ -1305,7 +1303,7 @@ CURLcode Curl_http_connect(struct connectdata *conn, bool *done)
   }
 #endif /* CURL_DISABLE_PROXY */
 
-  if(conn->handler->protocol & CURLPROTO_HTTPS) {
+  if(conn->given->protocol & CURLPROTO_HTTPS) {
     /* perform SSL initialization */
     if(data->state.used_interface == Curl_if_multi) {
       result = https_connecting(conn, done);
@@ -1533,6 +1531,11 @@ CURLcode Curl_add_custom_headers(struct connectdata *conn,
                    we will force length zero then */
                 checkprefix("Content-Length", headers->data))
           ;
+        else if(conn->allocptr.te &&
+                /* when asking for Transfer-Encoding, don't pass on a custom
+                   Connection: */
+                checkprefix("Connection", headers->data))
+          ;
         else {
           CURLcode result = Curl_add_bufferf(req_buffer, "%s\r\n",
                                              headers->data);
@@ -1727,6 +1730,29 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
     if(!conn->allocptr.accept_encoding)
       return CURLE_OUT_OF_MEMORY;
   }
+
+#ifdef HAVE_LIBZ
+  /* we only consider transfer-encoding magic if libz support is built-in */
+
+  if(!Curl_checkheaders(data, "TE:") && data->set.http_transfer_encoding) {
+    /* When we are to insert a TE: header in the request, we must also insert
+       TE in a Connection: header, so we need to merge the custom provided
+       Connection: header and prevent the original to get sent. Note that if
+       the user has inserted his/hers own TE: header we don't do this magic
+       but then assume that the user will handle it all! */
+    char *cptr = Curl_checkheaders(data, "Connection:");
+#define TE_HEADER "TE: gzip\r\n"
+
+    Curl_safefree(conn->allocptr.te);
+
+    /* Create the (updated) Connection: header */
+    conn->allocptr.te = cptr? aprintf("%s, TE\r\n" TE_HEADER, cptr):
+      strdup("Connection: TE\r\n" TE_HEADER);
+
+    if(!conn->allocptr.te)
+      return CURLE_OUT_OF_MEMORY;
+  }
+#endif
 
   ptr = Curl_checkheaders(data, "Transfer-Encoding:");
   if(ptr) {
@@ -2058,6 +2084,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
                 "%s" /* user agent */
                 "%s" /* host */
                 "%s" /* accept */
+                "%s" /* TE: */
                 "%s" /* accept-encoding */
                 "%s" /* referer */
                 "%s" /* Proxy-Connection */
@@ -2075,6 +2102,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
                 conn->allocptr.uagent:"",
                 (conn->allocptr.host?conn->allocptr.host:""), /* Host: host */
                 http->p_accept?http->p_accept:"",
+                conn->allocptr.te?conn->allocptr.te:"",
                 (data->set.str[STRING_ENCODING] &&
                  *data->set.str[STRING_ENCODING] &&
                  conn->allocptr.accept_encoding)?
@@ -2262,14 +2290,14 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       Curl_formclean(&http->sendit); /* free that whole lot */
       return result;
     }
-#ifdef CURL_DOES_CONVERSIONS
-/* time to convert the form data... */
-    result = Curl_formconvert(data, http->sendit);
+
+    /* convert the form data */
+    result = Curl_convert_form(data, http->sendit);
     if(result) {
       Curl_formclean(&http->sendit); /* free that whole lot */
       return result;
     }
-#endif /* CURL_DOES_CONVERSIONS */
+
     break;
 
   case HTTPREQ_PUT: /* Let's PUT the data to the server! */
@@ -2508,13 +2536,13 @@ checkhttpprefix(struct SessionHandle *data,
   /* convert from the network encoding using a scratch area */
   char *scratch = strdup(s);
   if(NULL == scratch) {
-     failf (data, "Failed to allocate memory for conversion!");
-     return FALSE; /* can't return CURLE_OUT_OF_MEMORY so return FALSE */
+    failf (data, "Failed to allocate memory for conversion!");
+    return FALSE; /* can't return CURLE_OUT_OF_MEMORY so return FALSE */
   }
   if(CURLE_OK != Curl_convert_from_network(data, scratch, strlen(s)+1)) {
     /* Curl_convert_from_network calls failf if unsuccessful */
-     free(scratch);
-     return FALSE; /* can't return CURLE_foobar so return FALSE */
+    free(scratch);
+    return FALSE; /* can't return CURLE_foobar so return FALSE */
   }
   s = scratch;
 #endif /* CURL_DOES_CONVERSIONS */
@@ -2527,9 +2555,8 @@ checkhttpprefix(struct SessionHandle *data,
     head = head->next;
   }
 
-  if((rc != TRUE) && (checkprefix("HTTP/", s))) {
+  if((rc != TRUE) && (checkprefix("HTTP/", s)))
     rc = TRUE;
-  }
 
 #ifdef CURL_DOES_CONVERSIONS
   free(scratch);
@@ -2901,10 +2928,9 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
       res = Curl_convert_from_network(data,
                                       &scratch[0],
                                       SCRATCHSIZE);
-      if(CURLE_OK != res) {
+      if(res)
         /* Curl_convert_from_network calls failf if unsuccessful */
         return res;
-      }
 #else
 #define HEADER1 k->p /* no conversion needed, just use k->p */
 #endif /* CURL_DOES_CONVERSIONS */
@@ -3035,14 +3061,10 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
       }
     }
 
-#ifdef CURL_DOES_CONVERSIONS
-    /* convert from the network encoding */
     result = Curl_convert_from_network(data, k->p, strlen(k->p));
-    if(CURLE_OK != result) {
-      return(result);
-    }
     /* Curl_convert_from_network calls failf if unsuccessful */
-#endif /* CURL_DOES_CONVERSIONS */
+    if(result)
+      return result;
 
     /* Check for Content-Length: header lines to get size */
     if(!k->ignorecl && !data->set.ignorecl &&
@@ -3127,8 +3149,9 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
        */
       conn->bits.close = TRUE; /* close when done */
     }
-    else if(Curl_compareheader(k->p, "Transfer-Encoding:", "chunked") &&
-            !(conn->handler->protocol & CURLPROTO_RTSP)) {
+    else if(checkprefix("Transfer-Encoding:", k->p)) {
+      /* One or more encodings. We check for chunked and/or a compression
+         algorithm. */
       /*
        * [RFC 2616, section 3.6.1] A 'chunked' transfer encoding
        * means that the server will send a series of "chunks". Each
@@ -3137,10 +3160,60 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
        * with the previously mentioned size. There can be any amount
        * of chunks, and a chunk-data set to zero signals the
        * end-of-chunks. */
-      k->chunk = TRUE; /* chunks coming our way */
 
-      /* init our chunky engine */
-      Curl_httpchunk_init(conn);
+      char *start;
+
+      /* Find the first non-space letter */
+      start = k->p + 18;
+
+      do {
+        /* skip whitespaces and commas */
+        while(*start && (ISSPACE(*start) || (*start == ',')))
+          start++;
+
+        if(checkprefix("chunked", start)) {
+          k->chunk = TRUE; /* chunks coming our way */
+
+          /* init our chunky engine */
+          Curl_httpchunk_init(conn);
+
+          start += 7;
+        }
+
+        if(k->auto_decoding)
+          /* TODO: we only support the first mentioned compression for now */
+          break;
+
+        if(checkprefix("identity", start)) {
+          k->auto_decoding = IDENTITY;
+          start += 8;
+        }
+        else if(checkprefix("deflate", start)) {
+          k->auto_decoding = DEFLATE;
+          start += 7;
+        }
+        else if(checkprefix("gzip", start)) {
+          k->auto_decoding = GZIP;
+          start += 4;
+        }
+        else if(checkprefix("x-gzip", start)) {
+          k->auto_decoding = GZIP;
+          start += 6;
+        }
+        else if(checkprefix("compress", start)) {
+          k->auto_decoding = COMPRESS;
+          start += 8;
+        }
+        else if(checkprefix("x-compress", start)) {
+          k->auto_decoding = COMPRESS;
+          start += 10;
+        }
+        else
+          /* unknown! */
+          break;
+
+      } while(1);
+
     }
     else if(checkprefix("Content-Encoding:", k->p) &&
             data->set.str[STRING_ENCODING]) {
@@ -3160,15 +3233,15 @@ CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
 
       /* Record the content-encoding for later use */
       if(checkprefix("identity", start))
-        k->content_encoding = IDENTITY;
+        k->auto_decoding = IDENTITY;
       else if(checkprefix("deflate", start))
-        k->content_encoding = DEFLATE;
+        k->auto_decoding = DEFLATE;
       else if(checkprefix("gzip", start)
               || checkprefix("x-gzip", start))
-        k->content_encoding = GZIP;
+        k->auto_decoding = GZIP;
       else if(checkprefix("compress", start)
               || checkprefix("x-compress", start))
-        k->content_encoding = COMPRESS;
+        k->auto_decoding = COMPRESS;
     }
     else if(checkprefix("Content-Range:", k->p)) {
       /* Content-Range: bytes [num]-

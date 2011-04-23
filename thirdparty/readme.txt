@@ -11,7 +11,7 @@ Boost lockfree version unknown
 License:  Boost Software License
 Website:  http://tim.klingt.org/git?p=boost_lockfree.git
 
-libcurl version 7.21.5
+libcurl version 7.21.6
 License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl
 Notes:    The version PeerBlock is using is slightly modified.  See here:

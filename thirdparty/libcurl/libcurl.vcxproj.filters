@@ -231,6 +231,9 @@
     <ClInclude Include="lib\netrc.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\non-ascii.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="lib\nonblock.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -573,6 +576,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\netrc.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\non-ascii.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\nonblock.c">

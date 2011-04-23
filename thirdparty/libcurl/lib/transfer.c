@@ -101,9 +101,9 @@
 #include "curl_memory.h"
 #include "select.h"
 #include "multiif.h"
-#include "easyif.h" /* for Curl_convert_to_network prototype */
 #include "rtsp.h"
 #include "connect.h"
+#include "non-ascii.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -233,7 +233,7 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
 #endif /* CURL_DOES_CONVERSIONS */
 
     if((nread - hexlen) == 0)
-      /* mark this as done once this chunk is transfered */
+      /* mark this as done once this chunk is transferred */
       data->req.upload_done = TRUE;
 
     nread+=(int)strlen(endofline_native); /* for the added end of line */
@@ -509,7 +509,7 @@ static CURLcode readwrite_data(struct SessionHandle *data,
                   "Rewinding stream by : %zd"
                   " bytes on url %s (zero-length body)\n",
                   nread, data->state.path);
-	    read_rewind(conn, (size_t)nread);
+	          read_rewind(conn, (size_t)nread);
           }
 	  else {
             infof(data,
@@ -714,12 +714,12 @@ static CURLcode readwrite_data(struct SessionHandle *data,
              encodings handled here. */
 #ifdef HAVE_LIBZ
           switch (conn->data->set.http_ce_skip ?
-                  IDENTITY : k->content_encoding) {
+                  IDENTITY : k->auto_decoding) {
           case IDENTITY:
 #endif
             /* This is the default when the server sends no
                Content-Encoding header. See Curl_readwrite_init; the
-               memset() call initializes k->content_encoding to zero. */
+               memset() call initializes k->auto_decoding to zero. */
             if(!k->ignorebody) {
 
 #ifndef CURL_DISABLE_POP3
@@ -2098,7 +2098,7 @@ CURLcode Curl_retry_request(struct connectdata *conn,
                                 to retry. Marking it this way should
                                 prevent i.e HTTP transfers to return
                                 error just because nothing has been
-                                transfered! */
+                                transferred! */
 
     if(data->state.proto.http->writebytecount)
       Curl_readrewind(conn);

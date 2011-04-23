@@ -86,14 +86,16 @@
 #ifdef HAVE_IDN_FREE_H
 #include <idn-free.h>
 #else
-void idn_free (void *ptr); /* prototype from idn-free.h, not provided by
-                              libidn 0.4.5's make install! */
+/* prototype from idn-free.h, not provided by libidn 0.4.5's make install! */
+void idn_free (void *ptr);
 #endif
 #ifndef HAVE_IDN_FREE
-/* if idn_free() was not found in this version of libidn, use plain free()
-   instead */
+/* if idn_free() was not found in this version of libidn use free() instead */
 #define idn_free(x) (free)(x)
 #endif
+#elif defined(USE_WIN32_IDN)
+/* prototype for curl_win32_idn_to_ascii() */
+int curl_win32_idn_to_ascii(const char *in, char **out);
 #endif  /* USE_LIBIDN */
 
 #include "urldata.h"
@@ -120,6 +122,7 @@ void idn_free (void *ptr); /* prototype from idn-free.h, not provided by
 #include "speedcheck.h"
 #include "rawstr.h"
 #include "warnless.h"
+#include "non-ascii.h"
 
 /* And now for the protocols */
 #include "ftp.h"
@@ -525,18 +528,7 @@ CURLcode Curl_close(struct SessionHandle *data)
   /* this destroys the channel and we cannot use it anymore after this */
   ares_destroy(data->state.areschannel);
 
-#if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
-  /* close iconv conversion descriptors */
-  if(data->inbound_cd != (iconv_t)-1) {
-     iconv_close(data->inbound_cd);
-  }
-  if(data->outbound_cd != (iconv_t)-1) {
-     iconv_close(data->outbound_cd);
-  }
-  if(data->utf8_cd != (iconv_t)-1) {
-     iconv_close(data->utf8_cd);
-  }
-#endif /* CURL_DOES_CONVERSIONS && HAVE_ICONV */
+  Curl_convert_close(data);
 
   /* No longer a dirty share, if it exists */
   if(data->share) {
@@ -814,12 +806,7 @@ CURLcode Curl_open(struct SessionHandle **curl)
 
     data->state.headersize=HEADERSIZE;
 
-#if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
-    /* conversion descriptors for iconv calls */
-    data->outbound_cd = (iconv_t)-1;
-    data->inbound_cd  = (iconv_t)-1;
-    data->utf8_cd     = (iconv_t)-1;
-#endif /* CURL_DOES_CONVERSIONS && HAVE_ICONV */
+    Curl_convert_init(data);
 
     /* most recent connection is not yet defined */
     data->state.lastconnect = -1;
@@ -1076,7 +1063,7 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
     data->set.http_auto_referer = (bool)(0 != va_arg(param, long));
     break;
 
-  case CURLOPT_ENCODING:
+  case CURLOPT_ACCEPT_ENCODING:
     /*
      * String to use at the value of Accept-Encoding header.
      *
@@ -1090,6 +1077,10 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
     result = setstropt(&data->set.str[STRING_ENCODING],
                        (argptr && !*argptr)?
                        (char *) ALL_CONTENT_ENCODINGS: argptr);
+    break;
+
+  case CURLOPT_TRANSFER_ENCODING:
+    data->set.http_transfer_encoding = (bool)(0 != va_arg(param, long));
     break;
 
   case CURLOPT_FOLLOWLOCATION:
@@ -2559,6 +2550,7 @@ static void conn_free(struct connectdata *conn)
   Curl_safefree(conn->allocptr.uagent);
   Curl_safefree(conn->allocptr.userpwd);
   Curl_safefree(conn->allocptr.accept_encoding);
+  Curl_safefree(conn->allocptr.te);
   Curl_safefree(conn->allocptr.rangeline);
   Curl_safefree(conn->allocptr.ref);
   Curl_safefree(conn->allocptr.host);
@@ -3457,7 +3449,7 @@ static void fix_hostname(struct SessionHandle *data,
    * Check name for non-ASCII and convert hostname to ACE form.
    *************************************************************/
     char *ace_hostname = NULL;
-    int rc = curl_win32_idn_to_ascii(host->name, &ace_hostname, 0);
+    int rc = curl_win32_idn_to_ascii(host->name, &ace_hostname);
     if(rc == 0)
       infof(data, "Failed to convert %s to ACE;\n",
             host->name);

@@ -6,6 +6,199 @@
 
                                   Changelog
 
+Version 7.21.6 (22 Apr 2011)
+
+Daniel Stenberg (22 Apr 2011)
+- RELEASE-NOTES: two more contributors
+
+Dan Fandrich (21 Apr 2011)
+- Fixed test 1023 when using daily snapshots
+
+- Include unistd.h to declare close()
+
+Julien Chaffraix (21 Apr 2011)
+- [Fabian Keil brought this change]
+
+  In lib/, change 'wanna' to 'want to'.
+  
+  Found with codespell.
+
+- [Fabian Keil brought this change]
+
+  Fix spelling errors in buildconf
+  
+  Found with codespell.
+
+- [Fabian Keil brought this change]
+
+  Fix spelling errors in src/
+  
+  Found with codespell.
+
+- [Fabian Keil brought this change]
+
+  Fix spelling errors in include/
+
+- [Fabian Keil brought this change]
+
+  Fix a couple of spelling errors in lib/
+  
+  Found with codespell.
+
+- transfer.c: Fixed indentation in readwrite_data.
+
+Dan Fandrich (20 Apr 2011)
+- Fixed closing test tag
+
+Daniel Stenberg (20 Apr 2011)
+- RELEASE-NOTES: synced with 3242abd87a1262
+
+- SFTP: close file before postquote
+  
+  Make sure that files are closed before the post quote commands run as if
+  they operate on the just transferred file they could otherwise easily
+  fail.
+  
+  Patch by: Rajesh Naganathan (edited)
+
+Dan Fandrich (20 Apr 2011)
+- Fixed test 1022 when using daily snapshots
+
+Daniel Stenberg (20 Apr 2011)
+- Curl_http_connect: detect HTTPS properly after CONNECT
+  
+  libcurl failed to check the correct struct for HTTPS after CONNECT was
+  issued to the proxy, so it didn't do the TLS handshake and subsequently
+  failed the connection. A regression released in 7.21.5 (introduced
+  around commit 8831000bc07de).
+  
+  Bug: http://curl.haxx.se/mail/lib-2011-04/0134.html
+  Reported by: Josue Andrade Gomes
+
+- curl_easy_setopt.3: CURLOPT_PROXYTYPE clarification
+  
+  When set to a HTTP 1.0 proxy, that only affects the CONNECT request and
+  not the regular HTTP request.
+
+- [Gisle Vanem brought this change]
+
+  CURL_DOES_CONVERSIONS: fixes
+  
+  Made it compile and work again after the code move.
+
+- CURL_DOES_CONVERSIONS: cleanup
+  
+  Massively reduce #ifdefs all over (23 #ifdef lines less so far)
+  Moved conversion-specific code to non-ascii.c
+
+Guenter Knauf (19 Apr 2011)
+- Improve MinGW static makefile builds.
+  
+  It is now possible to use any combination of features without
+  having to 1st add makefile targets to the main makefile. The
+  main makefile now passes the 'mingw32-feat1-feat2' as var CFG,
+  and the ./[lib|src]/Makefile.m32 parses the CFG var to determine
+  the features to be enabled.
+
+- Enabled MinGW native Windows IDN build.
+
+- Windows native IDN fixes.
+  
+  changed windows.h include to system header;
+  changed obsolete 2nd check for str_w to str_utf8 in order to catch
+  malloc() failure and avoid a free(NULL);
+  changed calls to GetLastError() to void to kill unsused var compiler
+  warnings;
+  moved one call to GetLastError() into else case so that its only
+  called when WideCharToMultiByte() really fails.
+
+- Windows native IDN fixes.
+  
+  Provide prototype for curl_win32_idn_to_ascii();
+  remove wrong 3rd parameter from curl_win32_idn_to_ascii() call.
+
+Daniel Stenberg (19 Apr 2011)
+- curl-config: fix version output
+  
+  do the s/VERSION/CURLVERSION replacement for the human redable output
+  for --checkfor
+  
+  Reported by: Ryan Schmidt
+
+- RELEASE-NOTES: synced with 5aae3c13e2
+
+Guenter Knauf (19 Apr 2011)
+- Updated default (recommended) dependency versions.
+
+- Updated default (recommended) dependency versions.
+
+Daniel Stenberg (18 Apr 2011)
+- transfer-encoding: document the options
+  
+  The new libcurl and command line options are now described.
+
+- transfer-encoding: added new option and cmdline
+  
+  Added CURLOPT_TRANSFER_ENCODING as the option to set to request Transfer
+  Encoding in HTTP requests (if built zlib enabled). I also renamed
+  CURLOPT_ENCODING to CURLOPT_ACCEPT_ENCODING (while keeping the old name
+  around) to reduce the confusion when we have to encoding options for
+  HTTP.
+  
+  --tr-encoding is now the new command line option for curl to request
+  this, and thus I updated the test cases accordingly.
+
+- CURLE_BAD_CONTENT_ENCODING: now used for transfer encoding too
+
+- TE: do the Connection: header
+  
+  When TE: is inserted in the request, we must add a "Connection: TE" as
+  well to be HTTP 1.1 compliant. If a custom Connection: header is passed
+  in, we must use that and only append TE to it. Test case 1125 verifies
+  TE: + custom Connection:.
+
+- test1124: verify gzip AND chunked transfer-encoding
+
+- TE: rename struct field content_encoding
+  
+  Since this struct member is used in the code to determine what and how
+  to decode automatically and since it is now also used for compressed
+  Transfer-Encodings, I renamed it to the more suitable 'auto_decoding'
+
+- HTTP: add support for gzip and deflate Transfer-Encoding
+  
+  Transfer-Encoding differs from Content-Encoding in a few subtle ways,
+  but primarily it concerns the transfer only and not the content so when
+  discovered to be compressed we know we have to uncompress it. There will
+  only arrive compressed transfers in a response after we have requested
+  them with the appropriate TE: header.
+  
+  Test case 1122 and 1123 verify.
+
+Patrick Monnerat (18 Apr 2011)
+- OS400 pragma comment: replace (date) by (user, __DATE__) to include year.
+
+- Augment RPG binding with "OLDIES" definitions.
+  Fix OS400 LDAP wrappers: strings were non null-terminated.
+
+Daniel Stenberg (18 Apr 2011)
+- curl-config: fix --version
+  
+  curl-config --version didn't output the correct version string (bug
+  introduced in commit 0355e33b5f7b234cf3), and unfortunately the test
+  case 1022 that was supposed to check for this was broken.
+  
+  This change fixes the test to detect this problem and it fixes the
+  output.
+  
+  Bug: http://curl.haxx.se/bug/view.cgi?id=3288727
+
+- RELEASE-NOTES: updated contributor amount
+
+- THANKS: 11 new contributors from 7.21.5
+
+- 7.21.6: next planned release number
+
 Version 7.21.5 (17 Apr 2011)
 
 Daniel Stenberg (17 Apr 2011)
@@ -5229,153 +5422,3 @@ Daniel Stenberg (17 Apr 2010)
   blocking when GnuTLS is used.
 
 - krb5_auth: fix my previous change to compile
-
-unknown (16 Apr 2010)
-- OS400 version V5R2M0 not supported anymore by IBM: default target release changed to V5R3M0.
-
-Daniel Stenberg (16 Apr 2010)
-- changelog: GnuTLS fix, no reverse loopkups and fixed GSS detection
-
-- SSL_RECV: EOF is not an error here
-  
-  The recent overhaul of the SSL recv function made this treat a
-  zero returned from gnutls_record_recv() as an error, and this
-  caused our HTTPS test cases to fail. We leave it to upper layer
-  code to detect if an EOF is a problem or not.
-
-- [Paul Howarth brought this change]
-
-  configure: GSSAPI detection on ancient Linux distros
-  
-  On some ancient distributions such as RHEL-3, <gssapi/gssapi_krb5.h> needs
-  to be processed after <gssapi/gssapi.h>, but does not include it itself.
-  This patch checks for <gssapi/gssapi.h> first and then includes it
-  in the test for <gssapi/gssapi_krb5.h>, resolving the problem.
-  
-  Without the patch, <gssapi/gssapi_krb5.h> is "present but cannot be
-  compiled".
-
-- resolvers: no more using AI_CANONNAME
-  
-  No resolver anymore needs to use AI_CANONNAME and do reverse
-  lookups.  We should work hard to avoid having code that relies on
-  it.
-
-- KRB5: use given host name instead of reverse lookup'ed name
-  
-  This code would previously use dns_entry->addr->ai_canonname
-  instead of the given host name, which caused us grief and
-  problems since not all our resolver options do the reverse lookup
-  and I would also guess that it caused problems with KRB5/GSS with
-  virtual name-based hosts. Now the host name from the URL is used.
-
-Dan Fandrich (15 Apr 2010)
-- Remove redundant conditional
-
-- Eliminated an unlikely race condition in some tests.
-  
-  Based on a patch from the FreeBSD ports by Peter Pentchev.
-
-Daniel Stenberg (15 Apr 2010)
-- changelog: prevent needless reverse name lookups
-
-- Curl_ipv4_resolve_r: only set AI_CANONNAME when needed
-  
-  As reported in bug report #2987196, the code for ipv6 already did
-  the setting of this bit correctly so we copied that logic into
-  the Curl_ipv4_resolve_r() function as well. KRB code is the only
-  code we know that might need the cannonical name so only resolve
-  it for such requests!
-
-- IGNORE: files generated by maketgz
-
-- bumped to start the journey towards 7.20.2
-
-- added contributors from the 7.20.1 RELEASE-NOTES
-
-- ignore files generated by 'maketgz'
-
-Version 7.20.1 (14 Apr 2010)
-
-Daniel Stenberg (14 Apr 2010)
-- 7.20.1: 14 April 2010
-
-Guenter Knauf (13 Apr 2010)
-- Use correct directory for c-ares git pull
-  Signed-off-by: Tor Arntsen <tor@spacetec.no>
-
-Yang Tse (13 Apr 2010)
-- fix compiler warning: variable might be clobbered by longjmp or vfork
-
-Guenter Knauf (13 Apr 2010)
-- added last git commit output for c-ares too.
-
-- changed the git update block to take care of c-ares repo if detected.
-
-- updated timestamp of the script.
-
-- removed obsolete var in gitpull() function
-  no need to create a var - lets just return the status var itself.
-
-- added a cast to silent compiler warning with 64bit systems.
-
-- fixed a path typo in src/Makefile.netware.
-
-Daniel Stenberg (12 Apr 2010)
-- Added text for How To Make a Patch with git
-
-- update the section on timeouts
-  
-  The section that describes how to work with timeouts was
-  misleading and could easily trick users to use the wrong API.
-
-- update URL and cut out wrong info on ipv6
-  
-  c-ares has had its own URL for a while and we should point
-  people to that. It also works with IPv6 since a long time.
-
-- refer to CURLMOPT_TIMERFUNCTION for multi_socket users
-  
-  curl_multi_timeout(3) is simply the wrong function to use
-  if you're using the multi_socket API and this document now
-  states this pretty clearly to help guiding users.
-
-- s/CVS/git
-
-- modified to use the git file, not cvs
-  
-  I've done this blindly, and the last piece that works with ares
-  should possibly be done differently now that c-ares isn't a
-  subtree within the curl tree anymore...
-
-- mention missing test servers for <server>
-
-- FTP quote commands prefixed with '*' now can fail without aborting
-  
-  Prefixing the FTP quote commands with an asterisk really only
-  worked for the postquote actions. This is now fixed and test case
-  227 has been extended to verify.
-
-Kamil Dudka (7 Apr 2010)
-- qssl: reflect recent code changes in SSL interface
-  
-  Reported by Guenter Knauf.
-
-- nss: handle client certificate related errors
-
-- [Ben Greear brought this change]
-
-  ssl: Fix build when SSL isn't enabled
-  
-  Signed-off-by: Ben Greear <greearb@candelatech.com>
-
-- refactorize interface of Curl_ssl_recv/Curl_ssl_send
-
-- simplify code of Curl_resolv_timeout()
-
-- eliminate a race condition in Curl_resolv_timeout()
-
-Daniel Stenberg (2 Apr 2010)
-- [Ben Greear brought this change]
-
-  fixed compiler warnings

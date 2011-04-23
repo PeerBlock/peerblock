@@ -242,6 +242,7 @@
     <ClInclude Include="lib\memdebug.h" />
     <ClInclude Include="lib\multiif.h" />
     <ClInclude Include="lib\netrc.h" />
+    <ClInclude Include="lib\non-ascii.h" />
     <ClInclude Include="lib\nonblock.h" />
     <ClInclude Include="lib\nssg.h" />
     <ClInclude Include="lib\parsedate.h" />
@@ -360,6 +361,7 @@
     <ClCompile Include="lib\mprintf.c" />
     <ClCompile Include="lib\multi.c" />
     <ClCompile Include="lib\netrc.c" />
+    <ClCompile Include="lib\non-ascii.c" />
     <ClCompile Include="lib\nonblock.c" />
     <ClCompile Include="lib\nss.c" />
     <ClCompile Include="lib\nwlib.c" />

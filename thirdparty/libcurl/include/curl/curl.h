@@ -473,7 +473,7 @@ typedef enum {
   CURLE_SSL_CERTPROBLEM,         /* 58 - problem with the local certificate */
   CURLE_SSL_CIPHER,              /* 59 - couldn't use specified cipher */
   CURLE_SSL_CACERT,              /* 60 - problem with the CA cert (path?) */
-  CURLE_BAD_CONTENT_ENCODING,    /* 61 - Unrecognized transfer encoding */
+  CURLE_BAD_CONTENT_ENCODING,    /* 61 - Unrecognized/bad encoding */
   CURLE_LDAP_INVALID_URL,        /* 62 - Invalid LDAP URL */
   CURLE_FILESIZE_EXCEEDED,       /* 63 - Maximum file size exceeded */
   CURLE_USE_SSL_FAILED,          /* 64 - Requested FTP SSL level failed */
@@ -523,7 +523,8 @@ typedef enum {
 #ifndef CURL_NO_OLDIES /* define this to test if your app builds with all
                           the obsolete stuff removed! */
 
-/* Backwards compatibility with older names */
+/*  compatibility with older names */
+#define CURLOPT_ENCODING CURLOPT_ACCEPT_ENCODING
 
 /* The following were added in 7.21.5, April 2011 */
 #define CURLE_UNKNOWN_TELNET_OPTION CURLE_UNKNOWN_OPTION
@@ -534,7 +535,7 @@ typedef enum {
 
 /* The following were added in 7.17.0 */
 /* These are scheduled to disappear by 2009 */
-#define CURLE_OBSOLETE CURLE_OBSOLETE50 /* noone should be using this! */
+#define CURLE_OBSOLETE CURLE_OBSOLETE50 /* no one should be using this! */
 #define CURLE_BAD_PASSWORD_ENTERED CURLE_OBSOLETE46
 #define CURLE_BAD_CALLING_ORDER CURLE_OBSOLETE44
 #define CURLE_FTP_USER_PASSWORD_INCORRECT CURLE_OBSOLETE10
@@ -1109,8 +1110,9 @@ typedef enum {
   CINIT(PROXYTYPE, LONG, 101),
 
   /* Set the Accept-Encoding string. Use this to tell a server you would like
-     the response to be compressed. */
-  CINIT(ENCODING, OBJECTPOINT, 102),
+     the response to be compressed. Before 7.21.6, this was known as
+     CURLOPT_ENCODING */
+  CINIT(ACCEPT_ENCODING, OBJECTPOINT, 102),
 
   /* Set pointer to private data */
   CINIT(PRIVATE, OBJECTPOINT, 103),
@@ -1472,6 +1474,18 @@ typedef enum {
 
   /* Set authentication type for authenticated TLS */
   CINIT(TLSAUTH_TYPE, OBJECTPOINT, 206),
+
+  /* Set to 1 to enable the "TE:" header in HTTP requests to ask for
+     compressed transfer-encoded responses. Set to 0 to disable the use of TE:
+     in outgoing requests. The current default is 0, but it might change in a
+     future libcurl release.
+
+     libcurl will ask for the compressed methods it knows of, and if that
+     isn't any, it will not ask for transfer-encoding at all even if this
+     option is set to 1.
+
+  */
+  CINIT(TRANSFER_ENCODING, LONG, 207),
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
