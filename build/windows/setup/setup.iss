@@ -52,7 +52,7 @@
   #define sse2_required
 #elif defined(VS2010build)
   #define bindir        = "..\bin10"
-  #define sse2_required
+  #define sse_required
 #else
   #define bindir        = "..\bin"
 #endif
