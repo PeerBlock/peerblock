@@ -91,7 +91,7 @@ class TiXmlParsingData;
 
 const int TIXML_MAJOR_VERSION = 2;
 const int TIXML_MINOR_VERSION = 6;
-const int TIXML_PATCH_VERSION = 1;
+const int TIXML_PATCH_VERSION = 2;
 
 /*	Internal structure for tracking location of items 
 	in the XML file.
@@ -146,7 +146,7 @@ public:
 	virtual bool Visit( const TiXmlText& /*text*/ )					{ return true; }
 	/// Visit a comment node
 	virtual bool Visit( const TiXmlComment& /*comment*/ )			{ return true; }
-	/// Visit an unknow node
+	/// Visit an unknown node
 	virtual bool Visit( const TiXmlUnknown& /*unknown*/ )			{ return true; }
 };
 
@@ -678,8 +678,8 @@ public:
 	#endif
 
 	/** Query the type (as an enumerated value, above) of this node.
-		The possible types are: DOCUMENT, ELEMENT, COMMENT,
-								UNKNOWN, TEXT, and DECLARATION.
+		The possible types are: TINYXML_DOCUMENT, TINYXML_ELEMENT, TINYXML_COMMENT,
+								TINYXML_UNKNOWN, TINYXML_TEXT, and TINYXML_DECLARATION.
 	*/
 	int Type() const	{ return type; }
 
@@ -983,6 +983,13 @@ public:
 		does not exist, then TIXML_NO_ATTRIBUTE is returned.
 	*/	
 	int QueryIntAttribute( const char* name, int* _value ) const;
+	/// QueryUnsignedAttribute examines the attribute - see QueryIntAttribute().
+	int QueryUnsignedAttribute( const char* name, unsigned* _value ) const;
+	/** QueryBoolAttribute examines the attribute - see QueryIntAttribute(). 
+		Note that '1', 'true', or 'yes' are considered true, while '0', 'false'
+		and 'no' are considered false.
+	*/
+	int QueryBoolAttribute( const char* name, bool* _value ) const;
 	/// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
 	int QueryDoubleAttribute( const char* name, double* _value ) const;
 	/// QueryFloatAttribute examines the attribute - see QueryIntAttribute().
@@ -1796,4 +1803,3 @@ private:
 #endif
 
 #endif
-

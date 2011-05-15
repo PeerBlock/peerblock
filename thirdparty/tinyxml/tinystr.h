@@ -96,14 +96,12 @@ class TiXmlString
 
 	TiXmlString& operator = (const char * copy)
 	{
-		assign( copy, (size_type)strlen(copy));
-		return *this;
+		return assign( copy, (size_type)strlen(copy));
 	}
 
 	TiXmlString& operator = (const TiXmlString & copy)
 	{
-		assign(copy.start(), copy.length());
-		return *this;
+		return assign(copy.start(), copy.length());
 	}
 
 
