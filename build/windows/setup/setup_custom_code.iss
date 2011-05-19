@@ -143,10 +143,14 @@ end;
 
 // Check if PeerBlock is configured to run on startup
 function StartupCheck(): Boolean;
+var
+  svalue: String;
 begin
-  if RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock') then begin
-    Log('Custom Code: PeerBlock is configured to run on startup');
-    Result := True;
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock', svalue) then begin
+    if svalue = (ExpandConstant('{app}\peerblock.exe')) then begin
+      Log('Custom Code: PeerBlock is configured to run on startup');
+      Result := True;
+    end;
   end else
     Result := False;
 end;
