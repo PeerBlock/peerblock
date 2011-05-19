@@ -136,17 +136,20 @@ BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) built on {#in
 
 
 [Tasks]
-Name: desktopicon;           Description: {cm:CreateDesktopIcon};     GroupDescription: {cm:AdditionalIcons}
-Name: quicklaunchicon;       Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons};                        Flags: unchecked; OnlyBelowVersion: 0,6.01
-Name: startup_task;          Description: {cm:tsk_startup_descr};     GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
-Name: remove_startup_task;   Description: {cm:tsk_remove_startup};    GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
-Name: uninstall_pg;          Description: {cm:tsk_uninstall_pg};      GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
-Name: use_pg_settings;       Description: {cm:tsk_use_PG_settings};   GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
-Name: reset;                 Description: {cm:tsk_reset_descr};       GroupDescription: {cm:tsk_reset};   Check: MiscFilesExist() OR ListsExist() OR LogsExist() OR SettingsExist(); Flags: checkedonce unchecked
-Name: reset\delete_misc;     Description: {cm:tsk_delete_misc};       GroupDescription: {cm:tsk_reset};   Check: MiscFilesExist();   Flags: checkedonce unchecked
-Name: reset\delete_lists;    Description: {cm:tsk_delete_lists};      GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkedonce unchecked
-Name: reset\delete_logs;     Description: {cm:tsk_delete_logs};       GroupDescription: {cm:tsk_reset};   Check: LogsExist();        Flags: checkedonce unchecked
-Name: reset\delete_settings; Description: {cm:tsk_delete_settings};   GroupDescription: {cm:tsk_reset};   Check: SettingsExist();    Flags: checkedonce unchecked
+Name: desktopicon;         Description: {cm:CreateDesktopIcon};       GroupDescription: {cm:AdditionalIcons}
+Name: quicklaunchicon;     Description: {cm:CreateQuickLaunchIcon};   GroupDescription: {cm:AdditionalIcons};                        Flags: unchecked; OnlyBelowVersion: 0,6.01
+
+Name: startup_task;        Description: {cm:tsk_startup_descr};       GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
+Name: remove_startup_task; Description: {cm:tsk_remove_startup};      GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
+
+Name: uninstall_pg;        Description: {cm:tsk_uninstall_pg};        GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
+Name: use_pg_settings;     Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
+
+Name: delete_custom_lists; Description: {cm:tsk_delete_custom_lists}; GroupDescription: {cm:tsk_reset};   Check: CustomListsExist(); Flags: checkedonce unchecked
+Name: delete_lists;        Description: {cm:tsk_delete_lists};        GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkedonce unchecked
+Name: delete_misc;         Description: {cm:tsk_delete_misc};         GroupDescription: {cm:tsk_reset};   Check: MiscFilesExist();   Flags: checkedonce unchecked
+Name: delete_logs;         Description: {cm:tsk_delete_logs};         GroupDescription: {cm:tsk_reset};   Check: LogsExist();        Flags: checkedonce unchecked
+Name: delete_settings;     Description: {cm:tsk_delete_settings};     GroupDescription: {cm:tsk_reset};   Check: SettingsExist();    Flags: checkedonce unchecked
 
 
 [Files]
@@ -194,7 +197,7 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filen
 
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: reset\delete_settings remove_startup_task;  Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: delete_settings remove_startup_task;  Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
 ; Always delete the startup PeerBlock value when uninstalling
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Flags: uninsdeletevalue
 
@@ -252,6 +255,9 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 ///////////////////////////////////////////
 //  Inno Setup functions and procedures  //
 ///////////////////////////////////////////
+const
+  installer_mutex_name = 'peerblock_setup_mutex';
+
 
 function InitializeSetup(): Boolean;
 begin
@@ -337,23 +343,27 @@ begin
       RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
     end;
     if IsTaskSelected('uninstall_pg') then begin
-      Log('Custom Code: User selected to uninstall PeerGuardian, calling KillAndUninstallPG()');
+      Log('Custom Code: User selected the "uninstall_pg" task, calling KillAndUninstallPG()');
       KillAndUninstallPG;
     end;
-    if IsTaskSelected('reset\delete_misc') then begin
-      Log('Custom Code: User selected to delete misc files, calling RemoveMiscFiles()');
+    if IsTaskSelected('delete_custom_lists') then begin
+      Log('Custom Code: User selected the "delete_custom_lists" task, calling RemoveCustomLists()');
+      RemoveCustomLists;
+    end;
+    if IsTaskSelected('delete_misc') then begin
+      Log('Custom Code: User selected the "delete_misc" task, calling RemoveMiscFiles()');
       RemoveMiscFiles;
     end;
-    if IsTaskSelected('reset\delete_lists') then begin
-      Log('Custom Code: User selected to delete the lists, calling RemoveLists()');
+    if IsTaskSelected('delete_lists') then begin
+      Log('Custom Code: User selected the "delete_lists" task, calling RemoveLists()');
       RemoveLists;
     end;
-    if IsTaskSelected('reset\delete_logs') then begin
-      Log('Custom Code: User selected to delete the logs calling RemoveLogs()');
+    if IsTaskSelected('delete_logs') then begin
+      Log('Custom Code: User selected the "delete_logs" task, calling RemoveLogs()');
       RemoveLogs;
     end;
-    if IsTaskSelected('reset\delete_settings') then begin
-      Log('Custom Code: User selected to delete settings, calling RemoveSettings()');
+    if IsTaskSelected('delete_settings') then begin
+      Log('Custom Code: User selected the "delete_setting" task, calling RemoveSettings()');
       RemoveSettings;
     end;
   end;
@@ -366,6 +376,7 @@ begin
     // When uninstalling, ask the user if they want to delete PeerBlock's logs and settings
     if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
       if MsgBox(ExpandConstant('{cm:msg_DeleteLogsListsSettings}'), mbConfirmation, MB_YESNO OR MB_DEFBUTTON2) = IDYES then begin
+        RemoveCustomLists;
         RemoveLists;
         RemoveLogs;
         RemoveSettings;

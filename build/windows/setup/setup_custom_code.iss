@@ -22,21 +22,20 @@
 
 
 [Code]
-////////////////////////////////////////
-//   Global variables and constants   //
-////////////////////////////////////////
+///////////////////////////////////////
+//  Global variables and constants   //
+///////////////////////////////////////
 
 var
   PGPath: String;
   is_update: Boolean;
 const
-  installer_mutex_name = 'peerblock_setup_mutex';
   PGUninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
 
 
-////////////////////////////////////////
-//  Custom functions and procedures   //
-////////////////////////////////////////
+///////////////////////////////////////
+//  Custom functions and procedures   /
+///////////////////////////////////////
 
 // Get PeerGuardian's installation path
 function GetPGPath(Default: String): String;
@@ -63,6 +62,19 @@ end;
 function IsUpdate(): Boolean;
 begin
   Result := is_update;
+end;
+
+
+function CustomListsExist(): Boolean;
+var
+  FindRec: TFindRec;
+begin
+  if FindFirst(ExpandConstant('{app}\lists\*.p2b'), FindRec) OR FileExists(ExpandConstant('{app}\lists\*.p2p')) then begin
+    Log('Custom Code: Custom lists exist');
+    Result := True;
+    FindClose(FindRec);
+  end else
+    Result := False;
 end;
 
 
@@ -190,11 +202,17 @@ begin
 end;
 
 
+procedure RemoveCustomLists();
+begin
+  DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
+  DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
+  RemoveDir(ExpandConstant('{app}\lists\'));
+end;
+
+
 procedure RemoveLists();
 begin
   DelTree(ExpandConstant('{app}\lists\*.list'), False, True, False);
-  DelTree(ExpandConstant('{app}\lists\*.p2b'), False, True, False);
-  DelTree(ExpandConstant('{app}\lists\*.p2p'), False, True, False);
   RemoveDir(ExpandConstant('{app}\lists\'));
 end;
 
