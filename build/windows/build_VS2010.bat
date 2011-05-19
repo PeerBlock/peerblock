@@ -1,5 +1,5 @@
 @ECHO OFF
-SETLOCAL
+SETLOCAL ENABLEEXTENSIONS
 CD /D %~dp0
 
 REM  PeerBlock copyright (C) 2009-2011 PeerBlock, LLC
@@ -28,23 +28,9 @@ IF /I "%1"=="/help"  GOTO SHOWHELP
 IF /I "%1"=="-help"  GOTO SHOWHELP
 IF /I "%1"=="--help" GOTO SHOWHELP
 IF /I "%1"=="/?"     GOTO SHOWHELP
-GOTO CHECK
 
 
-:SHOWHELP
-TITLE "%~nx0 %1"
-ECHO.
-ECHO Usage:  %~nx0 [Clean^|Build^|Rebuild]
-ECHO.
-ECHO Executing "%~nx0" will use the defaults: "%~nx0 Rebuild"
-ECHO.
-ENDLOCAL
-EXIT /B
-
-
-:CHECK
 REM Check if Windows DDK is present in PATH
-
 IF NOT DEFINED PB_DDK_DIR (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
@@ -64,7 +50,7 @@ IF NOT DEFINED VS100COMNTOOLS (
 
 REM Check for the switches
 IF "%1" == "" (
-  SET "BUILDTYPE=Rebuild"
+  SET "BUILDTYPE=Build"
 ) ELSE (
   IF /I "%1" == "Build"     SET "BUILDTYPE=Build"   & GOTO START
   IF /I "%1" == "/Build"    SET "BUILDTYPE=Build"   & GOTO START
@@ -131,7 +117,7 @@ IF NOT DEFINED InnoSetupPath (
   GOTO CreateZips
 )
 
-PUSHD setup
+PUSHD "setup"
 TITLE Compiling installer...
 ECHO.
 ECHO Compiling installer...
@@ -157,7 +143,7 @@ FOR /f "tokens=3,4 delims= " %%K IN (
   SET "buildnum=%%K" & Call :SubRevNumber %%buildnum:*Z=%%)
 ECHO. & ECHO.
 
-MD "..\..\distribution" >NUL 2>&1
+IF NOT EXIST "..\..\distribution" MD "..\..\distribution"
 
 FOR %%L IN (
 "Release" "Release_(Vista)"
@@ -188,11 +174,11 @@ EXIT /B
 
 :SubZipFiles
 TITLE Creating ZIP files - %~2 %1...
-MD "temp_zip" >NUL 2>&1
-COPY "bin10\%1\%~2\peerblock.exe" "temp_zip\" /Y /V
-COPY "bin10\%1\%~2\pbfilter.sys" "temp_zip\" /Y /V
-COPY "..\..\license.txt" "temp_zip\" /Y /V
-COPY "..\..\doc\readme.rtf" "temp_zip\" /Y /V
+IF NOT EXIST "temp_zip" MD "temp_zip"
+COPY /Y /V "bin10\%1\%~2\peerblock.exe" "temp_zip\"
+COPY /Y /V "bin10\%1\%~2\pbfilter.sys"  "temp_zip\"
+COPY /Y /V "..\..\license.txt"          "temp_zip\"
+COPY /Y /V "..\..\doc\readme.rtf"       "temp_zip\"
 
 PUSHD "temp_zip"
 START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^
@@ -201,10 +187,10 @@ START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^
 IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 
 ECHO PeerBlock_r%buildnum%__%1_%~2_VS2010.zip created successfully!
-MOVE /Y "PeerBlock_r%buildnum%__%1_%~2_VS2010.zip" "..\..\..\distribution" >NUL 2>&1
+MOVE /Y "PeerBlock_r%buildnum%__%1_%~2_VS2010.zip" "..\..\..\distribution" >NUL
 ECHO.
 POPD
-RD /S /Q "temp_zip" >NUL 2>&1
+IF EXIST "temp_zip" RD /S /Q "temp_zip"
 EXIT /B
 
 
@@ -215,6 +201,17 @@ EXIT /B
 
 :SubRevNumber
 SET buildnum=%*
+EXIT /B
+
+
+:SHOWHELP
+TITLE "%~nx0 %1"
+ECHO.
+ECHO Usage:  %~nx0 [Clean^|Build^|Rebuild]
+ECHO.
+ECHO Executing "%~nx0" will use the defaults: "%~nx0 Build"
+ECHO.
+ENDLOCAL
 EXIT /B
 
 
