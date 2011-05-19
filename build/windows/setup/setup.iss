@@ -134,22 +134,26 @@ BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) [MSVC2010] bu
 BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
 #endif
 
+; The same as AppVerName with the "Setup -" prefix
+SetupAppTitle=Setup - PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+SetupWindowTitle=Setup - PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+
 
 [Tasks]
-Name: desktopicon;         Description: {cm:CreateDesktopIcon};       GroupDescription: {cm:AdditionalIcons}
-Name: quicklaunchicon;     Description: {cm:CreateQuickLaunchIcon};   GroupDescription: {cm:AdditionalIcons};                        Flags: unchecked; OnlyBelowVersion: 0,6.01
+Name: desktopicon;               Description: {cm:CreateDesktopIcon};       GroupDescription: {cm:AdditionalIcons}
+Name: quicklaunchicon;           Description: {cm:CreateQuickLaunchIcon};   GroupDescription: {cm:AdditionalIcons};                        Flags: unchecked; OnlyBelowVersion: 0,6.01
 
-Name: startup_task;        Description: {cm:tsk_startup_descr};       GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
-Name: remove_startup_task; Description: {cm:tsk_remove_startup};      GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
+Name: startup;                   Description: {cm:tsk_startup_descr};       GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
+Name: remove_startup;            Description: {cm:tsk_remove_startup};      GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
 
-Name: uninstall_pg;        Description: {cm:tsk_uninstall_pg};        GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
-Name: use_pg_settings;     Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
+Name: uninstall_pg;              Description: {cm:tsk_uninstall_pg};        GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
+Name: use_pg_settings;           Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
 
-Name: delete_custom_lists; Description: {cm:tsk_delete_custom_lists}; GroupDescription: {cm:tsk_reset};   Check: CustomListsExist(); Flags: checkedonce unchecked
-Name: delete_lists;        Description: {cm:tsk_delete_lists};        GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkedonce unchecked
-Name: delete_misc;         Description: {cm:tsk_delete_misc};         GroupDescription: {cm:tsk_reset};   Check: MiscFilesExist();   Flags: checkedonce unchecked
-Name: delete_logs;         Description: {cm:tsk_delete_logs};         GroupDescription: {cm:tsk_reset};   Check: LogsExist();        Flags: checkedonce unchecked
-Name: delete_settings;     Description: {cm:tsk_delete_settings};     GroupDescription: {cm:tsk_reset};   Check: SettingsExist();    Flags: checkedonce unchecked
+Name: delete_lists;              Description: {cm:tsk_delete_lists};        GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkablealone checkedonce unchecked
+Name: delete_lists\custom_lists; Description: {cm:tsk_delete_custom_lists}; GroupDescription: {cm:tsk_reset};   Check: CustomListsExist(); Flags: checkedonce unchecked dontinheritcheck
+Name: delete_misc;               Description: {cm:tsk_delete_misc};         GroupDescription: {cm:tsk_reset};   Check: MiscFilesExist();   Flags: checkedonce unchecked
+Name: delete_logs;               Description: {cm:tsk_delete_logs};         GroupDescription: {cm:tsk_reset};   Check: LogsExist();        Flags: checkedonce unchecked
+Name: delete_settings;           Description: {cm:tsk_delete_settings};     GroupDescription: {cm:tsk_reset};   Check: SettingsExist();    Flags: checkedonce unchecked
 
 
 [Files]
@@ -175,13 +179,13 @@ Source: {#bindir}\x64\Release_(Vista)\peerblock.exe;   DestDir: {app}; Flags: ig
 Source: {#bindir}\x64\Release_(Vista)\pbfilter.sys;    DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode();     MinVersion: 0,6.0
 
 ; Copy PG settings and custom lists only if PG is installed and the user has chosen to do so
-Source: {code:GetPGPath}\pg2.conf;    DestDir: {app};  DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
-Source: {code:GetPGPath}\*.p2p;       DestDir: {app};                            Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
-Source: {code:GetPGPath}\lists\*.p2b; DestDir: {app}\lists;                      Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
-Source: {code:GetPGPath}\lists\*.p2p; DestDir: {app}\lists;                      Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\pg2.conf;                     DestDir: {app};  DestName: peerblock.conf; Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\*.p2p;                        DestDir: {app};                            Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\lists\*.p2b;                  DestDir: {app}\lists;                      Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
+Source: {code:GetPGPath}\lists\*.p2p;                  DestDir: {app}\lists;                      Tasks: use_pg_settings; Flags: skipifsourcedoesntexist external uninsneveruninstall
 
-Source: ..\..\..\license.txt;         DestDir: {app};                                                    Flags: ignoreversion
-Source: ..\..\..\doc\readme.rtf;      DestDir: {app};                                                    Flags: ignoreversion
+Source: ..\..\..\license.txt;                          DestDir: {app};                                                    Flags: ignoreversion
+Source: ..\..\..\doc\readme.rtf;                       DestDir: {app};                                                    Flags: ignoreversion
 
 
 [Icons]
@@ -196,15 +200,15 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filen
 
 
 [Registry]
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup_task; Flags: uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Tasks: delete_settings remove_startup_task;  Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup_task')
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup; Flags: uninsdeletevalue
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock;                                                    Tasks: delete_settings remove_startup;  Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup')
 ; Always delete the startup PeerBlock value when uninstalling
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Flags: uninsdeletevalue
 
 
 [Run]
 Filename: {app}\peerblock.exe;       Description: {cm:LaunchProgram,PeerBlock}; WorkingDir: {app}; Flags: nowait postinstall skipifsilent runascurrentuser
-Filename: http://www.peerblock.com/; Description: {cm:run_visit_website};                          Flags: nowait postinstall skipifsilent shellexec runascurrentuser unchecked
+Filename: http://www.peerblock.com/; Description: {cm:run_visit_website};                          Flags: nowait postinstall skipifsilent shellexec unchecked
 
 
 [InstallDelete]
@@ -346,10 +350,6 @@ begin
       Log('Custom Code: User selected the "uninstall_pg" task, calling KillAndUninstallPG()');
       KillAndUninstallPG;
     end;
-    if IsTaskSelected('delete_custom_lists') then begin
-      Log('Custom Code: User selected the "delete_custom_lists" task, calling RemoveCustomLists()');
-      RemoveCustomLists;
-    end;
     if IsTaskSelected('delete_misc') then begin
       Log('Custom Code: User selected the "delete_misc" task, calling RemoveMiscFiles()');
       RemoveMiscFiles;
@@ -357,6 +357,10 @@ begin
     if IsTaskSelected('delete_lists') then begin
       Log('Custom Code: User selected the "delete_lists" task, calling RemoveLists()');
       RemoveLists;
+    end;
+    if IsTaskSelected('delete_lists\custom_lists') then begin
+      Log('Custom Code: User selected the "delete_lists\custom_lists" task, calling RemoveCustomLists()');
+      RemoveCustomLists;
     end;
     if IsTaskSelected('delete_logs') then begin
       Log('Custom Code: User selected the "delete_logs" task, calling RemoveLogs()');
