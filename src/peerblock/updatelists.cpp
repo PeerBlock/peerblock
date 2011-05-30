@@ -982,17 +982,7 @@ public:
 
 
 	int Process() {
-		try {
-			return this->_Process();
-		}
-		catch(exception &ex) {
-			UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-			return 0;
-		}
-		catch(...) {
-			UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-			return 0;
-		}
+		return this->_Process();
 	}
 
 	void operator()() {
@@ -1183,28 +1173,18 @@ static void UpdateLists_OnTimer(HWND hwnd, UINT id)
 
 
 static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, UpdateLists_OnClose);
-			HANDLE_MSG(hwnd, WM_COMMAND, UpdateLists_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, UpdateLists_OnDestroy);
-			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, UpdateLists_OnGetMinMaxInfo);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, UpdateLists_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_SIZE, UpdateLists_OnSize);
-			HANDLE_MSG(hwnd, WM_TIMER, UpdateLists_OnTimer);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
-				return 1;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_CLOSE, UpdateLists_OnClose);
+		HANDLE_MSG(hwnd, WM_COMMAND, UpdateLists_OnCommand);
+		HANDLE_MSG(hwnd, WM_DESTROY, UpdateLists_OnDestroy);
+		HANDLE_MSG(hwnd, WM_GETMINMAXINFO, UpdateLists_OnGetMinMaxInfo);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, UpdateLists_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_SIZE, UpdateLists_OnSize);
+		HANDLE_MSG(hwnd, WM_TIMER, UpdateLists_OnTimer);
+		case WM_DIALOG_ICON_REFRESH:
+			RefreshDialogIcon(hwnd);
+			return 1;
+		default: return 0;
 	}
 }
 

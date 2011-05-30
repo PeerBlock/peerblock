@@ -45,25 +45,15 @@ public:
 
 		INT_PTR ret=0;
 
-		try {
-			double total=(double)data.InitFunc();
+		double total=(double)data.InitFunc();
 
-			for(unsigned int i=0; data.ProcessFunc(); i++) {
-				if(aborted) {
-					ret=1;
-					break;
-				}
-				TRACEI("[LoadingThread] [operator()]    updating progress");
-				SendMessage(progress, PBM_SETPOS, (WPARAM)(int)(i/total*1000.0), 0);
+		for(unsigned int i=0; data.ProcessFunc(); i++) {
+			if(aborted) {
+				ret=1;
+				break;
 			}
-		}
-		catch(exception &ex) {
-			UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-			EndDialog(hwnd, -1);
-		}
-		catch(...) {
-			UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-			EndDialog(hwnd, -1);
+			TRACEI("[LoadingThread] [operator()]    updating progress");
+			SendMessage(progress, PBM_SETPOS, (WPARAM)(int)(i/total*1000.0), 0);
 		}
 
 		SendMessage(progress, PBM_SETPOS, 1000, 0);
@@ -126,20 +116,10 @@ INT_PTR CALLBACK Loading_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		TRACEI("[Loading_DlgProc]    msg: WM_INITDIALOG.");
 	}
 
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, Loading_OnClose);
-			HANDLE_MSG(hwnd, WM_DESTROY, Loading_OnDestroy);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, Loading_OnInitDialog);
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_CLOSE, Loading_OnClose);
+		HANDLE_MSG(hwnd, WM_DESTROY, Loading_OnDestroy);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, Loading_OnInitDialog);
+		default: return 0;
 	}
 }

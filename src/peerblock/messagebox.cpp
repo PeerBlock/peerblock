@@ -139,35 +139,3 @@ void ExceptionBox(HWND hwnd, const exception &ex, const char *file, int line) {
 	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
 	MessageBox(hwnd, str, IDS_EXCEPTION, MB_ICONERROR|MB_OK);
 }
-
-
-
-void UncaughtExceptionBox(HWND hwnd, const char *file, int line) {
-	ReportException(NULL, file, line);
-
-	tstring str=boost::str(tformat(LoadString(IDS_CAUGHTUNKNOWNTEXT))%g_build%file%line);
-	TRACEC("    vvvv  EXCEPTION!!  vvvv");
-	TRACEBUFC(str.c_str());
-	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
-	MessageBox(hwnd, str, IDS_UNCAUGHT, MB_ICONERROR|MB_OK);
-}
-
-
-
-void UncaughtExceptionBox(HWND hwnd, const exception &ex, const char *file, int line) {
-	ReportException(&ex, file, line);
-
-	tstring str;
-
-	if(const win32_error *err = dynamic_cast<const win32_error*>(&ex)) {
-		str=boost::str(tformat(LoadString(IDS_UNCAUGHTWIN32TEXT)) % g_build % file % line % err->func() % err->error() % err->what());
-	}
-	else {
-		str=boost::str(tformat(LoadString(IDS_UNCAUGHTTEXT)) % g_build % file % line % typeid(ex).name() % ex.what());
-	}
-
-	TRACEC("    vvvv  EXCEPTION!!  vvvv");
-	TRACEBUFC(str.c_str());
-	TRACEC("    ^^^^  EXCEPTION!!  ^^^^");
-	MessageBox(hwnd, str, IDS_UNCAUGHT, MB_ICONERROR|MB_OK);
-}

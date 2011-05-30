@@ -111,25 +111,15 @@ static void HistoryCalendar_OnSetCurSel(HWND hwnd, const SYSTEMTIME *st) {
 }
 
 INT_PTR CALLBACK HistoryCalendar_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_NOTIFY, HistoryCalendar_OnNotify);
-			HANDLE_MSG(hwnd, WM_SIZE, HistoryCalendar_OnSize);
-			case HCM_GETCURSEL:
-				HistoryCalendar_OnGetCurSel(hwnd, (SYSTEMTIME*)wParam);
-				return 0;
-			case HCM_SETCURSEL:
-				HistoryCalendar_OnSetCurSel(hwnd, (const SYSTEMTIME*)wParam);
-				return 0;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_NOTIFY, HistoryCalendar_OnNotify);
+		HANDLE_MSG(hwnd, WM_SIZE, HistoryCalendar_OnSize);
+		case HCM_GETCURSEL:
+			HistoryCalendar_OnGetCurSel(hwnd, (SYSTEMTIME*)wParam);
+			return 0;
+		case HCM_SETCURSEL:
+			HistoryCalendar_OnSetCurSel(hwnd, (const SYSTEMTIME*)wParam);
+			return 0;
+		default: return 0;
 	}
 }

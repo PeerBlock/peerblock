@@ -210,40 +210,29 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		TRACEW("Could NOT PreventSetUnhandledExceptionFilter()");
 	}
 
-	try 
-	{
-		// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program
-		TRACEI("Creating main UI window");
-		HWND hwnd=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_MAIN), NULL, Main_DlgProc);
-		TRACES("Created main UI window");
+	// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program
+	TRACEI("Creating main UI window");
+	HWND hwnd=CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_MAIN), NULL, Main_DlgProc);
+	TRACES("Created main UI window");
 
-		// Save copy of peerblock.conf as "last known good" peerblock.conf.bak
-		g_config.Save(_T("peerblock.conf.bak"));
+	// Save copy of peerblock.conf as "last known good" peerblock.conf.bak
+	g_config.Save(_T("peerblock.conf.bak"));
 
-		// Set main window caption to version-string from versioninfo.h
-		TCHAR * chBuf;
-		chBuf = (TCHAR *)malloc(256 * sizeof(chBuf));
-		swprintf_s(chBuf, 256, L"%S", PB_BLDSTR);
-		SetWindowText(hwnd, chBuf);
-		free(chBuf);
+	// Set main window caption to version-string from versioninfo.h
+	TCHAR * chBuf;
+	chBuf = (TCHAR *)malloc(256 * sizeof(chBuf));
+	swprintf_s(chBuf, 256, L"%S", PB_BLDSTR);
+	SetWindowText(hwnd, chBuf);
+	free(chBuf);
 
-		TRACES("Starting message-loop");
-		MSG msg;
-		while(GetMessage(&msg, NULL, 0, 0)>0) 
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		TRACES("Message loop ended, shutting down PeerBlock");
-	}
-	catch(exception &ex) 
+	TRACES("Starting message-loop");
+	MSG msg;
+	while(GetMessage(&msg, NULL, 0, 0)>0) 
 	{
-		UncaughtExceptionBox(NULL, ex, __FILE__, __LINE__);
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
-	catch(...) 
-	{
-		UncaughtExceptionBox(NULL, __FILE__, __LINE__);
-	}
+	TRACES("Message loop ended, shutting down PeerBlock");
 
 
 	Shutdown();

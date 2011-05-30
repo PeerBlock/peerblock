@@ -43,17 +43,7 @@ private:
 	function_type fn;
 
 	static unsigned int __stdcall func(void *arg) {
-		try {
-			((thread*)arg)->fn();
-		}
-		catch(std::exception &ex) {
-			UncaughtExceptionBox(NULL, ex, __FILE__, __LINE__);
-			return -1;
-		}
-		catch(...) {
-			UncaughtExceptionBox(NULL, __FILE__, __LINE__);
-			return -1;
-		}
+		((thread*)arg)->fn();
 
 		return 0;
 	}

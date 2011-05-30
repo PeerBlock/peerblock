@@ -514,15 +514,7 @@ private:
 
 public:
 	void Commit(bool force=false) {
-		try {
-			_Commit(force);
-		}
-		catch(exception &ex) {
-			UncaughtExceptionBox(NULL, ex, __FILE__, __LINE__);
-		}
-		catch(...) {
-			UncaughtExceptionBox(NULL, __FILE__, __LINE__);
-		}
+		_Commit(force);
 	}
 };
 
@@ -1255,32 +1247,22 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM
 }
 
 INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		TCHAR chBuf[256];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogProc] [Log_DlgProc]    processing hwnd:[%p] msg:[%d]"), hwnd, msg);
-		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_DEBUG);
+	TCHAR chBuf[256];
+	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogProc] [Log_DlgProc]    processing hwnd:[%p] msg:[%d]"), hwnd, msg);
+	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_DEBUG);
 
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_COMMAND, Log_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, Log_OnDestroy);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, Log_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_NOTIFY, Log_OnNotify);
-			HANDLE_MSG(hwnd, WM_SIZE, Log_OnSize);
-			HANDLE_MSG(hwnd, WM_TIMER, Log_OnTimer);
-			case WM_LOG_HOOK:
-			case WM_LOG_RANGES:
-				TRACEV("[LogProc] [Log_DlgProc]    WM_LOG_HOOK or WM_LOG_RANGES");
-				UpdateStatus(hwnd);
-				return 1;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_COMMAND, Log_OnCommand);
+		HANDLE_MSG(hwnd, WM_DESTROY, Log_OnDestroy);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, Log_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_NOTIFY, Log_OnNotify);
+		HANDLE_MSG(hwnd, WM_SIZE, Log_OnSize);
+		HANDLE_MSG(hwnd, WM_TIMER, Log_OnTimer);
+		case WM_LOG_HOOK:
+		case WM_LOG_RANGES:
+			TRACEV("[LogProc] [Log_DlgProc]    WM_LOG_HOOK or WM_LOG_RANGES");
+			UpdateStatus(hwnd);
+			return 1;
+		default: return 0;
 	}
 }

@@ -185,24 +185,14 @@ static BOOL EditList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 }
 
 INT_PTR CALLBACK EditList_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_COMMAND, EditList_OnCommand);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, EditList_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_CLOSE, EditList_OnClose);
-			HANDLE_MSG(hwnd, WM_DESTROY, EditList_OnDestroy);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
-				return 1;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_COMMAND, EditList_OnCommand);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, EditList_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_CLOSE, EditList_OnClose);
+		HANDLE_MSG(hwnd, WM_DESTROY, EditList_OnDestroy);
+		case WM_DIALOG_ICON_REFRESH:
+			RefreshDialogIcon(hwnd);
+			return 1;
+		default: return 0;
 	}
 }

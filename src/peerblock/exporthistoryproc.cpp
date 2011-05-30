@@ -320,24 +320,14 @@ static BOOL ExportHistory_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 }
 
 INT_PTR CALLBACK ExportHistory_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_COMMAND, ExportHistory_OnCommand);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, ExportHistory_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_CLOSE, ExportHistory_OnClose);
-			HANDLE_MSG(hwnd, WM_DESTROY, ExportHistory_OnDestroy);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
-				return 1;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_COMMAND, ExportHistory_OnCommand);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, ExportHistory_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_CLOSE, ExportHistory_OnClose);
+		HANDLE_MSG(hwnd, WM_DESTROY, ExportHistory_OnDestroy);
+		case WM_DIALOG_ICON_REFRESH:
+			RefreshDialogIcon(hwnd);
+			return 1;
+		default: return 0;
 	}
 }

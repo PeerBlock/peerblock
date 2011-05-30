@@ -952,34 +952,18 @@ static void List_OnSize(HWND hwnd, UINT state, int cx, int cy)
 //
 INT_PTR CALLBACK List_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 {
-	try 
+	switch(msg) 
 	{
-		switch(msg) 
-		{
-			HANDLE_MSG(hwnd, WM_CLOSE, List_OnClose);
-			HANDLE_MSG(hwnd, WM_COMMAND, List_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, List_OnDestroy);
-			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, List_OnGetMinMaxInfo);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, List_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_NOTIFY, List_OnNotify);
-			HANDLE_MSG(hwnd, WM_SIZE, List_OnSize);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
-				return 1;
-			default: return 0;
-		}
+		HANDLE_MSG(hwnd, WM_CLOSE, List_OnClose);
+		HANDLE_MSG(hwnd, WM_COMMAND, List_OnCommand);
+		HANDLE_MSG(hwnd, WM_DESTROY, List_OnDestroy);
+		HANDLE_MSG(hwnd, WM_GETMINMAXINFO, List_OnGetMinMaxInfo);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, List_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_NOTIFY, List_OnNotify);
+		HANDLE_MSG(hwnd, WM_SIZE, List_OnSize);
+		case WM_DIALOG_ICON_REFRESH:
+			RefreshDialogIcon(hwnd);
+			return 1;
+		default: return 0;
 	}
-	catch(exception &ex) 
-	{
-		TRACEC("[listproc] [List_DlgProc]    ERROR:  Caught EXCEPTION!!");
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) 
-	{
-		TRACEC("[listproc] [List_DlgProc]    ERROR:  Caught unknown EXCEPTION!!");
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
-	}
-
 } // End of case List_DlgProc

@@ -82,171 +82,161 @@ static tstring FormatIp(unsigned int ip, unsigned short port) {
 
 static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	NMHDR *nmh=(NMHDR*)lParam;
-	try {
-		if(msg==WM_NOTIFY && nmh->idFrom==IDC_LIST) {
-			if(nmh->code==LVN_GETDISPINFO) {
-				NMLVDISPINFO *di=(NMLVDISPINFO*)nmh;
+	if(msg==WM_NOTIFY && nmh->idFrom==IDC_LIST) {
+		if(nmh->code==LVN_GETDISPINFO) {
+			NMLVDISPINFO *di=(NMLVDISPINFO*)nmh;
 
-				HistoryRow &r=g_rows[di->item.iItem];
-				LPCTSTR str;
+			HistoryRow &r=g_rows[di->item.iItem];
+			LPCTSTR str;
 
-				if(!r.full) {
-					sqlite3_lock lock(g_con);
-
-					sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid order by t_history.ROWID desc;");
-					cmd.bind(1, r.id);
-
-					sqlite3_reader reader=cmd.executereader();
-					if(reader.read()) {
-						unsigned short srcport=(unsigned short)reader.getint(3);
-						unsigned short destport=(unsigned short)reader.getint(5);
-
-#ifdef _UNICODE
-						r.time=reader.getstring16(0);
-						r.name=reader.getstring16(1);
-#else
-						r.time=UTF8_MBS(reader.getstring(0));
-						r.name=UTF8_MBS(reader.getstring(1));
-#endif
-
-						r.source=FormatIp((unsigned int)reader.getint(2), srcport);
-						r.dest=FormatIp((unsigned int)reader.getint(4), destport);
-
-						if(reader.getint(7)==1) {
-							if(reader.getint(6)==IPPROTO_TCP && (destport==80 || destport==443))
-								r.type=HistoryRow::http;
-							else r.type=HistoryRow::blocked;
-						}
-						else r.type=HistoryRow::allowed;
-
-						r.action=(r.type!=HistoryRow::allowed)?g_blocked.c_str():g_allowed.c_str();
-
-						if(r.name==_T("n/a")) r.name.clear();
-
-						switch(reader.getint(6)) {
-							case IPPROTO_ICMP: r.protocol=_T("ICMP"); break;
-							case IPPROTO_IGMP: r.protocol=_T("IGMP"); break;
-							case IPPROTO_GGP: r.protocol=_T("Gateway^2"); break;
-							case IPPROTO_TCP: r.protocol=_T("TCP"); break;
-							case IPPROTO_PUP: r.protocol=_T("PUP"); break;
-							case IPPROTO_UDP: r.protocol=_T("UDP"); break;
-							case IPPROTO_IDP: r.protocol=_T("XNS IDP"); break;
-							case IPPROTO_ND: r.protocol=_T("NetDisk"); break;
-							default: r.protocol=_T("Unknown"); break;
-						}
-
-						r.full=true;
-					}
-				}
-
-				switch(di->item.iSubItem) {
-					case 0: str=r.time.c_str(); break;
-					case 1: str=r.name.c_str(); break;
-					case 2: str=r.source.c_str(); break;
-					case 3: str=r.dest.c_str(); break;
-					case 4: str=r.protocol; break;
-					case 5: str=r.action; break;
-					default: __assume(0);
-				}
-
-				di->item.pszText=(LPTSTR)str;
-			}
-			else if(nmh->code==LVN_ODCACHEHINT) {
-				const NMLVCACHEHINT &ch=*((const NMLVCACHEHINT*)nmh);
-
+			if(!r.full) {
 				sqlite3_lock lock(g_con);
 
 				sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid order by t_history.ROWID desc;");
+				cmd.bind(1, r.id);
 
-				for(int i=ch.iFrom; i<=ch.iTo; i++) {
-					HistoryRow &r=g_rows[i];
-					if(r.full) continue;
-
-					cmd.bind(1, r.id);
-
-					sqlite3_reader reader=cmd.executereader();
-
-					if(reader.read()) {
-						unsigned short srcport=(unsigned short)reader.getint(3);
-						unsigned short destport=(unsigned short)reader.getint(5);
+				sqlite3_reader reader=cmd.executereader();
+				if(reader.read()) {
+					unsigned short srcport=(unsigned short)reader.getint(3);
+					unsigned short destport=(unsigned short)reader.getint(5);
 
 #ifdef _UNICODE
-						r.time=reader.getstring16(0);
-						r.name=reader.getstring16(1);
+					r.time=reader.getstring16(0);
+					r.name=reader.getstring16(1);
 #else
-						r.time=UTF8_MBS(reader.getstring(0));
-						r.name=UTF8_MBS(reader.getstring(1));
+					r.time=UTF8_MBS(reader.getstring(0));
+					r.name=UTF8_MBS(reader.getstring(1));
 #endif
 
-						r.source=FormatIp((unsigned int)reader.getint(2), srcport);
-						r.dest=FormatIp((unsigned int)reader.getint(4), destport);
+					r.source=FormatIp((unsigned int)reader.getint(2), srcport);
+					r.dest=FormatIp((unsigned int)reader.getint(4), destport);
 
-						if(reader.getint(7)==1) {
-							if(reader.getint(6)==IPPROTO_TCP && (destport==80 || destport==443))
-								r.type=HistoryRow::http;
-							else r.type=HistoryRow::blocked;
-						}
-						else r.type=HistoryRow::allowed;
-
-						r.action=(r.type!=HistoryRow::allowed)?g_blocked.c_str():g_allowed.c_str();
-
-						if(r.name==_T("n/a")) r.name.clear();
-
-						switch(reader.getint(6)) {
-							case IPPROTO_ICMP: r.protocol=_T("ICMP"); break;
-							case IPPROTO_IGMP: r.protocol=_T("IGMP"); break;
-							case IPPROTO_GGP: r.protocol=_T("Gateway^2"); break;
-							case IPPROTO_TCP: r.protocol=_T("TCP"); break;
-							case IPPROTO_PUP: r.protocol=_T("PUP"); break;
-							case IPPROTO_UDP: r.protocol=_T("UDP"); break;
-							case IPPROTO_IDP: r.protocol=_T("XNS IDP"); break;
-							case IPPROTO_ND: r.protocol=_T("NetDisk"); break;
-							default: r.protocol=_T("Unknown"); break;
-						}
-
-						r.full=true;
+					if(reader.getint(7)==1) {
+						if(reader.getint(6)==IPPROTO_TCP && (destport==80 || destport==443))
+							r.type=HistoryRow::http;
+						else r.type=HistoryRow::blocked;
 					}
+					else r.type=HistoryRow::allowed;
+
+					r.action=(r.type!=HistoryRow::allowed)?g_blocked.c_str():g_allowed.c_str();
+
+					if(r.name==_T("n/a")) r.name.clear();
+
+					switch(reader.getint(6)) {
+						case IPPROTO_ICMP: r.protocol=_T("ICMP"); break;
+						case IPPROTO_IGMP: r.protocol=_T("IGMP"); break;
+						case IPPROTO_GGP: r.protocol=_T("Gateway^2"); break;
+						case IPPROTO_TCP: r.protocol=_T("TCP"); break;
+						case IPPROTO_PUP: r.protocol=_T("PUP"); break;
+						case IPPROTO_UDP: r.protocol=_T("UDP"); break;
+						case IPPROTO_IDP: r.protocol=_T("XNS IDP"); break;
+						case IPPROTO_ND: r.protocol=_T("NetDisk"); break;
+						default: r.protocol=_T("Unknown"); break;
+					}
+
+					r.full=true;
 				}
 			}
-			else if(nmh->code==NM_CUSTOMDRAW && g_config.ColorCode) {
-				NMLVCUSTOMDRAW *cd=(NMLVCUSTOMDRAW*)nmh;
-				switch(cd->nmcd.dwDrawStage) {
-					case CDDS_PREPAINT:
-						return CDRF_NOTIFYITEMDRAW;
-					case CDDS_ITEMPREPAINT: {
-						const HistoryRow &row=g_rows[cd->nmcd.dwItemSpec];
 
-						Color c;
+			switch(di->item.iSubItem) {
+				case 0: str=r.time.c_str(); break;
+				case 1: str=r.name.c_str(); break;
+				case 2: str=r.source.c_str(); break;
+				case 3: str=r.dest.c_str(); break;
+				case 4: str=r.protocol; break;
+				case 5: str=r.action; break;
+				default: __assume(0);
+			}
 
-						switch(row.type) {
-							case HistoryRow::allowed:
-								c=g_config.AllowedColor;
-								break;
-							case HistoryRow::blocked:
-								c=g_config.BlockedColor;
-								break;
-							case HistoryRow::http:
-								c=g_config.HttpColor;
-								break;
-							default: __assume(0);
-						}
+			di->item.pszText=(LPTSTR)str;
+		}
+		else if(nmh->code==LVN_ODCACHEHINT) {
+			const NMLVCACHEHINT &ch=*((const NMLVCACHEHINT*)nmh);
 
-						cd->clrText=c.Text;
-						cd->clrTextBk=c.Background;
-					} return CDRF_NEWFONT;
-					default:
-						return CDRF_DODEFAULT;
+			sqlite3_lock lock(g_con);
+
+			sqlite3_command cmd(g_con, "select time(time, 'localtime'),name,source,sourceport,destination,destport,protocol,action from t_history,t_names where t_history.ROWID=? and id=nameid order by t_history.ROWID desc;");
+
+			for(int i=ch.iFrom; i<=ch.iTo; i++) {
+				HistoryRow &r=g_rows[i];
+				if(r.full) continue;
+
+				cmd.bind(1, r.id);
+
+				sqlite3_reader reader=cmd.executereader();
+
+				if(reader.read()) {
+					unsigned short srcport=(unsigned short)reader.getint(3);
+					unsigned short destport=(unsigned short)reader.getint(5);
+
+#ifdef _UNICODE
+					r.time=reader.getstring16(0);
+					r.name=reader.getstring16(1);
+#else
+					r.time=UTF8_MBS(reader.getstring(0));
+					r.name=UTF8_MBS(reader.getstring(1));
+#endif
+
+					r.source=FormatIp((unsigned int)reader.getint(2), srcport);
+					r.dest=FormatIp((unsigned int)reader.getint(4), destport);
+
+					if(reader.getint(7)==1) {
+						if(reader.getint(6)==IPPROTO_TCP && (destport==80 || destport==443))
+							r.type=HistoryRow::http;
+						else r.type=HistoryRow::blocked;
+					}
+					else r.type=HistoryRow::allowed;
+
+					r.action=(r.type!=HistoryRow::allowed)?g_blocked.c_str():g_allowed.c_str();
+
+					if(r.name==_T("n/a")) r.name.clear();
+
+					switch(reader.getint(6)) {
+						case IPPROTO_ICMP: r.protocol=_T("ICMP"); break;
+						case IPPROTO_IGMP: r.protocol=_T("IGMP"); break;
+						case IPPROTO_GGP: r.protocol=_T("Gateway^2"); break;
+						case IPPROTO_TCP: r.protocol=_T("TCP"); break;
+						case IPPROTO_PUP: r.protocol=_T("PUP"); break;
+						case IPPROTO_UDP: r.protocol=_T("UDP"); break;
+						case IPPROTO_IDP: r.protocol=_T("XNS IDP"); break;
+						case IPPROTO_ND: r.protocol=_T("NetDisk"); break;
+						default: r.protocol=_T("Unknown"); break;
+					}
+
+					r.full=true;
 				}
 			}
 		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+		else if(nmh->code==NM_CUSTOMDRAW && g_config.ColorCode) {
+			NMLVCUSTOMDRAW *cd=(NMLVCUSTOMDRAW*)nmh;
+			switch(cd->nmcd.dwDrawStage) {
+				case CDDS_PREPAINT:
+					return CDRF_NOTIFYITEMDRAW;
+				case CDDS_ITEMPREPAINT: {
+					const HistoryRow &row=g_rows[cd->nmcd.dwItemSpec];
+
+					Color c;
+
+					switch(row.type) {
+						case HistoryRow::allowed:
+							c=g_config.AllowedColor;
+							break;
+						case HistoryRow::blocked:
+							c=g_config.BlockedColor;
+							break;
+						case HistoryRow::http:
+							c=g_config.HttpColor;
+							break;
+						default: __assume(0);
+					}
+
+					cd->clrText=c.Text;
+					cd->clrTextBk=c.Background;
+				} return CDRF_NEWFONT;
+				default:
+					return CDRF_DODEFAULT;
+			}
+		}
 	}
 
 	return CallWindowProc(g_tabproc, hwnd, msg, wParam, lParam);
@@ -1001,27 +991,17 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia)
 }
 
 INT_PTR CALLBACK History_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, History_OnClose);
-			HANDLE_MSG(hwnd, WM_COMMAND, History_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, History_OnDestroy);
-			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, History_OnGetMinMaxInfo);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, History_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_NOTIFY, History_OnNotify);
-			HANDLE_MSG(hwnd, WM_SIZE, History_OnSize);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
-				return 1;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_CLOSE, History_OnClose);
+		HANDLE_MSG(hwnd, WM_COMMAND, History_OnCommand);
+		HANDLE_MSG(hwnd, WM_DESTROY, History_OnDestroy);
+		HANDLE_MSG(hwnd, WM_GETMINMAXINFO, History_OnGetMinMaxInfo);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, History_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_NOTIFY, History_OnNotify);
+		HANDLE_MSG(hwnd, WM_SIZE, History_OnSize);
+		case WM_DIALOG_ICON_REFRESH:
+			RefreshDialogIcon(hwnd);
+			return 1;
+		default: return 0;
 	}
 }

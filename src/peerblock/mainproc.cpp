@@ -1135,50 +1135,37 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	//	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
 	//}
 
-	try {
-
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, Main_OnClose);
-			HANDLE_MSG(hwnd, WM_COMMAND, Main_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, Main_OnDestroy);
-			HANDLE_MSG(hwnd, WM_ENDSESSION, Main_OnEndSession);
-			HANDLE_MSG(hwnd, WM_GETMINMAXINFO, Main_OnGetMinMaxInfo);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, Main_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_MOVE, Main_OnMove);
-			HANDLE_MSG(hwnd, WM_NOTIFY, Main_OnNotify);
-			HANDLE_MSG(hwnd, WM_SIZE, Main_OnSize);
-			HANDLE_MSG(hwnd, WM_TIMER, Main_OnTimer);
-			case WM_PB_TRAY:
-				Main_OnTray(hwnd, (UINT)wParam, (UINT)lParam);
-				return 1;
-			case WM_MAIN_VISIBLE:
-				TRACEI("[Main_DlgProc]    received WM_MAIN_VISIBLE message");
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_CLOSE, Main_OnClose);
+		HANDLE_MSG(hwnd, WM_COMMAND, Main_OnCommand);
+		HANDLE_MSG(hwnd, WM_DESTROY, Main_OnDestroy);
+		HANDLE_MSG(hwnd, WM_ENDSESSION, Main_OnEndSession);
+		HANDLE_MSG(hwnd, WM_GETMINMAXINFO, Main_OnGetMinMaxInfo);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, Main_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_MOVE, Main_OnMove);
+		HANDLE_MSG(hwnd, WM_NOTIFY, Main_OnNotify);
+		HANDLE_MSG(hwnd, WM_SIZE, Main_OnSize);
+		HANDLE_MSG(hwnd, WM_TIMER, Main_OnTimer);
+		case WM_PB_TRAY:
+			Main_OnTray(hwnd, (UINT)wParam, (UINT)lParam);
+			return 1;
+		case WM_MAIN_VISIBLE:
+			TRACEI("[Main_DlgProc]    received WM_MAIN_VISIBLE message");
+			Main_OnVisible(hwnd, (BOOL)lParam);
+			return 1;
+		default:
+			if(msg==WM_TRAY_CREATED && g_trayactive) Shell_NotifyIcon(NIM_ADD, &g_nid);
+			else if(msg==WM_PB_VISIBLE) 
+			{
+				TRACEI("[Main_DlgProc]    received WM_PB_VISIBLE message; setting visible");
 				Main_OnVisible(hwnd, (BOOL)lParam);
+				TRACEI("[Main_DlgProc]    finished setting visible");
 				return 1;
-			default:
-				if(msg==WM_TRAY_CREATED && g_trayactive) Shell_NotifyIcon(NIM_ADD, &g_nid);
-				else if(msg==WM_PB_VISIBLE) 
-				{
-					TRACEI("[Main_DlgProc]    received WM_PB_VISIBLE message; setting visible");
-					Main_OnVisible(hwnd, (BOOL)lParam);
-					TRACEI("[Main_DlgProc]    finished setting visible");
-					return 1;
-				}
-				else if(msg==WM_PB_LOADLISTS) {
-					LoadLists(hwnd);
-					return 1;
-				}
-				return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		PostQuitMessage(0);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		PostQuitMessage(0);
-		return 0;
+			}
+			else if(msg==WM_PB_LOADLISTS) {
+				LoadLists(hwnd);
+				return 1;
+			}
+			return 0;
 	}
 }

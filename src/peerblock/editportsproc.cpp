@@ -263,29 +263,15 @@ static INT_PTR EditPorts_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 
 INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 {
-	try 
+	switch(msg) 
 	{
-		switch(msg) 
-		{
-			HANDLE_MSG(hwnd, WM_COMMAND, EditPorts_OnCommand);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, EditPorts_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_NOTIFY, EditPorts_OnNotify);
-			HANDLE_MSG(hwnd, WM_SIZE, EditPorts_OnSize);
-			case WM_PORTSETTINGSCHANGE:
-				CheckDlgButton(hwnd, IDC_HTTPPORT, g_config.PortSet.AllowHttp);
-				return 1;
-			default: return 0;
-		}
+		HANDLE_MSG(hwnd, WM_COMMAND, EditPorts_OnCommand);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, EditPorts_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_NOTIFY, EditPorts_OnNotify);
+		HANDLE_MSG(hwnd, WM_SIZE, EditPorts_OnSize);
+		case WM_PORTSETTINGSCHANGE:
+			CheckDlgButton(hwnd, IDC_HTTPPORT, g_config.PortSet.AllowHttp);
+			return 1;
+		default: return 0;
 	}
-	catch(exception &ex) 
-	{
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) 
-	{
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
-	}
-
 }

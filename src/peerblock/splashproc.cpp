@@ -112,20 +112,10 @@ static void Splash_OnTimer(HWND hwnd, UINT id) {
 }
 
 INT_PTR CALLBACK Splash_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_DESTROY, Splash_OnDestroy);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, Splash_OnInitDialog);
-			HANDLE_MSG(hwnd, WM_TIMER, Splash_OnTimer);
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_DESTROY, Splash_OnDestroy);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, Splash_OnInitDialog);
+		HANDLE_MSG(hwnd, WM_TIMER, Splash_OnTimer);
+		default: return 0;
 	}
 }

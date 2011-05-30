@@ -69,24 +69,14 @@ static BOOL About_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 }
 
 INT_PTR CALLBACK About_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	try {
-		switch(msg) {
-			HANDLE_MSG(hwnd, WM_CLOSE, About_OnClose);
-			HANDLE_MSG(hwnd, WM_COMMAND, About_OnCommand);
-			HANDLE_MSG(hwnd, WM_DESTROY, About_OnDestroy);
-			HANDLE_MSG(hwnd, WM_INITDIALOG, About_OnInitDialog);
-			case WM_DIALOG_ICON_REFRESH:
-				RefreshDialogIcon(hwnd);
-				return 1;
-			default: return 0;
-		}
-	}
-	catch(exception &ex) {
-		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
-		return 0;
-	}
-	catch(...) {
-		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
-		return 0;
+	switch(msg) {
+		HANDLE_MSG(hwnd, WM_CLOSE, About_OnClose);
+		HANDLE_MSG(hwnd, WM_COMMAND, About_OnCommand);
+		HANDLE_MSG(hwnd, WM_DESTROY, About_OnDestroy);
+		HANDLE_MSG(hwnd, WM_INITDIALOG, About_OnInitDialog);
+		case WM_DIALOG_ICON_REFRESH:
+			RefreshDialogIcon(hwnd);
+			return 1;
+		default: return 0;
 	}
 }
