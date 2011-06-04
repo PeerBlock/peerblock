@@ -706,7 +706,7 @@ IDR_TRAYMENU MENU
 BEGIN
     POPUP "&Tray"
     BEGIN
-        MENUITEM "&PeerBlock",                  ID_TRAY_PEERBLOCK, CHECKED
+        MENUITEM "Hide/Show &PeerBlock",        ID_TRAY_PEERBLOCK, CHECKED
         MENUITEM SEPARATOR
         MENUITEM "&Enabled",                    ID_TRAY_ENABLED, CHECKED
         MENUITEM "&Disabled",                   ID_TRAY_DISABLED
