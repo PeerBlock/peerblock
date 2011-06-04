@@ -57,6 +57,10 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 	{
 		unsigned char c = (unsigned char) str[i];
 
+		// PeerBlock custom code (start)
+		/* "TinyXML will fail to load text elements containing an ampersand followed by either x or #"
+		  http://sourceforge.net/tracker/?func=detail&aid=3031828&group_id=13559&atid=313559
+		  In our case it would fail to parse the settings file.
 		if (    c == '&' 
 		     && i < ( (int)str.length() - 2 )
 			 && str[i+1] == '#'
@@ -80,7 +84,8 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 					break;
 			}
 		}
-		else if ( c == '&' )
+		else if ( c == '&' ) */
+		if ( c == '&' ) // PeerBlock custom code (end)
 		{
 			outString->append( entity[0].str, entity[0].strLength );
 			++i;
