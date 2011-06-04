@@ -22,6 +22,10 @@ REM  3. This notice may not be removed or altered from any source distribution.
 
 REM  $Id$
 
+REM You can set here the Inno Setup path if for example you have Inno Setup Unicode
+REM installed and you want to use the ANSI Inno Setup which is in another location
+REM SET "InnoSetupPath="
+
 REM check for the help switches
 IF /I "%1"=="help"   GOTO SHOWHELP
 IF /I "%1"=="/help"  GOTO SHOWHELP
@@ -114,9 +118,11 @@ IF "%PROGRAMFILES(x86)%zzz"=="zzz" (
   SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
 )
 
-FOR /F "delims=" %%a IN (
-  'REG QUERY "%U_%\Inno Setup 5_is1" /v "Inno Setup: App Path"2^>Nul^|FIND "REG_"') DO (
-  SET "InnoSetupPath=%%a" & CALL :SubInnoSetupPath %%InnoSetupPath:*Z=%%)
+IF NOT DEFINED InnoSetupPath (
+  FOR /F "delims=" %%a IN (
+    'REG QUERY "%U_%\Inno Setup 5_is1" /v "Inno Setup: App Path"2^>Nul^|FIND "REG_"') DO (
+    SET "InnoSetupPath=%%a" & CALL :SubInnoSetupPath %%InnoSetupPath:*Z=%%)
+)
 
 IF NOT DEFINED InnoSetupPath (
   ECHO. & ECHO.
