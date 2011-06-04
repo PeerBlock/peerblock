@@ -5,19 +5,19 @@
 //================================================================================================
 
 /*
-	Copyright (C) 2010 PeerBlock, LLC
+	Copyright (C) 2010-2011 PeerBlock, LLC
 
-	This software is provided 'as-is', without any express or implied warranty.  In no event will 
+	This software is provided 'as-is', without any express or implied warranty.  In no event will
 	the authors be held liable for any damages arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, including commercial 
-	applications, and to alter it and redistribute it freely, subject to the 
+	Permission is granted to anyone to use this software for any purpose, including commercial
+	applications, and to alter it and redistribute it freely, subject to the
 	following restrictions:
 
-	1. The origin of this software must not be misrepresented; you must not claim that you wrote 
-		the original software. If you use this software in a product, an acknowledgment in the 
+	1. The origin of this software must not be misrepresented; you must not claim that you wrote
+		the original software. If you use this software in a product, an acknowledgment in the
 		product documentation would be appreciated but is not required.
-	2. Altered source versions must be plainly marked as such, and must not be misrepresented as 
+	2. Altered source versions must be plainly marked as such, and must not be misrepresented as
 		being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 
@@ -36,8 +36,8 @@
 ///   Returns the List Name ID to which the specified URL belongs, or LISTNAME_COUNT if not found.
 /// </summary>
 //
-LISTNAME ListUrls::FindListNum(wstring _url) 
-{ 
+LISTNAME ListUrls::FindListNum(wstring _url)
+{
 	//TRACEV("[ListUrls] [FindListNum]  > Entering routine.");
 
 	//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   looking for url: [%1%]")) % _url.c_str() );
@@ -47,15 +47,15 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 	bool foundUrl = false;
 
 	// loop through each List Name
-	for (listName=0; listName<LISTNAME_COUNT && foundUrl==false; ++listName)	
+	for (listName=0; listName<LISTNAME_COUNT && foundUrl==false; ++listName)
 	{
 		// loop through each URL for that List
-		for (unsigned int listUrl=LISTS_FIELD_BESTURL; listUrl<Lists[listName].size() && foundUrl==false; ++listUrl)	
+		for (unsigned int listUrl=LISTS_FIELD_BESTURL; listUrl<Lists[listName].size() && foundUrl==false; ++listUrl)
 		{
 			// check for specified URL
 			if (Lists[listName][listUrl].Url.compare(_url) == 0)
 			{
-				//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   found url at: [%1%][%2%]")) 
+				//tstring strBuf = boost::str(tformat(_T("[ListUrls] [FindListNum]   found url at: [%1%][%2%]"))
 				//	% listName % listUrl );
 				//TRACEBUFI(strBuf);
 				foundUrl = true;	// found it!
@@ -68,7 +68,7 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 		listName -= 1;	// we're incrementing listName one extra time, after finding a match
 
 	//TRACEI("[ListUrls] [FindListNum]  < Leaving routine.");
-	return (LISTNAME)(listName);	
+	return (LISTNAME)(listName);
 
 }; // End of FindListNum()
 
@@ -89,15 +89,15 @@ LISTNAME ListUrls::FindListNum(wstring _url)
 ///   The URL which the callers wants to sanity-check.
 /// </param>
 /// <param name="num">
-///   A "hint" as to which row of our internal Lists array the specified URL belongs.  This 
+///   A "hint" as to which row of our internal Lists array the specified URL belongs.  This
 ///   parameter should have been discovered by the caller via a previous call to FindListNum().
 ///   If the caller wants to explicitly give no hint, this parameter should be set to
 ///   LISTNAME_COUNT.
 /// </param>
 /// <param name="listman">
-///   If called from within the ListManager, this should be the HWND of the ListManager window.  
-///   We're using this instead of g_config.dynamiclists[] because it will be updated as soon as 
-///   lists are added, instead of only updated after the ListManager is closed.  If this 
+///   If called from within the ListManager, this should be the HWND of the ListManager window.
+///   We're using this instead of g_config.dynamiclists[] because it will be updated as soon as
+///   lists are added, instead of only updated after the ListManager is closed.  If this
 ///   parameter is NULL, we will instead check against g_config.
 /// </param>
 //
@@ -123,7 +123,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 		if (Lists[_num][idx].Url.compare(_url) == 0)
 		{
 			// found it!
-			tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    found url at: [%1%][%2%]")) 
+			tstring strBuf = boost::str(tformat(_T("[ListUrls] [CheckUrl]    found url at: [%1%][%2%]"))
 				% _num % idx );
 			TRACEBUFI(strBuf);
 			found = true;
@@ -157,7 +157,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 		HWND listman_list = GetDlgItem(_listman, IDC_LIST);
 		int count=ListView_GetItemCount(listman_list);
 
-		for(int i=0; i<count; i++) 
+		for(int i=0; i<count; i++)
 		{
 			LVITEM lvi={0};
 			lvi.iItem=i;
@@ -177,7 +177,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 				}
 				else
 				{
-					// check against each url for this list-name 
+					// check against each url for this list-name
 					LISTNAME existingListId = FindListNum(l->Url);
 					for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 					{
@@ -204,7 +204,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 			}
 			else
 			{
-				// check against each url for this list-name 
+				// check against each url for this list-name
 				existingListId = FindListNum(g_deflists[i].Url);
 				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
@@ -233,7 +233,7 @@ LISTFLAGS ListUrls::CheckUrl(wstring _url, LISTNAME _num, HWND _listman)
 			}
 			else
 			{
-				// check against each url for this list-name 
+				// check against each url for this list-name
 				existingListId = FindListNum(g_config.DynamicLists[i].Url);
 				for (unsigned int j=LISTS_FIELD_BESTURL; existingListId!=LISTNAME_COUNT && j<Lists[existingListId].size(); ++j)
 				{
@@ -288,7 +288,7 @@ wstring ListUrls::GetListDesc(LISTNAME url_num)
 //    - Called by ?
 //
 /// <summary>
-///   Sets up our mapping of List Name IDs to the List Description and various URLs that 
+///   Sets up our mapping of List Name IDs to the List Description and various URLs that
 ///   correspond to them.  Also sets list flags, to let the caller know what to do about a given
 ///   URL when sanity-checking it.
 /// </summary>

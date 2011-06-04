@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2010 PeerBlock, LLC
+	Copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -144,7 +144,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 
 	// Now that iblocklist.com has support for some "friendly" URLs for lists, we can migrate people
 	// away from the slow, unreliable bluetack.co.uk servers and over to iblocklist.  We're checking
-	// against any of the bluetack URLs from our old dropdown list, and changing 'em over.  Same 
+	// against any of the bluetack URLs from our old dropdown list, and changing 'em over.  Same
 	// thing for any of the old naming-scheme iblocklist URLs.  We're also removing the bluetack
 	// "trojan" list, since it resolves to an unusable file and there is no iblocklist equivalent.
 
@@ -176,13 +176,13 @@ void PerformPrevRelUpdates(HWND _hwnd)
 					tempList.push_back(newList);
 					if (newList.Url.compare(list->Url) == 0)
 					{
-						tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - found no better list url than [%1%]")) 
+						tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - found no better list url than [%1%]"))
 							% list->Url.c_str() );
 						TRACEBUFW(strBuf);
 					}
 					else
 					{
-						tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - migrated list from [%1%] to [%2%]")) 
+						tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - migrated list from [%1%] to [%2%]"))
 							% list->Url.c_str() % newList.Url.c_str() );
 						TRACEBUFW(strBuf);
 					}
@@ -193,7 +193,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 				}
 				else
 				{
-					tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - found unknown list url [%1%], copying over as-is")) 
+					tstring strBuf = boost::str(tformat(_T("[mainproc] [PerformPrevRelUpdates]    - found unknown list url [%1%], copying over as-is"))
 						% list->Url.c_str() );
 					TRACEBUFW(strBuf);
 					DynamicList newList = *list;
@@ -299,7 +299,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 				newList->Description = listUrls.GetListDesc(LISTNAME_CIDR_BOGON);
 				tempList.push_back(*newList);
 			}
-			else if ( listId == LISTNAME_BT_LEVEL1 || listId == LISTNAME_BT_ADS || 
+			else if ( listId == LISTNAME_BT_LEVEL1 || listId == LISTNAME_BT_ADS ||
 					  listId == LISTNAME_BT_SPY || listId == LISTNAME_BT_EDU )
 			{
 				// Make sure Default Lists are set to Block, not Allow.  This will also take care

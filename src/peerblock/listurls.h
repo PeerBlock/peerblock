@@ -1,17 +1,17 @@
 /*
-	Copyright (C) 2010 PeerBlock, LLC
+	Copyright (C) 2010-2011 PeerBlock, LLC
 
-	This software is provided 'as-is', without any express or implied warranty.  In no event will 
+	This software is provided 'as-is', without any express or implied warranty.  In no event will
 	the authors be held liable for any damages arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, including commercial 
-	applications, and to alter it and redistribute it freely, subject to the 
+	Permission is granted to anyone to use this software for any purpose, including commercial
+	applications, and to alter it and redistribute it freely, subject to the
 	following restrictions:
 
-	1. The origin of this software must not be misrepresented; you must not claim that you wrote 
-		the original software. If you use this software in a product, an acknowledgment in the 
+	1. The origin of this software must not be misrepresented; you must not claim that you wrote
+		the original software. If you use this software in a product, an acknowledgment in the
 		product documentation would be appreciated but is not required.
-	2. Altered source versions must be plainly marked as such, and must not be misrepresented as 
+	2. Altered source versions must be plainly marked as such, and must not be misrepresented as
 		being the original software.
 	3. This notice may not be removed or altered from any source distribution.
 
@@ -170,7 +170,7 @@ public:
 };
 
 
-class ListUrls 
+class ListUrls
 {
 
 private:
@@ -178,7 +178,7 @@ private:
 
 public:
 	bool Init();
-	wstring GetBestUrl(LISTNAME url_num) { return(Lists[url_num][LISTS_FIELD_BESTURL].Url); }; 
+	wstring GetBestUrl(LISTNAME url_num) { return(Lists[url_num][LISTS_FIELD_BESTURL].Url); };
 	LISTNAME FindListNum(wstring url);
 	LISTFLAGS CheckUrl(wstring url, LISTNAME num=LISTNAME_COUNT, HWND listman=NULL);
 	wstring GetListDesc(LISTNAME url_num);
@@ -187,16 +187,16 @@ public:
 
 
 // Expected Usage:
-// - AddList_OnInitDialog, the window that pops up when you're adding a new list, creates an 
+// - AddList_OnInitDialog, the window that pops up when you're adding a new list, creates an
 //   instance of this class
-// - Once you select a list from the dropdown list, it prepopulates the Description field (if 
+// - Once you select a list from the dropdown list, it prepopulates the Description field (if
 //   nothing previously user-entered)
 // - After clicking OK, run through CheckUrl(), display message as appropriate per return flags
 // - AddList_proc reponsible for checking for duplicates
 //   - Loop through each currently added list to get it's ListNum (FindListNum()), and compare this
 //     against the newly-user-added list
 // - Offer to auto-correct issues, by using the LISTS_FIELD_BESTURL
-// - ListUrls class instance destroyed along with AddList window as this is likely an infrequent 
+// - ListUrls class instance destroyed along with AddList window as this is likely an infrequent
 //   task so we shouldn't need to keep this stuff in memory all the time
 
 // Possible Errors:

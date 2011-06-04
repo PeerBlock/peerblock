@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -78,7 +78,7 @@ struct DynamicList : List {
 
 	void Dump(TRACELOG_LEVEL _lvl)
 	{
-		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%] downloaded:[%6%]")) 
+		tstring strBuf = boost::str(tformat(_T("[DynamicList] [Dump]    desc:[%1%] url:[%2%] enabled:[%3%] type:[%4%] updated:[%5%] downloaded:[%6%]"))
 			% Description % Url % Enabled % Type % LastUpdate % LastDownload );
 
 		g_tlog.LogMessage(strBuf, _lvl);
@@ -97,7 +97,7 @@ struct PortRange
 	USHORT End;
 };
 
-struct PortProfile 
+struct PortProfile
 {
 	tstring Name;					// name of profile
 	bool Enabled;					// true to use this profile
@@ -105,7 +105,7 @@ struct PortProfile
 	std::vector<PortRange> Ports;	// ports in profile
 };
 
-struct PortSet 
+struct PortSet
 {
 	// allow common protocols for destination
 	bool AllowHttp;		// 80, 443
@@ -124,7 +124,7 @@ struct PortSet
 	}
 
 	// merges all the enabled profiles
-	void Merge() 
+	void Merge()
 	{
 		DestinationPorts.clear();
 		SourcePorts.clear();
@@ -156,7 +156,7 @@ struct PortSet
 								DestinationPorts.insert(i);
 							}
 						}
-						
+
 						if (pp.Type == Source || pp.Type == Both) {
 							for (USHORT i = pr.Start; i <= pr.End; i++) {
 								SourcePorts.insert(i);

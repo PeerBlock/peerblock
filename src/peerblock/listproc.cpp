@@ -1,14 +1,14 @@
 //================================================================================================
 //  listproc.cpp
 //
-//  This file contains all the routines used to handle the editing or creation of a lists: the 
+//  This file contains all the routines used to handle the editing or creation of a lists: the
 //  window that pops up after you open the List Manager and then select a list and click Open List,
 //  or if you click Create List, select a list File, and then click OK.
 //================================================================================================
 
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -35,10 +35,10 @@ using namespace std;
 #define IDC_SUBCTRL 200
 static const UINT ID_CONTEXT_REMOVE=200;
 
-class ListRow 
+class ListRow
 {
 private:
-	static tstring format_ip(unsigned int ip) 
+	static tstring format_ip(unsigned int ip)
 	{
 		const unsigned char *bytes=reinterpret_cast<const unsigned char*>(&ip);
 
@@ -81,19 +81,19 @@ HWND g_hListDlg = NULL;
 /// <remarks>
 ///   This routine is called a LOT while the window is open; hundreds of times per second.  These
 ///   "spammy" calls fail to pass any of the tests to actually do anything but pass the message on
-///   to CallWindowProc(), but just be aware of it and don't put any code in here that's not 
+///   to CallWindowProc(), but just be aware of it and don't put any code in here that's not
 ///   inside an if-statement!
 /// </remarks>
 //
-static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if(msg==WM_COMMAND && LOWORD(wParam)==IDC_SUBCTRL && HIWORD(wParam)==EN_KILLFOCUS) 
+	if(msg==WM_COMMAND && LOWORD(wParam)==IDC_SUBCTRL && HIWORD(wParam)==EN_KILLFOCUS)
 	{
 		TRACEV("[listproc] [ListView_SubProc]    kill focus");
 		TCHAR buf[256];
 		GetWindowText(g_subctrl, buf, 256);
 
-		if(_tcslen(buf)>0) 
+		if(_tcslen(buf)>0)
 		{
 			TRACEV("[listproc] [ListView_SubProc]    no subctrl text");
 			ListRow &r=g_rows[g_item];
@@ -110,7 +110,7 @@ static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
 					break;
 			}
 		}
-		else if(g_subitem==0 && g_item==ListView_GetItemCount(hwnd)-1) 
+		else if(g_subitem==0 && g_item==ListView_GetItemCount(hwnd)-1)
 		{
 			TRACEV("[listproc] [ListView_SubProc]    no subitem; removing item");
 			ListView_DeleteItem(hwnd, g_item);
@@ -122,7 +122,7 @@ static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
 		DestroyWindow(g_subctrl);
 		g_subctrl=NULL;
 	}
-	else if(msg==WM_KEYDOWN && wParam==VK_DELETE && ListView_GetSelectedCount(hwnd)>0 && GetDlgItem(GetParent(hwnd), IDC_REMOVE)) 
+	else if(msg==WM_KEYDOWN && wParam==VK_DELETE && ListView_GetSelectedCount(hwnd)>0 && GetDlgItem(GetParent(hwnd), IDC_REMOVE))
 	{
 		TRACEI("[listproc] [ListView_SubProc]    delete/remove item");
 		stack<int> items;
@@ -130,7 +130,7 @@ static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
 			items.push(index);
 
 		SendMessage(hwnd, WM_SETREDRAW, FALSE, 0);
-		for(; items.size()>0; items.pop()) 
+		for(; items.size()>0; items.pop())
 		{
 			ListView_DeleteItem(hwnd, items.top());
 			g_rows.erase(g_rows.begin()+items.top());
@@ -159,11 +159,11 @@ static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
 ///   an IPv4 address or not.  TODO: update ParseIp to handle IPv6 addresses too!
 /// </remarks>
 //
-static unsigned int ParseIp(LPCTSTR str) 
+static unsigned int ParseIp(LPCTSTR str)
 {
 	unsigned int ipa, ipb, ipc, ipd;
 
-	if(_stscanf(str, _T("%u.%u.%u.%u"), &ipa, &ipb, &ipc, &ipd)==4) 
+	if(_stscanf(str, _T("%u.%u.%u.%u"), &ipa, &ipb, &ipc, &ipd)==4)
 	{
 		union {
 			unsigned int ip;
@@ -201,7 +201,7 @@ static unsigned int ParseIp(LPCTSTR str)
 ///   in-window button labelled "Close".  Only the default Windows close (X) button.
 /// </remarks>
 //
-static void List_OnClose(HWND hwnd) 
+static void List_OnClose(HWND hwnd)
 {
 	TRACEI("[listproc] [List_OnClose]    closing list-edit window");
 	EndDialog(hwnd, IDCANCEL);
@@ -220,14 +220,14 @@ static void List_OnClose(HWND hwnd)
 ///   Handles the user clicking on buttons in the List Manager window.
 /// </summary>
 //
-static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
 	if(g_subctrl) // haven't found a better way to avoid the default push button :/
 	{
 		TRACEV("[listproc] [List_OnCommand]    global subctrl");
 		SetFocus(hwnd);
 
-		if(g_subitem!=2) 
+		if(g_subitem!=2)
 		{
 			TRACEV("[listproc] [List_OnCommand]    g_subitem != 2");
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
@@ -235,7 +235,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			TCHAR buf[32];
 			ListView_GetItemText(list, g_item, ++g_subitem, buf, 32);
 
-			if(buf[0]==_T('\0')) 
+			if(buf[0]==_T('\0'))
 			{
 				TRACEV("[listproc] [List_OnCommand]    null buffer");
 				RECT rc;
@@ -253,9 +253,9 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		return;
 	}
 
-	switch(id) 
+	switch(id)
 	{
-		case IDC_ADD: 
+		case IDC_ADD:
 		{
 			TRACEI("[listproc] [List_OnCommand]    user clicked Add");
 			g_rows.push_back(ListRow());
@@ -284,7 +284,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // End of case IDC_ADD
 
 
-		case IDC_REMOVE: 
+		case IDC_REMOVE:
 		{
 			TRACEI("[listproc] [List_OnCommand]    user clicked Remove");
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
@@ -294,7 +294,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED))
 				items.push(index);
 
-			for(; items.size()>0; items.pop()) 
+			for(; items.size()>0; items.pop())
 			{
 				ListView_DeleteItem(list, items.top());
 				g_rows.erase(g_rows.begin()+items.top());
@@ -303,12 +303,12 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // End of case IDC_REMOVE
 
 
-		case IDOK: 
+		case IDOK:
 		{
 			TRACEI("[listproc] [List_OnCommand]    user clicked OK");
 			p2p::list l;
 
-			for(vector<ListRow>::size_type i=0; i<g_rows.size(); i++) 
+			for(vector<ListRow>::size_type i=0; i<g_rows.size(); i++)
 			{
 				p2p::range r;
 
@@ -338,7 +338,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case IDC_SEARCH:
 			TRACED("[listproc] [List_OnCommand]    user clicked into or out of Search box, or entered some text");
-			if(codeNotify==EN_CHANGE) 
+			if(codeNotify==EN_CHANGE)
 			{
 				HWND list=GetDlgItem(hwnd, IDC_LIST);
 				tstring query=GetDlgItemText(hwnd, IDC_SEARCH);
@@ -364,7 +364,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			break; // End of case IDC_SEARCH
 
 
-		case IDC_NEXT: 
+		case IDC_NEXT:
 		{
 			TRACEV("[listproc] [List_OnCommand]    user clicked Find Next (search) button");
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
@@ -379,7 +379,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				items.push(index);
 
 			int i=ListView_FindItem(list, items.empty()?-1:items.top(), &find);
-			
+
 			for(; !items.empty(); items.pop())
 				ListView_SetItemState(list, items.top(), 0, LVIS_SELECTED);
 
@@ -406,7 +406,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 ///   Called when we're destroying the window.
 /// </summary>
 //
-static void List_OnDestroy(HWND hwnd) 
+static void List_OnDestroy(HWND hwnd)
 {
 	TRACEV("[listproc] [List_OnDestroy]  > Entering routine.");
 	g_rows.clear();
@@ -432,7 +432,7 @@ static void List_OnDestroy(HWND hwnd)
 ///   Adds a column to our ListView.
 /// </summary>
 //
-static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) 
+static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText)
 {
 	LVCOLUMN lvc={0};
 
@@ -460,7 +460,7 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText)
 ///   Specifies max size of our window.
 /// </summary>
 //
-static void List_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) 
+static void List_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 {
 	RECT rc={0};
 	rc.right=372;
@@ -489,7 +489,7 @@ static void List_OnSize(HWND hwnd, UINT state, int cx, int cy);
 ///   Initializes the List Manager window.  Adds lists to our ListView, etc.
 /// </summary>
 //
-static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	TRACEI("[listproc] [List_OnInitDialog]  > Entering routine.");
 
@@ -510,7 +510,7 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	path p;
 
-	if(DynamicList *dl=dynamic_cast<DynamicList*>(lp)) 
+	if(DynamicList *dl=dynamic_cast<DynamicList*>(lp))
 	{
 		DestroyWindow(GetDlgItem(hwnd, IDC_ADD));
 		DestroyWindow(GetDlgItem(hwnd, IDC_REMOVE));
@@ -519,13 +519,13 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		SetDlgItemText(hwnd, IDCANCEL, LoadString(IDS_CLOSE).c_str());
 		p=dl->File();
 	}
-	else if(StaticList *sl=dynamic_cast<StaticList*>(lp)) 
+	else if(StaticList *sl=dynamic_cast<StaticList*>(lp))
 	{
 		if(sl->File.has_root()) p=sl->File;
 		else if(!sl->File.empty()) p=path::base_dir()/sl->File;
 	}
 
-	if(!p.empty() && path::exists(p)) 
+	if(!p.empty() && path::exists(p))
 	{
 		p2p::list l;
 		LoadList(p, l);
@@ -540,7 +540,7 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 #pragma warning(default:4244 4312)
 
 	if( g_config.ListEditorWindowPos.left!=0 || g_config.ListEditorWindowPos.top!=0 ||
-		g_config.ListEditorWindowPos.right!=0 || g_config.ListEditorWindowPos.bottom!=0	) 
+		g_config.ListEditorWindowPos.right!=0 || g_config.ListEditorWindowPos.bottom!=0	)
 	{
 		SetWindowPos(hwnd, NULL,
 			g_config.ListEditorWindowPos.left,
@@ -574,21 +574,21 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 ///   Handles notification events, including right-mouse clicks.
 /// </summary>
 //
-static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) 
+static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 {
-	if(nmh->idFrom==IDC_LIST) 
+	if(nmh->idFrom==IDC_LIST)
 	{
-		switch(nmh->code) 
+		switch(nmh->code)
 		{
-			case LVN_GETDISPINFO: 
+			case LVN_GETDISPINFO:
 			{
-				// This gets called hundreds of times per second while mouse is hovering over 
+				// This gets called hundreds of times per second while mouse is hovering over
 				// entries in the Range List.
 				NMLVDISPINFO *di=(NMLVDISPINFO*)nmh;
 
 				LPCTSTR str;
 
-				switch(di->item.iSubItem) 
+				switch(di->item.iSubItem)
 				{
 					case 0:
 						str=g_rows[di->item.iItem].name.c_str();
@@ -607,7 +607,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 			} break; // End of case LVN_GETDISPINFO
 
 
-			case LVN_ODFINDITEM: 
+			case LVN_ODFINDITEM:
 			{
 				TRACEI("[listproc] [List_OnNotify]    searching for item");
 				NMLVFINDITEM &fi=*(NMLVFINDITEM*)nmh;
@@ -619,26 +619,26 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 				int end=(int)g_rows.size();
 
-				for(int i=fi.iStart; i<end; i++) 
+				for(int i=fi.iStart; i<end; i++)
 				{
-					if(ip && g_rows[i].lstart<=ip && ip<=g_rows[i].lend) 
+					if(ip && g_rows[i].lstart<=ip && ip<=g_rows[i].lend)
 					{
 						SetWindowLongPtr(hwnd, DWLP_MSGRESULT, i);
 						return i;
 					}
-					else 
+					else
 					{
 						tstring str=g_rows[i].name;
 						boost::to_lower(str);
-						
-						if(str.compare(s) == 0) 
+
+						if(str.compare(s) == 0)
 						{
 							SetWindowLongPtr(hwnd, DWLP_MSGRESULT, i);
 							return i;
 						}
 					}
 
-					if(i==end-1 && fi.iStart>0) 
+					if(i==end-1 && fi.iStart>0)
 					{
 						i=-1;
 						end=fi.iStart;
@@ -653,7 +653,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 			} break; // End of case LVN_ODFINDITEM
 
 
-			case LVN_ITEMCHANGED: 
+			case LVN_ITEMCHANGED:
 			{
 				// this is processed (multiple times) whenever the user clicks on an item in the Range List
 				TRACED("[listproc] [List_OnNotify]    item changed");
@@ -667,7 +667,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 			} break; // End of case LVN_ITEMCHANGED
 
 
-			case NM_CLICK: 
+			case NM_CLICK:
 			{
 				TRACEV("[listproc] [List_OnNotify]    click detected in client-area of range list");
 				{
@@ -675,22 +675,22 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 					if(typeid(*l)!=typeid(StaticList)) break;
 				}
 
-				if(!g_cansub) 
+				if(!g_cansub)
 					g_cansub=(ListView_GetSelectedCount(nmh->hwndFrom)==1);
-				else 
+				else
 				{
 					TRACEV("[listproc] [List_OnNotify]    + cansub");
 					LVHITTESTINFO info={0};
 					info.pt=((NMITEMACTIVATE*)nmh)->ptAction;
 
-					if(g_subctrl) 
+					if(g_subctrl)
 					{
 						TRACEV("[listproc] [List_OnNotify]    + g_subctrl");
 						DestroyWindow(g_subctrl);
 						g_subctrl=NULL;
 					}
 
-					if(ListView_SubItemHitTest(nmh->hwndFrom, &info)!=-1) 
+					if(ListView_SubItemHitTest(nmh->hwndFrom, &info)!=-1)
 					{
 						TRACEV("[listproc] [List_OnNotify]    + subitem hit");
 						RECT rc;
@@ -702,7 +702,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						g_item=info.iItem;
 						g_subitem=info.iSubItem;
 
-						if(info.iSubItem==0) 
+						if(info.iSubItem==0)
 						{
 							TRACEV("[listproc] [List_OnNotify]    + subitem: 0");
 							RECT sub;
@@ -716,7 +716,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 							SetWindowText(g_subctrl, buf);
 							SetFocus(g_subctrl);
 						}
-						else 
+						else
 						{
 							TRACEV("[listproc] [List_OnNotify]    + subitem: not 0");
 							g_subctrl=CreateWindow(WC_IPADDRESS, NULL, WS_CHILD|WS_VISIBLE|WS_BORDER|CBS_DROPDOWNLIST,
@@ -733,18 +733,18 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 			} break; // End of case NM_CLICK
 
 
-			case NM_RCLICK: 
+			case NM_RCLICK:
 			{
 				TRACEV("[listproc] [List_OnNotify]    user right-clicked in client area of range list");
 				NMITEMACTIVATE *nmia=(NMITEMACTIVATE*)nmh;
 
-				if(nmia->iItem!=-1) 
+				if(nmia->iItem!=-1)
 				{
 					TRACED("[listproc] [List_OnNotify]    + click detected on a list entry");
 					p2p::list l;
 					stack<int> indexes;
 
-					for(int index=ListView_GetNextItem(nmh->hwndFrom, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(nmh->hwndFrom, index, LVNI_SELECTED)) 
+					for(int index=ListView_GetNextItem(nmh->hwndFrom, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(nmh->hwndFrom, index, LVNI_SELECTED))
 					{
 						TCHAR name[256], start[16], end[16];
 
@@ -763,7 +763,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 					{
 						List *l=(List*)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
 
-						if(typeid(*l)==typeid(StaticList)) 
+						if(typeid(*l)==typeid(StaticList))
 						{
 							InsertMenu(context, -1, MF_BYPOSITION|MF_SEPARATOR, 0, NULL);
 							InsertMenu(context, -1, MF_BYPOSITION|MF_STRING, ID_CONTEXT_REMOVE, LoadString(IDS_REMOVE).c_str());
@@ -779,9 +779,9 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 					DestroyMenu(menu);
 
-					switch(ret) 
+					switch(ret)
 					{
-						case ID_CONTEXT_ALLOWFOR15MINUTES: 
+						case ID_CONTEXT_ALLOWFOR15MINUTES:
 						{
 							TRACEI("[listproc] [List_OnNotify]    + allow for 15 minutes");
 							g_tempallow.insert(l);
@@ -796,7 +796,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						} break; // End of case ID_CONTEXT_ALLOWFOR15MINUTES
 
 
-						case ID_CONTEXT_ALLOWFORONEHOUR: 
+						case ID_CONTEXT_ALLOWFORONEHOUR:
 						{
 							TRACEI("[listproc] [List_OnNotify]    + allow for one hour");
 							g_tempallow.insert(l);
@@ -811,7 +811,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						} break; // End of case ID_CONTEXT_ALLOWFORONEHOUR
 
 
-						case ID_CONTEXT_ALLOWPERMANENTLY: 
+						case ID_CONTEXT_ALLOWPERMANENTLY:
 						{
 							TRACEI("[listproc] [List_OnNotify]    + allow permanently");
 							const path dir=path::base_dir()/_T("lists");
@@ -830,16 +830,16 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 							bool found=false;
 
-							for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++) 
+							for(vector<StaticList>::size_type i=0; i<g_config.StaticLists.size(); i++)
 							{
-								if(g_config.StaticLists[i].File==_T("lists\\permallow.p2b")) 
+								if(g_config.StaticLists[i].File==_T("lists\\permallow.p2b"))
 								{
 									found=true;
 									break;
 								}
 							}
 
-							if(!found) 
+							if(!found)
 							{
 								StaticList list;
 								list.Type=List::Allow;
@@ -854,11 +854,11 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 						} break; // End of case ID_CONTEXT_ALLOWPERMANENTLY
 
 
-						case ID_CONTEXT_REMOVE: 
+						case ID_CONTEXT_REMOVE:
 						{
 							TRACEI("[listproc] [List_OnNotify]    + remove");
 							SendMessage(nmh->hwndFrom, WM_SETREDRAW, FALSE, 0);
-							for(; !indexes.empty(); indexes.pop()) 
+							for(; !indexes.empty(); indexes.pop())
 							{
 								ListView_DeleteItem(nmh->hwndFrom, indexes.top());
 								g_rows.erase(g_rows.begin()+indexes.top());
@@ -894,7 +894,7 @@ static INT_PTR List_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 ///   Handles resizing of the window.
 /// </summary>
 //
-static void List_OnSize(HWND hwnd, UINT state, int cx, int cy) 
+static void List_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
 	TRACED("[listproc] [List_OnSize]  > Entering routine.");
 	HWND searchtext=GetDlgItem(hwnd, IDC_SEARCHTEXT);
@@ -918,7 +918,7 @@ static void List_OnSize(HWND hwnd, UINT state, int cx, int cy)
 	DeferWindowPos(dwp, next, NULL, (st.right-st.left)+(s.right-s.left)+21, 7, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 	DeferWindowPos(dwp, list, NULL, 7, (st.bottom-st.top)+14, cx-14, cy-28-(st.bottom-st.top)-(rc.bottom-rc.top), SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
 
-	if(add) 
+	if(add)
 	{
 		DeferWindowPos(dwp, add, NULL, 7, cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOOWNERZORDER|SWP_NOSIZE);
 		DeferWindowPos(dwp, remove, NULL, (rc.right-rc.left)+14, cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOOWNERZORDER|SWP_NOSIZE);
@@ -929,7 +929,7 @@ static void List_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	EndDeferWindowPos(dwp);
 
-	if(state==SIZE_RESTORED) 
+	if(state==SIZE_RESTORED)
 	{
 		SaveWindowPosition(hwnd, g_config.ListEditorWindowPos);
 	}
@@ -950,11 +950,11 @@ static void List_OnSize(HWND hwnd, UINT state, int cx, int cy)
 ///   The main messageproc of this thread.  Dispatches incoming messages to other routines.
 /// </summary>
 //
-INT_PTR CALLBACK List_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR CALLBACK List_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	try 
+	try
 	{
-		switch(msg) 
+		switch(msg)
 		{
 			HANDLE_MSG(hwnd, WM_CLOSE, List_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, List_OnCommand);
@@ -969,13 +969,13 @@ INT_PTR CALLBACK List_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			default: return 0;
 		}
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		TRACEC("[listproc] [List_DlgProc]    ERROR:  Caught EXCEPTION!!");
 		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		return 0;
 	}
-	catch(...) 
+	catch(...)
 	{
 		TRACEC("[listproc] [List_DlgProc]    ERROR:  Caught unknown EXCEPTION!!");
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);

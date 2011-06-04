@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -528,13 +528,13 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				if(RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"), 0, KEY_READ, &key)==ERROR_SUCCESS) {
 					TCHAR dir[MAX_PATH];
 					GetModuleFileName(NULL, dir, MAX_PATH);
-			
+
 					TCHAR data[MAX_PATH];
 					DWORD type=REG_SZ, datalen=sizeof(data);
-			
+
 					if(RegQueryValueEx(key, _T("PeerBlock"), NULL, &type, (LPBYTE)data, &datalen)==ERROR_SUCCESS && type==REG_SZ && !_tcscmp(data, dir))
 						CheckDlgButton(hwnd, IDC_STARTWITHWINDOWS, BST_CHECKED);
-			
+
 					RegCloseKey(key);
 				}
 

@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -36,7 +36,7 @@ static const UINT WM_PB_TRAY=WM_APP+2;
 static const UINT TRAY_ID=1;
 static const UINT TIMER_BLINKTRAY=1;
 static const UINT TIMER_PROCESSDB=2;
-static const UINT TIMER_TEMPALLOWHTTP=3; // used to "Allow HTTP for X Minutes" 
+static const UINT TIMER_TEMPALLOWHTTP=3; // used to "Allow HTTP for X Minutes"
 
 bool g_trayactive;
 NOTIFYICONDATA g_nid={0};
@@ -81,7 +81,7 @@ void SendDialogIconRefreshMessage()
 //    - Called by SetBlock(), SetBlockHttp(), and Main_OnInitDialog()
 //
 /// <summary>
-///   Selects the correct icon we should be using, based on whether we're enabled/disabled, 
+///   Selects the correct icon we should be using, based on whether we're enabled/disabled,
 ///   allowing HTTP and whether we're allowed to use a yellow "warning" icon.
 /// </summary>
 //
@@ -118,18 +118,18 @@ HICON DetermineIcon()
 //    - Called by Log_OnCommand() if user clicked Enable/Disable button on main UI
 //
 /// <summary>
-///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies 
+///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies
 ///   the driver.
 /// </summary>
 /// <param name="block">
 ///   True if we are being set to Enabled, meaning we will start filtering network traffic.
 /// </param>
 //
-void SetBlock(bool block) 
+void SetBlock(bool block)
 {
 	TRACEV("[mainproc] [SetBlock]  > Entering routine.");
 
-	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlock]   setting PeerBlock blocking from [%1%] to [%2%]")) 
+	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlock]   setting PeerBlock blocking from [%1%] to [%2%]"))
 		% g_config.Block % block);
 	TRACEBUFI(strBuf);
 	g_config.Block=block;
@@ -158,22 +158,22 @@ void SetBlock(bool block)
 //    - Called by Log_OnCommand() if user clicked Allow HTTP button on main UI
 //
 /// <summary>
-///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies 
+///   Updates our internal state to Block/Allow HTTP (temporarily, if requested), and notifies
 ///   the driver.
 /// </summary>
 /// <param name="block">
 ///   True if we are going to start blocking HTTP requests.
 /// </param>
 /// <param name="time">
-///   Optional parameter specifying the number of minutes for which this change will be active.  
+///   Optional parameter specifying the number of minutes for which this change will be active.
 ///   If 0, then the change is permanent.  Default is 0.
 /// </param>
 //
-void SetBlockHttp(bool _block, unsigned int _time) 
+void SetBlockHttp(bool _block, unsigned int _time)
 {
 	TRACEV("[mainproc] [SetBlockHttp]  > Entering routine.");
 
-	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]   setting PeerBlock HTTP blocking from [%1%] to [%2%]")) 
+	tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]   setting PeerBlock HTTP blocking from [%1%] to [%2%]"))
 		% g_config.PortSet.IsHttpBlocked() % _block);
 	TRACEBUFI(strBuf);
 
@@ -200,12 +200,12 @@ void SetBlockHttp(bool _block, unsigned int _time)
 		tstring strBuf = boost::str(tformat(_T("[mainproc] [SetBlockHttp]    setting temp-http timer to [%1%] minutes")) % _time );
 		TRACEBUFI(strBuf);
 		SetTimer(g_main, TIMER_TEMPALLOWHTTP, _time * 60 * 1000, NULL); // _time minutes
-		if (_time < 30) 
+		if (_time < 30)
 		{
 			g_config.TempAllowingHttpShort = true;
 			g_config.TempAllowingHttpLong = false;
 		}
-		else 
+		else
 		{
 			g_config.TempAllowingHttpLong = true;
 			g_config.TempAllowingHttpShort = false;
@@ -245,7 +245,7 @@ void Shutdown()
 {
 	TRACES("[mainproc] [Shutdown]    Shutting down PeerBlock.");
 
-	if(g_filter) 
+	if(g_filter)
 	{
 		TRACES("[mainproc] [Shutdown]    Resetting filter driver on exit");
 		g_filter.reset();
@@ -266,9 +266,9 @@ static void Main_OnClose(HWND hwnd) {
 	else DestroyWindow(hwnd);
 }
 
-static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-	switch(id) 
+	switch(id)
 	{
 		case ID_TRAY_PEERBLOCK:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'PeerBlock' item");
@@ -381,7 +381,7 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	}
 }
 
-static void Main_OnDestroy(HWND hwnd) 
+static void Main_OnDestroy(HWND hwnd)
 {
 	TRACEI("[mainproc] [Main_OnDestroy]    destroying main window");
 	{
@@ -398,7 +398,7 @@ static void Main_OnDestroy(HWND hwnd)
 	if(g_trayactive) Shell_NotifyIcon(NIM_DELETE, &g_nid);
 
 	TRACEI("[mainproc] [Main_OnDestroy]    destroying main window tabs");
-	try 
+	try
 	{
 		for(size_t i=0; i<g_tabcount; i++)
 		{
@@ -409,7 +409,7 @@ static void Main_OnDestroy(HWND hwnd)
 			TRACEBUFE(strBuf);
 		}
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		TRACEE("[mainproc] [Main_OnDestroy]  * ERROR: Exception occurred while destroying main window tabs");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
@@ -421,9 +421,9 @@ static void Main_OnDestroy(HWND hwnd)
 	TRACEW("[mainproc] [Main_OnDestroy]    post quit message");
 }
 
-static void Main_OnEndSession(HWND hwnd, BOOL fEnding) 
+static void Main_OnEndSession(HWND hwnd, BOOL fEnding)
 {
-	if(fEnding) 
+	if(fEnding)
 	{
 		TRACEW("[mainproc] [Main_OnEndSession]    System requires immediate termination, due to shutdown/logoff.");
 		Main_OnDestroy(hwnd);
@@ -456,7 +456,7 @@ static void FitTabChild(HWND tabs, HWND child) {
 }
 
 static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy);
-static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	g_main=hwnd;
 
@@ -464,9 +464,9 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    loading config");
 	bool firsttime=false;
-	try 
+	try
 	{
-		if(!g_config.Load()) 
+		if(!g_config.Load())
 		{
 			TRACEI("[mainproc] [Main_OnInitDialog]    displaying first-time wizard");
 			DisplayStartupWizard(hwnd);
@@ -489,7 +489,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 			g_tlog.SetLoglevel(TRACELOG_LEVEL_NONE);
 		}
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		TRACEC("[mainproc] [Main_OnInitDialog]    Exception trying to load config!");
 		ExceptionBox(hwnd, ex, __FILE__, __LINE__);
@@ -501,19 +501,19 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	time(&g_config.LastStarted);
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    resetting g_filter");
-	try 
+	try
 	{
 		g_filter.reset(new pbfilter());
 		TRACES("[mainproc] [Main_OnInitDialog]    g_filter reset.");
 	}
-	catch(peerblock_error &ex) 
+	catch(peerblock_error &ex)
 	{
 		PeerBlockExceptionBox(NULL, ex);
 		DestroyWindow(hwnd);
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	catch(win32_error &ex) 
+	catch(win32_error &ex)
 	{
 		DWORD code = ex.error();
 		if (code == 577)
@@ -531,7 +531,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		PostQuitMessage(0);
 		return FALSE;
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		const tstring text=boost::str(tformat(LoadString(IDS_DRIVERERRTEXT))%typeid(ex).name()%ex.what());
 		MessageBox(hwnd, text, IDS_DRIVERERR, MB_ICONERROR|MB_OK);
@@ -552,7 +552,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
-	for(size_t i=0; i<g_tabcount; i++) 
+	for(size_t i=0; i<g_tabcount; i++)
 	{
 		tstring buf=LoadString(g_tabs[i].Title);
 
@@ -565,7 +565,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		FitTabChild(tabs, g_tabs[i].Tab);
 	}
 
-	if( firsttime && !g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted ) 
+	if( firsttime && !g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted )
 	{
 		TRACEI("[mainproc] [Main_OnInitDialog]    updating lists for firsttime");
 
@@ -591,7 +591,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_nid.hWnd=hwnd;
 	g_nid.uID=TRAY_ID;
 	g_nid.uCallbackMessage=WM_PB_TRAY;
-	g_nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;	
+	g_nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;
 	g_nid.hIcon = DetermineIcon();
 
 	tostringstream toss;
@@ -599,7 +599,7 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	StringCbCopy(g_nid.szTip, sizeof(g_nid.szTip), toss.str().c_str());
 
-	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden))) 
+	if((g_trayactive=(!g_config.HideTrayIcon && !g_config.StayHidden)))
 	{
 		Shell_NotifyIcon(NIM_ADD, &g_nid);
 	}
@@ -722,18 +722,18 @@ static boost::shared_ptr<thread> g_dbthread;
 static spinlock g_processlock;
 
 
-static void Main_ProcessDb() 
+static void Main_ProcessDb()
 {
 	TRACEI("[mainproc] [Main_ProcessDb]  > Entering routine.");
 	sqlite3_try_lock lock(g_con, true);
 
-	if(lock.is_locked()) 
+	if(lock.is_locked())
 	{
 		// Handle archival function first; deletion will be processed later
-		if(g_config.CleanupType==ArchiveDelete) 
+		if(g_config.CleanupType==ArchiveDelete)
 		{
 			TRACEI("[mainproc] [Main_ProcessDb]    performing 'archive & delete' type cleanup");
-			try 
+			try
 			{
 				// First, archive history.db entries
 				TRACEI("[mainproc] [Main_ProcessDb]    archiving history.db");
@@ -749,7 +749,7 @@ static void Main_ProcessDb()
 						dates.push(reader.getstring(0));
 				}
 
-				for(; !dates.empty(); dates.pop()) 
+				for(; !dates.empty(); dates.pop())
 				{
 					path p=g_config.ArchivePath;
 
@@ -813,10 +813,10 @@ static void Main_ProcessDb()
 			TRACEI("[mainproc] [Main_ProcessDb]    done with 'archive & delete' type cleanup");
 		}
 
-		if(g_config.CleanupType==Delete || g_config.CleanupType==ArchiveDelete) 
+		if(g_config.CleanupType==Delete || g_config.CleanupType==ArchiveDelete)
 		{
 			TRACEI("[mainproc] [Main_ProcessDb]    performing 'delete' type cleanup");
-			try 
+			try
 			{
 				ostringstream ss;
 
@@ -825,7 +825,7 @@ static void Main_ProcessDb()
 				g_con.executenonquery(ss.str());
 				lock.commit();
 
-				// now delete all free btree page structures, as per 
+				// now delete all free btree page structures, as per
 				// http://web.utk.edu/~jplyon/sqlite/SQLite_optimization_FAQ.html#compact
 				g_con.executenonquery(_T("vacuum;"));
 
@@ -842,7 +842,7 @@ static void Main_ProcessDb()
 				else
 					TRACES("[mainproc] [Main_ProcessDb]    Deleted history.db and peerblock.log files");
 			}
-			catch(database_error &ex) 
+			catch(database_error &ex)
 			{
 				TRACEE("[mainproc] [Main_ProcessDb]  * ERROR:  Caught database_error exception while deleting files!!");
 				ExceptionBox(NULL, ex, __FILE__, __LINE__);
@@ -860,7 +860,7 @@ static void Main_ProcessDb()
 	TRACEI("[mainproc] [Main_ProcessDb]  < Leaving routine.");
 }
 
-static void Main_OnTimer(HWND hwnd, UINT id) 
+static void Main_OnTimer(HWND hwnd, UINT id)
 {
 	if(id==TIMER_BLINKTRAY && g_trayactive) {
 		if(g_config.BlinkOnBlock!=Never && (GetTickCount()-6000) < g_blinkstart) {
@@ -918,7 +918,7 @@ static void Main_OnTimer(HWND hwnd, UINT id)
 ///   The window-message we're processing.
 /// </param>
 //
-static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg) 
+static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 {
 	if(eventMsg==WM_LBUTTONUP)
 	{
@@ -943,7 +943,7 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 			int desktopWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
 			int desktopHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-			tstring strBuf = boost::str(tformat(_T("[Main_OnTray]    rect:[%1%, %2%][%3%, %4%] desktop:[%5% x %6%]")) 
+			tstring strBuf = boost::str(tformat(_T("[Main_OnTray]    rect:[%1%, %2%][%3%, %4%] desktop:[%5% x %6%]"))
 				% rect.left % rect.top % rect.right % rect.bottom % desktopWidth % desktopHeight);
 			TRACEBUFI(strBuf)
 
@@ -1000,7 +1000,7 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 
 		SendMessage(hwnd, WM_MAIN_VISIBLE, 0, showWindow);
 	}
-	else if(eventMsg==WM_RBUTTONUP) 
+	else if(eventMsg==WM_RBUTTONUP)
 	{
 		POINT pt;
 		GetCursorPos(&pt);
@@ -1063,16 +1063,16 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 ///   True if we need to show/restore the window; false if we need to minimize it.
 /// </param>
 //
-static void Main_OnVisible(HWND hwnd, BOOL visible) 
+static void Main_OnVisible(HWND hwnd, BOOL visible)
 {
 	TRACEI("[Main_OnVisible]  > Entering routine.");
 	int index=TabCtrl_GetCurSel(GetDlgItem(hwnd, IDC_TABS));
 	TRACEV("[Main_OnVisible]    tabctrl_getcursel");
 
-	if(visible) 
+	if(visible)
 	{
 		TRACEI("[Main_OnVisible]    visible:[TRUE]");
-		if(index!=-1) 
+		if(index!=-1)
 		{
 			TRACEI("[Main_OnVisible]    index != [-1], showing window based on tab");
 			ShowWindow(g_tabs[index].Tab, SW_SHOW);
@@ -1088,7 +1088,7 @@ static void Main_OnVisible(HWND hwnd, BOOL visible)
 		g_config.WindowHidden=false;
 		TRACEI("[Main_OnVisible]    checking for g_trayactive and g_config.StayHidden");
 
-		if(!g_trayactive && !g_config.StayHidden) 
+		if(!g_trayactive && !g_config.StayHidden)
 		{
 			TRACEV("[Main_OnVisible]    NOT g_trayactive AND NOT g_config.StayHidden");
 			g_trayactive=true;
@@ -1098,11 +1098,11 @@ static void Main_OnVisible(HWND hwnd, BOOL visible)
 			TRACEV("[Main_OnVisible]    done showing notify-icon");
 		}
 	}
-	else 
+	else
 	{
 		TRACEI("[Main_OnVisible]    visible:[FALSE]");
 
-		if(index!=-1) 
+		if(index!=-1)
 		{
 			TRACEI("[Main_OnVisible]    index != [-1], hiding window based on tab");
 			ShowWindow(g_tabs[index].Tab, SW_HIDE);
@@ -1157,7 +1157,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 1;
 			default:
 				if(msg==WM_TRAY_CREATED && g_trayactive) Shell_NotifyIcon(NIM_ADD, &g_nid);
-				else if(msg==WM_PB_VISIBLE) 
+				else if(msg==WM_PB_VISIBLE)
 				{
 					TRACEI("[Main_DlgProc]    received WM_PB_VISIBLE message; setting visible");
 					Main_OnVisible(hwnd, (BOOL)lParam);

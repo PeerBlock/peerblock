@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2010 PeerBlock, LLC
+	Copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -143,7 +143,7 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 }
 
 
-static void EditPorts_OnSize(HWND hwnd, UINT state, int cx, int cy) 
+static void EditPorts_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
 	HWND add=GetDlgItem(hwnd, IDC_ADD);
 	HWND edit=GetDlgItem(hwnd, IDC_EDIT);
@@ -178,7 +178,7 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	ListView_SetExtendedListViewStyle(list, LVS_EX_CHECKBOXES|LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
 
 	LVCOLUMN lvc = {0};
-	
+
 	lvc.mask = LVCF_FMT|LVCF_WIDTH|LVCF_TEXT|LVCF_SUBITEM;
 	lvc.fmt = LVCFMT_LEFT;
 	lvc.cx = 300;
@@ -219,17 +219,17 @@ static BOOL EditPorts_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 
 static INT_PTR EditPorts_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
-	if (finishedloading && (nmh->idFrom == IDC_PORTS)) 
+	if (finishedloading && (nmh->idFrom == IDC_PORTS))
 	{
-		switch(nmh->code) 
+		switch(nmh->code)
 		{
-			case LVN_ITEMCHANGED: 
+			case LVN_ITEMCHANGED:
 			{
 				unsigned int num = ListView_GetSelectedCount(nmh->hwndFrom);
 
 				BOOL edit, remove;
 
-				switch(num) 
+				switch(num)
 				{
 					case 0:
 						edit=FALSE;
@@ -261,11 +261,11 @@ static INT_PTR EditPorts_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 }
 
 
-INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	try 
+	try
 	{
-		switch(msg) 
+		switch(msg)
 		{
 			HANDLE_MSG(hwnd, WM_COMMAND, EditPorts_OnCommand);
 			HANDLE_MSG(hwnd, WM_INITDIALOG, EditPorts_OnInitDialog);
@@ -277,12 +277,12 @@ INT_PTR CALLBACK EditPorts_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 			default: return 0;
 		}
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		return 0;
 	}
-	catch(...) 
+	catch(...)
 	{
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
 		return 0;

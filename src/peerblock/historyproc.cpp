@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -489,7 +489,7 @@ static void History_LoadData(HWND hwnd, const SYSTEMTIME &st) {
 		InvalidateRect(g_list, NULL, FALSE);
 		return;
 	}
-	
+
 	boost::shared_array<HistoryRow> nrows(new HistoryRow[rows.size()]);
 
 	for(vector<long long>::size_type i=0; i<rows.size(); ++i)
@@ -696,7 +696,7 @@ static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 				int nListItemsProcessedCounter = 0;
 
 				int nListViewItemPosition = ListView_GetNextItem(nmh->hwndFrom, -1, LVNI_SELECTED);
-				while(nListViewItemPosition != -1) 
+				while(nListViewItemPosition != -1)
 				{
 					TCHAR text[MAX_SIZE_IP], name[256];
 

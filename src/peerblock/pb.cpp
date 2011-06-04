@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -98,7 +98,7 @@ static bool CheckOS() {
 		strOsBitness = _T("??-bit");
 
 
-	tstring strOsString = boost::str(tformat(_T("%1% %5% - Build:[%2%], SP:[%3%.%4%]")) 
+	tstring strOsString = boost::str(tformat(_T("%1% %5% - Build:[%2%], SP:[%3%.%4%]"))
 		% strOsName % osv.dwBuildNumber % osv.wServicePackMajor % osv.wServicePackMinor % strOsBitness.c_str());
 
 	TCHAR chBuf[256];
@@ -119,17 +119,17 @@ static bool CheckOS() {
 //
 /// <summary>
 ///   Initial starting point of the app.  Performs some quick sanity-checking and then starts up
-///   a different thread (serviced by the Main_DlgProc() routine in mainproc.cpp) to handle all 
+///   a different thread (serviced by the Main_DlgProc() routine in mainproc.cpp) to handle all
 ///   the "real" work.
 /// </summary>
 //
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow) 
+int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 {
 	hPeerBlockInstance = hInstance;
 
 	// If PeerBlock is already running, bring it to the forefront and exit this new instance.
 	HANDLE pbmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
-	if(pbmutex) 
+	if(pbmutex)
 	{
 		UINT msg=RegisterWindowMessage(_T("PeerBlockSetVisible"));
 		if(msg) SendNotifyMessage(HWND_BROADCAST, msg, 0, TRUE);
@@ -150,7 +150,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	g_tlog.ProcessMessages();
 	TRACES("Flushed tracelog");
 
-	if(!CheckOS()) 
+	if(!CheckOS())
 	{
 		TRACEE("ERROR:  Failed checking for OS rev!");
 		return -1;
@@ -158,7 +158,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 #ifdef _WIN32_WINNT
 	// PeerBlock requires Admin Mode in order to load the pbfilter.sys driver
-	if(!IsUserAnAdmin()) 
+	if(!IsUserAnAdmin())
 	{
 		TRACEE("ERROR:  User not running as Admin!");
 		MessageBox(NULL, IDS_NEEDADMINTEXT, IDS_NEEDADMIN, MB_ICONERROR|MB_OK);
@@ -169,10 +169,10 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 	// If PeerGuardian2 is already running, warn the user and then exit.
 	HANDLE pgmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pgmutex_name);
-	if(pgmutex) 
+	if(pgmutex)
 	{
 		TRACEW("PeerGuardian already running!  Warning user and exiting.");
-		MessageBox(NULL, IDS_PGALREADYRUNNINGTEXT, IDS_PGALREADYRUNNING, MB_ICONWARNING|MB_OK);		
+		MessageBox(NULL, IDS_PGALREADYRUNNINGTEXT, IDS_PGALREADYRUNNING, MB_ICONWARNING|MB_OK);
 		return 0;
 	}
 	else pgmutex=CreateMutex(NULL, FALSE, g_pgmutex_name);
@@ -210,7 +210,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		TRACEW("Could NOT PreventSetUnhandledExceptionFilter()");
 	}
 
-	try 
+	try
 	{
 		// Spawn a new thread to handle the UI Dialog; this thread becomes the main workhorse of the program
 		TRACEI("Creating main UI window");
@@ -229,18 +229,18 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 		TRACES("Starting message-loop");
 		MSG msg;
-		while(GetMessage(&msg, NULL, 0, 0)>0) 
+		while(GetMessage(&msg, NULL, 0, 0)>0)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 		TRACES("Message loop ended, shutting down PeerBlock");
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		UncaughtExceptionBox(NULL, ex, __FILE__, __LINE__);
 	}
-	catch(...) 
+	catch(...)
 	{
 		UncaughtExceptionBox(NULL, __FILE__, __LINE__);
 	}

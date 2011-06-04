@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2010-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -154,7 +154,7 @@ static BOOL HistoryFind_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	HWND srcip=GetDlgItem(hwnd, IDC_SOURCEIP);
 	HWND destip=GetDlgItem(hwnd, IDC_DESTIP);
-	
+
 	EnableWindow(srcip, FALSE);
 	InvalidateRect(srcip, NULL, TRUE);
 

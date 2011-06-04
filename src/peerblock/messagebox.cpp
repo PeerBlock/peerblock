@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -19,9 +19,6 @@
 	3. This notice may not be removed or altered from any source distribution.
 
 */
-
-//#ifndef __MESSAGEBOX_H__
-//#define __MESSAGEBOX_H__
 
 #include "stdafx.h"
 #include "resource.h"
@@ -57,7 +54,7 @@ static const char *g_bugport="50005";
 //        This way, we will be able to report whatever we want, regardless of whether it's a
 //        complete exception or not.  Need to check on the code that's actually handling these
 //        sorts of problem-reports, to see what it's expecting.
-static void ReportException(const exception *ex, const char *file, int line) 
+static void ReportException(const exception *ex, const char *file, int line)
 {
 /*	TRACEC("Reporting exception to bugs.phoenixlabs.org:50005");
 	string packet;

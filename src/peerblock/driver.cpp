@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
 	This software is provided 'as-is', without any express or implied
@@ -34,10 +34,10 @@ driver::driver() : m_dev(INVALID_HANDLE_VALUE),m_loaded(false),m_started(false),
 }
 
 driver::~driver() {
-	this->close(); 
+	this->close();
 }
 
-void driver::load(const std::wstring &name) 
+void driver::load(const std::wstring &name)
 {
 	wchar_t path[MAX_PATH + 1], *pathend;
 
@@ -52,10 +52,10 @@ void driver::load(const std::wstring &name)
 	load(name, path);
 }
 
-void driver::load(const std::wstring &name, const std::wstring &file) 
+void driver::load(const std::wstring &name, const std::wstring &file)
 {
 	{
-		tstring strBuf = boost::str(tformat(_T("[driver] [load(2)]    preparing to load driver - name: [%1%], file: [%2%]")) 
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(2)]    preparing to load driver - name: [%1%], file: [%2%]"))
 			% name.c_str() % file.c_str() );
 		TRACEBUFI(strBuf);
 	}
@@ -63,13 +63,13 @@ void driver::load(const std::wstring &name, const std::wstring &file)
 	load(name, file, L"\\\\.\\" + name);
 }
 
-void driver::load(const std::wstring &name, const std::wstring &file, const std::wstring &devfile) 
+void driver::load(const std::wstring &name, const std::wstring &file, const std::wstring &devfile)
 {
 	TRACEV("[driver] [load(3)]  > Entering routine.");
 	if(m_loaded) throw std::exception("driver already loaded", 0);
 
 	{
-		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    loading driver - name: [%1%], file: [%2%], devfile: [%3%]")) 
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    loading driver - name: [%1%], file: [%2%], devfile: [%3%]"))
 			% name.c_str() % file.c_str() % devfile.c_str() );
 		TRACEBUFI(strBuf);
 	}
@@ -85,7 +85,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
 		m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 
-	if(!service) 
+	if(!service)
 	{
 		DWORD err = 0;
 
@@ -93,7 +93,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 		err = 0;
 		service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
-		if(!service) 
+		if(!service)
 		{
 			TRACEERR("[driver] [load(3)]", L"opening service", err = GetLastError());
 			CloseServiceHandle(manager);
@@ -105,7 +105,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		DWORD bytes;
 		BOOL ret = QueryServiceConfig(service, NULL, 0, &bytes);
 
-		if(ret || (err = GetLastError()) != ERROR_INSUFFICIENT_BUFFER) 
+		if(ret || (err = GetLastError()) != ERROR_INSUFFICIENT_BUFFER)
 		{
 			TRACEERR("[driver] [load(3)]", L"calling QueryServiceConfig", err);
 			CloseServiceHandle(service);
@@ -115,7 +115,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		err = 0; // reset error-code, so that nobody else accidentally trips over it.
 
 		QUERY_SERVICE_CONFIG *qsc = (QUERY_SERVICE_CONFIG*)malloc(bytes);
-		if(!qsc) 
+		if(!qsc)
 		{
 			TRACEERR("[driver] [load(3)]", L"allocating memory for QueryServiceConfig", err = GetLastError());
 			CloseServiceHandle(service);
@@ -124,7 +124,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		}
 
 		ret = QueryServiceConfig(service, qsc, bytes, &bytes);
-		if(!ret) 
+		if(!ret)
 		{
 			TRACEERR("[driver] [load(3)]", L"second call to QueryServiceConfig", err = GetLastError());
 			CloseServiceHandle(service);
@@ -147,7 +147,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 				tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    comparing against driver full-path:[%1%]")) % strFullPath );
 				TRACEBUFI(strBuf);
 
-				del = _wcsicmp(qsc->lpBinaryPathName, strFullPath.c_str()) != 0;			
+				del = _wcsicmp(qsc->lpBinaryPathName, strFullPath.c_str()) != 0;
 			}
 			else
 			{
@@ -155,20 +155,20 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			}
 		}
 
-		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    service name: [%1%], file name: [%2%]")) 
+		tstring strBuf = boost::str(tformat(_T("[driver] [load(3)]    service name: [%1%], file name: [%2%]"))
 			% qsc->lpBinaryPathName % m_file.c_str() );
 		TRACEBUFI(strBuf);
 
 		free(qsc);
 
 		// paths don't match, remove service and recreate.
-		if(del) 
+		if(del)
 		{
 			TRACEW("[driver] [load(3)]    paths don't match, removing and recreating driver-service");
 			TCHAR buf[128];
 
 			// if it's not removable, bail out.
-			if(!this->removable) 
+			if(!this->removable)
 			{
 				TRACEC("[driver] [load(3)]    ERROR trying to remove driver-service");
 				CloseServiceHandle(service);
@@ -179,7 +179,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			// check if its running
 			SERVICE_STATUS status;
 			ret = QueryServiceStatus(service, &status);
-			if(!ret) 
+			if(!ret)
 			{
 				TRACEERR("[driver] [load(3)]", L"ERROR calling QueryServiceStatus", err = GetLastError());
 				CloseServiceHandle(service);
@@ -223,10 +223,10 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 					TRACEBUFE(buf);
 					break;
 			}
-			if(status.dwCurrentState != SERVICE_STOPPED && status.dwCurrentState != SERVICE_STOP_PENDING) 
+			if(status.dwCurrentState != SERVICE_STOPPED && status.dwCurrentState != SERVICE_STOP_PENDING)
 			{
 				ret = ControlService(service, SERVICE_CONTROL_STOP, &status);
-				if(!ret) 
+				if(!ret)
 				{
 					TRACEERR("[driver] [load(3)]", L"ERROR stopping driver-service", err = GetLastError());
 					CloseServiceHandle(service);
@@ -240,7 +240,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			err = GetLastError();
 			CloseServiceHandle(service);
 
-			if(!ret && err != ERROR_SERVICE_MARKED_FOR_DELETE) 
+			if(!ret && err != ERROR_SERVICE_MARKED_FOR_DELETE)
 			{
 				TRACEERR("[driver] [load(3)]", L"ERROR deleting driver-service", err);
 				CloseServiceHandle(manager);
@@ -252,7 +252,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 				SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
 				m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 
-			if(!service && (err = GetLastError()) == ERROR_SERVICE_MARKED_FOR_DELETE) 
+			if(!service && (err = GetLastError()) == ERROR_SERVICE_MARKED_FOR_DELETE)
 			{
 				TRACEW("[driver] [load(3)]    Service marked for delete; trying closing/reopening SCM");
 				CloseServiceHandle(manager);
@@ -270,7 +270,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 					m_file.c_str(), NULL, NULL, NULL, NULL, NULL);
 			}
 
-			if(!service) 
+			if(!service)
 			{
 				TRACEERR("[driver] [load(3)]", L"ERROR re-creating driver-service", err = GetLastError());
 				CloseServiceHandle(manager);
@@ -282,7 +282,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 	}
 
 	SERVICE_STATUS status;
-	if(QueryServiceStatus(service, &status)) 
+	if(QueryServiceStatus(service, &status))
 	{
 		if (status.dwCurrentState == SERVICE_RUNNING)
 		{
@@ -311,14 +311,14 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 
 
 
-void driver::close() 
+void driver::close()
 {
 	TRACEI("[driver] [close]  > Entering routine.");
 
 	tstring strBuf = boost::str(tformat(_T("[driver] [close]   closing driver - name: [%1%]")) % m_name.c_str() );
 	TRACEBUFI(strBuf);
 
-	if(!m_loaded) 
+	if(!m_loaded)
 	{
 		TRACEW("[driver] [close]    Tried to close driver, but it wasn't loaded.");
 		TRACEI("[driver] [close]  < Leaving routine (without doing anything).");
@@ -327,7 +327,7 @@ void driver::close()
 
 	stop();
 
-	if(this->removable) 
+	if(this->removable)
 	{
 		TRACEV("[driver] [close]    driver is removable");
 		SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
@@ -356,7 +356,7 @@ void driver::close()
 
 
 
-bool driver::isrunning() 
+bool driver::isrunning()
 {
 	TRACEV("[driver] [isrunning]  > Entering routine.");
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
@@ -391,10 +391,10 @@ bool driver::isrunning()
 
 
 
-void driver::start(bool _gethandle) 
+void driver::start(bool _gethandle)
 {
 	TRACEV("[driver] [start]  > Entering routine.");
-	if(m_started) 
+	if(m_started)
 	{
 		TRACEI("[driver] [start]    driver already started");
 		return;
@@ -405,21 +405,21 @@ void driver::start(bool _gethandle)
 	DWORD err = 0;
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-	if(!manager) 
+	if(!manager)
 	{
 		TRACEERR("[driver] [start]", L"ERROR: OpenSCManager", err = GetLastError());
 		throw win32_error("OpenSCManager");
 	}
 
 	SC_HANDLE service = OpenService(manager, m_name.c_str(), SERVICE_ALL_ACCESS);
-	if(!service) 
+	if(!service)
 	{
 		CloseServiceHandle(manager);
 		TRACEERR("[driver] [start]", L"ERROR: OpenService", err = GetLastError());
 		throw win32_error("OpenService", err);
 	}
 
-	if(!StartService(service, 0, NULL) && (err = GetLastError()) != ERROR_SERVICE_ALREADY_RUNNING) 
+	if(!StartService(service, 0, NULL) && (err = GetLastError()) != ERROR_SERVICE_ALREADY_RUNNING)
 	{
 		bool startFailed = true;
 
@@ -478,7 +478,7 @@ void driver::start(bool _gethandle)
 		m_dev = CreateFile(m_devfile.c_str(), GENERIC_READ | GENERIC_WRITE,
 			0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
 
-		if(m_dev == INVALID_HANDLE_VALUE) 
+		if(m_dev == INVALID_HANDLE_VALUE)
 		{
 			TRACEERR("[driver] [start]", L"ERROR: CreateFile", err = GetLastError());
 			throw win32_error("CreateFile");
@@ -501,11 +501,11 @@ void driver::start(bool _gethandle)
 
 
 
-void driver::stop() 
+void driver::stop()
 {
 	TRACEI("[driver] [stop]  > Entering routine.");
 
-	if(!m_started) 
+	if(!m_started)
 	{
 		TRACEW("[driver] [stop]    Tried to stop driver, but it is not started");
 		TRACEI("[driver] [stop]  < Leaving routine (without doing anything).");
@@ -526,7 +526,7 @@ void driver::stop()
 	}
 
 	SC_HANDLE manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-	if(!manager) 
+	if(!manager)
 	{
 		TRACEE("[driver] [stop]    ERROR:  Can't OpenSCManager");
 		throw win32_error("OpenSCManager");
@@ -546,7 +546,7 @@ void driver::stop()
 		(
 			!QueryServiceStatus(service, &status) ||
 			(
-				status.dwCurrentState != SERVICE_STOPPED && 
+				status.dwCurrentState != SERVICE_STOPPED &&
 				status.dwCurrentState != SERVICE_STOP_PENDING
 			)
 		) &&
@@ -573,19 +573,19 @@ void driver::stop()
 
 
 
-DWORD driver::rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD outsize, OVERLAPPED *ovl) 
+DWORD driver::rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD outsize, OVERLAPPED *ovl)
 {
 	TRACEV("[driver] [rawio]  > Entering routine.");
 	DWORD bytes;
 
 	BOOL ret = DeviceIoControl(m_dev, ioctl, inbuf, insize, outbuf, outsize, &bytes, ovl);
-	if(ret) 
+	if(ret)
 	{
 		TRACEV("[driver] [rawio]    Successfully sent IOCTL to driver");
 		TRACEV("[driver] [rawio]  < Leaving routine.");
 		return ERROR_SUCCESS;
 	}
-	else 
+	else
 	{
 		DWORD err = GetLastError();
 		if (err == ERROR_IO_PENDING)
@@ -606,7 +606,7 @@ DWORD driver::rawio(DWORD ioctl, void *inbuf, DWORD insize, void *outbuf, DWORD 
 
 
 
-DWORD driver::read(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl) 
+DWORD driver::read(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl)
 {
 	TRACEV("[driver] [read]    Entering routine.");
 	return rawio(ioctl, 0, 0, buf, size, ovl);
@@ -615,7 +615,7 @@ DWORD driver::read(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl)
 
 
 
-DWORD driver::write(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl) 
+DWORD driver::write(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl)
 {
 	TRACEV("[driver] [write]    Entering routine.");
 	return rawio(ioctl, buf, size, 0, 0, ovl);
@@ -624,7 +624,7 @@ DWORD driver::write(DWORD ioctl, void *buf, DWORD size, OVERLAPPED *ovl)
 
 
 
-DWORD driver::cancelio() 
+DWORD driver::cancelio()
 {
 	TRACEV("[driver] [cancelio]    Entering routine.");
 	BOOL ret = CancelIo(m_dev);
@@ -634,7 +634,7 @@ DWORD driver::cancelio()
 
 
 
-DWORD driver::getresult(OVERLAPPED *ovl) 
+DWORD driver::getresult(OVERLAPPED *ovl)
 {
 	TRACEV("[driver] [getresult]    Entering routine.");
 	DWORD bytes;

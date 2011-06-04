@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2010 PeerBlock, LLC
+	Copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -130,7 +130,7 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 			SYSTEMTIME st;
 			GetLocalTime(&st);
 
-			tlEnt->Message = boost::str(tformat(_T("[%1%/%2%/%3%] [%|4$0+2|:%|5$0+2|:%|6$0+2|.%|7$0+3|] [%|8$0+5|]  %9%")) 
+			tlEnt->Message = boost::str(tformat(_T("[%1%/%2%/%3%] [%|4$0+2|:%|5$0+2|:%|6$0+2|.%|7$0+3|] [%|8$0+5|]  %9%"))
 				% st.wMonth % st.wDay % st.wYear % st.wHour % st.wMinute % st.wSecond % st.wMilliseconds % GetCurrentThreadId() % _msg );
 			tlEnt->Level = _lvl;
 			tlEnt->Tid = GetCurrentThreadId();
@@ -141,10 +141,10 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 			ProcessMessages();	// TODO:  This should be its own real thread...
 
 			// done!
-			if (!ReleaseMutex(LoggingMutex)) 
-			{ 
+			if (!ReleaseMutex(LoggingMutex))
+			{
 				return;
-			} 
+			}
 
 			break;
 
@@ -176,7 +176,7 @@ void TraceLog::LogMessage(tstring _msg, TracelogLevel _lvl)
 //    - Called from wherever when we encounter an error
 //
 /// <summary>
-///   Logs an error message to the tracelog, including a second line with error number and 
+///   Logs an error message to the tracelog, including a second line with error number and
 ///   description.
 /// </summary>
 //
@@ -187,7 +187,7 @@ void TraceLog::LogErrorMessage(tstring _location, tstring _buf, DWORD _err)
 	TCHAR chBuf[1024];
 	LPVOID lpMsgBuf;
 	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM |
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL,
@@ -301,7 +301,7 @@ void TraceLog::StartLogging()
 void TraceLog::StopLogging()
 {
 	TRACEI("[TraceLog] [StopLogging]    stopping logging");
-	ResetEvent(LoggingReady); // Sets signalled to FALSE, so noone else will try logging	
+	ResetEvent(LoggingReady); // Sets signalled to FALSE, so noone else will try logging
 	if (LogFile.is_open())
 	{
 //		TRACEI("[TraceLog] [StopLogging]    closing file");

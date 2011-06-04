@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2009 PeerBlock, LLC
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -23,7 +23,7 @@
 //================================================================================================
 //  portprofile.h
 //
-//  This file defines the PortProfile window dialog-proc, used to handle the editing of port sets: 
+//  This file defines the PortProfile window dialog-proc, used to handle the editing of port sets:
 //  the window that pops up after you click the "Ports" button on the Settings screen.
 //================================================================================================
 

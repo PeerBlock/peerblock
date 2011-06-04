@@ -6,7 +6,7 @@
 
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -40,7 +40,7 @@ HWND g_hListsDlg = NULL;
 //------------------------------------------------------------
 // Internal routines.  If this were a class, these routines would be marked as Private.
 
-static void AddToDefLists(tstring _url, tstring _desc, List::ListType _type) 
+static void AddToDefLists(tstring _url, tstring _desc, List::ListType _type)
 {
 	tstring strBuf = boost::str(tformat(_T("[listsproc] [AddToDefLists]    adding url:[%1%] desc:[%2%]")) % _url % _desc );
 	TRACEBUFD(strBuf);
@@ -57,7 +57,7 @@ static void AddToDefLists(tstring _url, tstring _desc, List::ListType _type)
 } // End of AddToDefLists()
 
 
-static void RemoveFromDefLists(tstring _url) 
+static void RemoveFromDefLists(tstring _url)
 {
 	tstring strBuf = boost::str(tformat(_T("[listsproc] [AddToDefLists]    removing url:[%1%]")) % _url );
 	TRACEBUFD(strBuf);
@@ -71,7 +71,7 @@ static void RemoveFromDefLists(tstring _url)
 
 
 
-static vector<DynamicList>::size_type FindInDefLists(tstring _url) 
+static vector<DynamicList>::size_type FindInDefLists(tstring _url)
 {
 	tstring strBuf = boost::str(tformat(_T("[listsproc] [FindInDefLists]    finding url:[%1%]")) % _url );
 	TRACEBUFV(strBuf);
@@ -104,14 +104,14 @@ static vector<DynamicList>::size_type FindInDefLists(tstring _url)
 ///   Closes the List Manager window.
 /// </summary>
 //
-static void Lists_OnClose(HWND hwnd) 
+static void Lists_OnClose(HWND hwnd)
 {
 	TRACEI("[listsproc] [Lists_OnClose]  > Entering routine.");
 
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	int count=ListView_GetItemCount(list);
 
-	for(int i=0; i<count; i++) 
+	for(int i=0; i<count; i++)
 	{
 		LVITEM lvi={0};
 		lvi.mask=LVIF_PARAM;
@@ -122,7 +122,7 @@ static void Lists_OnClose(HWND hwnd)
 
 		bool checked=(ListView_GetCheckState(list, i)!=0);
 
-		if(l->Enabled!=checked) 
+		if(l->Enabled!=checked)
 		{
 			l->Enabled=checked;
 			g_ret|=LISTS_NEEDRELOAD;
@@ -149,7 +149,7 @@ static void Lists_OnClose(HWND hwnd)
 ///   Note that there are two InsertItem routines.  This one takes a List pointer as the third arg.
 /// </remarks>
 //
-static void InsertItem(HWND list, int index, List *plist) 
+static void InsertItem(HWND list, int index, List *plist)
 {
 	LVITEM lvi={0};
 	lvi.mask=LVIF_TEXT|LVIF_PARAM;
@@ -196,7 +196,7 @@ static void InsertItem(HWND list, int index, List *plist)
 ///   Note that there are two InsertItem routines.  This one takes a List ref as the third arg.
 /// </remarks>
 //
-static void InsertItem(HWND list, int index, List &plist) 
+static void InsertItem(HWND list, int index, List &plist)
 {
 	List *nlist;
 
@@ -221,7 +221,7 @@ static void InsertItem(HWND list, int index, List &plist)
 ///   Inserts a new column into our Lists ListView.
 /// </summary>
 //
-static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) 
+static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText)
 {
 	LVCOLUMN lvc={0};
 
@@ -249,11 +249,11 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText)
 ///   Handles clicks on buttons/items on List Manager window.
 /// </summary>
 //
-static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-	switch(id) 
+	switch(id)
 	{
-		case IDC_P2PLIST: 
+		case IDC_P2PLIST:
 		{
 			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_P2PLIST");
 			if (IsDlgButtonChecked(hwnd, IDC_P2PLIST)==BST_CHECKED)
@@ -272,7 +272,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_P2PLIST
 
 
-		case IDC_SPYLIST: 
+		case IDC_SPYLIST:
 		{
 			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_SPYLIST");
 			if (IsDlgButtonChecked(hwnd, IDC_SPYLIST)==BST_CHECKED)
@@ -291,7 +291,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_SPYLIST
 
 
-		case IDC_ADSLIST: 
+		case IDC_ADSLIST:
 		{
 			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_ADSLIST");
 			if (IsDlgButtonChecked(hwnd, IDC_ADSLIST)==BST_CHECKED)
@@ -310,7 +310,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_ADSLIST
 
 
-		case IDC_EDULIST: 
+		case IDC_EDULIST:
 		{
 			TRACED("[listsproc] [Lists_OnCommand]    clicked on IDC_EDULIST");
 			if (IsDlgButtonChecked(hwnd, IDC_EDULIST)==BST_CHECKED)
@@ -329,7 +329,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_EDULIST
 
 
-		case IDC_OPENP2P: 
+		case IDC_OPENP2P:
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENP2P");
 
@@ -348,7 +348,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_OPENP2P
 
 
-		case IDC_OPENSPY: 
+		case IDC_OPENSPY:
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENSPY");
 
@@ -367,7 +367,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_OPENSPY
 
 
-		case IDC_OPENADS: 
+		case IDC_OPENADS:
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENADS");
 
@@ -386,7 +386,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_OPENADS
 
 
-		case IDC_OPENEDU: 
+		case IDC_OPENEDU:
 		{
 			TRACEI("[listsproc] [Lists_OnCommand]    clicked on IDC_OPENEDU");
 
@@ -405,10 +405,10 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break; // end case IDC_OPENEDU
 
 
-		case IDC_ADD: 
+		case IDC_ADD:
 		{
 			List *l;
-			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ADDLIST), hwnd, AddList_DlgProc, (LPARAM)&l)==IDOK) 
+			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ADDLIST), hwnd, AddList_DlgProc, (LPARAM)&l)==IDOK)
 			{
 				tstring s;
 
@@ -490,7 +490,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				lvfi.psz=s.c_str();
 
 				int index=ListView_FindItem(list, -1, &lvfi);
-				if(index==-1) 
+				if(index==-1)
 				{
 					InsertItem(list, ListView_GetItemCount(list), l);
 
@@ -498,14 +498,14 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 						g_ret|=LISTS_NEEDUPDATE;
 					g_ret|=LISTS_NEEDRELOAD;
 				}
-				else 
+				else
 				{
 					delete l;
 
 					int count=ListView_GetItemCount(list);
-					for(int i=0; i<count; i++) 
+					for(int i=0; i<count; i++)
 					{
-						if(i==index) 
+						if(i==index)
 						{
 							ListView_EnsureVisible(list, i, FALSE);
 							ListView_SetItemState(list, i, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
@@ -517,12 +517,12 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 
-		case IDC_EDIT: 
+		case IDC_EDIT:
 		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 			int index=ListView_GetSelectionMark(list);
 
-			if(index!=-1) 
+			if(index!=-1)
 			{
 				LVITEM lvi={0};
 				lvi.iItem=index;
@@ -532,7 +532,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				List *plist=(List*)lvi.lParam;
 
 				INT_PTR ret=DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_EDITLIST), hwnd, EditList_DlgProc, (LPARAM)&plist);
-				if(ret) 
+				if(ret)
 				{
 					g_ret|=ret;
 
@@ -544,11 +544,11 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 					ListView_SetItemText(list, index, 1, (LPTSTR)type.c_str());
 					ListView_SetItemText(list, index, 2, (LPTSTR)plist->Description.c_str());
 
-					if(StaticList *l=dynamic_cast<StaticList*>(plist)) 
+					if(StaticList *l=dynamic_cast<StaticList*>(plist))
 					{
 						ListView_SetItemText(list, index, 0, (LPTSTR)l->File.c_str());
 					}
-					else if(DynamicList *l=dynamic_cast<DynamicList*>(plist)) 
+					else if(DynamicList *l=dynamic_cast<DynamicList*>(plist))
 					{
 						ListView_SetItemText(list, index, 0, (LPTSTR)l->Url.c_str());
 
@@ -560,7 +560,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 
-		case IDC_REMOVE: 
+		case IDC_REMOVE:
 		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 
@@ -572,7 +572,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if(items.size()>0)
 				g_ret|=LISTS_NEEDRELOAD;
 
-			while(items.size()>0) 
+			while(items.size()>0)
 			{
 				int index=items.top(); items.pop();
 
@@ -588,12 +588,12 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 
-		case IDC_OPEN: 
+		case IDC_OPEN:
 		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 			int index=ListView_GetSelectionMark(list);
 
-			if(index!=-1) 
+			if(index!=-1)
 			{
 				LVITEM lvi={0};
 				lvi.iItem=index;
@@ -606,13 +606,13 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 
-		case IDC_CREATE: 
+		case IDC_CREATE:
 		{
 			StaticList *sl;
-			
-			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CREATELIST), hwnd, CreateList_DlgProc, (LPARAM)&sl)==IDOK) 
+
+			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CREATELIST), hwnd, CreateList_DlgProc, (LPARAM)&sl)==IDOK)
 			{
-				if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LIST), hwnd, List_DlgProc, (LPARAM)sl)==IDOK) 
+				if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LIST), hwnd, List_DlgProc, (LPARAM)sl)==IDOK)
 				{
 					HWND list=GetDlgItem(hwnd, IDC_LIST);
 					InsertItem(list, ListView_GetItemCount(list), sl);
@@ -624,11 +624,11 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 
-		case ID_CONTEXT_EXPORTTO: 
+		case ID_CONTEXT_EXPORTTO:
 		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 
-			if(ListView_GetSelectedCount(list)>0) 
+			if(ListView_GetSelectedCount(list)>0)
 			{
 				TCHAR file[MAX_PATH]={0};
 
@@ -641,11 +641,11 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				ofn.nMaxFile=MAX_PATH;
 				ofn.Flags=OFN_HIDEREADONLY|OFN_PATHMUSTEXIST;
 
-				if(GetSaveFileName(&ofn)) 
+				if(GetSaveFileName(&ofn))
 				{
 					p2p::list l;
 
-					for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED)) 
+					for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED))
 					{
 						LVITEM lvi={0};
 						lvi.iItem=index;
@@ -667,11 +667,11 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		} break;
 
 
-		case ID_CONTEXT_MAKESTATIC: 
+		case ID_CONTEXT_MAKESTATIC:
 		{
 			HWND list=GetDlgItem(hwnd, IDC_LIST);
 
-			if(ListView_GetSelectedCount(list)==1 && MessageBox(hwnd, IDS_MAKESTATICTEXT, IDS_WARNING, MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2)==IDYES) 
+			if(ListView_GetSelectedCount(list)==1 && MessageBox(hwnd, IDS_MAKESTATICTEXT, IDS_WARNING, MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2)==IDYES)
 			{
 				TCHAR file[MAX_PATH]={0};
 
@@ -686,7 +686,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				ofn.nMaxFile=MAX_PATH;
 				ofn.Flags=OFN_HIDEREADONLY|OFN_PATHMUSTEXIST;
 
-				if(GetSaveFileName(&ofn)) 
+				if(GetSaveFileName(&ofn))
 				{
 					path p=path::relative_to(path::base_dir(), file);
 					tstring fs=p.file_str();
@@ -708,7 +708,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 					sl->File=p;
 					sl->Type=dl->Type;
 					sl->Description=dl->Description;
-					
+
 					delete dl;
 
 					lvi.mask=LVIF_TEXT|LVIF_PARAM;
@@ -736,7 +736,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 ///   Handles List Manager window destruction, and saves current set of lists to g_config.
 /// </summary>
 //
-static void Lists_OnDestroy(HWND hwnd) 
+static void Lists_OnDestroy(HWND hwnd)
 {
 	g_config.StaticLists.clear();
 	g_config.DynamicLists.clear();
@@ -752,7 +752,7 @@ static void Lists_OnDestroy(HWND hwnd)
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	int count=ListView_GetItemCount(list);
 
-	for(int i=0; i<count; i++) 
+	for(int i=0; i<count; i++)
 	{
 		LVITEM lvi={0};
 		lvi.iItem=i;
@@ -791,7 +791,7 @@ static void Lists_OnDestroy(HWND hwnd)
 ///   Returns size of the client area of our window.
 /// </summary>
 //
-static void Lists_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo) 
+static void Lists_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 {
 	RECT rc={0};
 	rc.right=349;
@@ -821,7 +821,7 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy);
 ///   of lists" from g_config.
 /// </summary>
 //
-static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	TRACEI("[listsproc] [Lists_OnInitDialog]  > Entering routine.");
 
@@ -885,7 +885,7 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_ret=0;
 
 	if(	g_config.ListManagerWindowPos.left!=0 || g_config.ListManagerWindowPos.top!=0 ||
-		g_config.ListManagerWindowPos.right!=0 || g_config.ListManagerWindowPos.bottom!=0 ) 
+		g_config.ListManagerWindowPos.right!=0 || g_config.ListManagerWindowPos.bottom!=0 )
 	{
 		SetWindowPos(hwnd, NULL,
 			g_config.ListManagerWindowPos.left,
@@ -919,17 +919,17 @@ static BOOL Lists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 ///   Handles list-selection and right-clicking.
 /// </summary>
 //
-static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) 
+static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 {
-	if(nmh->idFrom==IDC_LIST) 
+	if(nmh->idFrom==IDC_LIST)
 	{
-		if(nmh->code==LVN_ITEMCHANGED) 
+		if(nmh->code==LVN_ITEMCHANGED)
 		{
 			unsigned int num=ListView_GetSelectedCount(nmh->hwndFrom);
 
 			BOOL open, edit, remove;
 
-			switch(num) 
+			switch(num)
 			{
 				case 0:
 					open=FALSE;
@@ -951,18 +951,18 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 			EnableWindow(GetDlgItem(hwnd, IDC_EDIT), edit);
 			EnableWindow(GetDlgItem(hwnd, IDC_REMOVE), remove);
 		}
-		else if(nmh->code==NM_RCLICK) 
+		else if(nmh->code==NM_RCLICK)
 		{
 			int count=ListView_GetSelectedCount(nmh->hwndFrom);
 
-			if(count>0) 
+			if(count>0)
 			{
 				NMITEMACTIVATE *nmia=(NMITEMACTIVATE*)nmh;
 
 				HMENU menu=LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_LISTSCONTEXT));
 				HMENU context=GetSubMenu(menu, 0);
 
-				if(count==1) 
+				if(count==1)
 				{
 					tstring buf;
 					MENUITEMINFO info={0};
@@ -979,7 +979,7 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 						List *l=(List*)lvi.lParam;
 
-						if(typeid(*l)==typeid(DynamicList)) 
+						if(typeid(*l)==typeid(DynamicList))
 						{
 							buf=LoadString(IDS_MAKESTATIC);
 							info.wID=ID_CONTEXT_MAKESTATIC;
@@ -1025,7 +1025,7 @@ static INT_PTR Lists_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 ///   Handles resizing of the List Manager window.
 /// </summary>
 //
-static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy) 
+static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	HWND open=GetDlgItem(hwnd, IDC_OPEN);
@@ -1052,7 +1052,7 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
 	EndDeferWindowPos(dwp);
 
-	if(state==SIZE_RESTORED) 
+	if(state==SIZE_RESTORED)
 	{
 		SaveWindowPosition(hwnd, g_config.ListManagerWindowPos);
 	}
@@ -1072,11 +1072,11 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy)
 ///   subroutine.
 /// </summary>
 //
-INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	try 
+	try
 	{
-		switch(msg) 
+		switch(msg)
 		{
 			HANDLE_MSG(hwnd, WM_CLOSE, Lists_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, Lists_OnCommand);
@@ -1091,12 +1091,12 @@ INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 			default: return 0;
 		}
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		return 0;
 	}
-	catch(...) 
+	catch(...)
 	{
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
 		return 0;

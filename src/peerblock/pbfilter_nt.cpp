@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -30,7 +30,7 @@ static const LPCTSTR IPFILTER_PATH=_T("System32\\Drivers\\IpFltDrv.sys");
 static const wchar_t* PBFILTER_NAME = L"pbfilter";
 static const wchar_t* PBFILTER_PATH = L"pbfilter.sys";
 
-pbfilter::pbfilter() 
+pbfilter::pbfilter()
 {
 	TRACEI("[pbfilter_nt] [pbfilter]  > Entering routine.");
 	m_ipfltdrv.removable = false;
@@ -45,7 +45,7 @@ pbfilter::pbfilter()
 	m_filter.removable = true; // so it can be removed if there's a path mismatch.
 	TRACEI("[pbfilter_nt] [pbfilter]    loading pbfilter.sys");
 	m_filter.load(PBFILTER_NAME);
-	if(m_filter.isrunning()) 
+	if(m_filter.isrunning())
 	{
 		TRACEI("[pbfilter_nt] [pbfilter]    pbfilter.sys already running, now stopping it");
 		m_filter.stop();
@@ -68,7 +68,7 @@ pbfilter::~pbfilter() {
 	m_filter.removable = true;	// let's delete the driver-service wrapper
 	m_filter.close();
 
-	// Don't close the Microsoft IpFilterDriver, because 1) we never acquired a handle to it in 
+	// Don't close the Microsoft IpFilterDriver, because 1) we never acquired a handle to it in
 	// the first place, and it's been known to hang in a STOP_PENDING state if we try to stop
 //	m_ipfltdrv.close();
 }

@@ -6,7 +6,7 @@
 
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -63,7 +63,7 @@ static void AddList_OnDestroy(HWND hwnd) {
 ///   The URL which the caller wants to sanity-check.
 /// </param>
 //
-static tstring AddList_SanityCheckUrl(tstring _url) 
+static tstring AddList_SanityCheckUrl(tstring _url)
 {
 	tstring url = _url;
 	int result = 0;
@@ -74,7 +74,7 @@ static tstring AddList_SanityCheckUrl(tstring _url)
 
 	// Handle sanity-checking results
 
-	// User entered a "known wrong" URL, such as a list-description URL from iblocklist.com instead of a 
+	// User entered a "known wrong" URL, such as a list-description URL from iblocklist.com instead of a
 	// list-update URL
 	if (listFlags.test(LISTFLAG_WRONG))
 	{
@@ -168,7 +168,7 @@ static tstring AddList_SanityCheckUrl(tstring _url)
 		}
 	}
 
-	// User entered an "unfriendly URL", for instance one of the ones iblocklist.com 
+	// User entered an "unfriendly URL", for instance one of the ones iblocklist.com
 	// publicly displays such as http://list.iblocklist.com/lists/bluetack/level-2
 	else if (listFlags.test(LISTFLAG_UNFRIENDLY))
 	{
@@ -185,7 +185,7 @@ static tstring AddList_SanityCheckUrl(tstring _url)
 		}
 	}
 
-	// User entered a non-iblocklist.com URL even though one exists, such as the 
+	// User entered a non-iblocklist.com URL even though one exists, such as the
 	// bluetack.co.uk-hosted version of Level2
 	else if (listFlags.test(LISTFLAG_NOT_IBL))
 	{
@@ -244,17 +244,17 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 			}
 		} break;
 
-		case IDOK: 
+		case IDOK:
 		{
 			List **list=(List**)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
 			bool addedList = false;
 
-			if(IsDlgButtonChecked(hwnd, IDC_ADDFILE)==BST_CHECKED) 
+			if(IsDlgButtonChecked(hwnd, IDC_ADDFILE)==BST_CHECKED)
 			{
 				// File-based list
 				const path file=GetDlgItemText(hwnd, IDC_FILE);
 
-				if(!path::exists(file.has_root()?file:path::base_dir()/file)) 
+				if(!path::exists(file.has_root()?file:path::base_dir()/file))
 				{
 					MessageBox(hwnd, IDS_INVALIDFILETEXT, IDS_INVALIDFILE, MB_ICONERROR|MB_OK);
 					break;
@@ -266,14 +266,14 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 				*list=l;
 				addedList = true;
 			}
-			else 
+			else
 			{
 				TRACEI("[addlistproc] [AddList_OnCommand]    sanity-checking URL-based list");
 
 				// URL-based list
 				tstring url=GetDlgItemText(hwnd, IDC_URL);
 
-				if(!(path(url).is_url())) 
+				if(!(path(url).is_url()))
 				{
 					TRACEE("[addlistproc] [AddList_OnCommand]  * ERROR:  Not a valid URL!");
 					MessageBox(hwnd, IDS_INVALIDURLTEXT, IDS_INVALIDURL, MB_ICONERROR|MB_OK);
@@ -323,7 +323,7 @@ static void AddList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
 
 
 
-static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	g_hAddListDlg = hwnd;
 	g_pListUrls = new ListUrls();

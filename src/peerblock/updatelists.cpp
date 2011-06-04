@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -74,7 +74,7 @@ static unsigned short g_countdown;
 static HWND g_updater=NULL;
 HWND g_hUpdateListsDlg = NULL;
 
-class UpdateThread 
+class UpdateThread
 {
 private:
 	struct HandleData {
@@ -189,7 +189,7 @@ private:
 		return 0;
 	}
 
-	void UpdateProgress() 
+	void UpdateProgress()
 	{
 		TRACED("[UpdateThread] [UpdateProgress]  > Entering routine.");
 
@@ -198,7 +198,7 @@ private:
 		TRACED("[UpdateThread] [UpdateProgress]    about to spin through vector");
 		for(vector<HandleData*>::size_type i=0; i<hdata.size(); i++)
 			total+=hdata[i]->progress;
-		
+
 		TRACED("[UpdateThread] [UpdateProgress]    computing temporary Total value");
 		total=min(total, maxprogress);
 
@@ -232,18 +232,18 @@ public:
 	int changes;
 	bool aborted;
 
-	UpdateThread() 
+	UpdateThread()
 	{
 		TRACEI("[UpdateThread] [UpdateThread]    created thread (base constructor)");
 	}
 
 	UpdateThread(HWND hwnd, HWND list, HWND progress, bool autoupdate)
-		: hwnd(hwnd), list(list), progress(progress), autoupdate(autoupdate),changes(0),aborted(false),progressmod(0.0) 
+		: hwnd(hwnd), list(list), progress(progress), autoupdate(autoupdate),changes(0),aborted(false),progressmod(0.0)
 	{
 		TRACEI("[UpdateThread] [UpdateThread]    created thread class");
 	}
 
-	~UpdateThread() 
+	~UpdateThread()
 	{
 		if(allowed.size() > 0 && g_filter) {
 			g_filter->setranges(p2p::list(), false);
@@ -263,7 +263,7 @@ public:
 	///   Performs all the "real" work for this list-updating thread.
 	/// </summary>
 	//
-	int _Process() 
+	int _Process()
 	{
 		TRACEV("[UpdateThread] [_Process]  > Entering routine.");
 		unsigned short total=0;
@@ -271,7 +271,7 @@ public:
 		bool updatelists=false;
 
 		if(g_config.UpdatePeerBlock) total+=1;
-		if(g_config.UpdateLists) 
+		if(g_config.UpdateLists)
 		{
 			for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) {
 				if(g_config.DynamicLists[i].Enabled) {
@@ -281,7 +281,7 @@ public:
 			}
 		}
 
-		if(total>0) 
+		if(total>0)
 		{
 			const string proxy=TSTRING_UTF8(g_config.UpdateProxy);
 
@@ -291,7 +291,7 @@ public:
 			LVITEM lvi={0};
 			lvi.mask=LVIF_TEXT;
 
-			if(progress) 
+			if(progress)
 			{
 				SendMessage(progress, PBM_SETPOS, 0, 0);
 				SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, total*100));
@@ -305,7 +305,7 @@ public:
 			///////////////////////////////////////////////
 			/// Update PeerBlock
 
-			if(g_config.UpdatePeerBlock) 
+			if(g_config.UpdatePeerBlock)
 			{
 				TRACEI("[UpdateThread] [_Process]    updating peerblock");
 				TCHAR buf[128];
@@ -319,7 +319,7 @@ public:
 				HandleData *data=new HandleData(this);
 
 				CURL *site=curl_easy_init();
-				if(site) 
+				if(site)
 				{
 					TRACEV("[UpdateThread] [_Process]    curl returned site, now setting options");
 					curl_easy_setopt(site, CURLOPT_PRECONNECT, preconnect_func);
@@ -335,7 +335,7 @@ public:
 					curl_easy_setopt(site, CURLOPT_FAILONERROR, 1);
 					curl_easy_setopt(site, CURLOPT_PRIVATE, data);
 					curl_easy_setopt(site, CURLOPT_ERRORBUFFER, data->errbuf);
-					if(proxy.length()>0) 
+					if(proxy.length()>0)
 					{
 						curl_easy_setopt(site, CURLOPT_PROXY, proxy.c_str());
 						curl_easy_setopt(site, CURLOPT_PROXYTYPE, g_config.UpdateProxyType);
@@ -346,14 +346,14 @@ public:
 					curl_multi_add_handle(multi, site);
 					TRACEV("[UpdateThread] [_Process]    added site-handle to curl handle-list");
 				}
-				else 
+				else
 				{
 					TRACEV("[UpdateThread] [_Process]    curl did not return site");
 					delete data;
 					data=NULL;
 				}
 
-				if(list) 
+				if(list)
 				{
 					TRACEV("[UpdateThread] [_Process]    list found");
 					tstring text=LoadString(IDS_UPDATEPB);
@@ -383,12 +383,12 @@ public:
 			///////////////////////////////////////////////
 			/// Update dynamic lists
 
-			if(g_config.UpdateLists && updatelists) 
+			if(g_config.UpdateLists && updatelists)
 			{
 				TRACEI("[UpdateThread] [_Process]    updating dynamic lists");
 				time_t curtime=time(NULL);
 
-				for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++) 
+				for(vector<DynamicList>::size_type i=0; i<g_config.DynamicLists.size(); i++)
 				{
 					if(!g_config.DynamicLists[i].Enabled)
 					{
@@ -399,7 +399,7 @@ public:
 
 					const path file=g_config.DynamicLists[i].File();
 
-					tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    updating file:[%1%] from url:[%2%]")) 
+					tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    updating file:[%1%] from url:[%2%]"))
 						%  file.c_str() % g_config.DynamicLists[i].Url );
 					TRACEBUFI(strBuf);
 
@@ -424,7 +424,7 @@ public:
 						TRACEI("[UpdateThread] [_Process]    + file does not exist");
 					}
 
-					if(elapsedTime >= 43200 || !fileExists || fileSize==0) 
+					if(elapsedTime >= 43200 || !fileExists || fileSize==0)
 					{
 						HandleData *data=new HandleData(this);
 
@@ -436,10 +436,10 @@ public:
 
 						data->fp=_tfopen(data->tempfile.c_str(), _T("wbT"));
 
-						if(data->fp) 
+						if(data->fp)
 						{
 							CURL *site=curl_easy_init();
-							if(site) 
+							if(site)
 							{
 								curl_easy_setopt(site, CURLOPT_PRECONNECT, preconnect_func);
 								curl_easy_setopt(site, CURLOPT_PRECONNECTDATA, &allowed);
@@ -454,13 +454,13 @@ public:
 								curl_easy_setopt(site, CURLOPT_PRIVATE, data);
 								curl_easy_setopt(site, CURLOPT_ERRORBUFFER, data->errbuf);
 
-								if(proxy.length()>0) 
+								if(proxy.length()>0)
 								{
 									curl_easy_setopt(site, CURLOPT_PROXY, proxy.c_str());
 									curl_easy_setopt(site, CURLOPT_PROXYTYPE, g_config.UpdateProxyType);
 								}
 
-								if(g_config.DynamicLists[i].LastDownload && path::exists(g_config.DynamicLists[i].File())) 
+								if(g_config.DynamicLists[i].LastDownload && path::exists(g_config.DynamicLists[i].File()))
 								{
 									tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    + checking against last-downloaded time:[%1%]")) % g_config.DynamicLists[i].LastDownload );
 									TRACEBUFI(strBuf);
@@ -468,22 +468,22 @@ public:
 									curl_easy_setopt(site, CURLOPT_TIMEVALUE, g_config.DynamicLists[i].LastDownload);
 								}
 								else curl_easy_setopt(site, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
-								
+
 								hdata.push_back(data);
 								handles.push_back(site);
 								curl_multi_add_handle(multi, site);
 								TRACEV("[UpdateThread] [_Process]    added dynamic-list site to curl handle-list");
 							}
-							else 
+							else
 							{
 								TRACEW("[UpdateThread] [_Process]    *  Dynamic-list site not found by curl!");
 								fclose(data->fp);
 								{
-									try 
+									try
 									{
 										path::remove(data->tempfile);
 									}
-									catch(exception &ex) 
+									catch(exception &ex)
 									{
 										ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 									}
@@ -494,7 +494,7 @@ public:
 								g_config.DynamicLists[i].FailedUpdate=true;
 							}
 						}
-						else 
+						else
 						{
 							TRACEW("[UpdateThread] [_Process]    *  Couldn't open data->fp!");
 							delete data;
@@ -503,7 +503,7 @@ public:
 							g_config.DynamicLists[i].FailedUpdate=true;
 						}
 
-						if(list) 
+						if(list)
 						{
 							TRACEI("[UpdateThread] [_Process]    found list, adding stuff to list-view");
 
@@ -526,12 +526,12 @@ public:
 							lvi.iItem++;
 						}
 					}
-					else 
+					else
 					{
 						TRACEI("[UpdateThread] [_Process]    not updating list; setting progress-bar to 100");
 						this->progressmod+=100.0;
 
-						if(list) 
+						if(list)
 						{
 							TRACEV("[UpdateThread] [_Process]    setting list-items, \"no update needed\"");
 
@@ -563,7 +563,7 @@ public:
 
 			if(progress) this->UpdateProgress();
 
-			if(handles.size()>0) 
+			if(handles.size()>0)
 			{
 				///////////////////////////////////////////////
 				/// Perform Updates
@@ -576,23 +576,23 @@ public:
 				while(curl_multi_perform(multi, &running)==CURLM_CALL_MULTI_PERFORM);
 
 				TRACEV("[UpdateThread] [_Process]    called initial curl_multi_perform");
-				while(!aborted && running) 
+				while(!aborted && running)
 				{
 					FD_ZERO(&read); FD_ZERO(&write); FD_ZERO(&error);
 					curl_multi_fdset(multi, &read, &write, &error, &max);
 
 					timeval tv={2,0};
 
-					if(select(FD_SETSIZE, &read, &write, &error, &tv)!=-1) 
+					if(select(FD_SETSIZE, &read, &write, &error, &tv)!=-1)
 					{
 						while(curl_multi_perform(multi, &running)==CURLM_CALL_MULTI_PERFORM);
 						TRACED("[UpdateThread] [_Process]    called curl_multi_perform");
 
 						int msgs;
-						while(CURLMsg *msg=curl_multi_info_read(multi, &msgs)) 
+						while(CURLMsg *msg=curl_multi_info_read(multi, &msgs))
 						{
 							TRACEV("[UpdateThread] [_Process]    called curl_multi_info_read");
-							if(msg->msg==CURLMSG_DONE) 
+							if(msg->msg==CURLMSG_DONE)
 							{
 								TRACEV("[UpdateThread] [_Process]    CURLMSG_DONE");
 								HandleData *data;
@@ -602,26 +602,26 @@ public:
 								data->progress=100.0;
 								if(this->progress) this->UpdateProgress();
 
-								if(data->fp) 
+								if(data->fp)
 								{
 									fclose(data->fp);
 									data->fp=NULL;
 								}
 
-								if(msg->data.result==CURLE_OK) 
+								if(msg->data.result==CURLE_OK)
 								{
 									TRACEV("[UpdateThread] [_Process]    CURLE_OK");
 									long code;
 									TCHAR chBuf[256];
 									curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &code);
-									_stprintf_s(chBuf, sizeof(chBuf)/2, 
+									_stprintf_s(chBuf, sizeof(chBuf)/2,
 										_T("[UpdateThread] [_Process]    response code: [%ld]"), code);
 									g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
 
-									if(code==200) 
+									if(code==200)
 									{
 										TRACEI("[UpdateThread] [_Process]    successfully contacted URL; code:[200]");
-										if(data->list) 
+										if(data->list)
 										{
 											TRACEV("[UpdateThread] [_Process]    data is a list");
 											const tstring str = LoadString(IDS_VERIFYING);
@@ -629,7 +629,7 @@ public:
 											lvi.iSubItem = 2;
 											lvi.pszText = (LPTSTR)str.c_str();
 											ListView_SetItem(list, &lvi);
-											try 
+											try
 											{
 												// Verify that list is useful
 												p2p::list testlist;
@@ -670,7 +670,7 @@ public:
 													}
 												}
 											}
-											catch(exception &ex) 
+											catch(exception &ex)
 											{
 												ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 												data->list->FailedUpdate=true;
@@ -692,7 +692,7 @@ public:
 												}
 											}
 
-											if(list && !data->list->FailedUpdate) 
+											if(list && !data->list->FailedUpdate)
 											{
 												TRACEV("[UpdateThread] [_Process]    updating list entry to IDS_FINISHED");
 												const tstring str=LoadString(IDS_FINISHED);
@@ -703,14 +703,14 @@ public:
 												ListView_SetItem(list, &lvi);
 											}
 										}
-										else 
+										else
 										{
 											TRACEV("[UpdateThread] [_Process]    data is not a list, must be program update");
-											try 
+											try
 											{
 												unsigned long long b=boost::lexical_cast<unsigned long long>(build);
 
-												if(list) 
+												if(list)
 												{
 													if (b > g_build)
 													{
@@ -729,7 +729,7 @@ public:
 													lvi.pszText=(LPTSTR)str.c_str();
 													ListView_SetItem(list, &lvi);
 												}
-												else 
+												else
 												{
 													if (b > g_build)
 													{
@@ -743,24 +743,24 @@ public:
 													}
 												}
 											}
-											catch(...) 
+											catch(...)
 											{
 												TRACEW("[UpdateThread] [_Process]    *  caught exception; ignoring");
 												// keep going...
 											}
 										}
 									}
-									else if(code==304) 
+									else if(code==304)
 									{
 										TRACEI("[UpdateThread] [_Process]    NO UPDATE AVAILABLE; code:[304]");
-										if(data->list) 
+										if(data->list)
 										{
 											TRACEV("[UpdateThread] [_Process]    found data->list; NO UPDATE AVAILABLE");
 											time(&data->list->LastUpdate);
 											data->list->FailedUpdate=false;
 										}
 
-										if(list) 
+										if(list)
 										{
 											TRACEV("[UpdateThread] [_Process]    found list; NO UPDATE AVAILABLE");
 											const tstring str=LoadString(IDS_NOUPDATEAVAIL);
@@ -771,14 +771,14 @@ public:
 											ListView_SetItem(list, &lvi);
 										}
 									}
-									else if(code>=300) 
+									else if(code>=300)
 									{
 										tstring strBuf = boost::str(tformat(
 											_T("[UpdateThread] [_Process]    code >= 300; code:[%1%]")) % code );
 										TRACEBUFE(strBuf);
 										if(data->list) data->list->FailedUpdate=true;
 
-										if(list) 
+										if(list)
 										{
 											tstring strBuf = boost::str(tformat(
 												_T("[UpdateThread] [_Process]    found list; ERROR CONTACTING URL, code:[%1%]")) % code );
@@ -791,14 +791,14 @@ public:
 											ListView_SetItem(list, &lvi);
 										}
 									}
-									else if(code>200) 
+									else if(code>200)
 									{
 										tstring strBuf = boost::str(tformat(
 											_T("[UpdateThread] [_Process]    code > 200, code < 300; code:[%1%]")) % code );
 										TRACEBUFE(strBuf);
 										if(data->list) data->list->FailedUpdate=true;
 
-										if(list) 
+										if(list)
 										{
 											tstring strBuf = boost::str(tformat(
 												_T("[UpdateThread] [_Process]    found list; UNEXPECTED RESPONSE contacting url, code:[%1%]")) % code );
@@ -812,7 +812,7 @@ public:
 										}
 									}
 								} // end if CURLE_OK
-								else if(data->list) 
+								else if(data->list)
 								{
 									tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    *  failed update, !CURLE_OK, result:[%1%]")) % msg->data.result );
 									TRACEBUFE(strBuf);
@@ -824,12 +824,12 @@ public:
 										if(data->errbuf[0])
 										{
 											tstring strBuf = boost::str(tformat(
-												_T("[UpdateThread] [_Process]    ERROR CONTACTING URL, result:[%1%] err:[%2%]")) 
+												_T("[UpdateThread] [_Process]    ERROR CONTACTING URL, result:[%1%] err:[%2%]"))
 												% msg->data.result % data->errbuf );
 											TRACEBUFE(strBuf);
 											str=boost::str(tformat(LoadString(IDS_ERRORCONTACTINGWHY))%data->errbuf);
 										}
-										else 
+										else
 										{
 											tstring strBuf = boost::str(tformat(_T("[UpdateThread] [_Process]    ERROR CONTACTING URL, result:[%1%]")) % msg->data.result );
 											TRACEBUFE(strBuf);
@@ -843,14 +843,14 @@ public:
 									}
 								}
 
-								if(data->list) 
+								if(data->list)
 								{
 									TRACEI("[UpdateThread] [_Process]    removing tempfile");
-									try 
+									try
 									{
 										if(path::exists(data->tempfile)) path::remove(data->tempfile);
 									}
-									catch(exception &ex) 
+									catch(exception &ex)
 									{
 										ExceptionBox(hwnd, ex, __FILE__, __LINE__);
 									}
@@ -922,7 +922,7 @@ public:
 
 		TRACEI("[UpdateThread] [_Process]    finished downloading updates");
 
-		if(IsWindowVisible(hwnd)) 
+		if(IsWindowVisible(hwnd))
 		{
 			TRACEV("[UpdateThread] [_Process]    waiting for update-window to close");
 			if(g_config.UpdateCountdown==0) {
@@ -939,7 +939,7 @@ public:
 				SetTimer(hwnd, TIMER_COUNTDOWN, 1000, NULL);
 			}
 		}
-		else if(g_updater==(HWND)-1) 
+		else if(g_updater==(HWND)-1)
 		{
 			TRACEV("[UpdateThread] [_Process]    window not visible, g_updater:[FFFFFFFF]:  calling EndDialog()");
 			if (!EndDialog(hwnd, changes))
@@ -956,7 +956,7 @@ public:
 				}
 			}
 		}
-		else 
+		else
 		{
 			TRACEV("[UpdateThread] [_Process]    closing invisible auto-update window");
 			if (!DestroyWindow(hwnd))
@@ -1018,9 +1018,9 @@ static void UpdateLists_OnClose(HWND hwnd)
 
 
 
-static void UpdateLists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+static void UpdateLists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-	if(id==IDC_ABORT) 
+	if(id==IDC_ABORT)
 	{
 		TRACEI("[UpdateLists_OnCommand]    IDC_ABORT");
 		EnableWindow(GetDlgItem(hwnd, IDC_ABORT), FALSE);
@@ -1036,7 +1036,7 @@ static void UpdateLists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 
 
 
-static void UpdateLists_OnDestroy(HWND hwnd) 
+static void UpdateLists_OnDestroy(HWND hwnd)
 {
 	TRACEI("[UpdateLists_OnDestroy]  > Entering routine.");
 
@@ -1090,7 +1090,7 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 
 
 static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy);
-static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL UpdateLists_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	g_hUpdateListsDlg = hwnd;
 
@@ -1161,7 +1161,7 @@ static void UpdateLists_OnSize(HWND hwnd, UINT state, int cx, int cy) {
 
 
 
-static void UpdateLists_OnTimer(HWND hwnd, UINT id) 
+static void UpdateLists_OnTimer(HWND hwnd, UINT id)
 {
 	TRACEI("[UpdateLists_OnTimer]  > Entering routine.");
 	if(id==TIMER_COUNTDOWN) {
@@ -1234,7 +1234,7 @@ static INT_PTR CALLBACK UpdateLists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, 
 ///   is already in progress.
 /// </remarks>
 //
-int UpdateLists(HWND parent) 
+int UpdateLists(HWND parent)
 {
 	TRACEI("[UpdateLists]  > Entering routine.");
 
@@ -1244,9 +1244,9 @@ int UpdateLists(HWND parent)
 	{
 		TRACEI("[UpdateLists]    neither UpdateLists nor UpdatePeerBlock is enabled, so nothing to update");
 	}
-	else if(g_updater==NULL) 
+	else if(g_updater==NULL)
 	{
-		if(parent) 
+		if(parent)
 		{
 			// Either user-initiated, or else "update at startup"
 			g_updater=(HWND)-1;
@@ -1254,7 +1254,7 @@ int UpdateLists(HWND parent)
 			ret=(int)DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_UPDATELISTS), parent, UpdateLists_DlgProc);
 			TRACEI("[UpdateLists]    dialog box finished running");
 		}
-		else 
+		else
 		{
 			// auto-updating
 			TRACEI("[UpdateLists]    g_updater null, no parent, creating dialog-box");
@@ -1264,7 +1264,7 @@ int UpdateLists(HWND parent)
 		TRACEI("[UpdateLists]    resetting LastUpdate time");
 		time(&g_config.LastUpdate);
 	}
-	else if(parent) 
+	else if(parent)
 	{
 		// restoring update-window?
 		TRACEI("[UpdateLists]    g_updater not null, found parent, creating dialog-box");

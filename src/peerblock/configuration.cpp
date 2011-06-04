@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -32,8 +32,8 @@ Configuration g_config;
 Configuration::Configuration() :
 	Block(true), AllowLocal(true), UpdatePeerBlock(true),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
-	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true), 
-	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60), 
+	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true),
+	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60),
 	UpdateProxyType(CURLPROXY_HTTP), UpdateWindowPos(RECT()), ListManagerWindowPos(RECT()), StayHidden(false),
 	ListEditorWindowPos(RECT()), HistoryWindowPos(RECT()),
 	HideOnClose(true), AlwaysOnTop(false), HideTrayIcon(false), FirstBlock(true), FirstHide(true),
@@ -330,20 +330,20 @@ static void InsertAttribute(TiXmlElement *root, PortRange pr) {
 ///   Attempts to load the specified config-file.  Returns true if successful, false if not
 /// </summary>
 //
-bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view) 
+bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view)
 {
 		TCHAR chBuf[256];
 		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Configuration] [LoadFile]    loading file:[%s]"), file);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
 
 		*fp=CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-		if(*fp==INVALID_HANDLE_VALUE) 
+		if(*fp==INVALID_HANDLE_VALUE)
 		{
 			TRACEERR("[Configuration] [LoadFile]", L"Can't open file", GetLastError());
 			return false;
 		}
 
-		// Attempting to access a 0-byte file causes "The volume for a file has been externally 
+		// Attempting to access a 0-byte file causes "The volume for a file has been externally
 		// altered so that the opened file is no longer valid." errors, both here and when trying
 		// to save the .conf file later on.
 		DWORD size=0;
@@ -369,14 +369,14 @@ bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const v
 		}
 
 		*map=CreateFileMapping(*fp, NULL, PAGE_READONLY, 0, 0, NULL);
-		if(*map==NULL) 
+		if(*map==NULL)
 		{
 			TRACEERR("[Configuration] [LoadFile]", L"Can't create file map", GetLastError());
 			return false;
 		}
 
 		*view=MapViewOfFile(*map, FILE_MAP_READ, 0, 0, 0);
-		if(*view==NULL) 
+		if(*view==NULL)
 		{
 			TRACEERR("[Configuration] [LoadFile]", L"Can't map view of file", GetLastError());
 			return false;
@@ -405,7 +405,7 @@ bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const v
 ///   and will run through the startup-wizard.
 /// </remarks>
 //
-bool Configuration::Load() 
+bool Configuration::Load()
 {
 	TRACEI("[Configuration] [Load]  > Entering routine.");
 
@@ -430,13 +430,13 @@ bool Configuration::Load()
 			const void *view = NULL;
 			if (!LoadFile((*itr).file_str().c_str(), &fp, &map, &view))	// first try to find a PeerBlock file
 			{
-				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]    WARNING:  Unable to load configuration file [%1%]")) % 
+				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]    WARNING:  Unable to load configuration file [%1%]")) %
 					(*itr).file_str().c_str() );
 				TRACEBUFW(strBuf);
 				continue;
 			}
 
-			tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]    Loaded configuration file [%1%]")) % 
+			tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]    Loaded configuration file [%1%]")) %
 				(*itr).file_str().c_str() );
 			TRACEBUFI(strBuf);
 
@@ -446,10 +446,10 @@ bool Configuration::Load()
 
 			doc.Parse((const char*)view);
 
-			if(doc.Error()) 
+			if(doc.Error())
 			{
 				TRACEE("[Configuration] [Load]  * ERROR:  Can't parse xml document");
-				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]  * - Error: [%1%] (\"%2%\") at row:[%3%] col:[%4%]")) % 
+				tstring strBuf = boost::str(tformat(_T("[Configuration] [Load]  * - Error: [%1%] (\"%2%\") at row:[%3%] col:[%4%]")) %
 					doc.ErrorId() % doc.ErrorDesc() % doc.ErrorRow() % doc.ErrorCol() );
 				TRACEBUFE(strBuf);
 
@@ -497,7 +497,7 @@ bool Configuration::Load()
 	TRACEI("[Configuration] [Load]    parsing config root element");
 
 	const TiXmlElement *root=doc.RootElement();
-	if(!root || (strcmp(root->Value(), "PeerGuardian2") && strcmp(root->Value(), "PeerBlock"))) 
+	if(!root || (strcmp(root->Value(), "PeerGuardian2") && strcmp(root->Value(), "PeerBlock")))
 	{
 		TRACEI("[Configuration] [Load]    ERROR:  Not a valid configuration file!");
 		return false;
@@ -814,11 +814,11 @@ static bool RectValid(const RECT &rc) {
 ///   Writes out currently-set config to peerblock.conf file.
 /// </summary>
 //
-void Configuration::Save(const TCHAR * _filename) 
+void Configuration::Save(const TCHAR * _filename)
 {
 	TRACEI("[Configuration] [Save]  > Entering routine.");
 
-	if (TempAllowingHttpShort || TempAllowingHttpLong) 
+	if (TempAllowingHttpShort || TempAllowingHttpLong)
 		SetBlockHttp(this->PortSet.AllowHttp);	// make sure we don't accidentally startup allowed
 
 	TiXmlDocument doc;
@@ -880,7 +880,7 @@ void Configuration::Save(const TCHAR * _filename)
 
 		if(RectValid(this->WindowPos))
 			InsertChild(windowing, "Main", this->WindowPos);
-		
+
 		if(RectValid(this->UpdateWindowPos))
 			InsertChild(windowing, "Update", this->UpdateWindowPos);
 
@@ -1054,7 +1054,7 @@ void Configuration::Save(const TCHAR * _filename)
 	std::wstring tempfile = _filename;
 	tempfile += L".tmp";
 	FILE *fp=_tfopen((path::base_dir()/tempfile.c_str()).file_str().c_str(), _T("w"));
-	if(!fp) 
+	if(!fp)
 	{
 		TRACEERR("[Configuration] [Save]", L"Can't open file", GetLastError());
 		throw runtime_error("unable to save configuration");

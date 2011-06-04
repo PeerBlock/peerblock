@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -87,20 +87,20 @@ static pair<boost::shared_array<char>,size_t> UngzipFile(const path &file) {
 #define kBufferSize 4096
 static Byte g_Buffer[kBufferSize];
 
-bool LoadList(path file, p2p::list &list) 
+bool LoadList(path file, p2p::list &list)
 {
 	TRACEV("[LoadList]  > Entering routine.");
 	if(!file.has_root()) file=path::base_dir()/file;
-	if(!path::exists(file)) 
+	if(!path::exists(file))
 	{
 		TRACEE("[LoadList]    ERROR: specified path doesn't exist!!");
 		TRACEV("[LoadList]  < Leaving routine.");
 		return false;
 	}
 
-	switch(GetType(file)) 
+	switch(GetType(file))
 	{
-		case File_Zip: 
+		case File_Zip:
 		{
 			TRACEV("[LoadList]    found zip file");
 			ZipFile zip(file);
@@ -119,7 +119,7 @@ bool LoadList(path file, p2p::list &list)
 			TRACEV("[LoadList]    done with zip file");
 		} break;
 
-		case File_Gzip: 
+		case File_Gzip:
 		{
 			TRACEV("[LoadList]    found gzip file");
 			pair<boost::shared_array<char>,size_t> buf=UngzipFile(file);
@@ -128,7 +128,7 @@ bool LoadList(path file, p2p::list &list)
 			TRACEV("[LoadList]    done with gzip file");
 		} break;
 
-		case File_7zip: 
+		case File_7zip:
 		{
 			TRACEV("[LoadList]    found 7z file");
 			CFileInStream is;
@@ -138,7 +138,7 @@ bool LoadList(path file, p2p::list &list)
 			{
 				errno_t err = 0;
 			    _get_errno(&err);
-	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on _tfopen 7z file [%2%]")) 
+	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on _tfopen 7z file [%2%]"))
 					% err % file.c_str());
 				TRACEBUFE(strBuf);
 				throw zip_error("unable to open file");
@@ -166,7 +166,7 @@ bool LoadList(path file, p2p::list &list)
 			SRes res=SzArEx_Open(&db, &lookStream.s, &ai, &aitemp);
 			if(res!=SZ_OK) {
 				File_Close(&is.file);
-	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzArchiveOpen 7z file [%2%]")) 
+	   			tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzArchiveOpen 7z file [%2%]"))
 					% res % file.c_str());
 				TRACEBUFE(strBuf);
 				throw zip_error("SzArchiveOpen");
@@ -193,7 +193,7 @@ bool LoadList(path file, p2p::list &list)
 					SzArEx_Free(&db, &ai);
 					SzFree(NULL, filename);
 					File_Close(&is.file);
-	   				tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzExtract 7z file [%2%]")) 
+	   				tstring strBuf = boost::str(tformat(_T("[LoadList]  * ERROR:  [%1%] on SzExtract 7z file [%2%]"))
 						% res % file.c_str());
 					TRACEBUFE(strBuf);
 					throw zip_error("SzExtract");
@@ -207,7 +207,7 @@ bool LoadList(path file, p2p::list &list)
 					TRACEV("[LoadList]  * ERROR:  Exception caught while performing 7z list.load()");
 					throw;
 				}
-				
+
 				IAlloc_Free(&ai,outbuf);
 			}
 
@@ -218,7 +218,7 @@ bool LoadList(path file, p2p::list &list)
 			TRACEV("[LoadList]    done with 7z file");
 		} break;
 
-		case File_Unknown: 
+		case File_Unknown:
 		{
 			TRACEV("[LoadList]    found p2p/p2b file");
 			HANDLE h=CreateFile(file.file_str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -278,7 +278,7 @@ bool LoadList(path file, p2p::list &list)
 ///   Checks for a list-url in the specified container.  Returns true if found, false if not.
 /// </summary>
 //
-vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list) 
+vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list)
 {
 	tstring strBuf = boost::str(tformat(_T("[lists] [FindUrl]    finding url:[%1%]")) % _url );
 	TRACEBUFV(strBuf);
@@ -382,7 +382,7 @@ public:
 					return true;
 				}
 			}
-			if(!(stat=(++i < g_config.StaticLists.size()))) 
+			if(!(stat=(++i < g_config.StaticLists.size())))
 			{
 				TRACEI("[GenCacheFuncs] [Process]    stat funkiness");
 				i=0;
@@ -524,7 +524,7 @@ static bool GenCache(HWND hwnd, p2p::list &work) {
 		TRACEI("[GenCache]  < Leaving routine (true).");
 		return true;
 	}
-	else 
+	else
 	{
 		TRACEI("[GenCache]  < Leaving routine (false).");
 		return false;

@@ -6,7 +6,7 @@
 //================================================================================================
 
 /*
-	Copyright (C) 2009-2010 PeerBlock, LLC
+	Copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -33,7 +33,7 @@ using namespace std;
 HWND g_hPortProfileDlg = NULL;
 
 
-static void PortProfile_OnClose(HWND hwnd) 
+static void PortProfile_OnClose(HWND hwnd)
 {
 	TRACEI("[portprofileproc] [PortProfile_OnClose]  > Entering routine.");
 	EndDialog(hwnd, IDCANCEL);
@@ -45,7 +45,7 @@ static void PortProfile_OnDestroy(HWND hwnd) {
 	g_hPortProfileDlg = NULL;
 }
 
-static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	TRACEI("[portprofileproc] [PortProfile_OnInitDialog]  > Entering routine.");
 
@@ -71,7 +71,7 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	}
 
 	tstringstream ports;
-	for (vector<PortRange>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); ++iter) 
+	for (vector<PortRange>::const_iterator iter = profile->Ports.begin(); iter != profile->Ports.end(); ++iter)
 	{
 		PortRange pr = (PortRange) *iter;
 
@@ -96,11 +96,11 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 
 
-static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
 	switch (id)
 	{
-		case IDOK: 
+		case IDOK:
 		{
 			TRACEI("[portprofileproc] [PortProfile_OnCommand]  > IDOK");
 			PortProfile *pp = (PortProfile*)(LONG_PTR)GetWindowLongPtr(hwnd, DWLP_USER);
@@ -126,9 +126,9 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 			// allow for a whole range of separators
 			boost::split(ports, txtports, boost::is_any_of("\t\n\r,|"));
 
-			for (std::vector<tstring>::size_type i = 0; i < ports.size(); i++) 
+			for (std::vector<tstring>::size_type i = 0; i < ports.size(); i++)
 			{
-				try 
+				try
 				{
 					std::vector<tstring> ranges;
 					boost::split(ranges, ports[i], boost::is_any_of("-"));
@@ -148,7 +148,7 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 						pp->Ports.push_back(pr);
 					}
 				}
-				catch (boost::bad_lexical_cast &) 
+				catch (boost::bad_lexical_cast &)
 				{
 					TRACEW("[portprofileproc] [PortProfile_OnCommand]  * EXCEPTION caught (and ignored) while processing IDOK");
 				}
@@ -171,11 +171,11 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 
 
 
-INT_PTR CALLBACK PortProfile_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR CALLBACK PortProfile_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	try 
+	try
 	{
-		switch(msg) 
+		switch(msg)
 		{
 			HANDLE_MSG(hwnd, WM_CLOSE, PortProfile_OnClose);
 			HANDLE_MSG(hwnd, WM_COMMAND, PortProfile_OnCommand);
@@ -188,12 +188,12 @@ INT_PTR CALLBACK PortProfile_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 		}
 		return 0;
 	}
-	catch(exception &ex) 
+	catch(exception &ex)
 	{
 		UncaughtExceptionBox(hwnd, ex, __FILE__, __LINE__);
 		return 0;
 	}
-	catch(...) 
+	catch(...)
 	{
 		UncaughtExceptionBox(hwnd, __FILE__, __LINE__);
 		return 0;

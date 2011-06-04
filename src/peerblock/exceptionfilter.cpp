@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2010 PeerBlock, LLC
+	Copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -25,7 +25,7 @@
 
 
 #if defined _M_X64 || defined _M_IX86
-LPTOP_LEVEL_EXCEPTION_FILTER WINAPI 
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
   MyDummySetUnhandledExceptionFilter(
   LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
@@ -47,7 +47,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
 ///   This is a hack to resolve some issues setting up unhandled exception filters on VS 2005+.
 /// </summary>
 /// <remarks>
-///   See (http://blog.kalmbach-software.de/2008/04/02/unhandled-exceptions-in-vc8-and-above-for-x86-and-x64/) 
+///   See (http://blog.kalmbach-software.de/2008/04/02/unhandled-exceptions-in-vc8-and-above-for-x86-and-x64/)
 ///   for more details as to why this hack is required for certain cases.
 /// </remarks>
 //
@@ -75,7 +75,7 @@ BOOL PreventSetUnhandledExceptionFilter()
 	newJump[0] = 0xE9;  // JMP rel32
 	memcpy(&newJump[1], &dwRelativeAddr, sizeof(pNewFunc));
 #elif _M_X64
-	// We must use R10 or R11, because these are "scratch" registers 
+	// We must use R10 or R11, because these are "scratch" registers
 	// which need not to be preserved accross function calls
 	// For more info see: Register Usage for x64 64-Bit
 	// http://msdn.microsoft.com/en-us/library/ms794547.aspx
@@ -112,11 +112,11 @@ BOOL PreventSetUnhandledExceptionFilter()
 ///   Writes out a mini-dump file "peerblock.dmp" into the program's current working directory.
 /// </summary>
 /// <remarks>
-///   See (http://www.codeproject.com/KB/debug/postmortemdebug_standalone1.aspx) for more details 
+///   See (http://www.codeproject.com/KB/debug/postmortemdebug_standalone1.aspx) for more details
 ///   on this implementation.
 /// </remarks>
 //
-LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo) 
+LONG WINAPI PeerblockExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
 {
 	HMODULE hDll = NULL;
 

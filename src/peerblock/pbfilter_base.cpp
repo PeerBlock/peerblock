@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
 	This software is provided 'as-is', without any express or implied
@@ -35,7 +35,7 @@ pbfilter_base::pbfilter_base() : m_block(false),m_blockhttp(true),m_blockcount(0
 
 
 
-void pbfilter_base::start_thread() 
+void pbfilter_base::start_thread()
 {
 	TRACEV("[pbfilter_base] [start_thread]  > Entering routine.");
 	m_runthread = true;
@@ -64,7 +64,7 @@ void pbfilter_base::start_thread()
 
 
 
-void pbfilter_base::stop_thread() 
+void pbfilter_base::stop_thread()
 {
 	TRACEV("[pbfilter_base] [stop_thread]  > Entering routine.");
 	m_runthread = false;
@@ -81,17 +81,17 @@ void pbfilter_base::stop_thread()
 
 
 
-void pbfilter_base::setblock(bool block) 
+void pbfilter_base::setblock(bool block)
 {
 	TRACEV("[pbfilter_base] [setblock]  > Entering routine.");
 	TRACEI("[pbfilter_base] [setblock]    acquiring lock");
 	mutex::scoped_lock lock(m_blocklock);
 
-	if(block != m_block) 
+	if(block != m_block)
 	{
-		if (block) 
+		if (block)
 			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [true]")
-		else 
+		else
 			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [false]");
 
 		m_block = block;
@@ -100,7 +100,7 @@ void pbfilter_base::setblock(bool block)
 		TRACEI("[pbfilter_base] [setblock]    sending block request to driver...")
 		DWORD ret = m_filter.write(IOCTL_PEERBLOCK_HOOK, &data, sizeof(data));
 		TRACEI("[pbfilter_base] [setblock]    ...block request sent")
-		if(ret != ERROR_SUCCESS) 
+		if(ret != ERROR_SUCCESS)
 		{
 			TRACEERR("[pbfilter_base] [setblock]", L"sending block request to driver", ret);
 			throw win32_error("DeviceIoControl", ret);
@@ -118,7 +118,7 @@ void pbfilter_base::setblock(bool block)
 
 
 
-void pbfilter_base::setranges(const p2p::list &ranges, bool block) 
+void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 {
 	typedef stdext::hash_map<std::wstring, const wchar_t*> hmap_type;
 
@@ -130,7 +130,7 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 
 	TRACEV("[pbfilter_base] [setranges]    initial for-loop");
 
-	for(p2p::list::const_iterator iter = ranges.begin(); iter != ranges.end(); ++iter) 
+	for(p2p::list::const_iterator iter = ranges.begin(); iter != ranges.end(); ++iter)
 	{
 		const wchar_t* &label = labels[iter->name];
 
@@ -257,7 +257,7 @@ void pbfilter_base::setsourceports(const std::set<USHORT> &ports)
 
 
 
-void pbfilter_base::setactionfunc(const action_function &func) 
+void pbfilter_base::setactionfunc(const action_function &func)
 {
 	TRACEV("[pbfilter_base] [setactionfunc]  > Entering routine.");
 	mutex::scoped_lock lock(m_lock);
@@ -268,7 +268,7 @@ void pbfilter_base::setactionfunc(const action_function &func)
 
 
 
-void pbfilter_base::thread_func() 
+void pbfilter_base::thread_func()
 {
 	TRACEV("[pbfilter_base] [thread_func]  > Entering routine.");
 	HANDLE evts[2];
@@ -308,22 +308,22 @@ void pbfilter_base::thread_func()
 		}
 
 		ret = m_filter.getresult(&ovl);
-		if(ret == ERROR_SUCCESS) 
+		if(ret == ERROR_SUCCESS)
 		{
 			TRACEV("[pbfilter_base] [thread_func]    m_filter.getresult() succeeded");
 			action a;
 
-			if(pbn.action == 0) 
+			if(pbn.action == 0)
 			{
 				TRACEV("[pbfilter_base] [thread_func]    action:[blocked]");
 				a.type = action::blocked;
 			}
-			else if(pbn.action == 1) 
+			else if(pbn.action == 1)
 			{
 				TRACEV("[pbfilter_base] [thread_func]    action:[allowed]");
 				a.type = action::allowed;
 			}
-			else 
+			else
 			{
 				TRACEV("[pbfilter_base] [thread_func]    action:[none]");
 				a.type = action::none;
@@ -348,7 +348,7 @@ void pbfilter_base::thread_func()
 					a.label = pbn.label;
 				}
 
-				if(m_onaction) 
+				if(m_onaction)
 				{
 					TRACEV("[pbfilter_base] [thread_func]    performing on_action routine");
 					m_onaction(a);
@@ -357,12 +357,12 @@ void pbfilter_base::thread_func()
 				TRACEV("[pbfilter_base] [thread_func]    mutex going out of scope, releasing");
 			}
 		}
-		else if(ret == ERROR_OPERATION_ABORTED) 
+		else if(ret == ERROR_OPERATION_ABORTED)
 		{
 			TRACEE("[pbfilter_base] [thread_func]    ERROR OPERATION_ABORTED");
 			break;
 		}
-		else 
+		else
 		{
 			TRACEW("[pbfilter_base] [thread_func]    ERROR:  getresult failed");
 			std::wcout << L"error: getresult failed." << std::endl;
@@ -378,7 +378,7 @@ void pbfilter_base::thread_func()
 
 
 
-DWORD WINAPI pbfilter_base::thread_thunk(void *arg) 
+DWORD WINAPI pbfilter_base::thread_thunk(void *arg)
 {
 	TRACEV("[pbfilter_base] [thread_thunk]  > Entering routine.");
 	reinterpret_cast<pbfilter_base*>(arg)->thread_func();

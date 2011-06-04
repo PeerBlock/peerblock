@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -109,7 +109,7 @@ private:
 	std::queue<Action> dbqueue;
 
 public:
-	LogFilterAction(HWND hwnd, HWND l, bool db=true) : hwnd(hwnd),log(l),usedb(db) 
+	LogFilterAction(HWND hwnd, HWND l, bool db=true) : hwnd(hwnd),log(l),usedb(db)
 	{
 		TRACEV("[LogFilterAction] [LogFilterAction]  > Entering routine.");
 
@@ -122,17 +122,17 @@ public:
 
 		TRACEV("[LogFilterAction] [LogFilterAction]  < Leaving routine.");
 	}
-	
-	~LogFilterAction() 
-	{ 
+
+	~LogFilterAction()
+	{
 		TRACEV("[LogFilterAction] [~LogFilterAction]  > Entering routine.");
-		this->Commit(true); 
+		this->Commit(true);
 		TRACEV("[LogFilterAction] [~LogFilterAction]  < Leaving routine.");
 	}
 
 
 
-	void operator()(const pbfilter::action &action) 
+	void operator()(const pbfilter::action &action)
 	{
 		TRACEV("[LogFilterAction] [operator()]  > Entering routine.");
 		unsigned int sourceip, destip;
@@ -158,7 +158,7 @@ public:
 			destport = htons(action.dest.addr6.sin6_port);
 		}
 
-		if((action.type == pbfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed || g_numlogged < 10) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK)) 
+		if((action.type == pbfilter::action::blocked || g_config.LogAllowed || g_config.ShowAllowed || g_numlogged < 10) && (sourceip!=INADDR_LOOPBACK || destip!=INADDR_LOOPBACK))
 		{
 			TRACEV("[LogFilterAction] [operator()]    allowed, not loopbacks");
 			if(action.type == pbfilter::action::blocked && g_config.BlinkOnBlock!=Never && (g_config.BlinkOnBlock==OnBlock || ((destport==80 || destport==443) && action.protocol==IPPROTO_TCP)))
@@ -167,7 +167,7 @@ public:
 				g_blinkstart=GetTickCount();
 			}
 
-			if(g_config.ShowAllowed || action.type == pbfilter::action::blocked || g_numlogged < 10) 
+			if(g_config.ShowAllowed || action.type == pbfilter::action::blocked || g_numlogged < 10)
 			{
 				TCHAR chBuf[256];
 				_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [operator()]    updating list for window log:[%p]"), log);
@@ -194,7 +194,7 @@ public:
 					lvi.iSubItem=0;
 					lvi.pszText=(LPTSTR)time.c_str();
 
-					if(action.type == pbfilter::action::blocked) 
+					if(action.type == pbfilter::action::blocked)
 					{
 						TRACEV("[LogFilterAction] [operator()]    logging blocked packet");
 
@@ -202,17 +202,17 @@ public:
 						{
 							lvi.lParam=(LPARAM)2;	// HTTP block
 						}
-						else 
+						else
 						{
 							// non-HTTP block
-							lvi.lParam=(LPARAM)1;	
+							lvi.lParam=(LPARAM)1;
 
 							// Update "last block time", so we can warn the user when exiting.
 							mutex::scoped_lock lock(g_lastblocklock);
 							g_lastblocktime = GetTickCount();
 						}
 					}
-					else 
+					else
 					{
 						TRACEV("[LogFilterAction] [operator()]    logging allowed packet");
 						if (g_numlogged < 20) ++g_numlogged;
@@ -252,7 +252,7 @@ public:
 					lvi.pszText=(LPTSTR)actionstr.c_str();
 					ListView_SetItem(log, &lvi);
 
-					// We should log at least a few Allowed messages even if ShowAllowed is false, so that the user 
+					// We should log at least a few Allowed messages even if ShowAllowed is false, so that the user
 					// sees at least some activity and doesn't think that we're broken.
 					if (g_numlogged == 9 && !g_config.ShowAllowed)
 					{
@@ -274,10 +274,10 @@ public:
 				}
 			}
 
-			if(usedb && action.src.addr.sa_family == AF_INET && action.dest.addr.sa_family == AF_INET) 
+			if(usedb && action.src.addr.sa_family == AF_INET && action.dest.addr.sa_family == AF_INET)
 			{
 				TRACEV("[LogFilterAction] [operator()]    using db, src and dest not af_inet");
-				if((action.type != pbfilter::action::blocked && g_config.LogAllowed) || (action.type == pbfilter::action::blocked && g_config.LogBlocked)) 
+				if((action.type != pbfilter::action::blocked && g_config.LogAllowed) || (action.type == pbfilter::action::blocked && g_config.LogBlocked))
 				{
 					TRACEV("[LogFilterAction] [operator()]    logging to dbqueue");
 					LogFilterAction::Action a;
@@ -390,7 +390,7 @@ private:
 
 								if (g_config.CleanupType == ArchiveDelete)
 								{
-									try 
+									try
 									{
 										queue<string> dates;
 
@@ -404,7 +404,7 @@ private:
 												dates.push(reader.getstring(0));
 										}
 
-										for(; !dates.empty(); dates.pop()) 
+										for(; !dates.empty(); dates.pop())
 										{
 											TRACEI("getting dates");
 											path p=g_config.ArchivePath;
@@ -459,7 +459,7 @@ private:
 
 								if (g_config.CleanupType == Delete || g_config.CleanupType == ArchiveDelete)
 								{
-									try 
+									try
 									{
 										ostringstream ss;
 
@@ -477,7 +477,7 @@ private:
 											needvacuum = true;
 										}
 									}
-									catch(database_error &ex) 
+									catch(database_error &ex)
 									{
 										TRACEE("[LogFilterAction] [_Commit]  * ERROR:  Caught database_error exception while deleting files!!");
 										ExceptionBox(NULL, ex, __FILE__, __LINE__);
@@ -548,7 +548,7 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM
 ///   Parent's hwnd, if any.
 /// </param>
 //
-static void UpdateStatus(HWND hwnd) 
+static void UpdateStatus(HWND hwnd)
 {
 	TRACEV("[LogProc] [UpdateStatus]  > Entering routine.");
 	tstring enable, http, blocking, httpstatus, update, lastupdate;
@@ -556,7 +556,7 @@ static void UpdateStatus(HWND hwnd)
 	enable=LoadString(g_config.Block?IDS_DISABLE:IDS_ENABLE);
 	http=LoadString(g_config.PortSet.IsHttpBlocked()?IDS_ALLOWHTTP:IDS_BLOCKHTTP);
 
-	if(g_config.Block) 
+	if(g_config.Block)
 	{
 		// Use locale-specific number grouping
 		std::ostringstream numblocked;
@@ -564,7 +564,7 @@ static void UpdateStatus(HWND hwnd)
 		numblocked << g_filter->blockcount();
 		blocking=boost::str(tformat(LoadString(IDS_PBACTIVE)) % numblocked.str().c_str());
 	}
-	else 
+	else
 	{
 		blocking=LoadString(IDS_PBDISABLED);
 	}
@@ -595,13 +595,13 @@ static void UpdateStatus(HWND hwnd)
 		TRACEV("[LogProc] [UpdateStatus]    done generating list metrics");
 	}
 
-	if(g_config.LastUpdate) 
+	if(g_config.LastUpdate)
 	{
 		TRACEV("[LogProc] [UpdateStatus]    g_config.LastUpdate: [true]");
 		mutex::scoped_lock lock(g_lastupdatelock);
 		time_t dur=time(NULL)-g_config.LastUpdate;
 
-		if(dur<604800) 
+		if(dur<604800)
 		{
 			TRACEV("[LogProc] [UpdateStatus]    dur < 604800");
 			TCHAR buf[64];
@@ -632,15 +632,15 @@ static void UpdateStatus(HWND hwnd)
 
 
 
-static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) 
+static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
 	switch(id) {
 
-		case IDC_LISTS: 
+		case IDC_LISTS:
 		{
 			TRACEI("[LogProc] [Log_OnCommand]    user clicked List Manager button");
 			INT_PTR ret=DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LISTS), hwnd, Lists_DlgProc);
-			if(ret&LISTS_NEEDUPDATE) 
+			if(ret&LISTS_NEEDUPDATE)
 			{
 				{
 					TRACEI("[LogProc] [Log_OnCommand]    lists need to be updated");
@@ -654,7 +654,7 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			if(g_filter.get() && ret&LISTS_NEEDRELOAD) LoadLists(hwnd);
 		} break;
 
-		case IDC_UPDATE: 
+		case IDC_UPDATE:
 		{
 			TRACEI("[LogProc] [Log_OnCommand]    user clicked Update button");
 			int ret = 0;
@@ -696,7 +696,7 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 
 
-static void Log_OnDestroy(HWND hwnd) 
+static void Log_OnDestroy(HWND hwnd)
 {
 	TRACEI("[LogProc] [Log_OnDestroy]  > Entering routine.");
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
@@ -733,7 +733,7 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 
 
 
-static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) 
+static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	TRACEV("[LogProc] [Log_OnInitDialog]  > Entering routine.");
 
@@ -757,7 +757,7 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 				TRACEV("[LogProc] [Log_OnInitDialog]    acquiring sqlite3 lock");
 				sqlite3_lock lock(g_con, true);
 				TRACEV("[LogProc] [Log_OnInitDialog]    acquired sqlite3 lock");
-			
+
 				if(g_con.executeint("select count(*) from sqlite_master where name='t_names';")==0)
 					g_con.executenonquery("create table t_names(id integer primary key, name text unique);");
 
@@ -823,10 +823,10 @@ static unsigned int ParseIp(LPCTSTR str) {
 
 
 
-static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) 
+static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 {
 	TRACED("[LogProc] [Log_OnNotify]  > Entering routine.");
-	if(nmh->code==NM_CUSTOMDRAW && nmh->idFrom==IDC_LIST && g_config.ColorCode) 
+	if(nmh->code==NM_CUSTOMDRAW && nmh->idFrom==IDC_LIST && g_config.ColorCode)
 	{
 		TRACED("[LogProc] [Log_OnNotify]    custom draw list colorcode");
 		NMLVCUSTOMDRAW *cd=(NMLVCUSTOMDRAW*)nmh;
@@ -860,7 +860,7 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 		TRACED("[LogProc] [Log_OnNotify]  < Leaving routine (TRUE).");
 		return TRUE;
 	}
-	else if(nmh->code==NM_RCLICK && nmh->idFrom==IDC_LIST) 
+	else if(nmh->code==NM_RCLICK && nmh->idFrom==IDC_LIST)
 	{
 		TRACED("[LogProc] [Log_OnNotify]    right-click on list");
 		NMITEMACTIVATE *nmia=(NMITEMACTIVATE*)nmh;
@@ -881,7 +881,7 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 				int nListItemsProcessedCounter = 0;
 
 				int nListViewItemPosition = ListView_GetNextItem(nmh->hwndFrom, -1, LVNI_SELECTED);
-				while(nListViewItemPosition != -1) 
+				while(nListViewItemPosition != -1)
 				{
 					TCHAR text[MAX_SIZE_IP], name[256];
 					ListView_GetItemText(nmh->hwndFrom, nListViewItemPosition, 2, text, MAX_SIZE_IP);
@@ -1052,7 +1052,7 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 
 
-static void Log_OnSize(HWND hwnd, UINT state, int cx, int cy) 
+static void Log_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
 	TRACEV("[LogProc] [Log_OnSize]    Entering routine.");
 	HWND enable=GetDlgItem(hwnd, IDC_ENABLE);
@@ -1118,10 +1118,10 @@ public:
 
 
 
-static void Log_OnTimer(HWND hwnd, UINT id) 
+static void Log_OnTimer(HWND hwnd, UINT id)
 {
 	TRACEV("[LogProc] [Log_OnTimer]  > Entering routine.");
-	switch(id) 
+	switch(id)
 	{
 		case TIMER_UPDATE:
 		{

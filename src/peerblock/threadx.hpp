@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -84,7 +84,7 @@ public:
 		//_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  > Entering Mutex:[%p]"), this);
 		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
-		EnterCriticalSection(&cs); 
+		EnterCriticalSection(&cs);
 	}
 #ifdef _WIN32_WINNT
 	bool tryenter() { return TryEnterCriticalSection(&cs)!=0; }
@@ -95,7 +95,7 @@ public:
 		//_stprintf_s(chBuf, sizeof(chBuf)/2, _T("***  < Leaving Mutex:[%p]"), this);
 		//g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
-		LeaveCriticalSection(&cs); 
+		LeaveCriticalSection(&cs);
 	}
 
 private:
@@ -157,7 +157,7 @@ private:
 public:
 	void enter() { while(InterlockedCompareExchange(&locked, 1, 0)); }
 	bool tryenter() { return InterlockedCompareExchange(&locked, 1, 0)==0; }
-	
+
 	bool tryenter(unsigned int tries) {
 		while(tries--) if(InterlockedCompareExchange(&locked, 1, 0)==0) return true;
 		return false;

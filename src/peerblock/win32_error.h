@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -92,7 +92,7 @@ private:
 ///   disabled.
 /// </remarks>
 //
-class peerblock_error : public win32_error 
+class peerblock_error : public win32_error
 {
 public:
 	peerblock_error(DWORD _codeId = 0, DWORD _textId = 0) : m_codeId(_codeId), m_textId(_textId) {}

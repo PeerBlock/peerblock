@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -131,7 +131,7 @@ public:
 			return p;
 		}
 		else if(to.has_root()) return to;
-		else 
+		else
 		{
 			TRACEE("[path] [relative_to]  * ERROR:  unable to create relative path: paths have different roots!!");
 			throw std::runtime_error("unable to create relative path: paths have different roots");
@@ -171,7 +171,7 @@ public:
 #endif
 	}
 
-	static void copy(const path &from, const path &to, bool replace=false) 
+	static void copy(const path &from, const path &to, bool replace=false)
 	{
 		if(replace && exists(to)) remove(to);
 		if(!CopyFile(from.buf, to.buf, true))

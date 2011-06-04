@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
 	Based on the original work by Tim Leonard
 
 	This software is provided 'as-is', without any express or implied
@@ -49,7 +49,7 @@ public:
 		DWORD err = FwpmEngineOpen0(0, RPC_C_AUTHN_WINNT, 0, &session, &m_session);
 		if (err == 1753)
 			throw peerblock_error(IDS_NEEDSVCSERR, IDS_NEEDSVCSERRTEXT);
-		if (err != ERROR_SUCCESS) 
+		if (err != ERROR_SUCCESS)
 			throw win32_error("FwpmEngineOpen0", err);
 	}
 

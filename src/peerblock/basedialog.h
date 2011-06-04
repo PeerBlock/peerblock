@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010 PeerBlock, LLC
+	Copyright (C) 2010-2011 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -33,7 +33,7 @@
 //    - Called by each dialog when the status bar icon changes status (colors)
 //
 /// <summary>
-///   Sends a message to the dialog to refresh the titlebar icon, based on the 
+///   Sends a message to the dialog to refresh the titlebar icon, based on the
 ///   state of the status bar icon
 /// </summary>
 //
@@ -69,7 +69,7 @@ static void RefreshDialogIcon(HWND hDialog)
 ///   Returns the text (if any) from a control in a dialog.
 /// </summary>
 //
-static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem) 
+static tstring GetDlgItemText(HWND hDlg, int nIDDlgItem)
 {
 	HWND ctrl=GetDlgItem(hDlg, nIDDlgItem);
 
