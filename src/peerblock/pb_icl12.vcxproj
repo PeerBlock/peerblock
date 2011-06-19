@@ -139,7 +139,14 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|x64'">$(SolutionDir)bin_icl12\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|Win32'">$(SolutionDir)bin_icl12\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'">$(SolutionDir)bin_icl12\$(Platform)\$(Configuration)\</OutDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|x64'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -175,9 +182,6 @@
       <TargetMachine>MachineX86</TargetMachine>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
@@ -211,9 +215,6 @@
       <TargetMachine>MachineX64</TargetMachine>
       <MinimumRequiredVersion>5.02</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
@@ -235,10 +236,6 @@
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <ResourceCompile />
     <ResourceCompile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ResourceCompile>
@@ -262,10 +259,6 @@
       <TargetMachine>MachineX64</TargetMachine>
       <MinimumRequiredVersion>5.02</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <ResourceCompile />
     <ResourceCompile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ResourceCompile>
@@ -290,9 +283,6 @@
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
     <ResourceCompile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ResourceCompile>
@@ -317,9 +307,6 @@
       <TargetMachine>MachineX64</TargetMachine>
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
     <ResourceCompile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ResourceCompile>
@@ -358,9 +345,6 @@
       <TargetMachine>MachineX86</TargetMachine>
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'">
     <PreBuildEvent>
@@ -394,9 +378,6 @@
       <TargetMachine>MachineX64</TargetMachine>
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>peerblock.manifest</AdditionalManifestFiles>
-    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="aboutproc.cpp" />

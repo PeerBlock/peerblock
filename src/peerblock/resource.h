@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by pb.rc
 //
+#define IDC_STATIC                      -1
+#define IDR_RT_MANIFEST                 1
 #define IDD_MAIN                        101
 #define IDS_EXCEPTION                   102
 #define IDS_LOG                         103

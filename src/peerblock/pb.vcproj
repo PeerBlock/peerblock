@@ -72,6 +72,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -85,7 +86,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -158,6 +158,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -169,7 +170,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -233,6 +233,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				SubSystem="2"
 				TargetMachine="1"
@@ -242,7 +243,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -307,6 +307,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				SubSystem="2"
 				TargetMachine="17"
@@ -316,7 +317,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -380,6 +380,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib fwpuclnt.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				SubSystem="2"
 				TargetMachine="1"
@@ -389,7 +390,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -454,6 +454,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib fwpuclnt.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				SubSystem="2"
 				TargetMachine="17"
@@ -463,7 +464,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -534,6 +534,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib fwpuclnt.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -547,7 +548,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -620,6 +620,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib ws2_32.lib winmm.lib dnsapi.lib iphlpapi.lib shlwapi.lib fwpuclnt.lib"
+				GenerateManifest="false"
 				UACExecutionLevel="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -631,7 +632,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="peerblock.manifest"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
