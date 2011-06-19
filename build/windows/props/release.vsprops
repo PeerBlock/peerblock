@@ -26,6 +26,7 @@
 		GenerateDebugInformation="true"
 		OptimizeReferences="2"
 		EnableCOMDATFolding="2"
+		SetChecksum="true"
 		LinkTimeCodeGeneration="1"
 	/>
 	<Tool
