@@ -7,16 +7,9 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		Optimization="2"
-		InlineFunctionExpansion="2"
-		EnableIntrinsicFunctions="true"
-		FavorSizeOrSpeed="1"
-		OmitFramePointers="true"
-		StringPooling="true"
 		RuntimeLibrary="0"
 		DebugInformationFormat="3"
-		BufferSecurityCheck="true"
 		ExceptionHandling="2"
-		EnableEnhancedInstructionSet="0"
 		WholeProgramOptimization="true"
 		AdditionalOptions="/MP"
 	/>
