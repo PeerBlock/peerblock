@@ -107,6 +107,7 @@ const struct Curl_handler Curl_handler_dict = {
   ZERO_NULL,                            /* doing_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
+  ZERO_NULL,                            /* readwrite */
   PORT_DICT,                            /* defport */
   CURLPROTO_DICT,                       /* protocol */
   PROTOPT_NONE                          /* flags */
@@ -279,7 +280,7 @@ static CURLcode dict_do(struct connectdata *conn, bool *done)
       int i;
 
       ppath++;
-      for (i = 0; ppath[i]; i++) {
+      for(i = 0; ppath[i]; i++) {
         if(ppath[i] == ':')
           ppath[i] = ' ';
       }

@@ -192,6 +192,9 @@
 /* Define to 1 if you have the ftruncate function. */
 #undef HAVE_FTRUNCATE
 
+/* Define to 1 if you have the gai_strerror function. */
+#undef HAVE_GAI_STRERROR
+
 /* Define to 1 if you have a working getaddrinfo function. */
 #undef HAVE_GETADDRINFO
 
@@ -836,6 +839,9 @@
 
 /* a suitable file to read random data from */
 #undef RANDOM_FILE
+
+/* Define to the type qualifier pointed by arg 5 for recvfrom. */
+#undef RECVFROM_QUAL_ARG5
 
 /* Define to the type of arg 1 for recvfrom. */
 #undef RECVFROM_TYPE_ARG1

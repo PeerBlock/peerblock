@@ -99,7 +99,7 @@ static CURLcode imap_do(struct connectdata *conn, bool *done);
 static CURLcode imap_done(struct connectdata *conn,
                           CURLcode, bool premature);
 static CURLcode imap_connect(struct connectdata *conn, bool *done);
-static CURLcode imap_disconnect(struct connectdata *conn, bool dead_connection);
+static CURLcode imap_disconnect(struct connectdata *conn, bool dead);
 static CURLcode imap_multi_statemach(struct connectdata *conn, bool *done);
 static int imap_getsock(struct connectdata *conn,
                         curl_socket_t *socks,
@@ -126,9 +126,10 @@ const struct Curl_handler Curl_handler_imap = {
   imap_getsock,                     /* doing_getsock */
   ZERO_NULL,                        /* perform_getsock */
   imap_disconnect,                  /* disconnect */
+  ZERO_NULL,                        /* readwrite */
   PORT_IMAP,                        /* defport */
   CURLPROTO_IMAP,                   /* protocol */
-  PROTOPT_CLOSEACTION               /* flags */
+  PROTOPT_CLOSEACTION | PROTOPT_NEEDSPWD /* flags */
 };
 
 
@@ -150,9 +151,10 @@ const struct Curl_handler Curl_handler_imaps = {
   imap_getsock,                     /* doing_getsock */
   ZERO_NULL,                        /* perform_getsock */
   imap_disconnect,                  /* disconnect */
+  ZERO_NULL,                        /* readwrite */
   PORT_IMAPS,                       /* defport */
   CURLPROTO_IMAP | CURLPROTO_IMAPS, /* protocol */
-  PROTOPT_CLOSEACTION | PROTOPT_SSL /* flags */
+  PROTOPT_CLOSEACTION | PROTOPT_SSL | PROTOPT_NEEDSPWD /* flags */
 };
 #endif
 
@@ -174,6 +176,7 @@ static const struct Curl_handler Curl_handler_imap_proxy = {
   ZERO_NULL,                            /* doing_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
+  ZERO_NULL,                            /* readwrite */
   PORT_IMAP,                            /* defport */
   CURLPROTO_HTTP,                       /* protocol */
   PROTOPT_NONE                          /* flags */
@@ -198,6 +201,7 @@ static const struct Curl_handler Curl_handler_imaps_proxy = {
   ZERO_NULL,                            /* doing_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
+  ZERO_NULL,                            /* readwrite */
   PORT_IMAPS,                           /* defport */
   CURLPROTO_HTTP,                       /* protocol */
   PROTOPT_NONE                          /* flags */
@@ -629,12 +633,10 @@ static CURLcode imap_multi_statemach(struct connectdata *conn,
   struct imap_conn *imapc = &conn->proto.imapc;
   CURLcode result;
 
-  if((conn->handler->protocol & CURLPROTO_IMAPS) && !imapc->ssldone) {
+  if((conn->handler->flags & PROTOPT_SSL) && !imapc->ssldone)
     result = Curl_ssl_connect_nonblocking(conn, FIRSTSOCKET, &imapc->ssldone);
-  }
-  else {
+  else
     result = Curl_pp_multi_statemach(&imapc->pp);
-  }
 
   *done = (bool)(imapc->state == IMAP_STOP);
 
@@ -744,11 +746,9 @@ static CURLcode imap_connect(struct connectdata *conn,
       return result;
   }
 
-  if((conn->handler->protocol & CURLPROTO_IMAPS) &&
+  if((conn->handler->flags & PROTOPT_SSL) &&
      data->state.used_interface != Curl_if_multi) {
     /* BLOCKING */
-    /* IMAPS is simply imap with SSL for the control channel */
-    /* now, perform the SSL initialization for this socket */
     result = Curl_ssl_connect(conn, FIRSTSOCKET);
     if(result)
       return result;

@@ -168,6 +168,7 @@
     <ClInclude Include="src\xattr.h" />
     <ClInclude Include="lib\amigaos.h" />
     <ClInclude Include="lib\arpa_telnet.h" />
+    <ClInclude Include="lib\asyn.h" />
     <ClInclude Include="lib\config-amigaos.h" />
     <ClInclude Include="lib\config-mac.h" />
     <ClInclude Include="lib\config-os400.h" />
@@ -272,7 +273,6 @@
     <ClInclude Include="include\curl\multi.h" />
     <ClInclude Include="include\curl\stdcheaders.h" />
     <ClInclude Include="include\curl\typecheck-gcc.h" />
-    <ClInclude Include="include\curl\types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\axtls.c" />
@@ -289,6 +289,8 @@
     <ClCompile Include="src\writeout.c" />
     <ClCompile Include="src\xattr.c" />
     <ClCompile Include="lib\amigaos.c" />
+    <ClCompile Include="lib\asyn-ares.c" />
+    <ClCompile Include="lib\asyn-thread.c" />
     <ClCompile Include="lib\base64.c" />
     <ClCompile Include="lib\connect.c" />
     <ClCompile Include="lib\content_encoding.c" />
@@ -316,13 +318,11 @@
     <ClCompile Include="lib\gtls.c" />
     <ClCompile Include="lib\hash.c" />
     <ClCompile Include="lib\hmac.c" />
-    <ClCompile Include="lib\hostares.c" />
     <ClCompile Include="lib\hostasyn.c" />
     <ClCompile Include="lib\hostip.c" />
     <ClCompile Include="lib\hostip4.c" />
     <ClCompile Include="lib\hostip6.c" />
     <ClCompile Include="lib\hostsyn.c" />
-    <ClCompile Include="lib\hostthre.c" />
     <ClCompile Include="lib\http.c" />
     <ClCompile Include="lib\http_chunks.c" />
     <ClCompile Include="lib\http_digest.c" />

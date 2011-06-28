@@ -42,8 +42,7 @@
 #include "connect.h"
 #include "timeval.h"
 #include "socks.h"
-
-static gss_ctx_id_t     gss_context = GSS_C_NO_CONTEXT;
+#include "warnless.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -51,6 +50,8 @@ static gss_ctx_id_t     gss_context = GSS_C_NO_CONTEXT;
 #include "curl_memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
+
+static gss_ctx_id_t gss_context = GSS_C_NO_CONTEXT;
 
 /*
  * Helper gssapi error functions.
@@ -148,7 +149,7 @@ CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
    */
 
   /* prepare service name */
-  if (strchr(serviceptr,'/')) {
+  if(strchr(serviceptr,'/')) {
     service.value = malloc(strlen(serviceptr));
     if(!service.value)
       return CURLE_OUT_OF_MEMORY;
@@ -438,7 +439,8 @@ CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
       gss_delete_sec_context(&gss_status, &gss_context, NULL);
       return CURLE_COULDNT_CONNECT;
     }
-  } else {
+  }
+  else {
     code = Curl_write_plain(conn, sock, (char *)gss_w_token.value,
                             gss_w_token.length, &written);
     if((code != CURLE_OK) || ((ssize_t)gss_w_token.length != written)) {

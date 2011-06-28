@@ -84,7 +84,7 @@ Example set of cookies:
 #include <stdlib.h>
 #include <string.h>
 
-#define _MPRINTF_REPLACE /* without this on windows OS we get undefined reference to snprintf */
+#define _MPRINTF_REPLACE
 #include <curl/mprintf.h>
 
 #include "urldata.h"
@@ -100,7 +100,6 @@ Example set of cookies:
 
 /* The last #include file should be: */
 #include "memdebug.h"
-
 
 static void freecookie(struct Cookie *co)
 {
@@ -371,10 +370,10 @@ Curl_cookie_add(struct SessionHandle *data,
             /* Session cookies have expires set to 0 so if we get that back
                from the date parser let's add a second to make it a
                non-session cookie */
-            if (co->expires == 0)
+            if(co->expires == 0)
               co->expires = 1;
-            else if( co->expires < 0 )
-                co->expires = 0;
+            else if(co->expires < 0)
+              co->expires = 0;
           }
           else if(!co->name) {
             co->name = strdup(name);
@@ -398,7 +397,7 @@ Curl_cookie_add(struct SessionHandle *data,
           if(Curl_raw_equal("secure", what)) {
             co->secure = TRUE;
           }
-          else if (Curl_raw_equal("httponly", what)) {
+          else if(Curl_raw_equal("httponly", what)) {
             co->httponly = TRUE;
           }
           /* else,
@@ -482,7 +481,7 @@ Curl_cookie_add(struct SessionHandle *data,
        lines are preceded with #HttpOnly_ and then everything is
        as usual, so we skip 10 characters of the line..
     */
-    if (strncmp(lineptr, "#HttpOnly_", 10) == 0) {
+    if(strncmp(lineptr, "#HttpOnly_", 10) == 0) {
       lineptr += 10;
       co->httponly = TRUE;
     }
@@ -531,7 +530,7 @@ Curl_cookie_add(struct SessionHandle *data,
            As far as I can see, it is set to true when the cookie says
            .domain.com and to false when the domain is complete www.domain.com
         */
-        co->tailmatch=(bool)Curl_raw_equal(ptr, "TRUE"); /* store information */
+        co->tailmatch=(bool)Curl_raw_equal(ptr, "TRUE");
         break;
       case 2:
         /* It turns out, that sometimes the file format allows the path
@@ -819,8 +818,8 @@ struct Cookie *Curl_cookie_getlist(struct CookieInfo *c,
     /* only process this cookie if it is not expired or had no expire
        date AND that if the cookie requires we're secure we must only
        continue if we are! */
-    if( (!co->expires || (co->expires > now)) &&
-        (co->secure?secure:TRUE) ) {
+    if((!co->expires || (co->expires > now)) &&
+       (co->secure?secure:TRUE)) {
 
       /* now check if the domain is correct */
       if(!co->domain ||
@@ -877,7 +876,7 @@ struct Cookie *Curl_cookie_getlist(struct CookieInfo *c,
     size_t i;
 
     /* alloc an array and store all cookie pointers */
-    array = (struct Cookie **)malloc(sizeof(struct Cookie *) * matches);
+    array = malloc(sizeof(struct Cookie *) * matches);
     if(!array)
       goto fail;
 
@@ -1040,14 +1039,14 @@ static char *get_netscape_format(const struct Cookie *co)
 }
 
 /*
- * Curl_cookie_output()
+ * cookie_output()
  *
  * Writes all internally known cookies to the specified file. Specify
  * "-" as file name to write to stdout.
  *
  * The function returns non-zero on write failure.
  */
-int Curl_cookie_output(struct CookieInfo *c, const char *dumphere)
+static int cookie_output(struct CookieInfo *c, const char *dumphere)
 {
   struct Cookie *co;
   FILE *out;
@@ -1147,7 +1146,7 @@ void Curl_flush_cookies(struct SessionHandle *data, int cleanup)
     Curl_share_lock(data, CURL_LOCK_DATA_COOKIE, CURL_LOCK_ACCESS_SINGLE);
 
     /* if we have a destination file for all the cookies to get dumped to */
-    if(Curl_cookie_output(data->cookies, data->set.str[STRING_COOKIEJAR]))
+    if(cookie_output(data->cookies, data->set.str[STRING_COOKIEJAR]))
       infof(data, "WARNING: failed to save cookies in %s\n",
             data->set.str[STRING_COOKIEJAR]);
   }

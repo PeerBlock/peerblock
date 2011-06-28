@@ -138,7 +138,7 @@ CURLcode Curl_pp_easy_statemach(struct pingpong *pp)
 
   rc = Curl_socket_ready(pp->sendleft?CURL_SOCKET_BAD:sock, /* reading */
                          pp->sendleft?sock:CURL_SOCKET_BAD, /* writing */
-                         (int)interval_ms);
+                         interval_ms);
 
   if(Curl_pgrsUpdate(conn))
     result = CURLE_ABORTED_BY_CALLBACK;
@@ -431,8 +431,8 @@ CURLcode Curl_pp_readresp(curl_socket_t sockfd,
           /* We got an excessive line without newlines and we need to deal
              with it. We keep the first bytes of the line then we throw
              away the rest. */
-          infof(data, "Excessive server response line length received, %zd bytes."
-                " Stripping\n", gotbytes);
+          infof(data, "Excessive server response line length received, "
+                "%zd bytes. Stripping\n", gotbytes);
           restart = TRUE;
 
           /* we keep 40 bytes since all our pingpong protocols are only
@@ -440,9 +440,9 @@ CURLcode Curl_pp_readresp(curl_socket_t sockfd,
           clipamount = 40;
         }
         else if(pp->nread_resp > BUFSIZE/2) {
-          /* We got a large chunk of data and there's potentially still trailing
-             data to take care of, so we put any such part in the "cache", clear
-             the buffer to make space and restart. */
+          /* We got a large chunk of data and there's potentially still
+             trailing data to take care of, so we put any such part in the
+             "cache", clear the buffer to make space and restart. */
           clipamount = perline;
           restart = TRUE;
         }

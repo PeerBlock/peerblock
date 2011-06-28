@@ -63,6 +63,9 @@
     <ClInclude Include="lib\arpa_telnet.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\asyn.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="lib\config-amigaos.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -375,9 +378,6 @@
     <ClInclude Include="include\curl\typecheck-gcc.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\types.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="lib\axtls.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -414,6 +414,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="lib\amigaos.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\asyn-ares.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\asyn-thread.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\base64.c">
@@ -497,9 +503,6 @@
     <ClCompile Include="lib\hmac.c">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\hostares.c">
-      <Filter>lib</Filter>
-    </ClCompile>
     <ClCompile Include="lib\hostasyn.c">
       <Filter>lib</Filter>
     </ClCompile>
@@ -513,9 +516,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\hostsyn.c">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\hostthre.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\http.c">

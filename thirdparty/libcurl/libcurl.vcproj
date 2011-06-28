@@ -493,11 +493,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\asyn-ares.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\asyn-thread.c"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\amigaos.h"
 				>
 			</File>
 			<File
 				RelativePath=".\lib\arpa_telnet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\asyn.h"
 				>
 			</File>
 			<File
@@ -777,10 +789,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\lib\hostares.c"
-				>
-			</File>
-			<File
 				RelativePath=".\lib\hostasyn.c"
 				>
 			</File>
@@ -802,10 +810,6 @@
 			</File>
 			<File
 				RelativePath=".\lib\hostsyn.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lib\hostthre.c"
 				>
 			</File>
 			<File
@@ -1314,10 +1318,6 @@
 			</File>
 			<File
 				RelativePath=".\include\curl\typecheck-gcc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\curl\types.h"
 				>
 			</File>
 		</Filter>

@@ -73,6 +73,8 @@ static void decodeQuantum(unsigned char *dest, const char *src)
  *
  * Given a base64 string at src, decode it and return an allocated memory in
  * the *outptr. Returns the length of the decoded data.
+ *
+ * @unittest: 1302
  */
 size_t Curl_base64_decode(const char *src, unsigned char **outptr)
 {
@@ -135,11 +137,13 @@ size_t Curl_base64_decode(const char *src, unsigned char **outptr)
  * is a pointer to an allocated area holding the base64 data. If something
  * went wrong, 0 is returned.
  *
+ * @unittest: 1302
  */
 size_t Curl_base64_encode(struct SessionHandle *data,
                           const char *inputbuff, size_t insize,
                           char **outptr)
 {
+  CURLcode res;
   unsigned char ibuf[3];
   unsigned char obuf[4];
   int i;
@@ -164,14 +168,17 @@ size_t Curl_base64_encode(struct SessionHandle *data,
    * not the host encoding.  And we can't change the actual input
    * so we copy it to a buffer, translate it, and use that instead.
    */
-  if(Curl_convert_clone(data, indata, insize, &convbuf))
+  res = Curl_convert_clone(data, indata, insize, &convbuf);
+  if(res) {
+    free(output);
     return 0;
+  }
 
   if(convbuf)
     indata = (char *)convbuf;
 
   while(insize > 0) {
-    for (i = inputparts = 0; i < 3; i++) {
+    for(i = inputparts = 0; i < 3; i++) {
       if(insize > 0) {
         inputparts++;
         ibuf[i] = (unsigned char) *indata;

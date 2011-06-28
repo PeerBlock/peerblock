@@ -305,6 +305,24 @@ AM_CONDITIONAL(NO_UNDEFINED, test x$need_no_undefined = xyes)
 CURL_CHECK_CURLDEBUG
 AM_CONDITIONAL(CURLDEBUG, test x$want_curldebug = xyes)
 
+supports_unittests=yes
+# cross-compilation of unit tests static library/programs fails when
+# libcurl shared library is built. This might be due to a libtool or
+# automake issue. In this case we disable unit tests.
+if test "x$cross_compiling" != "xno" &&
+   test "x$enable_shared" != "xno"; then
+  supports_unittests=no
+fi
+
+dnl Build unit tests when option --enable-debug is given.
+if test "x$want_debug" = "xyes" &&
+   test "x$supports_unittests" = "xyes"; then
+  want_unittests=yes
+else
+  want_unittests=no
+fi
+AM_CONDITIONAL(BUILD_UNITTESTS, test x$want_unittests = xyes)
+
 dnl **********************************************************************
 dnl Compilation based checks should not be done before this point.
 dnl **********************************************************************
@@ -1513,6 +1531,7 @@ if test X"$OPT_SSL" != Xno; then
        export LD_LIBRARY_PATH
        AC_MSG_NOTICE([Added $LIB_OPENSSL to LD_LIBRARY_PATH])
     fi
+    CURL_CHECK_OPENSSL_API
   fi
 
 fi
@@ -1624,8 +1643,12 @@ if test X"$OPENSSL_ENABLED" = X"1"; then
                  [read randomness from FILE (default=/dev/urandom)]),
       [ RANDOM_FILE="$withval" ],
       [
-          dnl Check for random device
-          AC_CHECK_FILE("/dev/urandom", [ RANDOM_FILE="/dev/urandom"] )
+          if test x$cross_compiling != xyes; then
+            dnl Check for random device
+            AC_CHECK_FILE("/dev/urandom", [ RANDOM_FILE="/dev/urandom"] )
+          else
+            AC_MSG_WARN([skipped the /dev/urandom detection when cross-compiling])
+          fi
       ]
   )
   if test -n "$RANDOM_FILE" && test X"$RANDOM_FILE" != Xno ; then
@@ -2517,6 +2540,7 @@ CURL_CHECK_FUNC_FREEIFADDRS
 CURL_CHECK_FUNC_FSETXATTR
 CURL_CHECK_FUNC_FTRUNCATE
 CURL_CHECK_FUNC_GETADDRINFO
+CURL_CHECK_FUNC_GAI_STRERROR
 CURL_CHECK_FUNC_GETHOSTBYADDR
 CURL_CHECK_FUNC_GETHOSTBYADDR_R
 CURL_CHECK_FUNC_GETHOSTBYNAME
@@ -2593,7 +2617,7 @@ AC_CHECK_FUNCS([fork \
     ],[
       AC_MSG_RESULT([yes])
       eval "ac_cv_func_$func=yes"
-      AC_DEFINE_UNQUOTED(AS_TR_CPP([HAVE_$func]), [1],
+      AC_DEFINE_UNQUOTED(XC_SH_TR_CPP([HAVE_$func]), [1],
         [Define to 1 if you have the $func function.])
     ],[
       AC_MSG_RESULT([but still no])

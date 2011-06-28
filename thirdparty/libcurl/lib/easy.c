@@ -86,6 +86,7 @@
 #include "slist.h"
 #include "curl_rand.h"
 #include "non-ascii.h"
+#include "warnless.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -133,8 +134,8 @@ static CURLcode win32_init(void)
   /* wVersionRequested in wVersion. wHighVersion contains the */
   /* highest supported version. */
 
-  if( LOBYTE( wsaData.wVersion ) != LOBYTE(wVersionRequested) ||
-       HIBYTE( wsaData.wVersion ) != HIBYTE(wVersionRequested) ) {
+  if(LOBYTE( wsaData.wVersion ) != LOBYTE(wVersionRequested) ||
+     HIBYTE( wsaData.wVersion ) != HIBYTE(wVersionRequested) ) {
     /* Tell the user that we couldn't find a useable */
 
     /* winsock.dll. */
@@ -147,7 +148,7 @@ static CURLcode win32_init(void)
 #ifdef USE_WINDOWS_SSPI
   {
     CURLcode err = Curl_sspi_global_init();
-    if (err != CURLE_OK)
+    if(err != CURLE_OK)
       return err;
   }
 #endif
@@ -269,12 +270,10 @@ CURLcode curl_global_init(long flags)
   idna_init();
 #endif
 
-#ifdef CARES_HAVE_ARES_LIBRARY_INIT
-  if(ares_library_init(ARES_LIB_INIT_ALL)) {
-    DEBUGF(fprintf(stderr, "Error: ares_library_init failed\n"));
+  if(Curl_resolver_global_init() != CURLE_OK) {
+    DEBUGF(fprintf(stderr, "Error: resolver_global_init failed\n"));
     return CURLE_FAILED_INIT;
   }
-#endif
 
 #if defined(USE_LIBSSH2) && defined(HAVE_LIBSSH2_INIT)
   if(libssh2_init(0)) {
@@ -307,7 +306,7 @@ CURLcode curl_global_init_mem(long flags, curl_malloc_callback m,
     return CURLE_FAILED_INIT;
 
   /* Already initialized, don't do it again */
-  if( initialized )
+  if(initialized)
     return CURLE_OK;
 
   /* Call the actual init function first */
@@ -340,9 +339,7 @@ void curl_global_cleanup(void)
   if(init_flags & CURL_GLOBAL_SSL)
     Curl_ssl_cleanup();
 
-#ifdef CARES_HAVE_ARES_LIBRARY_CLEANUP
-  ares_library_cleanup();
-#endif
+  Curl_resolver_global_cleanup();
 
   if(init_flags & CURL_GLOBAL_WIN32)
     win32_cleanup();
@@ -510,7 +507,7 @@ CURLcode curl_easy_perform(CURL *curl)
   if(!data)
     return CURLE_BAD_FUNCTION_ARGUMENT;
 
-  if( ! (data->share && data->share->hostcache) ) {
+  if(! (data->share && data->share->hostcache)) {
     /* this handle is not using a shared dns cache */
 
     if(data->set.global_dns_cache &&
@@ -676,12 +673,10 @@ CURL *curl_easy_duphandle(CURL *incurl)
     outcurl->change.referer_alloc = TRUE;
   }
 
-#ifdef USE_ARES
-  /* If we use ares, we clone the ares channel for the new handle */
-  if(ARES_SUCCESS != ares_dup(&outcurl->state.areschannel,
-                              data->state.areschannel))
+  /* Clone the resolver handle, if present, for the new handle */
+  if(Curl_resolver_duphandle(&outcurl->state.resolver,
+                             data->state.resolver) != CURLE_OK)
     goto fail;
-#endif
 
   Curl_convert_setup(outcurl);
 
@@ -770,8 +765,8 @@ CURLcode curl_easy_pause(CURL *curl, int action)
   k->keepon = newstate;
 
   if(!(newstate & KEEP_RECV_PAUSE) && data->state.tempwrite) {
-    /* we have a buffer for sending that we now seem to be able to deliver since
-       the receive pausing is lifted! */
+    /* we have a buffer for sending that we now seem to be able to deliver
+       since the receive pausing is lifted! */
 
     /* get the pointer, type and length in local copies since the function may
        return PAUSE again and then we'll get a new copy allocted and stored in

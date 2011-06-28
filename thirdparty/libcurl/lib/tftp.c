@@ -166,7 +166,8 @@ typedef struct tftp_state_data {
 static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event) ;
 static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event) ;
 static CURLcode tftp_connect(struct connectdata *conn, bool *done);
-static CURLcode tftp_disconnect(struct connectdata *conn, bool dead_connection);
+static CURLcode tftp_disconnect(struct connectdata *conn,
+                                bool dead_connection);
 static CURLcode tftp_do(struct connectdata *conn, bool *done);
 static CURLcode tftp_done(struct connectdata *conn,
                           CURLcode, bool premature);
@@ -195,6 +196,7 @@ const struct Curl_handler Curl_handler_tftp = {
   tftp_getsock,                         /* doing_getsock */
   ZERO_NULL,                            /* perform_getsock */
   tftp_disconnect,                      /* disconnect */
+  ZERO_NULL,                            /* readwrite */
   PORT_TFTP,                            /* defport */
   CURLPROTO_TFTP,                       /* protocol */
   PROTOPT_NONE                          /* flags */
@@ -330,14 +332,14 @@ static const char *tftp_option_get(const char *buf, size_t len,
   loc = Curl_strnlen( buf, len );
   loc++; /* NULL term */
 
-  if (loc >= len)
+  if(loc >= len)
     return NULL;
   *option = buf;
 
   loc += Curl_strnlen( buf+loc, len-loc );
   loc++; /* NULL term */
 
-  if (loc > len)
+  if(loc > len)
     return NULL;
   *value = &buf[strlen(*option) + 1];
 
@@ -353,7 +355,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
   /* if OACK doesn't contain blksize option, the default (512) must be used */
   state->blksize = TFTP_BLKSIZE_DEFAULT;
 
-  while (tmp < ptr + len) {
+  while(tmp < ptr + len) {
     const char *option, *value;
 
     tmp = tftp_option_get(tmp, ptr + len - tmp, &option, &value);
@@ -383,7 +385,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
               TFTP_BLKSIZE_MIN);
         return CURLE_TFTP_ILLEGAL;
       }
-      else if (blksize > state->requested_blksize) {
+      else if(blksize > state->requested_blksize) {
         /* could realloc pkt buffers here, but the spec doesn't call out
          * support for the server requesting a bigger blksize than the client
          * requests */
@@ -404,7 +406,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
 
       /* tsize should be ignored on upload: Who cares about the size of the
          remote file? */
-      if (!data->set.upload) {
+      if(!data->set.upload) {
         if(!tsize) {
           failf(data, "invalid tsize -:%s:- value in OACK packet", value);
           return CURLE_TFTP_ILLEGAL;
@@ -420,7 +422,7 @@ static CURLcode tftp_parse_option_ack(tftp_state_data_t *state,
 static size_t tftp_option_add(tftp_state_data_t *state, size_t csize,
                               char *buf, const char *option)
 {
-  if( ( strlen(option) + csize + 1 ) > (size_t)state->blksize )
+  if(( strlen(option) + csize + 1 ) > (size_t)state->blksize)
     return 0;
   strcpy(buf, option);
   return( strlen(option) + 1 );
@@ -716,7 +718,7 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
 
   case TFTP_EVENT_ACK:
   case TFTP_EVENT_OACK:
-    if (event == TFTP_EVENT_ACK) {
+    if(event == TFTP_EVENT_ACK) {
       /* Ack the packet */
       rblock = getrpacketblock(&state->rpacket);
 
@@ -1170,7 +1172,7 @@ static long tftp_state_timeout(struct connectdata *conn, tftp_event_t *event)
   time_t                current;
   tftp_state_data_t     *state = (tftp_state_data_t *)conn->proto.tftpc;
 
-  if (event)
+  if(event)
     *event = TFTP_EVENT_NONE;
 
   time(&current);
@@ -1181,8 +1183,8 @@ static long tftp_state_timeout(struct connectdata *conn, tftp_event_t *event)
     state->state = TFTP_STATE_FIN;
     return 0;
   }
-  else if (current > state->rx_time+state->retry_time) {
-    if (event)
+  else if(current > state->rx_time+state->retry_time) {
+    if(event)
       *event = TFTP_EVENT_TIMEOUT;
     time(&state->rx_time); /* update even though we received nothing */
   }
@@ -1221,8 +1223,8 @@ static CURLcode tftp_easy_statemach(struct connectdata *conn)
 
     timeout_ms = state->retry_time * 1000;
 
-    if (data->set.upload) {
-      if (data->set.max_send_speed &&
+    if(data->set.upload) {
+      if(data->set.max_send_speed &&
           (data->progress.ulspeed > data->set.max_send_speed)) {
         fd_read = CURL_SOCKET_BAD;
         timeout_ms = Curl_sleep_time(data->set.max_send_speed,
@@ -1233,20 +1235,19 @@ static CURLcode tftp_easy_statemach(struct connectdata *conn)
       }
     }
     else {
-      if (data->set.max_recv_speed &&
-          (data->progress.dlspeed > data->set.max_recv_speed)) {
+      if(data->set.max_recv_speed &&
+         (data->progress.dlspeed > data->set.max_recv_speed)) {
         fd_read = CURL_SOCKET_BAD;
         timeout_ms = Curl_sleep_time(data->set.max_recv_speed,
                                      data->progress.dlspeed, state->blksize);
       }
-      else {
+      else
         fd_read = state->sockfd;
-      }
     }
 
     if(data->set.timeout) {
       timeout_ms = data->set.timeout - Curl_tvdiff(k->now, k->start);
-      if (timeout_ms > state->retry_time * 1000)
+      if(timeout_ms > state->retry_time * 1000)
         timeout_ms = state->retry_time * 1000;
       else if(timeout_ms < 0)
         timeout_ms = 0;
@@ -1254,12 +1255,12 @@ static CURLcode tftp_easy_statemach(struct connectdata *conn)
 
 
     /* Wait until ready to read or timeout occurs */
-    rc = Curl_socket_ready(fd_read, CURL_SOCKET_BAD, (int)(timeout_ms));
+    rc = Curl_socket_ready(fd_read, CURL_SOCKET_BAD, timeout_ms);
 
     k->now = Curl_tvnow();
 
     /* Force a progress callback if it's been too long */
-    if (Curl_tvdiff(k->now, k->start) >= data->set.timeout) {
+    if(Curl_tvdiff(k->now, k->start) >= data->set.timeout) {
       if(Curl_pgrsUpdate(conn)) {
         tftp_state_machine(state, TFTP_EVENT_ERROR);
         return CURLE_ABORTED_BY_CALLBACK;
@@ -1279,7 +1280,7 @@ static CURLcode tftp_easy_statemach(struct connectdata *conn)
         /* A timeout occurred, but our timeout is variable, so maybe
            just continue? */
         long rtms = state->retry_time * 1000;
-        if (Curl_tvdiff(k->now, transaction_start) > rtms) {
+        if(Curl_tvdiff(k->now, transaction_start) > rtms) {
           state->event = TFTP_EVENT_TIMEOUT;
           /* Force a look at transfer timeouts */
           check_time = 1;
@@ -1290,7 +1291,7 @@ static CURLcode tftp_easy_statemach(struct connectdata *conn)
       }
       else {
         result = tftp_receive_packet(conn);
-        if (result == CURLE_OK)
+        if(result == CURLE_OK)
           transaction_start = Curl_tvnow();
 
         if(k->bytecountp)
@@ -1339,7 +1340,7 @@ static CURLcode tftp_multi_statemach(struct connectdata *conn, bool *done)
     failf(data, "TFTP response timeout");
     return CURLE_OPERATION_TIMEDOUT;
   }
-  else if (event != TFTP_EVENT_NONE) {
+  else if(event != TFTP_EVENT_NONE) {
     result = tftp_state_machine(state, event);
     if(result != CURLE_OK)
       return(result);
@@ -1463,7 +1464,7 @@ static CURLcode tftp_do(struct connectdata *conn, bool *done)
 
   /* If tftp_perform() returned an error, use that for return code. If it
      was OK, see if tftp_translate_code() has an error. */
-  if (code == CURLE_OK)
+  if(code == CURLE_OK)
     /* If we have encountered an internal tftp error, translate it. */
     code = tftp_translate_code(state->error);
 

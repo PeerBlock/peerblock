@@ -42,7 +42,6 @@
 #include "sslgen.h"
 #include "ssh.h"
 #include "multiif.h"
-#include "rtsp.h"
 #include "non-ascii.h"
 
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
@@ -299,7 +298,8 @@ ssize_t Curl_send_plain(struct connectdata *conn, int num,
       /* this is just a case of EWOULDBLOCK */
       bytes_written=0;
       *code = CURLE_AGAIN;
-    } else {
+    }
+    else {
       failf(conn->data, "Send failure: %s",
             Curl_strerror(conn, err));
       conn->data->state.os_errno = err;
@@ -354,7 +354,8 @@ ssize_t Curl_recv_plain(struct connectdata *conn, int num, char *buf,
       ) {
       /* this is just a case of EWOULDBLOCK */
       *code = CURLE_AGAIN;
-    } else {
+    }
+    else {
       failf(conn->data, "Recv failure: %s",
             Curl_strerror(conn, err));
       conn->data->state.os_errno = err;
@@ -445,7 +446,7 @@ CURLcode Curl_client_write(struct connectdata *conn,
     if((conn->handler->protocol&CURLPROTO_FTP) &&
        conn->proto.ftpc.transfertype == 'A') {
       /* convert from the network encoding */
-      size_t rc = Curl_convert_from_network(data, ptr, len);
+      CURLcode rc = Curl_convert_from_network(data, ptr, len);
       /* Curl_convert_from_network calls failf if unsuccessful */
       if(rc)
         return rc;

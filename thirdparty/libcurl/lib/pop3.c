@@ -100,7 +100,7 @@ static CURLcode pop3_do(struct connectdata *conn, bool *done);
 static CURLcode pop3_done(struct connectdata *conn,
                           CURLcode, bool premature);
 static CURLcode pop3_connect(struct connectdata *conn, bool *done);
-static CURLcode pop3_disconnect(struct connectdata *conn, bool dead_connection);
+static CURLcode pop3_disconnect(struct connectdata *conn, bool dead);
 static CURLcode pop3_multi_statemach(struct connectdata *conn, bool *done);
 static int pop3_getsock(struct connectdata *conn,
                         curl_socket_t *socks,
@@ -126,6 +126,7 @@ const struct Curl_handler Curl_handler_pop3 = {
   pop3_getsock,                     /* doing_getsock */
   ZERO_NULL,                        /* perform_getsock */
   pop3_disconnect,                  /* disconnect */
+  ZERO_NULL,                        /* readwrite */
   PORT_POP3,                        /* defport */
   CURLPROTO_POP3,                   /* protocol */
   PROTOPT_CLOSEACTION               /* flags */
@@ -150,6 +151,7 @@ const struct Curl_handler Curl_handler_pop3s = {
   pop3_getsock,                     /* doing_getsock */
   ZERO_NULL,                        /* perform_getsock */
   pop3_disconnect,                  /* disconnect */
+  ZERO_NULL,                        /* readwrite */
   PORT_POP3S,                       /* defport */
   CURLPROTO_POP3 | CURLPROTO_POP3S, /* protocol */
   PROTOPT_CLOSEACTION | PROTOPT_SSL /* flags */
@@ -174,6 +176,7 @@ static const struct Curl_handler Curl_handler_pop3_proxy = {
   ZERO_NULL,                            /* doing_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
+  ZERO_NULL,                            /* readwrite */
   PORT_POP3,                            /* defport */
   CURLPROTO_HTTP,                       /* protocol */
   PROTOPT_NONE                          /* flags */
@@ -198,6 +201,7 @@ static const struct Curl_handler Curl_handler_pop3s_proxy = {
   ZERO_NULL,                            /* doing_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
+  ZERO_NULL,                            /* readwrite */
   PORT_POP3S,                           /* defport */
   CURLPROTO_HTTP,                       /* protocol */
   PROTOPT_NONE                          /* flags */
@@ -214,8 +218,8 @@ static int pop3_endofresp(struct pingpong *pp,
   char *line = pp->linestart_resp;
   size_t len = pp->nread_resp;
 
-  if( ((len >= 3) && !memcmp("+OK", line, 3)) ||
-      ((len >= 4) && !memcmp("-ERR", line, 4)) ) {
+  if(((len >= 3) && !memcmp("+OK", line, 3)) ||
+     ((len >= 4) && !memcmp("-ERR", line, 4))) {
     *resp=line[1]; /* O or E */
     return TRUE;
   }
@@ -477,11 +481,14 @@ static CURLcode pop3_list(struct connectdata *conn)
   CURLcode result = CURLE_OK;
   struct pop3_conn *pop3c = &conn->proto.pop3c;
 
-  result = Curl_pp_sendf(&conn->proto.pop3c.pp, "LIST %s", pop3c->mailbox);
+  if(pop3c->mailbox[0] != '\0')
+    result = Curl_pp_sendf(&conn->proto.pop3c.pp, "LIST %s", pop3c->mailbox);
+  else
+    result = Curl_pp_sendf(&conn->proto.pop3c.pp, "LIST");
   if(result)
     return result;
 
-  if (strlen(pop3c->mailbox))
+  if(pop3c->mailbox[0] != '\0')
     state(conn, POP3_LIST_SINGLE);
   else
     state(conn, POP3_LIST);
@@ -676,10 +683,8 @@ static CURLcode pop3_connect(struct connectdata *conn,
       return result;
   }
 
-  if(conn->handler->protocol & CURLPROTO_POP3S) {
+  if(conn->handler->flags & PROTOPT_SSL) {
     /* BLOCKING */
-    /* POP3S is simply pop3 with SSL for the control channel */
-    /* now, perform the SSL initialization for this socket */
     result = Curl_ssl_connect(conn, FIRSTSOCKET);
     if(result)
       return result;
@@ -773,7 +778,7 @@ CURLcode pop3_perform(struct connectdata *conn,
   /* If mailbox is empty, then assume user wants listing for mail IDs,
    * otherwise, attempt to retrieve the mail-id stored in mailbox
    */
-  if (strlen(pop3c->mailbox) && !conn->data->set.ftp_list_only)
+  if(strlen(pop3c->mailbox) && !conn->data->set.ftp_list_only)
     result = pop3_retr(conn);
   else
     result = pop3_list(conn);
@@ -896,7 +901,7 @@ static CURLcode pop3_parse_url_path(struct connectdata *conn)
 
   /* url decode the path and use this mailbox */
   pop3c->mailbox = curl_easy_unescape(data, path, 0, NULL);
-  if (!pop3c->mailbox)
+  if(!pop3c->mailbox)
     return CURLE_OUT_OF_MEMORY;
 
   return CURLE_OK;

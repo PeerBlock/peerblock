@@ -37,6 +37,7 @@
 #include "rawstr.h"
 #include "progress.h"
 #include "non-ascii.h"
+#include "connect.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -164,8 +165,9 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
 
         if(CURLE_OK == result) {
           /* Now send off the request */
-          result = Curl_add_buffer_send(req_buffer, conn,
-                                        &data->info.request_size, 0, sockindex);
+          result =
+            Curl_add_buffer_send(req_buffer, conn,
+                                 &data->info.request_size, 0, sockindex);
         }
         req_buffer = NULL;
         if(result)
@@ -242,7 +244,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
 
         /* loop every second at least, less if the timeout is near */
         switch (Curl_socket_ready(tunnelsocket, CURL_SOCKET_BAD,
-                            check<1000L?(int)check:1000)) {
+                                  check<1000L?check:1000)) {
         case -1: /* select() error, stop reading */
           error = SELECT_ERROR;
           failf(data, "Proxy CONNECT aborted due to select/poll error");
@@ -481,7 +483,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
 
       if(closeConnection && data->req.newurl) {
         /* Connection closed by server. Don't use it anymore */
-        sclose(conn->sock[sockindex]);
+        Curl_closesocket(conn, conn->sock[sockindex]);
         conn->sock[sockindex] = CURL_SOCKET_BAD;
         break;
       }
