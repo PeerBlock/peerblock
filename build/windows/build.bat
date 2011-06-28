@@ -25,6 +25,9 @@ REM  $Id$
 REM You can set here the Inno Setup path if for example you have Inno Setup Unicode
 REM installed and you want to use the ANSI Inno Setup which is in another location
 REM SET "InnoSetupPath="
+REM You can set here the path to the Windows DDK if you don't feel like adding a new
+REM environment variable or if you are lazy like I am ;)
+REM SET "PB_DDK_DIR=C:\WinDDK\7600.16385.1"
 
 REM check for the help switches
 IF /I "%1"=="help"   GOTO SHOWHELP
@@ -35,7 +38,7 @@ IF /I "%1"=="/?"     GOTO SHOWHELP
 
 
 REM Check if Windows DDK is present in PATH
-IF NOT DEFINED PB_DDK_DIR (
+IF NOT EXIST %PB_DDK_DIR% (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
   ECHO Windows DDK path NOT FOUND!
@@ -117,9 +120,9 @@ IF NOT DEFINED InnoSetupPath (
     SET "InnoSetupPath=%%a" & CALL :SubInnoSetupPath %%InnoSetupPath:*Z=%%)
 )
 
-IF NOT DEFINED InnoSetupPath (
+IF NOT EXIST "%InnoSetupPath%" (
   ECHO. & ECHO.
-  ECHO Inno Setup IS NOT INSTALLED! The installer won't be compiled.
+  ECHO Inno Setup wasn't found! The installer won't be compiled.
   GOTO CreateZips
 )
 
