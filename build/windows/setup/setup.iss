@@ -91,7 +91,7 @@ OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}
 Compression=lzma2/max
 SolidCompression=yes
 #if defined(ICL12build) || defined(VS2010build)
-MinVersion=0,5.1
+MinVersion=0,5.1.2600sp3
 #else
 MinVersion=0,5.0
 #endif
@@ -270,7 +270,7 @@ begin
   if CheckForMutexes(installer_mutex_name) then begin
     if NOT WizardSilent() then begin
       Log('Custom Code: Installer is already running');
-      MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
+      SuppressibleMsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK, MB_OK);
       Result := False;
     end;
   end else begin
@@ -285,13 +285,13 @@ begin
     if Result AND NOT Is_SSE2_Supported() then begin
       Result := False;
       Log('Custom Code: Found a non SSE2 capable CPU');
-      MsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK);
+      SuppressibleMsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK, MB_OK);
     end;
 #elif defined(sse_required)
     if Result AND NOT Is_SSE_Supported() then begin
       Result := False;
       Log('Custom Code: Found a non SSE capable CPU');
-      MsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK);
+      SuppressibleMsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK, MB_OK);
     end;
 #endif
 
@@ -307,7 +307,7 @@ end;
 function InitializeUninstall(): Boolean;
 begin
   if CheckForMutexes(installer_mutex_name) then begin
-    MsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK);
+    SuppressibleMsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK, MB_OK);
     Result := False;
   end else begin
     CreateMutex(installer_mutex_name);
@@ -379,7 +379,7 @@ begin
   if CurUninstallStep = usUninstall then begin
     // When uninstalling, ask the user if they want to delete PeerBlock's logs and settings
     if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-      if MsgBox(ExpandConstant('{cm:msg_DeleteLogsListsSettings}'), mbConfirmation, MB_YESNO OR MB_DEFBUTTON2) = IDYES then begin
+      if SuppressibleMsgBox(ExpandConstant('{cm:msg_DeleteLogsListsSettings}'), mbConfirmation, MB_YESNO OR MB_DEFBUTTON2, IDNO) = IDYES then begin
         RemoveCustomLists;
         RemoveLists;
         RemoveLogs;
