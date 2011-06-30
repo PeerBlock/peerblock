@@ -39,7 +39,6 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <ExceptionHandling>Async</ExceptionHandling>
-      <Parallelization>true</Parallelization>
       <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
