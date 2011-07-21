@@ -148,7 +148,13 @@ static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	pbn.action = CheckRanges(&pbn, remoteAddr);
+	if (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
+		pbn.action = 2;
+	}
+	else {
+		pbn.action = CheckRanges(&pbn, remoteAddr);
+	}
+
 	pbn.protocol = protocol;
 
 	FillAddrs(&pbn, remoteAddr, remoteAddr6, remotePort, localAddr, localAddr6, localPort);
