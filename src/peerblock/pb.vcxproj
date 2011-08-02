@@ -194,7 +194,6 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <AdditionalDependencies>comctl32.lib;ws2_32.lib;winmm.lib;dnsapi.lib;iphlpapi.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -232,7 +231,6 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <AdditionalDependencies>comctl32.lib;ws2_32.lib;winmm.lib;dnsapi.lib;iphlpapi.lib;shlwapi.lib;fwpuclnt.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -91,7 +91,6 @@
       <PreprocessorDefinitions>NDEBUG;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

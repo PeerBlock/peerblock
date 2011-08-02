@@ -4,11 +4,14 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir>$(SolutionDir)bin10\lib\$(Configuration)_$(PlatformName)\</OutDir>
     <IntDir>$(SolutionDir)bin10\obj\$(Configuration)_$(PlatformName)\$(ProjectName)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Debug Filter'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='Release Filter'">false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -18,11 +21,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Debug_(Vista)'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='Release_(Vista)'">
@@ -31,16 +32,14 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Async</ExceptionHandling>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Platform)'=='Win32'">StreamingSIMDExtensions</EnableEnhancedInstructionSet>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <SetChecksum>true</SetChecksum>
       <LargeAddressAware>true</LargeAddressAware>
-      <LinkIncremental>false</LinkIncremental>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Lib>

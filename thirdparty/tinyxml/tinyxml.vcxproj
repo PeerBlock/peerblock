@@ -88,7 +88,6 @@
       <PreprocessorDefinitions>NDEBUG;TIXML_USE_STL;_CRT_SECURE_NO_DEPRECATE;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

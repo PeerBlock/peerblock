@@ -44,6 +44,7 @@
 ; E.g. 1.0.1+
 ;#define simple_app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
 
+#define copyright            "Copyright © 2009-2011, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 
 
@@ -64,18 +65,18 @@ AppName=PeerBlock
 AppVersion={#app_version}
 AppVerName=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
 AppPublisher=PeerBlock, LLC
-AppCopyright=Copyright © 2009-2011, PeerBlock, LLC
+AppCopyright={#copyright}
 AppPublisherURL=http://www.peerblock.com/
 AppSupportURL=http://www.peerblock.com/support
 AppUpdatesURL=http://www.peerblock.com/releases
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
-VersionInfoCopyright=Copyright © 2009-2011, PeerBlock, LLC
+VersionInfoCopyright={#copyright}
+VersionInfoDescription=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) Setup
 VersionInfoProductName=PeerBlock
 VersionInfoProductVersion={#app_version}
-VersionInfoVersion={#app_version}
-VersionInfoDescription=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) Setup
 VersionInfoTextVersion={#app_version}
+VersionInfoVersion={#app_version}
 DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
 LicenseFile=..\..\..\license.txt

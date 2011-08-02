@@ -215,7 +215,6 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;libcntpr.lib</AdditionalDependencies>
@@ -264,7 +263,6 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ntoskrnl.lib;hal.lib;fwpkclnt.lib</AdditionalDependencies>

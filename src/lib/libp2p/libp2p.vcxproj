@@ -87,7 +87,6 @@
       <AdditionalIncludeDirectories>..\..\..\thirdparty\boost;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CallingConvention>FastCall</CallingConvention>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
