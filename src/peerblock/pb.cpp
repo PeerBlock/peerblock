@@ -23,6 +23,8 @@
 #include "resource.h"
 #include "updatelists.h"
 #include "exceptionfilter.h"
+#include "versioninfo.h"
+
 using namespace std;
 
 #if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0501

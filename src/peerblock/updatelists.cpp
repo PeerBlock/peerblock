@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "versioninfo.h"
+
 using namespace std;
 
 #include "tracelog.h"

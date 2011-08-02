@@ -106,8 +106,6 @@ extern "C" {
 #include <tinyxml.h>
 #include <sqlite3x.hpp>
 
-#include "version_parsed.h"
-#include "versioninfo.h"
 #include "tstring.h"
 #include "char_convert.h"
 

@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "versioninfo.h"
 
 #include "ListUrls.h"
 
