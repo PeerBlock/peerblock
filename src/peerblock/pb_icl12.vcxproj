@@ -44,53 +44,45 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
     <InterproceduralOptimization>true</InterproceduralOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
     <InterproceduralOptimization>true</InterproceduralOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_(Vista)|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_(Vista)|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
     <InterproceduralOptimization>true</InterproceduralOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
     <InterproceduralOptimization>true</InterproceduralOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
     <PlatformToolset>Intel Parallel Composer 2011</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -157,7 +149,6 @@
       <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WIN32_WINNT=0x0500;WINVER=0x0500;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -166,7 +157,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -178,7 +168,6 @@
       <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0502;WINVER=0x0502;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
@@ -188,7 +177,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <MinimumRequiredVersion>5.02</MinimumRequiredVersion>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -208,7 +196,6 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
-      <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
     </Link>
     <ResourceCompile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -231,7 +218,6 @@
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <MinimumRequiredVersion>5.02</MinimumRequiredVersion>
     </Link>
     <ResourceCompile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -291,9 +277,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -313,9 +297,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\thirdparty\boost;..\..\thirdparty\boost_lockfree;..\..\thirdparty\zlib;..\..\thirdparty\sqlite3;..\..\thirdparty\sqlite3-plus;..\..\thirdparty\miniunzip;..\lib\libp2p\include;..\..\thirdparty\libcurl\include;..\..\thirdparty\lib7z;..\..\thirdparty\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0600;WINVER=0x0600;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
