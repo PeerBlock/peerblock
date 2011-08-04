@@ -3,7 +3,7 @@ SETLOCAL
 
 SET "SUBWCREV=SubWCRev.exe"
 
-"%SUBWCREV%" "..\.." "version.h" "version_parsed.h" -f
+"%SUBWCREV%" "..\.." "version.h.in" "version_parsed.h" -f
 IF %ERRORLEVEL% NEQ 0 GOTO NoSubWCRev
 
 ENDLOCAL

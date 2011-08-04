@@ -21,7 +21,7 @@
 */
 
 //================================================================================================
-//  portprofile.h
+//  portprofileproc.h
 //
 //  This file defines the PortProfile window dialog-proc, used to handle the editing of port sets:
 //  the window that pops up after you click the "Ports" button on the Settings screen.
