@@ -80,6 +80,8 @@ IF "%1" == "" (
 
 
 :START
+SET START_TIME=%DATE%-%TIME%
+
 REM Compile PeerBlock with MSVC 2010
 CALL "%VS100COMNTOOLS%vsvars32.bat" >NUL
 
@@ -167,6 +169,9 @@ GOTO END
 :END
 TITLE Compiling PeerBlock - Finished!
 ECHO. & ECHO.
+ECHO PeerBlock's compilation started on %START_TIME%
+ECHO and completed on %DATE%-%TIME%
+ECHO.
 ENDLOCAL
 PAUSE
 EXIT /B
