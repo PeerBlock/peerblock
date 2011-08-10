@@ -29,6 +29,10 @@ REM You can set here the path to the Windows DDK if you don't feel like adding a
 REM environment variable or if you are lazy like I am ;)
 REM SET "PB_DDK_DIR=C:\WinDDK\7600.16385.1"
 
+REM If you define BUILD_ONLY_PB=True then only the main program will be compiled
+REM without the installer and the ZIP packages
+REM SET BUILD_ONLY_PB=True
+
 REM check for the help switches
 IF /I "%1"=="help"   GOTO SHOWHELP
 IF /I "%1"=="/help"  GOTO SHOWHELP
@@ -92,6 +96,8 @@ CALL :SubMSVC "Release_(Vista)" %%A
 )
 
 IF /I "%BUILDTYPE%" == "Clean" GOTO END
+
+IF /I "%BUILD_ONLY_PB%" == "True" GOTO END
 
 REM Sign driver and program
 IF DEFINED PB_CERT (

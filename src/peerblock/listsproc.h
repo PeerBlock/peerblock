@@ -20,8 +20,7 @@
 
 */
 
-#ifndef __LISTSPROC_H__
-#define __LISTSPROC_H__
+#pragma once
 
 #include <windows.h>
 
@@ -31,5 +30,3 @@
 INT_PTR CALLBACK Lists_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 extern HWND g_hListsDlg;
-
-#endif

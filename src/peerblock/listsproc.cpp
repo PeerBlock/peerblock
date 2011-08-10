@@ -569,10 +569,10 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED))
 				items.push(index);
 
-			if(items.size()>0)
+			if(!items.empty())
 				g_ret|=LISTS_NEEDRELOAD;
 
-			while(items.size()>0)
+			while(!items.empty())
 			{
 				int index=items.top(); items.pop();
 

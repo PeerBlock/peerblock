@@ -112,7 +112,7 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 				for(int idx = ListView_GetNextItem(list, -1, LVNI_SELECTED); idx != -1; idx = ListView_GetNextItem(list, idx, LVNI_SELECTED))
 					items.push(idx);
 
-				while (items.size() > 0) {
+				while (!items.empty()) {
 					int idx = items.top();
 					items.pop();
 

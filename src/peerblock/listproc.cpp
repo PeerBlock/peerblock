@@ -130,7 +130,7 @@ static LRESULT CALLBACK ListView_SubProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
 			items.push(index);
 
 		SendMessage(hwnd, WM_SETREDRAW, FALSE, 0);
-		for(; items.size()>0; items.pop())
+		for(; !items.empty(); items.pop())
 		{
 			ListView_DeleteItem(hwnd, items.top());
 			g_rows.erase(g_rows.begin()+items.top());
@@ -294,7 +294,7 @@ static void List_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			for(int index=ListView_GetNextItem(list, -1, LVNI_SELECTED); index!=-1; index=ListView_GetNextItem(list, index, LVNI_SELECTED))
 				items.push(index);
 
-			for(; items.size()>0; items.pop())
+			for(; !items.empty(); items.pop())
 			{
 				ListView_DeleteItem(list, items.top());
 				g_rows.erase(g_rows.begin()+items.top());

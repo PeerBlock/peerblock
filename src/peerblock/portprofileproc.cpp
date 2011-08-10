@@ -133,7 +133,7 @@ static void PortProfile_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNoti
 					std::vector<tstring> ranges;
 					boost::split(ranges, ports[i], boost::is_any_of("-"));
 
-					if (ranges.size() > 0 && ranges.size() <= 2)
+					if (!ranges.empty() && ranges.size() <= 2)
 					{
 						USHORT s = boost::lexical_cast<USHORT>(ranges[0]);
 						USHORT e = s;

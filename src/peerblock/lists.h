@@ -19,8 +19,7 @@
 
 */
 
-#ifndef __LISTS_H__
-#define __LISTS_H__
+#pragma once
 
 #include <p2p/list.hpp>
 #include <windows.h>
@@ -32,5 +31,3 @@ vector<DynamicList>::size_type FindUrl(tstring _url, vector<DynamicList> &_list)
 
 extern p2p::list g_tempallow;
 extern p2p::list g_tempblock;
-
-#endif

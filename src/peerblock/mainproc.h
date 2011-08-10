@@ -33,7 +33,7 @@
 #endif
 #endif
 
-#define WM_MAIN_VISIBLE	(WM_APP+1)
+#define WM_MAIN_VISIBLE (WM_APP+1)
 
 struct TabData {
 	UINT Title;

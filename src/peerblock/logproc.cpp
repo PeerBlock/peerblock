@@ -268,7 +268,7 @@ public:
 
 						lvi2.mask=LVIF_TEXT;
 						lvi2.iSubItem=1;
-						lvi2.pszText=_T("Stopped displaying allowed packets, for performance reasons.  Re-enable by selecting 'Show allowed connections' option to override.");;
+						lvi2.pszText=_T("Stopped displaying allowed packets, for performance reasons.  Re-enable by selecting 'Show allowed connections' option to override.");
 						ListView_SetItem(log, &lvi2);
 					}
 				}

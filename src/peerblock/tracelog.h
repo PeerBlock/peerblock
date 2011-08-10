@@ -23,7 +23,6 @@
 
 #include <boost\lockfree\fifo.hpp>
 #include <string>
-
 #include <windows.h>
 
 using namespace std;

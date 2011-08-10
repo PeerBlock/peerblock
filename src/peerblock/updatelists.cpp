@@ -247,7 +247,7 @@ public:
 
 	~UpdateThread()
 	{
-		if(allowed.size() > 0 && g_filter) {
+		if(!allowed.empty() && g_filter) {
 			g_filter->setranges(p2p::list(), false);
 		}
 		TRACEI("[UpdateThread] [UpdateThread]    destroyed thread class");
@@ -565,7 +565,7 @@ public:
 
 			if(progress) this->UpdateProgress();
 
-			if(handles.size()>0)
+			if(!handles.empty())
 			{
 				///////////////////////////////////////////////
 				/// Perform Updates
