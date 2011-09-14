@@ -27,15 +27,16 @@
  */
 
 #include "setup.h"
+
 #ifdef USE_CYASSL
 
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#endif
+
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-
 
 #include "urldata.h"
 #include "sendf.h"
@@ -412,7 +413,7 @@ int Curl_cyassl_init(void)
 bool Curl_cyassl_data_pending(const struct connectdata* conn, int connindex)
 {
   if(conn->ssl[connindex].handle)   /* SSL is in use */
-    return (bool)(0 != SSL_pending(conn->ssl[connindex].handle));
+    return (0 != SSL_pending(conn->ssl[connindex].handle)) ? TRUE : FALSE;
   else
     return FALSE;
 }

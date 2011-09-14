@@ -22,8 +22,6 @@
 
 #include "setup.h"
 
-#include <string.h>
-
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -36,16 +34,12 @@
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>     /* required for free() prototypes */
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* for the close() proto */
 #endif
 #ifdef __VMS
 #include <in.h>
 #include <inet.h>
-#include <stdlib.h>
 #endif
 
 #ifdef HAVE_SETJMP_H
@@ -559,6 +553,10 @@ int Curl_resolv_timeout(struct connectdata *conn,
   int rc;
 
   *entry = NULL;
+
+  if(timeoutms < 0)
+    /* got an already expired timeout */
+    return CURLRESOLV_TIMEDOUT;
 
 #ifdef USE_ALARM_TIMEOUT
   if(data->set.no_signal)

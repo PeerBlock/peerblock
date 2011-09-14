@@ -314,6 +314,26 @@ if test "x$cross_compiling" != "xno" &&
   supports_unittests=no
 fi
 
+# IRIX 6.5.24 gcc 3.3 autobuilds fail unittests library compilation due to
+# a problem related with OpenSSL headers and library versions not matching.
+# Disable unit tests while time to further investigate this is found.
+case $host in
+  mips-sgi-irix6.5)
+    if test "$compiler_id" = "GNU_C"; then
+      supports_unittests=no
+    fi
+    ;;
+esac
+
+# All AIX autobuilds fails unit tests linking against unittests library
+# due to unittests library being built with no symbols or members. Libtool ?
+# Disable unit tests while time to further investigate this is found.
+case $host_os in
+  aix*)
+    supports_unittests=no
+    ;;
+esac
+
 dnl Build unit tests when option --enable-debug is given.
 if test "x$want_debug" = "xyes" &&
    test "x$supports_unittests" = "xyes"; then
@@ -1330,7 +1350,7 @@ if test X"$OPT_SSL" != Xno; then
     dnl the user told us to look
     OPENSSL_PCDIR="$OPT_SSL/lib/pkgconfig"
     AC_MSG_NOTICE([PKG_CONFIG_LIBDIR will be set to "$OPENSSL_PCDIR"])
-    if test -e "$OPENSSL_PCDIR/openssl.pc"; then
+    if test -f "$OPENSSL_PCDIR/openssl.pc"; then
       PKGTEST="yes"
     fi
 
@@ -2419,6 +2439,7 @@ AC_CHECK_HEADERS(
         stdbool.h \
         arpa/tftp.h \
         sys/filio.h \
+        sys/wait.h \
         setjmp.h,
 dnl to do if not found
 [],
@@ -2564,6 +2585,7 @@ CURL_CHECK_FUNC_SIGINTERRUPT
 CURL_CHECK_FUNC_SIGNAL
 CURL_CHECK_FUNC_SIGSETJMP
 CURL_CHECK_FUNC_SOCKET
+CURL_CHECK_FUNC_SOCKETPAIR
 CURL_CHECK_FUNC_STRCASECMP
 CURL_CHECK_FUNC_STRCASESTR
 CURL_CHECK_FUNC_STRCMPI
@@ -2794,6 +2816,10 @@ AC_HELP_STRING([--disable-crypto-auth],[Disable cryptographic authentication]),
        AC_MSG_RESULT(yes)
 )
 
+CURL_CHECK_OPTION_NTLM_WB
+
+CURL_CHECK_NTLM_WB
+
 dnl ************************************************************
 dnl disable TLS-SRP authentication
 dnl
@@ -2969,6 +2995,9 @@ if test "x$CURL_DISABLE_HTTP" != "x1"; then
   if test "x$USE_SSLEAY" = "x1" -o "x$USE_WINDOWS_SSPI" = "x1" \
       -o "x$GNUTLS_ENABLED" = "x1" -o "x$NSS_ENABLED" = "x1"; then
     SUPPORT_FEATURES="$SUPPORT_FEATURES NTLM"
+    if test "x$NTLM_WB_ENABLED" = "x1"; then
+      SUPPORT_FEATURES="$SUPPORT_FEATURES NTLM_WB"
+    fi
   fi
 fi
 if test "x$USE_TLS_SRP" = "x1"; then

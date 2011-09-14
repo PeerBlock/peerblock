@@ -22,9 +22,6 @@
 
 #include "setup.h"
 
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -52,9 +49,6 @@
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
 
 #if (defined(HAVE_IOCTL_FIONBIO) && defined(NETWARE))
 #include <sys/filio.h>
@@ -67,10 +61,6 @@
 #include <in.h>
 #include <inet.h>
 #endif
-
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -669,7 +659,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
 
   *connected = FALSE; /* a very negative world view is best */
 
-  if(conn->bits.tcpconnect) {
+  if(conn->bits.tcpconnect[sockindex]) {
     /* we are connected already! */
     *connected = TRUE;
     return CURLE_OK;
@@ -708,9 +698,10 @@ CURLcode Curl_is_connected(struct connectdata *conn,
       if(code)
         return code;
 
-      conn->bits.tcpconnect = TRUE;
+      conn->bits.tcpconnect[sockindex] = TRUE;
       *connected = TRUE;
-      Curl_pgrsTime(data, TIMER_CONNECT); /* connect done */
+      if(sockindex == FIRSTSOCKET)
+        Curl_pgrsTime(data, TIMER_CONNECT); /* connect done */
       Curl_verboseconnect(conn);
       Curl_updateconninfo(conn, sockfd);
 
@@ -756,7 +747,7 @@ static void tcpnodelay(struct connectdata *conn,
 #ifdef TCP_NODELAY
   struct SessionHandle *data= conn->data;
   curl_socklen_t onoff = (curl_socklen_t) data->set.tcp_nodelay;
-  int proto = IPPROTO_TCP;
+  int level = IPPROTO_TCP;
 
 #if 0
   /* The use of getprotobyname() is disabled since it isn't thread-safe on
@@ -768,10 +759,10 @@ static void tcpnodelay(struct connectdata *conn,
      detected. */
   struct protoent *pe = getprotobyname("tcp");
   if(pe)
-    proto = pe->p_proto;
+    level = pe->p_proto;
 #endif
 
-  if(setsockopt(sockfd, proto, TCP_NODELAY, (void *)&onoff,
+  if(setsockopt(sockfd, level, TCP_NODELAY, (void *)&onoff,
                 sizeof(onoff)) < 0)
     infof(data, "Could not set TCP_NODELAY: %s\n",
           Curl_strerror(conn, SOCKERRNO));
@@ -799,10 +790,10 @@ static void nosigpipe(struct connectdata *conn,
           Curl_strerror(conn, SOCKERRNO));
 }
 #else
-#define nosigpipe(x,y)
+#define nosigpipe(x,y) Curl_nop_stmt
 #endif
 
-#ifdef WIN32
+#ifdef USE_WINSOCK
 /* When you run a program that uses the Windows Sockets API, you may
    experience slow performance when you copy data to a TCP server.
 

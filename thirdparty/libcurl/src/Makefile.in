@@ -352,8 +352,8 @@ CURL_HFILES = hugehelp.h setup.h config-win32.h config-mac.h \
 curl_SOURCES = $(CURL_CFILES) $(CURLX_ONES) $(CURL_HFILES)
 curl_LDADD = $(top_builddir)/lib/libcurl.la @CURL_LIBS@
 curl_DEPENDENCIES = $(top_builddir)/lib/libcurl.la
-BUILT_SOURCES = hugehelp.c
-CLEANFILES = hugehelp.c
+BUILT_SOURCES = hugehelp.c config-win32.h
+CLEANFILES = hugehelp.c config-win32.h
 EXTRA_DIST = mkhelp.pl makefile.dj Makefile.vc6 Makefile.b32 Makefile.m32 \
 	curl_config.h.in macos/curl.mcp.xml.sit.hqx			  \
 	macos/MACINSTALL.TXT macos/src/curl_GUSIConfig.cpp vc6curlsrc.dsp \
@@ -365,6 +365,7 @@ MANPAGE = $(top_srcdir)/docs/curl.1
 README = $(top_srcdir)/docs/MANUAL
 MKHELP = $(top_srcdir)/src/mkhelp.pl
 HUGE = hugehelp.c
+CFGWIN32 = config-win32.h
 all: $(BUILT_SOURCES) curl_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -732,6 +733,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	uninstall-info-am
 
 
+$(CFGWIN32): $(top_srcdir)/lib/config-win32.h
+	echo "creating $(CFGWIN32)"
+	@(cp $(top_srcdir)/lib/config-win32.h $(CFGWIN32))
+
 # Here are the stuff to create a built-in manual
 
 # This generates the hugehelp.c file in both uncompressed and compressed formats
@@ -754,9 +759,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 @USE_MANUAL_FALSE@	echo "void hugehelp(void) {}" >>$(HUGE)
 
 # ignore hugehelp.c since it is generated source code and it plays by slightly
-# different rules!
+# different rules! config-win32.h already checked in lib subdir.
 checksrc:
-	@@PERL@ $(top_srcdir)/lib/checksrc.pl -D$(top_srcdir)/src -Whugehelp.c $(curl_SOURCES)
+	@@PERL@ $(top_srcdir)/lib/checksrc.pl -D$(top_srcdir)/src -Whugehelp.c -Wconfig-win32.h $(curl_SOURCES)
 
 # for debug builds, we scan the sources on all regular make invokes
 @CURLDEBUG_TRUE@all-local: checksrc

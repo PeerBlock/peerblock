@@ -23,26 +23,12 @@
 #include "setup.h"
 
 #ifndef CURL_DISABLE_FILE
-/* -- WIN32 approved -- */
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <ctype.h>
 
-#ifdef WIN32
-#include <time.h>
-#include <io.h>
-#include <fcntl.h>
-#else
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -67,8 +53,6 @@
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
-
-#endif /* WIN32 */
 
 #include "strtoofft.h"
 #include "urldata.h"

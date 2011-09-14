@@ -25,11 +25,7 @@
 #include "setup.h"
 
 #ifdef USE_LIBSSH2
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
+
 #ifdef HAVE_LIMITS_H
 #  include <limits.h>
 #endif
@@ -45,11 +41,6 @@
 #include <fcntl.h>
 #endif
 
-#ifdef HAVE_TIME_H
-#include <time.h>
-#endif
-
-#ifndef WIN32
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -69,7 +60,6 @@
 #include <in.h>
 #include <inet.h>
 #endif
-#endif /* !WIN32 */
 
 #if (defined(NETWARE) && defined(__NOVELL_LIBC__))
 #undef in_addr_t
@@ -107,6 +97,11 @@
 #include "curl_memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
+
+#ifdef WIN32
+#  undef  PATH_MAX
+#  define PATH_MAX MAX_PATH
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024 /* just an extra precaution since there are systems that
@@ -649,6 +644,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
   const char *fingerprint;
 #endif /* CURL_LIBSSH2_DEBUG */
   const char *host_public_key_md5;
+  char *new_readdir_line;
   int rc = LIBSSH2_ERROR_NONE, i;
   int err;
   int seekerr = CURL_SEEKFUNC_OK;
@@ -1581,7 +1577,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
                                     SEEK_SET);
         }
 
-        if(seekerr != CURL_SEEKFUNC_OK){
+        if(seekerr != CURL_SEEKFUNC_OK) {
 
           if(seekerr != CURL_SEEKFUNC_CANTSEEK) {
             failf(data, "Could not seek stream");
@@ -1864,10 +1860,13 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       }
       Curl_safefree(sshc->readdir_linkPath);
       sshc->readdir_linkPath = NULL;
-      sshc->readdir_line = realloc(sshc->readdir_line,
-                                   sshc->readdir_totalLen + 4 +
-                                   sshc->readdir_len);
-      if(!sshc->readdir_line) {
+
+      new_readdir_line = realloc(sshc->readdir_line,
+                                 sshc->readdir_totalLen + 4 +
+                                 sshc->readdir_len);
+      if(!new_readdir_line) {
+        Curl_safefree(sshc->readdir_line);
+        sshc->readdir_line = NULL;
         Curl_safefree(sshc->readdir_filename);
         sshc->readdir_filename = NULL;
         Curl_safefree(sshc->readdir_longentry);
@@ -1876,6 +1875,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
         sshc->actualcode = CURLE_OUT_OF_MEMORY;
         break;
       }
+      sshc->readdir_line = new_readdir_line;
 
       sshc->readdir_currLen += snprintf(sshc->readdir_line +
                                         sshc->readdir_currLen,
@@ -2388,10 +2388,39 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
         }
         sshc->ssh_session = NULL;
       }
+
+      /* worst-case scenario cleanup */
+
+      DEBUGASSERT(sshc->ssh_session == NULL);
+      DEBUGASSERT(sshc->ssh_channel == NULL);
+      DEBUGASSERT(sshc->sftp_session == NULL);
+      DEBUGASSERT(sshc->sftp_handle == NULL);
+#ifdef HAVE_LIBSSH2_KNOWNHOST_API
+      DEBUGASSERT(sshc->kh == NULL);
+#endif
+
+      Curl_safefree(sshc->rsa_pub);
+      Curl_safefree(sshc->rsa);
+
+      Curl_safefree(sshc->quote_path1);
+      Curl_safefree(sshc->quote_path2);
+
+      Curl_safefree(sshc->homedir);
+
+      Curl_safefree(sshc->readdir_filename);
+      Curl_safefree(sshc->readdir_longentry);
+      Curl_safefree(sshc->readdir_line);
+      Curl_safefree(sshc->readdir_linkPath);
+
+      /* the code we are about to return */
+      result = sshc->actualcode;
+
+      memset(sshc, 0, sizeof(struct ssh_conn));
+
       conn->bits.close = TRUE;
+      sshc->state = SSH_SESSION_FREE; /* current */
       sshc->nextstate = SSH_NO_STATE;
       state(conn, SSH_STOP);
-      result = sshc->actualcode;
       break;
 
     case SSH_QUIT:
@@ -2488,7 +2517,7 @@ static void ssh_block2waitfor(struct connectdata *conn, bool block)
 }
 #else
   /* no libssh2 directional support so we simply don't know */
-#define ssh_block2waitfor(x,y)
+#define ssh_block2waitfor(x,y) Curl_nop_stmt
 #endif
 
 /* called repeatedly until done from multi.c */
@@ -2500,7 +2529,7 @@ static CURLcode ssh_multi_statemach(struct connectdata *conn, bool *done)
                  implementation */
 
   result = ssh_statemach_act(conn, &block);
-  *done = (bool)(sshc->state == SSH_STOP);
+  *done = (sshc->state == SSH_STOP) ? TRUE : FALSE;
   ssh_block2waitfor(conn, block);
 
   return result;
@@ -2706,7 +2735,7 @@ CURLcode scp_perform(struct connectdata *conn,
     result = ssh_easy_statemach(conn, FALSE);
     *dophase_done = TRUE; /* with the easy interface we are done here */
   }
-  *connected = conn->bits.tcpconnect;
+  *connected = conn->bits.tcpconnect[FIRSTSOCKET];
 
   if(*dophase_done) {
     DEBUGF(infof(conn->data, "DO phase is complete\n"));
@@ -2913,7 +2942,7 @@ CURLcode sftp_perform(struct connectdata *conn,
     result = ssh_easy_statemach(conn, FALSE);
     *dophase_done = TRUE; /* with the easy interface we are done here */
   }
-  *connected = conn->bits.tcpconnect;
+  *connected = conn->bits.tcpconnect[FIRSTSOCKET];
 
   if(*dophase_done) {
     DEBUGF(infof(conn->data, "DO phase is complete\n"));

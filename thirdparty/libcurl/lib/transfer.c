@@ -22,30 +22,15 @@
 
 #include "setup.h"
 
-/* -- WIN32 approved -- */
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <errno.h>
-
 #include "strtoofft.h"
 #include "strequal.h"
 #include "rawstr.h"
 
-#ifdef WIN32
-#include <time.h>
-#include <io.h>
-#else
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -78,8 +63,6 @@
 #error "We can't compile without socket() support!"
 #endif
 
-#endif  /* WIN32 */
-
 #include "urldata.h"
 #include <curl/curl.h>
 #include "netrc.h"
@@ -95,7 +78,7 @@
 #include "getinfo.h"
 #include "sslgen.h"
 #include "http_digest.h"
-#include "http_ntlm.h"
+#include "curl_ntlm.h"
 #include "http_negotiate.h"
 #include "share.h"
 #include "curl_memory.h"
@@ -186,11 +169,12 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
     const char *endofline_native;
     const char *endofline_network;
     int hexlen;
+
+    if(
 #ifdef CURL_DO_LINEEND_CONV
-    if((data->set.crlf) || (data->set.prefer_ascii)) {
-#else
-    if(data->set.crlf) {
-#endif /* CURL_DO_LINEEND_CONV */
+       (data->set.prefer_ascii) ||
+#endif
+       (data->set.crlf)) {
       /* \n will become \r\n later on */
       endofline_native  = "\n";
       endofline_network = "\x0a";
@@ -302,7 +286,7 @@ CURLcode Curl_readrewind(struct connectdata *conn)
     else {
       /* If no CURLOPT_READFUNCTION is used, we know that we operate on a
          given FILE * stream and we can actually attempt to rewind that
-         ourself with fseek() */
+         ourselves with fseek() */
       if(data->set.fread_func == (curl_read_callback)fread) {
         if(-1 != fseek(data->set.in, 0, SEEK_SET))
           /* successful rewind */
@@ -446,7 +430,7 @@ static CURLcode readwrite_data(struct SessionHandle *data,
 
     *didwhat |= KEEP_RECV;
     /* indicates data of zero size, i.e. empty file */
-    is_empty_data = (bool)((nread == 0) && (k->bodywrites == 0));
+    is_empty_data = ((nread == 0) && (k->bodywrites == 0)) ? TRUE : FALSE;
 
     /* NUL terminate, allowing string ops to be used */
     if(0 < nread || is_empty_data) {
@@ -522,7 +506,6 @@ static CURLcode readwrite_data(struct SessionHandle *data,
        is non-headers. */
     if(k->str && !k->header && (nread > 0 || is_empty_data)) {
 
-
 #ifndef CURL_DISABLE_HTTP
       if(0 == k->bodywrites && !is_empty_data) {
         /* These checks are only made the first time we are about to
@@ -570,9 +553,10 @@ static CURLcode readwrite_data(struct SessionHandle *data,
             }
           } /* we have a time condition */
 
-        } /* this is HTTP */
+        } /* this is HTTP or RTSP */
       } /* this is the first time we write a body part */
 #endif /* CURL_DISABLE_HTTP */
+
       k->bodywrites++;
 
       /* pass data to the debug function before it gets "dechunked" */
@@ -606,7 +590,7 @@ static CURLcode readwrite_data(struct SessionHandle *data,
             failf(data, "Failed writing data");
             return CURLE_WRITE_ERROR;
           }
-          failf(data, "Received problem %d in the chunky parser", (int)res);
+          failf(data, "Problem (%d) in the Chunked-Encoded data", (int)res);
           return CURLE_RECV_ERROR;
         }
         else if(CHUNKE_STOP == res) {
@@ -816,6 +800,9 @@ static CURLcode readwrite_upload(struct SessionHandle *data,
   /*
    * We loop here to do the READ and SEND loop until we run out of
    * data to send or until we get EWOULDBLOCK back
+   *
+   * FIXME: above comment is misleading. Currently no looping is
+   * actually done in do-while loop below.
    */
   do {
 
@@ -892,13 +879,12 @@ static CURLcode readwrite_upload(struct SessionHandle *data,
 #endif /* CURL_DISABLE_SMTP */
 
       /* convert LF to CRLF if so asked */
-      if((!sending_http_headers) &&
+      if((!sending_http_headers) && (
 #ifdef CURL_DO_LINEEND_CONV
-        /* always convert if we're FTPing in ASCII mode */
-         ((data->set.crlf) || (data->set.prefer_ascii))) {
-#else
-         (data->set.crlf)) {
+         /* always convert if we're FTPing in ASCII mode */
+         (data->set.prefer_ascii) ||
 #endif
+         (data->set.crlf))) {
         if(data->state.scratch == NULL)
           data->state.scratch = malloc(2*BUFSIZE);
         if(data->state.scratch == NULL) {
@@ -988,7 +974,7 @@ static CURLcode readwrite_upload(struct SessionHandle *data,
 
     Curl_pgrsSetUploadCounter(data, k->writebytecount);
 
-  } while(0); /* just to break out from! */
+  } WHILE_FALSE; /* just to break out from! */
 
   return CURLE_OK;
 }
@@ -1042,6 +1028,12 @@ CURLcode Curl_readwrite(struct connectdata *conn,
     result = readwrite_data(data, conn, k, &didwhat, done);
     if(result || *done)
       return result;
+  }
+  else if(k->keepon & KEEP_RECV) {
+    DEBUGF(infof(data, "additional stuff not fine %s:%d: %d %d\n",
+                 __FILE__, __LINE__,
+                 select_res & CURL_CSELECT_IN,
+                 conn->bits.stream_was_rewound));
   }
 
   /* If we still have writing to do, we check if we have a writable socket. */
@@ -1136,7 +1128,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
             (conn->chunk.state != CHUNK_STOP)) {
       /*
        * In chunked mode, return an error if the connection is closed prior to
-       * the empty (terminiating) chunk is read.
+       * the empty (terminating) chunk is read.
        *
        * The condition above used to check for
        * conn->proto.http->chunk.datasize != 0 which is true after reading
@@ -1151,8 +1143,8 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   }
 
   /* Now update the "done" boolean we return */
-  *done = (bool)(0 == (k->keepon&(KEEP_RECV|KEEP_SEND|
-                                  KEEP_RECV_PAUSE|KEEP_SEND_PAUSE)));
+  *done = (0 == (k->keepon&(KEEP_RECV|KEEP_SEND|
+                            KEEP_RECV_PAUSE|KEEP_SEND_PAUSE))) ? TRUE : FALSE;
 
   return CURLE_OK;
 }
@@ -1213,11 +1205,11 @@ int Curl_single_getsock(const struct connectdata *conn,
 /*
  * Determine optimum sleep time based on configured rate, current rate,
  * and packet size.
- * Returns value in mili-seconds.
+ * Returns value in milliseconds.
  *
  * The basic idea is to adjust the desired rate up/down in this method
  * based on whether we are running too slow or too fast.  Then, calculate
- * how many miliseconds to wait for the next packet to achieve this new
+ * how many milliseconds to wait for the next packet to achieve this new
  * rate.
  */
 long Curl_sleep_time(curl_off_t rate_bps, curl_off_t cur_rate_bps,
@@ -1243,7 +1235,7 @@ long Curl_sleep_time(curl_off_t rate_bps, curl_off_t cur_rate_bps,
     rate_bps += rate_bps >> 6;
   }
 
-  /* Determine number of miliseconds to wait until we do
+  /* Determine number of milliseconds to wait until we do
    * the next packet at the adjusted rate.  We should wait
    * longer when using larger packets, for instance.
    */
@@ -1448,8 +1440,10 @@ static CURLcode loadhostpairs(struct SessionHandle *data)
       if(data->share)
         Curl_share_unlock(data, CURL_LOCK_DATA_DNS);
 
-      if(!dns)
+      if(!dns) {
+        Curl_freeaddrinfo(addr);
         return CURLE_OUT_OF_MEMORY;
+      }
     }
   }
   data->change.resolve = NULL; /* dealt with now */
@@ -1613,7 +1607,7 @@ static bool is_absolute_url(const char *url)
   char prot[16]; /* URL protocol string storage */
   char letter;   /* used for a silly sscanf */
 
-  return (bool)(2 == sscanf(url, "%15[^?&/:]://%c", prot, &letter));
+  return (2 == sscanf(url, "%15[^?&/:]://%c", prot, &letter)) ? TRUE : FALSE;
 }
 
 /*
@@ -1889,19 +1883,18 @@ CURLcode Curl_follow(struct SessionHandle *data,
   case 301: /* Moved Permanently */
     /* (quote from RFC2616, section 10.3.2):
      *
-     * Note: When automatically redirecting a POST request after receiving a
-     * 301 status code, some existing HTTP/1.0 user agents will erroneously
-     * change it into a GET request.
+     * When automatically redirecting a POST request after receiving a 301
+     * status code, some existing HTTP/1.0 user agents will erroneously change
+     * it into a GET request.
      *
      * ----
      *
-     * Warning: Because most of importants user agents do this obvious RFC2616
-     * violation, many webservers expect this misbehavior. So these servers
-     * often answers to a POST request with an error page.  To be sure that
-     * libcurl gets the page that most user agents would get, libcurl has to
-     * force GET.
+     * As most of the important user agents do this obvious RFC2616 violation,
+     * many webservers expect this. So these servers often answers to a POST
+     * request with an error page.  To be sure that libcurl gets the page that
+     * most user agents would get, libcurl has to force GET.
      *
-     * This behaviour can be overridden with CURLOPT_POSTREDIR.
+     * This behavior can be overridden with CURLOPT_POSTREDIR.
      */
     if((data->set.httpreq == HTTPREQ_POST
         || data->set.httpreq == HTTPREQ_POST_FORM)
@@ -1929,7 +1922,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
     302 status code may be used instead, since most user agents react
     to a 302 response as described here for 303.
 
-    This behaviour can be overriden with CURLOPT_POSTREDIR
+    This behavior can be overridden with CURLOPT_POSTREDIR
     */
     if((data->set.httpreq == HTTPREQ_POST
         || data->set.httpreq == HTTPREQ_POST_FORM)
@@ -2092,7 +2085,7 @@ CURLcode Curl_retry_request(struct connectdata *conn,
                                 transferred! */
 
     if(data->state.proto.http->writebytecount)
-      Curl_readrewind(conn);
+      return Curl_readrewind(conn);
   }
   return CURLE_OK;
 }

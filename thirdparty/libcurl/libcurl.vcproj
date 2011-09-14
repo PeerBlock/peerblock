@@ -521,6 +521,46 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lib\curl_gssapi.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_gssapi.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm_core.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm_core.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm_msgs.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm_msgs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm_wb.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lib\curl_ntlm_wb.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lib\base64.c"
 				>
 			</File>
@@ -846,14 +886,6 @@
 			</File>
 			<File
 				RelativePath=".\lib\http_negotiate_sspi.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lib\http_ntlm.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lib\http_ntlm.h"
 				>
 			</File>
 			<File

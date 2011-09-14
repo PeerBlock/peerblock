@@ -55,18 +55,17 @@
 #include <sys/types.h>
 #include <time.h>
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__GNUC__) && \
-  !defined(__CYGWIN__) || defined(__MINGW32__)
-#if !(defined(_WINSOCKAPI_) || defined(_WINSOCK_H))
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__CYGWIN__)
+#if !(defined(_WINSOCKAPI_) || defined(_WINSOCK_H) || defined(__LWIP_OPT_H__))
 /* The check above prevents the winsock2 inclusion if winsock.h already was
    included, since they can't co-exist without problems */
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
-#else
+#endif
 
 /* HP-UX systems version 9, 10 and 11 lack sys/select.h and so does oldish
-   libc5-based Linux systems. Only include it on system that are known to
+   libc5-based Linux systems. Only include it on systems that are known to
    require it! */
 #if defined(_AIX) || defined(__NOVELL_LIBC__) || defined(__NetBSD__) || \
     defined(__minix) || defined(__SYMBIAN32__) || defined(__INTEGRITY) || \
@@ -75,13 +74,12 @@
 #include <sys/select.h>
 #endif
 
-#ifndef _WIN32_WCE
+#if !defined(WIN32) && !defined(_WIN32_WCE)
 #include <sys/socket.h>
 #endif
+
 #if !defined(WIN32) && !defined(__WATCOMC__) && !defined(__VXWORKS__)
 #include <sys/time.h>
-#endif
-#include <sys/types.h>
 #endif
 
 #ifdef __BEOS__
@@ -122,7 +120,7 @@ typedef void CURL;
 
 #ifndef curl_socket_typedef
 /* socket typedef */
-#ifdef WIN32
+#if defined(WIN32) && !defined(__LWIP_OPT_H__)
 typedef SOCKET curl_socket_t;
 #define CURL_SOCKET_BAD INVALID_SOCKET
 #else
@@ -606,6 +604,7 @@ typedef enum {
 #define CURLAUTH_GSSNEGOTIATE (1<<2)  /* GSS-Negotiate */
 #define CURLAUTH_NTLM         (1<<3)  /* NTLM */
 #define CURLAUTH_DIGEST_IE    (1<<4)  /* Digest with IE flavour */
+#define CURLAUTH_NTLM_WB      (1<<5)  /* NTLM delegating to winbind helper */
 #define CURLAUTH_ONLY         (1<<31) /* used together with a single other
                                          type to force no auth or just that
                                          single type */
@@ -619,6 +618,10 @@ typedef enum {
 #define CURLSSH_AUTH_HOST      (1<<2) /* host key files */
 #define CURLSSH_AUTH_KEYBOARD  (1<<3) /* keyboard interactive */
 #define CURLSSH_AUTH_DEFAULT CURLSSH_AUTH_ANY
+
+#define CURLGSSAPI_DELEGATION_NONE        0      /* no delegation (default) */
+#define CURLGSSAPI_DELEGATION_POLICY_FLAG (1<<0) /* if permitted by policy */
+#define CURLGSSAPI_DELEGATION_FLAG        (1<<1) /* delegate always */
 
 #define CURL_ERROR_SIZE 256
 
@@ -922,9 +925,7 @@ typedef enum {
   /* send linked-list of post-transfer QUOTE commands */
   CINIT(POSTQUOTE, OBJECTPOINT, 39),
 
-  /* Pass a pointer to string of the output using full variable-replacement
-     as described elsewhere. */
-  CINIT(WRITEINFO, OBJECTPOINT, 40),
+  CINIT(WRITEINFO, OBJECTPOINT, 40), /* DEPRECATED, do not use! */
 
   CINIT(VERBOSE, LONG, 41),      /* talk a lot */
   CINIT(HEADER, LONG, 42),       /* throw the header out too */
@@ -1000,8 +1001,7 @@ typedef enum {
   /* Max amount of cached alive connections */
   CINIT(MAXCONNECTS, LONG, 71),
 
-  /* 72 - DEPRECATED */
-  CINIT(CLOSEPOLICY, LONG, 72),
+  CINIT(CLOSEPOLICY, LONG, 72), /* DEPRECATED, do not use! */
 
   /* 73 = OBSOLETE */
 
@@ -1075,7 +1075,7 @@ typedef enum {
   CINIT(SSLENGINE_DEFAULT, LONG, 90),
 
   /* Non-zero value means to use the global dns cache */
-  CINIT(DNS_USE_GLOBAL_CACHE, LONG, 91), /* To become OBSOLETE soon */
+  CINIT(DNS_USE_GLOBAL_CACHE, LONG, 91), /* DEPRECATED, do not use! */
 
   /* DNS cache timeout */
   CINIT(DNS_CACHE_TIMEOUT, LONG, 92),
@@ -1493,6 +1493,9 @@ typedef enum {
      should have type curl_closesocket_callback */
   CINIT(CLOSESOCKETFUNCTION, FUNCTIONPOINT, 208),
   CINIT(CLOSESOCKETDATA, OBJECTPOINT, 209),
+
+  /* allow GSSAPI credential delegation */
+  CINIT(GSSAPI_DELEGATION, LONG, 210),
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
@@ -2103,8 +2106,9 @@ typedef struct {
 #define CURL_VERSION_CONV      (1<<12) /* character conversions supported */
 #define CURL_VERSION_CURLDEBUG (1<<13) /* debug memory tracking supported */
 #define CURL_VERSION_TLSAUTH_SRP (1<<14) /* TLS-SRP auth is supported */
+#define CURL_VERSION_NTLM_WB   (1<<15) /* NTLM delegating to winbind helper */
 
-/*
+ /*
  * NAME curl_version_info()
  *
  * DESCRIPTION

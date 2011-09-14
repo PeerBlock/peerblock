@@ -23,27 +23,19 @@
 #include "setup.h"
 
 #ifndef CURL_DISABLE_TFTP
-/* -- WIN32 approved -- */
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <ctype.h>
 
-#if defined(WIN32)
-#include <time.h>
-#include <io.h>
-#else
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
+#endif
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
@@ -57,8 +49,6 @@
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
-
-#endif /* WIN32 */
 
 #include "urldata.h"
 #include <curl/curl.h>
@@ -216,7 +206,7 @@ static CURLcode tftp_set_timeouts(tftp_state_data_t *state)
 {
   time_t maxtime, timeout;
   long timeout_ms;
-  bool start = (bool)(state->state == TFTP_STATE_START);
+  bool start = (state->state == TFTP_STATE_START) ? TRUE : FALSE;
 
   time(&state->start_time);
 
@@ -627,7 +617,7 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
     }
 
     /* Check if completed (That is, a less than full packet is received) */
-    if(state->rbytes < (ssize_t)state->blksize+4){
+    if(state->rbytes < (ssize_t)state->blksize+4) {
       state->state = TFTP_STATE_FIN;
     }
     else {
@@ -1344,7 +1334,7 @@ static CURLcode tftp_multi_statemach(struct connectdata *conn, bool *done)
     result = tftp_state_machine(state, event);
     if(result != CURLE_OK)
       return(result);
-    *done = (bool)(state->state == TFTP_STATE_FIN);
+    *done = (state->state == TFTP_STATE_FIN) ? TRUE : FALSE;
     if(*done)
       /* Tell curl we're done */
       Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
@@ -1366,7 +1356,7 @@ static CURLcode tftp_multi_statemach(struct connectdata *conn, bool *done)
       result = tftp_state_machine(state, state->event);
       if(result != CURLE_OK)
         return(result);
-      *done = (bool)(state->state == TFTP_STATE_FIN);
+      *done = (state->state == TFTP_STATE_FIN) ? TRUE : FALSE;
       if(*done)
         /* Tell curl we're done */
         Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);

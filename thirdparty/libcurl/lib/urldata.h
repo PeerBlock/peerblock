@@ -360,7 +360,7 @@ struct ntlmdata {
   SEC_WINNT_AUTH_IDENTITY *p_identity;
   int has_handles;
   void *type_2;
-  int n_type_2;
+  unsigned long n_type_2;
 #else
   unsigned int flags;
   unsigned char nonce[8];
@@ -411,7 +411,7 @@ struct ConnectBits {
   bool do_more; /* this is set TRUE if the ->curl_do_more() function is
                    supposed to be called, after ->curl_do() */
 
-  bool tcpconnect;    /* the TCP layer (or similar) is connected, this is set
+  bool tcpconnect[2]; /* the TCP layer (or similar) is connected, this is set
                          the first time on the first connect function call */
   bool protoconnstart;/* the protocol layer has STARTED its operation after
                          the TCP layer connect */
@@ -904,6 +904,14 @@ struct connectdata {
                                because it authenticates connections, not
                                single requests! */
   struct ntlmdata proxyntlm; /* NTLM data for proxy */
+
+#ifdef NTLM_WB_ENABLED
+  /* used for communication with Samba's winbind daemon helper ntlm_auth */
+  curl_socket_t ntlm_auth_hlpr_socket;
+  pid_t ntlm_auth_hlpr_pid;
+  char* challenge_header;
+  char* response_header;
+#endif
 
   char syserr_buf [256]; /* buffer for Curl_strerror() */
 
@@ -1523,6 +1531,9 @@ struct UserDefined {
   curl_fnmatch_callback fnmatch; /* callback to decide which file corresponds
                                     to pattern (e.g. if WILDCARDMATCH is on) */
   void *fnmatch_data;
+
+  long gssapi_delegation; /* GSSAPI credential delegation, see the
+                             documentation of CURLOPT_GSSAPI_DELEGATION */
 };
 
 struct Names {

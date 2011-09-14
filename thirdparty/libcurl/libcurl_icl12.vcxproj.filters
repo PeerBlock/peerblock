@@ -201,9 +201,6 @@
     <ClInclude Include="lib\http_negotiate.h">
       <Filter>lib</Filter>
     </ClInclude>
-    <ClInclude Include="lib\http_ntlm.h">
-      <Filter>lib</Filter>
-    </ClInclude>
     <ClInclude Include="lib\http_proxy.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -381,6 +378,21 @@
     <ClInclude Include="lib\axtls.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\curl_gssapi.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl_ntlm.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl_ntlm_core.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl_ntlm_msgs.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl_ntlm_wb.h">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\curlutil.c">
@@ -528,9 +540,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\http_negotiate.c">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\http_ntlm.c">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\http_proxy.c">
@@ -708,6 +717,21 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\idn_win32.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_gssapi.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_ntlm.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_ntlm_core.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_ntlm_msgs.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl_ntlm_wb.c">
       <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>

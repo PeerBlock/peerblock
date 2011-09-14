@@ -32,9 +32,6 @@
 
 #include "setup.h"
 
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
@@ -123,7 +120,7 @@
 /* 0.9.6 didn't have X509_STORE_set_flags() */
 #define HAVE_X509_STORE_SET_FLAGS 1
 #else
-#define X509_STORE_set_flags(x,y)
+#define X509_STORE_set_flags(x,y) Curl_nop_stmt
 #endif
 
 /*
@@ -169,14 +166,14 @@ static int passwd_callback(char *buf, int num, int verify
 #define seed_enough(x) rand_enough()
 static bool rand_enough(void)
 {
-  return (bool)(0 != RAND_status());
+  return (0 != RAND_status()) ? TRUE : FALSE;
 }
 #else
 #define seed_enough(x) rand_enough(x)
 static bool rand_enough(int nread)
 {
   /* this is a very silly decision to make */
-  return (bool)(nread > 500);
+  return (nread > 500) ? TRUE : FALSE;
 }
 #endif
 
@@ -1410,7 +1407,7 @@ static void ssl_tls_trace(int direction, int ssl_ver, int content_type,
 #ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
 #  define use_sni(x)  sni = (x)
 #else
-#  define use_sni(x)  do { } while (0)
+#  define use_sni(x)  Curl_nop_stmt
 #endif
 
 static CURLcode
@@ -1491,6 +1488,10 @@ ossl_connect_step1(struct connectdata *conn,
           ERR_error_string(ERR_peek_error(), NULL));
     return CURLE_OUT_OF_MEMORY;
   }
+
+#ifdef SSL_MODE_RELEASE_BUFFERS
+  SSL_CTX_set_mode(connssl->ctx, SSL_MODE_RELEASE_BUFFERS);
+#endif
 
 #ifdef SSL_CTRL_SET_MSG_CALLBACK
   if(data->set.fdebug && data->set.verbose) {
@@ -1918,7 +1919,7 @@ do {                              \
       pubkey_show(data, _num, #_type, #_name, (unsigned char*)bufp, len); \
     } \
   } \
-} while(0)
+} WHILE_FALSE
 
 static int X509V3_ext(struct SessionHandle *data,
                       int certnum,
@@ -2563,7 +2564,7 @@ bool Curl_ossl_data_pending(const struct connectdata *conn,
 {
   if(conn->ssl[connindex].handle)
     /* SSL is in use */
-    return (bool)(0 != SSL_pending(conn->ssl[connindex].handle));
+    return (0 != SSL_pending(conn->ssl[connindex].handle)) ? TRUE : FALSE;
   else
     return FALSE;
 }

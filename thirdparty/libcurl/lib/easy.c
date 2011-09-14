@@ -22,28 +22,11 @@
 
 #include "setup.h"
 
-/* -- WIN32 approved -- */
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <errno.h>
-
-#include "strequal.h"
-
-#ifdef WIN32
-#include <time.h>
-#include <io.h>
-#else
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -65,8 +48,7 @@
 #include <sys/param.h>
 #endif
 
-#endif  /* WIN32 ... */
-
+#include "strequal.h"
 #include "urldata.h"
 #include <curl/curl.h>
 #include "transfer.h"
@@ -81,7 +63,7 @@
 #include "easyif.h"
 #include "select.h"
 #include "sendf.h" /* for failf function prototype */
-#include "http_ntlm.h"
+#include "curl_ntlm.h"
 #include "connect.h" /* for Curl_getconnectinfo */
 #include "slist.h"
 #include "curl_rand.h"
@@ -143,6 +125,8 @@ static CURLcode win32_init(void)
     return CURLE_FAILED_INIT;
   }
   /* The Windows Sockets DLL is acceptable. Proceed. */
+#elif defined(USE_LWIPSOCK)
+  lwip_init();
 #endif
 
 #ifdef USE_WINDOWS_SSPI

@@ -22,9 +22,6 @@
 
 #include "setup.h"
 
-#include <stdio.h>
-#include <string.h>
-
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -257,7 +254,7 @@ void ourWriteOut(CURL *curl, const char *writeinfo)
               break;
             }
           }
-          if(FALSE == match) {
+          if(!match) {
             fprintf(stderr, "curl: unknown --write-out variable: '%s'\n", ptr);
           }
           ptr=end+1; /* pass the end */

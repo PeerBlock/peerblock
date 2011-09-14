@@ -27,11 +27,6 @@
 #include "setup.h"
 
 #ifndef CURL_DISABLE_POP3
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -285,7 +280,7 @@ static void pop3_to_pop3s(struct connectdata *conn)
   conn->handler = &Curl_handler_pop3s;
 }
 #else
-#define pop3_to_pop3s(x)
+#define pop3_to_pop3s(x) Curl_nop_stmt
 #endif
 
 /* for STARTTLS responses */
@@ -575,7 +570,7 @@ static CURLcode pop3_multi_statemach(struct connectdata *conn, bool *done)
   struct pop3_conn *pop3c = &conn->proto.pop3c;
   CURLcode result = Curl_pp_multi_statemach(&pop3c->pp);
 
-  *done = (bool)(pop3c->state == POP3_STOP);
+  *done = (pop3c->state == POP3_STOP) ? TRUE : FALSE;
 
   return result;
 }
@@ -792,7 +787,7 @@ CURLcode pop3_perform(struct connectdata *conn,
     result = pop3_easy_statemach(conn);
     *dophase_done = TRUE; /* with the easy interface we are done here */
   }
-  *connected = conn->bits.tcpconnect;
+  *connected = conn->bits.tcpconnect[FIRSTSOCKET];
 
   if(*dophase_done)
     DEBUGF(infof(conn->data, "DO phase is complete\n"));

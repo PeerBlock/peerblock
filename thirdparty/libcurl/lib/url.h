@@ -1,5 +1,5 @@
-#ifndef __URL_H
-#define __URL_H
+#ifndef HEADER_CURL_URL_H
+#define HEADER_CURL_URL_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -21,8 +21,7 @@
  * KIND, either express or implied.
  *
  ***************************************************************************/
-
-#include <stdarg.h> /* to make sure we have ap_list */
+#include "setup.h"
 
 /*
  * Prototypes for library-wide functions provided by url.c
@@ -44,7 +43,6 @@ CURLcode Curl_disconnect(struct connectdata *, bool dead_connection);
 CURLcode Curl_protocol_connect(struct connectdata *conn, bool *done);
 CURLcode Curl_protocol_connecting(struct connectdata *conn, bool *done);
 CURLcode Curl_protocol_doing(struct connectdata *conn, bool *done);
-void Curl_safefree(void *ptr);
 CURLcode Curl_setup_conn(struct connectdata *conn,
                          bool *protocol_done);
 
@@ -88,10 +86,10 @@ void Curl_reset_reqproto(struct connectdata *conn);
 CURLcode Curl_connected_proxy(struct connectdata *conn);
 
 #ifdef CURL_DISABLE_VERBOSE_STRINGS
-#define Curl_verboseconnect(x)  do { } while (0)
+#define Curl_verboseconnect(x)  Curl_nop_stmt
 #else
 void Curl_verboseconnect(struct connectdata *conn);
 #endif
 
 
-#endif
+#endif /* HEADER_CURL_URL_H */

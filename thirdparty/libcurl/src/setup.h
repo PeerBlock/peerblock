@@ -135,6 +135,11 @@
 #  endif
 #endif
 
+#ifdef USE_LWIPSOCK
+#  include <lwip/sockets.h>
+#  include <lwip/netdb.h>
+#endif
+
 #ifdef TPF
 #  include <sys/socket.h>
    /* change which select is used for the curl command line tool */
@@ -219,6 +224,29 @@ int fileno( FILE *stream);
 
 #ifndef __SETUP_ONCE_H
 #include "setup_once.h"
+#endif
+
+/*
+ * Definition of our NOP statement Object-like macro
+ */
+
+#ifndef Curl_nop_stmt
+#  define Curl_nop_stmt do { } WHILE_FALSE
+#endif
+
+/*
+ * Ensure that Winsock and lwIP TCP/IP stacks are not mixed.
+ */
+
+#if defined(__LWIP_OPT_H__)
+#  if defined(SOCKET) || \
+     defined(USE_WINSOCK) || \
+     defined(HAVE_ERRNO_H) || \
+     defined(HAVE_WINSOCK_H) || \
+     defined(HAVE_WINSOCK2_H) || \
+     defined(HAVE_WS2TCPIP_H)
+#    error "Winsock and lwIP TCP/IP stack definitions shall not coexist!"
+#  endif
 #endif
 
 #endif /* HEADER_CURL_SRC_SETUP_H */

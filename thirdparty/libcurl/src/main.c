@@ -19,6 +19,7 @@
  * KIND, either express or implied.
  *
  ***************************************************************************/
+
 #include "setup.h"
 
 #include <curl/curl.h>
@@ -27,14 +28,8 @@
 ** system headers
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <ctype.h>
-#include <errno.h>
 
 #if defined(MSDOS) || defined(WIN32)
 #  if defined(HAVE_LIBGEN_H) && defined(HAVE_BASENAME)
@@ -439,7 +434,7 @@ char convert_char(curl_infotype infotype, char this_char)
 }
 #endif /* CURL_DOES_CONVERSIONS */
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW64__)
 
 #ifdef __BORLANDC__
 /* 64-bit lseek-like function unavailable */
@@ -486,6 +481,7 @@ typedef enum {
 
 struct OutStruct {
   char *filename;
+  bool alloc_filename;
   FILE *stream;
   struct Configurable *config;
   curl_off_t bytes; /* amount written so far */
@@ -659,6 +655,7 @@ struct Configurable {
                              basically each given URL to transfer */
   struct OutStruct *outs;
   bool xattr; /* store metadata in extended attributes */
+  long gssapi_delegation;
 };
 
 #define WARN_PREFIX "Warning: "
@@ -795,175 +792,175 @@ static void help(void)
   static const char * const helptext[]={
     "Usage: curl [options...] <url>",
     "Options: (H) means HTTP/HTTPS only, (F) means FTP only",
-    "    --anyauth       Pick \"any\" authentication method (H)",
-    " -a/--append        Append to target file when uploading (F/SFTP)",
-    "    --basic         Use HTTP Basic Authentication (H)",
-    "    --cacert <file> CA certificate to verify peer against (SSL)",
-    "    --capath <directory> CA directory to verify peer against (SSL)",
-    " -E/--cert <cert[:passwd]> Client certificate file and password (SSL)",
-    "    --cert-type <type> Certificate file type (DER/PEM/ENG) (SSL)",
-    "    --ciphers <list> SSL ciphers to use (SSL)",
-    "    --compressed    Request compressed response (using deflate or gzip)",
-    " -K/--config <file> Specify which config file to read",
-    "    --connect-timeout <seconds> Maximum time allowed for connection",
-    " -C/--continue-at <offset> Resumed transfer offset",
-    " -b/--cookie <name=string/file> String or file to read cookies from (H)",
-    " -c/--cookie-jar <file> Write cookies to this file after operation (H)",
-    "    --create-dirs   Create necessary local directory hierarchy",
-    "    --crlf          Convert LF to CRLF in upload",
-    "    --crlfile <file> Get a CRL list in PEM format from the given file",
-    " -d/--data <data>   HTTP POST data (H)",
-    "    --data-ascii <data>  HTTP POST ASCII data (H)",
-    "    --data-binary <data> HTTP POST binary data (H)",
-    "    --data-urlencode <name=data/name@filename> "
-    "HTTP POST data url encoded (H)",
-    "    --digest        Use HTTP Digest Authentication (H)",
-    "    --disable-eprt  Inhibit using EPRT or LPRT (F)",
-    "    --disable-epsv  Inhibit using EPSV (F)",
-    " -D/--dump-header <file> Write the headers to this file",
-    "    --egd-file <file> EGD socket path for random data (SSL)",
-    "    --engine <eng>  Crypto engine (SSL). \"--engine list\" for list",
+    "     --anyauth       Pick \"any\" authentication method (H)",
+    " -a, --append        Append to target file when uploading (F/SFTP)",
+    "     --basic         Use HTTP Basic Authentication (H)",
+    "     --cacert FILE   CA certificate to verify peer against (SSL)",
+    "     --capath DIR    CA directory to verify peer against (SSL)",
+    " -E, --cert CERT[:PASSWD] Client certificate file and password (SSL)",
+    "     --cert-type TYPE Certificate file type (DER/PEM/ENG) (SSL)",
+    "     --ciphers LIST  SSL ciphers to use (SSL)",
+    "     --compressed    Request compressed response (using deflate or gzip)",
+    " -K, --config FILE   Specify which config file to read",
+    "     --connect-timeout SECONDS  Maximum time allowed for connection",
+    " -C, --continue-at OFFSET  Resumed transfer offset",
+    " -b, --cookie STRING/FILE  String or file to read cookies from (H)",
+    " -c, --cookie-jar FILE  Write cookies to this file after operation (H)",
+    "     --create-dirs   Create necessary local directory hierarchy",
+    "     --crlf          Convert LF to CRLF in upload",
+    "     --crlfile FILE  Get a CRL list in PEM format from the given file",
+    " -d, --data DATA     HTTP POST data (H)",
+    "     --data-ascii DATA  HTTP POST ASCII data (H)",
+    "     --data-binary DATA  HTTP POST binary data (H)",
+    "     --data-urlencode DATA  HTTP POST data url encoded (H)",
+    "     --delegation STRING GSS-API delegation permission",
+    "     --digest        Use HTTP Digest Authentication (H)",
+    "     --disable-eprt  Inhibit using EPRT or LPRT (F)",
+    "     --disable-epsv  Inhibit using EPSV (F)",
+    " -D, --dump-header FILE  Write the headers to this file",
+    "     --egd-file FILE  EGD socket path for random data (SSL)",
+    "     --engine ENGINGE  Crypto engine (SSL). \"--engine list\" for list",
 #ifdef USE_ENVIRONMENT
-    "    --environment   Write results to environment variables (RISC OS)",
+    "     --environment   Write results to environment variables (RISC OS)",
 #endif
-    " -f/--fail          Fail silently (no output at all) on HTTP errors (H)",
-    " -F/--form <name=content> Specify HTTP multipart POST data (H)",
-    "    --form-string <name=string> Specify HTTP multipart POST data (H)",
-    "    --ftp-account <data> Account data string (F)",
-    "    --ftp-alternative-to-user <cmd> "
+    " -f, --fail          Fail silently (no output at all) on HTTP errors (H)",
+    " -F, --form CONTENT  Specify HTTP multipart POST data (H)",
+    "     --form-string STRING  Specify HTTP multipart POST data (H)",
+    "     --ftp-account DATA  Account data string (F)",
+    "     --ftp-alternative-to-user COMMAND  "
     "String to replace \"USER [name]\" (F)",
-    "    --ftp-create-dirs Create the remote dirs if not present (F)",
-    "    --ftp-method [multicwd/nocwd/singlecwd] Control CWD usage (F)",
-    "    --ftp-pasv      Use PASV/EPSV instead of PORT (F)",
-    " -P/--ftp-port <address> Use PORT with address instead of PASV (F)",
-    "    --ftp-skip-pasv-ip Skip the IP address for PASV (F)\n"
-    "    --ftp-pret      Send PRET before PASV (for drftpd) (F)",
-    "    --ftp-ssl-ccc   Send CCC after authenticating (F)",
-    "    --ftp-ssl-ccc-mode [active/passive] Set CCC mode (F)",
-    "    --ftp-ssl-control Require SSL/TLS for ftp login, "
+    "     --ftp-create-dirs  Create the remote dirs if not present (F)",
+    "     --ftp-method [MULTICWD/NOCWD/SINGLECWD] Control CWD usage (F)",
+    "     --ftp-pasv      Use PASV/EPSV instead of PORT (F)",
+    " -P, --ftp-port ADR  Use PORT with given address instead of PASV (F)",
+    "     --ftp-skip-pasv-ip Skip the IP address for PASV (F)\n"
+    "     --ftp-pret      Send PRET before PASV (for drftpd) (F)",
+    "     --ftp-ssl-ccc   Send CCC after authenticating (F)",
+    "     --ftp-ssl-ccc-mode ACTIVE/PASSIVE  Set CCC mode (F)",
+    "     --ftp-ssl-control Require SSL/TLS for ftp login, "
     "clear for transfer (F)",
-    " -G/--get           Send the -d data with a HTTP GET (H)",
-    " -g/--globoff       Disable URL sequences and ranges using {} and []",
-    " -H/--header <line> Custom header to pass to server (H)",
-    " -I/--head          Show document info only",
-    " -h/--help          This help text",
-    "    --hostpubmd5 <md5> "
+    " -G, --get           Send the -d data with a HTTP GET (H)",
+    " -g, --globoff       Disable URL sequences and ranges using {} and []",
+    " -H, --header LINE   Custom header to pass to server (H)",
+    " -I, --head          Show document info only",
+    " -h, --help          This help text",
+    "     --hostpubmd5 MD5  "
     "Hex encoded MD5 string of the host public key. (SSH)",
-    " -0/--http1.0       Use HTTP 1.0 (H)",
-    "    --ignore-content-length  Ignore the HTTP Content-Length header",
-    " -i/--include       Include protocol headers in the output (H/F)",
-    " -k/--insecure      Allow connections to SSL sites without certs (H)",
-    "    --interface <interface> Specify network interface/address to use",
-    " -4/--ipv4          Resolve name to IPv4 address",
-    " -6/--ipv6          Resolve name to IPv6 address",
-    " -j/--junk-session-cookies Ignore session cookies read from file (H)",
-    "    --keepalive-time <seconds> Interval between keepalive probes",
-    "    --key <key>     Private key file name (SSL/SSH)",
-    "    --key-type <type> Private key file type (DER/PEM/ENG) (SSL)",
-    "    --krb <level>   Enable Kerberos with specified security level (F)",
-    "    --libcurl <file> Dump libcurl equivalent code of this command line",
-    "    --limit-rate <rate> Limit transfer speed to this rate",
-    " -J/--remote-header-name Use the header-provided filename (H)",
-    " -l/--list-only     List only names of an FTP directory (F)",
-    "    --local-port <num>[-num] Force use of these local port numbers",
-    " -L/--location      Follow Location: hints (H)",
-    "    --location-trusted Follow Location: and send auth to other hosts (H)",
-    " -M/--manual        Display the full manual",
-    "    --mail-from <from> Mail from this address",
-    "    --mail-rcpt <to> Mail to this receiver(s)",
-    "    --max-filesize <bytes> Maximum file size to download (H/F)",
-    "    --max-redirs <num> Maximum number of redirects allowed (H)",
-    " -m/--max-time <seconds> Maximum time allowed for the transfer",
-    "    --negotiate     Use HTTP Negotiate Authentication (H)",
-    " -n/--netrc         Must read .netrc for user name and password",
-    "    --netrc-optional Use either .netrc or URL; overrides -n",
-    "    --netrc-file <file> Set up the netrc filename to use",
-    " -N/--no-buffer     Disable buffering of the output stream",
-    "    --no-keepalive  Disable keepalive use on the connection",
-    "    --no-sessionid  Disable SSL session-ID reusing (SSL)",
-    "    --noproxy       Comma-separated list of hosts which do not use proxy",
-    "    --ntlm          Use HTTP NTLM authentication (H)",
-    " -o/--output <file> Write output to <file> instead of stdout",
-    "    --pass  <pass>  Pass phrase for the private key (SSL/SSH)",
-    "    --post301       "
+    " -0, --http1.0       Use HTTP 1.0 (H)",
+    "     --ignore-content-length  Ignore the HTTP Content-Length header",
+    " -i, --include       Include protocol headers in the output (H/F)",
+    " -k, --insecure      Allow connections to SSL sites without certs (H)",
+    "     --interface INTERFACE  Specify network interface/address to use",
+    " -4, --ipv4          Resolve name to IPv4 address",
+    " -6, --ipv6          Resolve name to IPv6 address",
+    " -j, --junk-session-cookies Ignore session cookies read from file (H)",
+    "     --keepalive-time SECONDS  Interval between keepalive probes",
+    "     --key KEY       Private key file name (SSL/SSH)",
+    "     --key-type TYPE Private key file type (DER/PEM/ENG) (SSL)",
+    "     --krb LEVEL     Enable Kerberos with specified security level (F)",
+    "     --libcurl FILE  Dump libcurl equivalent code of this command line",
+    "     --limit-rate RATE  Limit transfer speed to this rate",
+    " -l, --list-only     List only names of an FTP directory (F)",
+    "     --local-port RANGE  Force use of these local port numbers",
+    " -L, --location      Follow redirects (H)",
+    "     --location-trusted like --location and send auth to other hosts (H)",
+    " -M, --manual        Display the full manual",
+    "     --mail-from FROM  Mail from this address",
+    "     --mail-rcpt TO  Mail to this receiver(s)",
+    "     --max-filesize BYTES  Maximum file size to download (H/F)",
+    "     --max-redirs NUM  Maximum number of redirects allowed (H)",
+    " -m, --max-time SECONDS  Maximum time allowed for the transfer",
+    "     --negotiate     Use HTTP Negotiate Authentication (H)",
+    " -n, --netrc         Must read .netrc for user name and password",
+    "     --netrc-optional Use either .netrc or URL; overrides -n",
+    "     --netrc-file FILE  Set up the netrc filename to use",
+    " -N, --no-buffer     Disable buffering of the output stream",
+    "     --no-keepalive  Disable keepalive use on the connection",
+    "     --no-sessionid  Disable SSL session-ID reusing (SSL)",
+    "     --noproxy       List of hosts which do not use proxy",
+    "     --ntlm          Use HTTP NTLM authentication (H)",
+    " -o, --output FILE   Write output to <file> instead of stdout",
+    "     --pass PASS     Pass phrase for the private key (SSL/SSH)",
+    "     --post301       "
     "Do not switch to GET after following a 301 redirect (H)",
-    "    --post302       "
+    "     --post302       "
     "Do not switch to GET after following a 302 redirect (H)",
-    " -#/--progress-bar  Display transfer progress as a progress bar",
-    "    --proto <protocols>       Enable/disable specified protocols",
-    "    --proto-redir <protocols> "
+    " -#, --progress-bar  Display transfer progress as a progress bar",
+    "     --proto PROTOCOLS  Enable/disable specified protocols",
+    "     --proto-redir PROTOCOLS  "
     "Enable/disable specified protocols on redirect",
-    " -x/--proxy <host[:port]> Use HTTP proxy on given port",
-    "    --proxy-anyauth Pick \"any\" proxy authentication method (H)",
-    "    --proxy-basic   Use Basic authentication on the proxy (H)",
-    "    --proxy-digest  Use Digest authentication on the proxy (H)",
-    "    --proxy-negotiate Use Negotiate authentication on the proxy (H)",
-    "    --proxy-ntlm    Use NTLM authentication on the proxy (H)",
-    " -U/--proxy-user <user[:password]> Set proxy user and password",
-    "    --proxy1.0 <host[:port]> Use HTTP/1.0 proxy on given port",
-    " -p/--proxytunnel   Operate through a HTTP proxy tunnel (using CONNECT)",
-    "    --pubkey <key>  Public key file name (SSH)",
-    " -Q/--quote <cmd>   Send command(s) to server before transfer (F/SFTP)",
-    "    --random-file <file> File for reading random data from (SSL)",
-    " -r/--range <range> Retrieve only the bytes within a range",
-    "    --raw           Pass HTTP \"raw\", without any transfer decoding (H)",
-    " -e/--referer       Referer URL (H)",
-    " -O/--remote-name   Write output to a file named as the remote file",
-    "    --remote-name-all Use the remote file name for all URLs",
-    " -R/--remote-time   Set the remote file's time on the local output",
-    " -X/--request <command> Specify request command to use",
-    "    --resolve <host:port:address> Force resolve of HOST:PORT to ADDRESS",
-    "    --retry <num>   "
-    "Retry request <num> times if transient problems occur",
-    "    --retry-delay <seconds> "
+    " -x, --proxy [PROTOCOL://]HOST[:PORT] Use proxy on given port",
+    "     --proxy-anyauth Pick \"any\" proxy authentication method (H)",
+    "     --proxy-basic   Use Basic authentication on the proxy (H)",
+    "     --proxy-digest  Use Digest authentication on the proxy (H)",
+    "     --proxy-negotiate Use Negotiate authentication on the proxy (H)",
+    "     --proxy-ntlm    Use NTLM authentication on the proxy (H)",
+    " -U, --proxy-user USER[:PASSWORD]  Proxy user and password",
+    "     --proxy1.0 HOST[:PORT]  Use HTTP/1.0 proxy on given port",
+    " -p, --proxytunnel   Operate through a HTTP proxy tunnel (using CONNECT)",
+    "     --pubkey KEY    Public key file name (SSH)",
+    " -Q, --quote CMD     Send command(s) to server before transfer (F/SFTP)",
+    "     --random-file FILE  File for reading random data from (SSL)",
+    " -r, --range RANGE   Retrieve only the bytes within a range",
+    "     --raw           Do HTTP \"raw\", without any transfer decoding (H)",
+    " -e, --referer       Referer URL (H)",
+    " -J, --remote-header-name Use the header-provided filename (H)",
+    " -O, --remote-name   Write output to a file named as the remote file",
+    "     --remote-name-all Use the remote file name for all URLs",
+    " -R, --remote-time   Set the remote file's time on the local output",
+    " -X, --request COMMAND  Specify request command to use",
+    "     --resolve HOST:PORT:ADDRESS  Force resolve of HOST:PORT to ADDRESS",
+    "     --retry NUM   "
+    "Retry request NUM times if transient problems occur",
+    "     --retry-delay SECONDS "
     "When retrying, wait this many seconds between each",
-    "    --retry-max-time <seconds> Retry only within this period",
-    " -S/--show-error    "
+    "     --retry-max-time SECONDS  Retry only within this period",
+    " -S, --show-error    "
     "Show error. With -s, make curl show errors when they occur",
-    " -s/--silent        Silent mode. Don't output anything",
-    "    --socks4 <host[:port]> SOCKS4 proxy on given host + port",
-    "    --socks4a <host[:port]> SOCKS4a proxy on given host + port",
-    "    --socks5 <host[:port]> SOCKS5 proxy on given host + port",
-    "    --socks5-hostname <host[:port]> "
+    " -s, --silent        Silent mode. Don't output anything",
+    "     --socks4 HOST[:PORT]  SOCKS4 proxy on given host + port",
+    "     --socks4a HOST[:PORT]  SOCKS4a proxy on given host + port",
+    "     --socks5 HOST[:PORT]  SOCKS5 proxy on given host + port",
+    "     --socks5-hostname HOST[:PORT] "
     "SOCKS5 proxy, pass host name to proxy",
 #if defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI)
-    "    --socks5-gssapi-service <name> SOCKS5 proxy service name for gssapi",
-    "    --socks5-gssapi-nec  Compatibility with NEC SOCKS5 server",
+    "     --socks5-gssapi-service NAME  SOCKS5 proxy service name for gssapi",
+    "     --socks5-gssapi-nec  Compatibility with NEC SOCKS5 server",
 #endif
-    " -Y/--speed-limit   "
-    "Stop transfer if below speed-limit for 'speed-time' secs",
-    " -y/--speed-time    "
-    "Time needed to trig speed-limit abort. Defaults to 30",
-    "    --ssl           Try SSL/TLS (FTP, IMAP, POP3, SMTP)",
-    "    --ssl-reqd      Require SSL/TLS (FTP, IMAP, POP3, SMTP)",
-    " -2/--sslv2         Use SSLv2 (SSL)",
-    " -3/--sslv3         Use SSLv3 (SSL)",
-    "    --stderr <file> Where to redirect stderr. - means stdout",
-    "    --tcp-nodelay   Use the TCP_NODELAY option",
-    " -t/--telnet-option <OPT=val> Set telnet option",
-    "    --tftp-blksize <value> Set TFTP BLKSIZE option (must be >512)",
-    " -z/--time-cond <time> Transfer based on a time condition",
-    " -1/--tlsv1         Use TLSv1 (SSL)",
-    "    --trace <file>  Write a debug trace to the given file",
-    "    --trace-ascii <file> Like --trace but without the hex output",
-    "    --trace-time    Add time stamps to trace/verbose output",
-    "    --tr-encoding   Request compressed transfer encoding (H)",
-    " -T/--upload-file <file> Transfer <file> to remote site",
-    "    --url <URL>     Set URL to work with",
-    " -B/--use-ascii     Use ASCII/text transfer",
-    " -u/--user <user[:password]> Set server user and password",
-    "    --tlsuser     <user> Set TLS username",
-    "    --tlspassword <string> Set TLS password",
-    "    --tlsauthtype <string> Set TLS authentication type (default SRP)",
-    " -A/--user-agent <string> User-Agent to send to server (H)",
-    " -v/--verbose       Make the operation more talkative",
-    " -V/--version       Show version number and quit",
+    " -Y, --speed-limit RATE  "
+    "Stop transfers below speed-limit for 'speed-time' secs",
+    " -y, --speed-time SECONDS  "
+    "Time for trig speed-limit abort. Defaults to 30",
+    "     --ssl           Try SSL/TLS (FTP, IMAP, POP3, SMTP)",
+    "     --ssl-reqd      Require SSL/TLS (FTP, IMAP, POP3, SMTP)",
+    " -2, --sslv2         Use SSLv2 (SSL)",
+    " -3, --sslv3         Use SSLv3 (SSL)",
+    "     --stderr FILE   Where to redirect stderr. - means stdout",
+    "     --tcp-nodelay   Use the TCP_NODELAY option",
+    " -t, --telnet-option OPT=VAL  Set telnet option",
+    "     --tftp-blksize VALUE  Set TFTP BLKSIZE option (must be >512)",
+    " -z, --time-cond TIME  Transfer based on a time condition",
+    " -1, --tlsv1         Use TLSv1 (SSL)",
+    "     --trace FILE    Write a debug trace to the given file",
+    "     --trace-ascii FILE  Like --trace but without the hex output",
+    "     --trace-time    Add time stamps to trace/verbose output",
+    "     --tr-encoding   Request compressed transfer encoding (H)",
+    " -T, --upload-file FILE  Transfer FILE to destination",
+    "     --url URL       URL to work with",
+    " -B, --use-ascii     Use ASCII/text transfer",
+    " -u, --user USER[:PASSWORD]  Server user and password",
+    "     --tlsuser USER  TLS username",
+    "     --tlspassword STRING TLS password",
+    "     --tlsauthtype STRING  TLS authentication type (default SRP)",
+    " -A, --user-agent STRING  User-Agent to send to server (H)",
+    " -v, --verbose       Make the operation more talkative",
+    " -V, --version       Show version number and quit",
 
 #ifdef USE_WATT32
-    "    --wdebug        Turn on Watt-32 debugging",
+    "     --wdebug        Turn on Watt-32 debugging",
 #endif
-    " -w/--write-out <format> What to output after completion",
-    "    --xattr         Store metadata in extended file attributes",
+    " -w, --write-out FORMAT  What to output after completion",
+    "     --xattr        Store metadata in extended file attributes",
     " -q                 If used as the first parameter disables .curlrc",
     NULL
   };
@@ -1823,6 +1820,18 @@ static int sockoptcallback(void *clientp, curl_socket_t curlfd,
   return 0;
 }
 
+static long delegation(struct Configurable *config,
+                       char *str)
+{
+  if(curlx_raw_equal("none", str))
+    return CURLGSSAPI_DELEGATION_NONE;
+  if(curlx_raw_equal("policy", str))
+    return CURLGSSAPI_DELEGATION_POLICY_FLAG;
+  if(curlx_raw_equal("always", str))
+    return CURLGSSAPI_DELEGATION_FLAG;
+  warnf(config, "unrecognized delegation method '%s', using none\n", str);
+  return CURLGSSAPI_DELEGATION_NONE;
+}
 
 static ParameterError getparameter(char *flag, /* f or -long-flag */
                                    char *nextarg, /* NULL if unset */
@@ -1870,6 +1879,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
     {"*k", "digest",     FALSE},
     {"*l", "negotiate",  FALSE},
     {"*m", "ntlm",       FALSE},
+    {"*M", "ntlm-wb",    FALSE},
     {"*n", "basic",      FALSE},
     {"*o", "anyauth",    FALSE},
 #ifdef USE_WATT32
@@ -1942,6 +1952,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
     {"$D", "proto",      TRUE},
     {"$E", "proto-redir", TRUE},
     {"$F", "resolve",    TRUE},
+    {"$G", "delegation", TRUE},
     {"0", "http1.0",     FALSE},
     {"1", "tlsv1",       FALSE},
     {"2", "sslv2",       FALSE},
@@ -2128,7 +2139,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         config->disable_epsv = toggle;
         break;
       case 'E': /* --epsv */
-        config->disable_epsv = (bool)(!toggle);
+        config->disable_epsv = (!toggle)?TRUE:FALSE;
         break;
 #ifdef USE_ENVIRONMENT
       case 'f':
@@ -2224,6 +2235,17 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
           config->authtype &= ~CURLAUTH_NTLM;
         break;
 
+      case 'M': /* --ntlm-wb */
+        if(toggle) {
+          if(curlinfo->features & CURL_VERSION_NTLM_WB)
+            config->authtype |= CURLAUTH_NTLM_WB;
+          else
+            return PARAM_LIBCURL_DOESNT_SUPPORT;
+        }
+        else
+          config->authtype &= ~CURLAUTH_NTLM_WB;
+        break;
+
       case 'n': /* --basic for completeness */
         if(toggle)
           config->authtype |= CURLAUTH_BASIC;
@@ -2303,7 +2325,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         config->disable_eprt = toggle;
         break;
       case 'Z': /* --eprt */
-        config->disable_eprt = (bool)(!toggle);
+        config->disable_eprt = (!toggle)?TRUE:FALSE;
         break;
 
       default: /* the URL! */
@@ -2434,7 +2456,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         config->ftp_ssl_reqd = toggle;
         break;
       case 'w': /* --no-sessionid */
-        config->disable_sessionid = (bool)(!toggle);
+        config->disable_sessionid = (!toggle)?TRUE:FALSE;
         break;
       case 'x': /* --ftp-ssl-control */
         if(toggle && !(curlinfo->features & CURL_VERSION_SSL))
@@ -2460,7 +2482,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         config->post301 = toggle;
         break;
       case '1': /* --no-keepalive */
-        config->nokeepalive = (bool)(!toggle);
+        config->nokeepalive = (!toggle)?TRUE:FALSE;
         break;
       case '3': /* --keepalive-time */
         if(str2num(&config->alivetime, nextarg))
@@ -2515,6 +2537,9 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         err = add2list(&config->resolve, nextarg);
         if(err)
           return err;
+        break;
+      case 'G': /* --delegation LEVEL */
+        config->gssapi_delegation = delegation(config, nextarg);
         break;
       }
       break;
@@ -2869,7 +2894,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
                    nextarg,
                    &config->httppost,
                    &config->last_post,
-                   (bool) (subletter=='s'))) /* 's' means literal string */
+                   (subletter=='s')?TRUE:FALSE)) /* 's' means literal string */
         return PARAM_BAD_USE;
       if(SetHTTPrequest(config, HTTPREQ_POST, &config->httpreq))
         return PARAM_BAD_USE;
@@ -2979,7 +3004,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
       /* disable the output I/O buffering. note that the option is called
          --buffer but is mostly used in the negative form: --no-buffer */
       if(longopt)
-        config->nobuffer = (bool)(!toggle);
+        config->nobuffer = (!toggle)?TRUE:FALSE;
       else
         config->nobuffer = toggle;
       break;
@@ -3105,7 +3130,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         config->mute = config->noprogress = TRUE;
       else
         config->mute = config->noprogress = FALSE;
-      config->showerror = (bool)(!toggle); /* toggle off */
+      config->showerror = (!toggle)?TRUE:FALSE; /* toggle off */
       break;
     case 'S':
       /* show errors */
@@ -3166,7 +3191,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
         GetStr(&config->trace_dump, (char *)"%");
         if(config->tracetype && (config->tracetype != TRACE_PLAIN))
           warnf(config,
-                "-v/--verbose overrides an earlier trace/verbose option\n");
+                "-v, --verbose overrides an earlier trace/verbose option\n");
         config->tracetype = TRACE_PLAIN;
       }
       else
@@ -3204,6 +3229,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
           {"IPv6", CURL_VERSION_IPV6},
           {"Largefile", CURL_VERSION_LARGEFILE},
           {"NTLM", CURL_VERSION_NTLM},
+          {"NTLM_WB", CURL_VERSION_NTLM_WB},
           {"SPNEGO", CURL_VERSION_SPNEGO},
           {"SSL",  CURL_VERSION_SSL},
           {"SSPI",  CURL_VERSION_SSPI},
@@ -3299,7 +3325,7 @@ static ParameterError getparameter(char *flag, /* f or -long-flag */
           /* failed, remove time condition */
           config->timecond = CURL_TIMECOND_NONE;
           warnf(config,
-                "Illegal date format for -z/--timecond (and not "
+                "Illegal date format for -z, --timecond (and not "
                 "a file name). Disabling time condition. "
                 "See curl_getdate(3) for valid date syntax.\n");
         }
@@ -3969,7 +3995,7 @@ int my_trace(CURL *handle, curl_infotype type,
       if(!newl)
         fprintf(output, "%s%s ", timebuf, s_infotype[type]);
       (void)fwrite(data+st, i-st+1, 1, output);
-      newl = (bool)(size && (data[size-1] != '\n'));
+      newl = (size && (data[size-1] != '\n'))?TRUE:FALSE;
       traced_data = FALSE;
       break;
     case CURLINFO_TEXT:
@@ -3977,7 +4003,7 @@ int my_trace(CURL *handle, curl_infotype type,
       if(!newl)
         fprintf(output, "%s%s ", timebuf, s_infotype[type]);
       (void)fwrite(data, size, 1, output);
-      newl = (bool)(size && (data[size-1] != '\n'));
+      newl = (size && (data[size-1] != '\n'))?TRUE:FALSE;
       traced_data = FALSE;
       break;
     case CURLINFO_DATA_OUT:
@@ -4369,8 +4395,8 @@ static void dumpeasycode(struct Configurable *config)
 
 static bool stdin_upload(const char *uploadfile)
 {
-  return (bool)(curlx_strequal(uploadfile, "-") ||
-                curlx_strequal(uploadfile, "."));
+  return (curlx_strequal(uploadfile, "-") ||
+          curlx_strequal(uploadfile, ".")) ? TRUE : FALSE;
 }
 
 /* Adds the file name to the URL if it doesn't already have one.
@@ -4450,27 +4476,32 @@ static char *get_url_file_name(const char *url)
   return fn;
 }
 
+/*
+ * Copies a file name part and returns an ALLOCATED data buffer.
+ */
 static char*
 parse_filename(char *ptr, size_t len)
 {
   char* copy;
   char* p;
   char* q;
-  char quote = 0;
+  char stop = 0;
 
   /* simple implementation of strndup() */
   copy = malloc(len+1);
   if(!copy)
     return NULL;
-  strncpy(copy, ptr, len);
+  memcpy(copy, ptr, len);
   copy[len] = 0;
 
   p = copy;
   if(*p == '\'' || *p == '"') {
     /* store the starting quote */
-    quote = *p;
+    stop = *p;
     p++;
   }
+  else
+    stop = ';';
 
   /* if the filename contains a path, only use filename portion */
   q = strrchr(copy, '/');
@@ -4494,29 +4525,48 @@ parse_filename(char *ptr, size_t len)
     }
   }
 
-  if(quote) {
-    /* if the file name started with a quote, then scan for the end quote and
-       stop there */
-    q = strrchr(p, quote);
-    if(q)
-      *q = 0;
+  /* scan for the end letter and stop there */
+  q = p;
+  while(*q) {
+    if(q[1] && q[0]=='\\')
+      q++;
+    else if(q[0] == stop)
+      break;
+    q++;
   }
-  else
-    q = NULL; /* no start quote, so no end has been found */
+  *q = 0;
 
-  if(!q) {
-    /* make sure the file name doesn't end in \r or \n */
-    q = strchr(p, '\r');
-    if(q)
-      *q  = 0;
+  /* make sure the file name doesn't end in \r or \n */
+  q = strchr(p, '\r');
+  if(q)
+    *q  = 0;
 
-    q = strchr(p, '\n');
-    if(q)
-      *q  = 0;
-  }
+  q = strchr(p, '\n');
+  if(q)
+    *q  = 0;
 
   if(copy!=p)
     memmove(copy, p, strlen(p)+1);
+
+  /* in case we built curl debug enabled, we allow an evironment variable
+   * named CURL_TESTDIR to prefix the given file name to put it into a
+   * specific directory
+   */
+#ifdef CURLDEBUG
+  {
+    char *tdir = curlx_getenv("CURL_TESTDIR");
+    if(tdir) {
+      char buffer[512]; /* suitably large */
+      snprintf(buffer, sizeof(buffer), "%s/%s", tdir, copy);
+      free(copy);
+      copy = strdup(buffer); /* clone the buffer, we don't use the libcurl
+                                aprintf() or similar since we want to use the
+                                same memory code as the "real" parse_filename
+                                function */
+      curl_free(tdir);
+    }
+  }
+#endif
 
   return copy;
 }
@@ -4528,7 +4578,6 @@ header_callback(void *ptr, size_t size, size_t nmemb, void *stream)
   const char* str = (char*)ptr;
   const size_t cb = size*nmemb;
   const char* end = (char*)ptr + cb;
-  size_t len;
 
   if(cb > 20 && checkprefix("Content-disposition:", str)) {
     char *p = (char*)str + 20;
@@ -4537,7 +4586,7 @@ header_callback(void *ptr, size_t size, size_t nmemb, void *stream)
        (encoded filenames (*=) are not supported) */
     for(;;) {
       char *filename;
-      char *semi;
+      size_t len;
 
       while(*p && (p < end) && !ISALPHA(*p))
         p++;
@@ -4551,15 +4600,15 @@ header_callback(void *ptr, size_t size, size_t nmemb, void *stream)
         continue;
       }
       p+=9;
-      semi = strchr(p, ';');
 
       /* this expression below typecasts 'cb' only to avoid
          warning: signed and unsigned type in conditional expression
       */
-      len = semi ? (semi - p) : (ssize_t)cb - (p - str);
+      len = (ssize_t)cb - (p - str);
       filename = parse_filename(p, len);
       if(filename) {
         outs->filename = filename;
+        outs->alloc_filename = TRUE;
         break;
       }
     }
@@ -4567,6 +4616,38 @@ header_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 
   return cb;
 }
+
+#ifdef CURLDEBUG
+static void memory_tracking_init(void)
+{
+  char *env;
+  /* if CURL_MEMDEBUG is set, this starts memory tracking message logging */
+  env = curlx_getenv("CURL_MEMDEBUG");
+  if(env) {
+    /* use the value as file name */
+    char fname[CURL_MT_LOGFNAME_BUFSIZE];
+    if(strlen(env) >= CURL_MT_LOGFNAME_BUFSIZE)
+      env[CURL_MT_LOGFNAME_BUFSIZE-1] = '\0';
+    strcpy(fname, env);
+    curl_free(env);
+    curl_memdebug(fname);
+    /* this weird stuff here is to make curl_free() get called
+       before curl_memdebug() as otherwise memory tracking will
+       log a free() without an alloc! */
+  }
+  /* if CURL_MEMLIMIT is set, this enables fail-on-alloc-number-N feature */
+  env = curlx_getenv("CURL_MEMLIMIT");
+  if(env) {
+    char *endptr;
+    long num = strtol(env, &endptr, 10);
+    if((endptr != env) && (endptr == env + strlen(env)) && (num > 0))
+      curl_memlimit(num);
+    curl_free(env);
+  }
+}
+#else
+#  define memory_tracking_init() Curl_nop_stmt
+#endif
 
 static int
 operate(struct Configurable *config, int argc, argv_item_t argv[])
@@ -4604,32 +4685,11 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
 
   memset(&heads, 0, sizeof(struct OutStruct));
 
-#ifdef CURLDEBUG
-  /* this sends all memory debug messages to a logfile named memdump */
-  env = curlx_getenv("CURL_MEMDEBUG");
-  if(env) {
-    /* use the value as file name */
-    char *s = strdup(env);
-    curl_free(env);
-    curl_memdebug(s);
-    free(s);
-    /* this weird strdup() and stuff here is to make the curl_free() get
-       called before the memdebug() as otherwise the memdebug tracing will
-       with tracing a free() without an alloc! */
-  }
-  env = curlx_getenv("CURL_MEMLIMIT");
-  if(env) {
-    char *endptr;
-    long num = strtol(env, &endptr, 10);
-    if((endptr != env) && (endptr == env + strlen(env)) && (num > 0))
-      curl_memlimit(num);
-    curl_free(env);
-  }
-#endif
+  memory_tracking_init();
 
   /* Initialize curl library - do not call any libcurl functions before.
-     Note that the CURLDEBUG magic above is an exception, but then that's not
-     part of the official public API.
+     Note that the memory_tracking_init() magic above is an exception, but
+     then that's not part of the official public API.
   */
   if(main_init() != CURLE_OK) {
     helpf(config->errors, "error initializing curl library\n");
@@ -4831,6 +4891,7 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
     /* open file for output: */
     if(strcmp(config->headerfile,"-")) {
       heads.filename = config->headerfile;
+      heads.alloc_filename = FALSE;
     }
     else
       heads.stream=stdout;
@@ -4866,6 +4927,7 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
     outs.stream = stdout;
     outs.config = config;
     outs.bytes = 0; /* nothing written yet */
+    outs.filename = NULL;
 
     /* save outfile pattern before expansion */
     if(urlnode->outfile) {
@@ -5001,6 +5063,7 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
           }
 
           outs.filename = outfile;
+          outs.alloc_filename = FALSE;
 
           if(config->resume_from) {
             outs.init = config->resume_from;
@@ -5187,7 +5250,7 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
           SET_BINMODE(stdout);
         }
 
-        if(1 == config->tcp_nodelay)
+        if(config->tcp_nodelay)
           my_setopt(curl, CURLOPT_TCP_NODELAY, 1);
 
         /* where to store */
@@ -5352,8 +5415,6 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
         my_setopt(curl, CURLOPT_QUOTE, config->quote);
         my_setopt(curl, CURLOPT_POSTQUOTE, config->postquote);
         my_setopt(curl, CURLOPT_PREQUOTE, config->prequote);
-        my_setopt(curl, CURLOPT_HEADERDATA,
-                  config->headerfile?&heads:NULL);
         my_setopt_str(curl, CURLOPT_COOKIEFILE, config->cookiefile);
         /* cookie jar was added in 7.9 */
         if(config->cookiejar)
@@ -5558,14 +5619,25 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
           my_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
           my_setopt(curl, CURLOPT_HEADERDATA, &outs);
         }
+        else {
+          /* if HEADERFUNCTION was set to something in the previous loop, it
+             is important that we set it (back) to NULL now */
+          my_setopt(curl, CURLOPT_HEADERFUNCTION, NULL);
+          my_setopt(curl, CURLOPT_HEADERDATA, config->headerfile?&heads:NULL);
+        }
 
         if(config->resolve)
           /* new in 7.21.3 */
           my_setopt(curl, CURLOPT_RESOLVE, config->resolve);
 
-        /* TODO: new in ### */
-        curl_easy_setopt(curl, CURLOPT_TLSAUTH_USERNAME, config->tls_username);
-        curl_easy_setopt(curl, CURLOPT_TLSAUTH_PASSWORD, config->tls_password);
+        /* new in 7.21.4 */
+        my_setopt_str(curl, CURLOPT_TLSAUTH_USERNAME, config->tls_username);
+        my_setopt_str(curl, CURLOPT_TLSAUTH_PASSWORD, config->tls_password);
+
+        /* new in 7.22.0 */
+        if(config->gssapi_delegation)
+          my_setopt_str(curl, CURLOPT_GSSAPI_DELEGATION,
+                        config->gssapi_delegation);
 
         retry_numretries = config->req_retry;
 
@@ -5745,6 +5817,8 @@ operate(struct Configurable *config, int argc, argv_item_t argv[])
               warnf(config, "Error setting extended attributes: %s\n",
                     strerror(errno) );
           }
+          if(outs.alloc_filename)
+            free(outs.filename);
 
           rc = fclose(outs.stream);
           if(!res && rc) {

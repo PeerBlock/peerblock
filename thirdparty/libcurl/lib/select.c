@@ -25,9 +25,6 @@
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 
 #if !defined(HAVE_SELECT) && !defined(HAVE_POLL_FINE)
 #error "We can't compile without select() or poll() support."
@@ -52,7 +49,7 @@
 /* Winsock and TPF sockets are not in range [0..FD_SETSIZE-1] */
 
 #if defined(USE_WINSOCK) || defined(TPF)
-#define VERIFY_SOCK(x) do { } while(0)
+#define VERIFY_SOCK(x) Curl_nop_stmt
 #else
 #define VALID_SOCK(s) (((s) >= 0) && ((s) < FD_SETSIZE))
 #define VERIFY_SOCK(x) do { \
@@ -60,7 +57,7 @@
     SET_SOCKERRNO(EINVAL); \
     return -1; \
   } \
-} while(0)
+} WHILE_FALSE
 #endif
 
 /* Convenience local macros */
@@ -93,7 +90,7 @@
  *   -1 = system call error, invalid timeout value, or interrupted
  *    0 = specified timeout has elapsed
  */
-static int wait_ms(int timeout_ms)
+int Curl_wait_ms(int timeout_ms)
 {
 #if !defined(MSDOS) && !defined(USE_WINSOCK)
 #ifndef HAVE_POLL_FINE
@@ -180,7 +177,7 @@ int Curl_socket_ready(curl_socket_t readfd, curl_socket_t writefd,
   int ret;
 
   if((readfd == CURL_SOCKET_BAD) && (writefd == CURL_SOCKET_BAD)) {
-    r = wait_ms((int)timeout_ms);
+    r = Curl_wait_ms((int)timeout_ms);
     return r;
   }
 
@@ -364,7 +361,7 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
     }
   }
   if(fds_none) {
-    r = wait_ms((int)timeout_ms);
+    r = Curl_wait_ms(timeout_ms);
     return r;
   }
 

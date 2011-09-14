@@ -24,7 +24,7 @@ OPENSSL_PATH = ../../openssl-0.9.8r
 endif
 # Edit the path below to point to the base of your LibSSH2 package.
 ifndef LIBSSH2_PATH
-LIBSSH2_PATH = ../../libssh2-1.2.8
+LIBSSH2_PATH = ../../libssh2-1.3.0
 endif
 # Edit the path below to point to the base of your librtmp package.
 ifndef LIBRTMP_PATH
@@ -50,8 +50,16 @@ ifndef LIBCARES_PATH
 LIBCARES_PATH = ../ares
 endif
 
+# Edit the var below to set to your architecture or set environment var.
+ifndef ARCH
+ARCH = w32
+endif
+
 CC = gcc
 CFLAGS = -g -O2 -Wall
+ifeq ($(ARCH),w64)
+CFLAGS += -D_AMD64_
+endif
 # comment LDFLAGS below to keep debug info
 LDFLAGS = -s
 AR = ar
@@ -94,6 +102,9 @@ WINIDN = 1
 endif
 ifeq ($(findstring -sspi,$(CFG)),-sspi)
 SSPI = 1
+endif
+ifeq ($(findstring -spnego,$(CFG)),-spnego)
+SPNEGO = 1
 endif
 ifeq ($(findstring -ldaps,$(CFG)),-ldaps)
 LDAPS = 1
@@ -138,14 +149,16 @@ ifdef IDN
   DLL_LIBS += -L$(LIBIDN_PATH)/lib -lidn
 else
 ifdef WINIDN
-  INCLUDES += -I"$(WINIDN_PATH)/include"
-  CFLAGS += -DHAVE_NORMALIZATION_H
   CFLAGS += -DUSE_WIN32_IDN
+  CFLAGS += -DWANT_IDN_PROTOTYPES
   DLL_LIBS += -L"$(WINIDN_PATH)" -lnormaliz
 endif
 endif
 ifdef SSPI
   CFLAGS += -DUSE_WINDOWS_SSPI
+endif
+ifdef SPNEGO
+  CFLAGS += -DHAVE_SPNEGO
 endif
 ifdef IPV6
   CFLAGS += -DENABLE_IPV6

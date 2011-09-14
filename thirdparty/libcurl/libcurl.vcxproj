@@ -134,6 +134,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="lib\axtls.h" />
+    <ClInclude Include="lib\curl_gssapi.h" />
+    <ClInclude Include="lib\curl_ntlm.h" />
+    <ClInclude Include="lib\curl_ntlm_core.h" />
+    <ClInclude Include="lib\curl_ntlm_msgs.h" />
+    <ClInclude Include="lib\curl_ntlm_wb.h" />
     <ClInclude Include="src\config-amigaos.h" />
     <ClInclude Include="src\config-mac.h" />
     <ClInclude Include="src\config-riscos.h" />
@@ -197,7 +202,6 @@
     <ClInclude Include="lib\http_chunks.h" />
     <ClInclude Include="lib\http_digest.h" />
     <ClInclude Include="lib\http_negotiate.h" />
-    <ClInclude Include="lib\http_ntlm.h" />
     <ClInclude Include="lib\http_proxy.h" />
     <ClInclude Include="lib\if2ip.h" />
     <ClInclude Include="lib\imap.h" />
@@ -259,6 +263,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\axtls.c" />
+    <ClCompile Include="lib\curl_gssapi.c" />
+    <ClCompile Include="lib\curl_ntlm.c" />
+    <ClCompile Include="lib\curl_ntlm_core.c" />
+    <ClCompile Include="lib\curl_ntlm_msgs.c" />
+    <ClCompile Include="lib\curl_ntlm_wb.c" />
     <ClCompile Include="lib\http_negotiate_sspi.c" />
     <ClCompile Include="lib\idn_win32.c" />
     <ClCompile Include="src\curlutil.c" />
@@ -310,7 +319,6 @@
     <ClCompile Include="lib\http_chunks.c" />
     <ClCompile Include="lib\http_digest.c" />
     <ClCompile Include="lib\http_negotiate.c" />
-    <ClCompile Include="lib\http_ntlm.c" />
     <ClCompile Include="lib\http_proxy.c" />
     <ClCompile Include="lib\if2ip.c" />
     <ClCompile Include="lib\imap.c" />
