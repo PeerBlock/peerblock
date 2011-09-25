@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\thirdparty\zl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbfilter", "..\..\src\pbfilter\pbfilter.vcproj", "{141BF107-16D2-4AF8-85F2-FA655A327F35}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbcore", "..\..\src\pbcore\pbcore.vcproj", "{E0E5D766-7194-4660-B7BD-E606A82B38AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_(Vista)|Win32 = Debug_(Vista)|Win32
@@ -203,6 +205,18 @@ Global
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|Win32.Build.0 = Release|Win32
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|x64.ActiveCfg = Release|x64
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|x64.Build.0 = Release|x64
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug_(Vista)|Win32.ActiveCfg = Debug|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug_(Vista)|Win32.Build.0 = Debug|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug_(Vista)|x64.ActiveCfg = Debug|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug|Win32.Build.0 = Debug|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug|x64.ActiveCfg = Debug|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release_(Vista)|Win32.ActiveCfg = Release|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release_(Vista)|Win32.Build.0 = Release|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release_(Vista)|x64.ActiveCfg = Release|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release|Win32.ActiveCfg = Release|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release|Win32.Build.0 = Release|Win32
+		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
