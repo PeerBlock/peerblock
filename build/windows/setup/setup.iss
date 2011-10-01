@@ -268,13 +268,12 @@ function InitializeSetup(): Boolean;
 begin
   // Create a mutex for the installer.
   // If it's already running display a message and stop the installation
-  if CheckForMutexes(installer_mutex_name) then begin
-    if NOT WizardSilent() then begin
+  if CheckForMutexes(installer_mutex_name) AND NOT WizardSilent() then begin
       Log('Custom Code: Installer is already running');
       SuppressibleMsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK, MB_OK);
       Result := False;
-    end;
   end else begin
+    Result := True;
     Log('Custom Code: Creating installer`s mutex');
     CreateMutex(installer_mutex_name);
 
@@ -284,15 +283,15 @@ begin
 
 #if defined(sse2_required)
     if Result AND NOT Is_SSE2_Supported() then begin
-      Result := False;
       Log('Custom Code: Found a non SSE2 capable CPU');
       SuppressibleMsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK, MB_OK);
+      Result := False;
     end;
 #elif defined(sse_required)
     if Result AND NOT Is_SSE_Supported() then begin
-      Result := False;
       Log('Custom Code: Found a non SSE capable CPU');
       SuppressibleMsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK, MB_OK);
+      Result := False;
     end;
 #endif
 
@@ -300,7 +299,6 @@ begin
 
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
 
-    Result := True;
   end;
 end;
 
