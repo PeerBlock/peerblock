@@ -102,7 +102,6 @@ AppReadmeFile={app}\readme.rtf
 WizardImageFile=WizardImageFile.bmp
 WizardSmallImageFile=WizardSmallImageFile.bmp
 SetupIconFile=..\..\..\src\peerblock\res\pb.ico
-EnableDirDoesntExistWarning=no
 AllowNoIcons=yes
 ShowTasksTreeLines=yes
 AlwaysShowDirOnReadyPage=yes

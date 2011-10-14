@@ -42,7 +42,7 @@ IF /I "%1"=="/?"     GOTO SHOWHELP
 
 
 REM Check if Windows DDK is present in PATH
-IF NOT EXIST %PB_DDK_DIR% (
+IF NOT DEFINED PB_DDK_DIR (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
   ECHO Windows DDK path NOT FOUND!
