@@ -28,7 +28,6 @@
 
 var
   PGPath: String;
-  is_update: Boolean;
 const
   PGUninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
 
@@ -59,9 +58,12 @@ begin
 end;
 
 
-function IsUpdate(): Boolean;
+function IsUpgrade(): Boolean;
+var
+  sPrevPath: String;
 begin
-  Result := is_update;
+  sPrevPath := WizardForm.PrevAppDir;
+  Result := (sPrevPath <> '');
 end;
 
 

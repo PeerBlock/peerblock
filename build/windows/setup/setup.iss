@@ -147,7 +147,7 @@ Name: startup;                   Description: {cm:tsk_startup_descr};       Grou
 Name: remove_startup;            Description: {cm:tsk_remove_startup};      GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
 
 Name: uninstall_pg;              Description: {cm:tsk_uninstall_pg};        GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
-Name: use_pg_settings;           Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpdate()
+Name: use_pg_settings;           Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpgrade()
 
 Name: delete_lists;              Description: {cm:tsk_delete_lists};        GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkablealone checkedonce unchecked
 Name: delete_lists\custom_lists; Description: {cm:tsk_delete_custom_lists}; GroupDescription: {cm:tsk_reset};   Check: CustomListsExist(); Flags: checkedonce unchecked dontinheritcheck
@@ -242,8 +242,8 @@ Name: {group}\ReadMe.lnk;                                      Type: files
 Name: {group}\Uninstall.lnk;                                   Type: files
 
 ; While we are at it, delete any shortcut which is not selected
-Name: {userdesktop}\PeerBlock.lnk;                                          Type: files; Check: NOT IsTaskSelected('desktopicon')     AND IsUpdate()
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon') AND IsUpdate()
+Name: {userdesktop}\PeerBlock.lnk;                                          Type: files; Check: NOT IsTaskSelected('desktopicon')     AND IsUpgrade()
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon') AND IsUpgrade()
 
 
 [Code]
@@ -296,8 +296,6 @@ begin
 
 #endif
 
-    is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{015C5B35-B678-451C-9AEE-821E8D69621C}_is1');
-
   end;
 end;
 
@@ -316,12 +314,12 @@ end;
 
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
-  if IsUpdate then begin
-    Case PageID of
-      // Hide the license page
-      wpLicense: Result := True;
-      wpInfoBefore: Result := True;
-    else
+  if IsUpgrade() then begin
+    // Hide the license page
+    if (PageID = wpLicense) OR (PageID = wpInfoBefore) then begin
+      Result := True;
+    end
+    else begin
       Result := False;
     end;
   end;
