@@ -200,10 +200,8 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filen
 
 
 [Registry]
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup; Flags: uninsdeletevalue
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock;                                                    Tasks: delete_settings remove_startup;  Flags: deletevalue uninsdeletevalue; Check: NOT IsTaskSelected('startup')
-; Always delete the startup PeerBlock value when uninstalling
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; Flags: uninsdeletevalue
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock;                                                    Tasks: delete_settings remove_startup;  Flags: deletevalue; Check: NOT IsTaskSelected('startup')
 
 
 [Run]
@@ -278,7 +276,7 @@ begin
 
 #if defined(sse_required) || defined(sse2_required)
     // Acquire CPU information
-    CPUCheck;
+    CPUCheck();
 
 #if defined(sse2_required)
     if Result AND NOT Is_SSE2_Supported() then begin
@@ -336,36 +334,44 @@ begin
     Log('Custom Code: pbfilter service is not running, will attempt to remove it');
     RemoveService('pbfilter');
   end;
+
   if CurStep = ssPostInstall then begin
     // Delete the old PeerBlock's startup registry value
-    if OldStartupCheck then begin
+    if OldStartupCheck() then begin
       Log('Custom Code: Removing old startup entry');
       RegDeleteValue(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian');
     end;
+
     if IsTaskSelected('uninstall_pg') then begin
       Log('Custom Code: User selected the "uninstall_pg" task, calling KillAndUninstallPG()');
       KillAndUninstallPG;
     end;
+
     if IsTaskSelected('delete_misc') then begin
       Log('Custom Code: User selected the "delete_misc" task, calling RemoveMiscFiles()');
       RemoveMiscFiles;
     end;
+
     if IsTaskSelected('delete_lists') then begin
       Log('Custom Code: User selected the "delete_lists" task, calling RemoveLists()');
       RemoveLists;
     end;
+
     if IsTaskSelected('delete_lists\custom_lists') then begin
       Log('Custom Code: User selected the "delete_lists\custom_lists" task, calling RemoveCustomLists()');
       RemoveCustomLists;
     end;
+
     if IsTaskSelected('delete_logs') then begin
       Log('Custom Code: User selected the "delete_logs" task, calling RemoveLogs()');
       RemoveLogs;
     end;
+
     if IsTaskSelected('delete_settings') then begin
       Log('Custom Code: User selected the "delete_setting" task, calling RemoveSettings()');
       RemoveSettings;
     end;
+
   end;
 end;
 
@@ -376,17 +382,25 @@ begin
     // When uninstalling, ask the user if they want to delete PeerBlock's logs and settings
     if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
       if SuppressibleMsgBox(ExpandConstant('{cm:msg_DeleteLogsListsSettings}'), mbConfirmation, MB_YESNO OR MB_DEFBUTTON2, IDNO) = IDYES then begin
-        RemoveCustomLists;
-        RemoveLists;
-        RemoveLogs;
-        RemoveSettings;
+        RemoveCustomLists();
+        RemoveLists();
+        RemoveLogs();
+        RemoveSettings();
       end;
     end;
+
     // Always stop and remove pbfilter service just in case
     StopService('pbfilter');
     RemoveService('pbfilter');
+
     // Always delete the rest of PeerBlock's files
-    RemoveMiscFiles;
+    RemoveMiscFiles();
     RemoveDir(ExpandConstant('{app}'));
+
+    if StartupCheck() then begin
+      // Delete the installed PeerBlock's startup value when uninstalling
+      RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock')
+    end;
+
   end;
 end;

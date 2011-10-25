@@ -203,7 +203,7 @@ begin
   end;
   begin
     Log('Custom Code: Trying to uninstall PG2');
-    UninstallPG;
+    UninstallPG();
   end;
 end;
 
