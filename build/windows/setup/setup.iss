@@ -46,6 +46,7 @@
 
 #define copyright            "Copyright © 2009-2011, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
+#define quick_launch "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
 
 
 #if defined(ICL12build)
@@ -133,21 +134,19 @@ BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) [MSVC2010] bu
 #else
 BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
 #endif
-
-; The same as AppVerName with the "Setup -" prefix
-SetupAppTitle=Setup - PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
-SetupWindowTitle=Setup - PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+SetupAppTitle=Setup - PeerBlock
+SetupWindowTitle=Setup - PeerBlock
 
 
 [Tasks]
 Name: desktopicon;               Description: {cm:CreateDesktopIcon};       GroupDescription: {cm:AdditionalIcons}
 Name: quicklaunchicon;           Description: {cm:CreateQuickLaunchIcon};   GroupDescription: {cm:AdditionalIcons};                        Flags: unchecked; OnlyBelowVersion: 0,6.01
 
-Name: startup;                   Description: {cm:tsk_startup_descr};       GroupDescription: {cm:tsk_startup}; Check: NOT StartupCheck(); Flags: checkedonce unchecked
+Name: startup;                   Description: {cm:tsk_startup_descr};       GroupDescription: {cm:tsk_startup}; Check: not StartupCheck(); Flags: checkedonce unchecked
 Name: remove_startup;            Description: {cm:tsk_remove_startup};      GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
 
 Name: uninstall_pg;              Description: {cm:tsk_uninstall_pg};        GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
-Name: use_pg_settings;           Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) AND NOT IsUpgrade()
+Name: use_pg_settings;           Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) and not IsUpgrade()
 
 Name: delete_lists;              Description: {cm:tsk_delete_lists};        GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkablealone checkedonce unchecked
 Name: delete_lists\custom_lists; Description: {cm:tsk_delete_custom_lists}; GroupDescription: {cm:tsk_reset};   Check: CustomListsExist(); Flags: checkedonce unchecked dontinheritcheck
@@ -157,22 +156,17 @@ Name: delete_settings;           Description: {cm:tsk_delete_settings};     Grou
 
 
 [Files]
-; For CPU detection
-#if defined(sse_required) || defined(sse2_required)
-Source: WinCPUID.dll; Flags: dontcopy noencryption
-#endif
-
 ; 2K/XP 32bit files
-Source: {#bindir}\Win32\Release\peerblock.exe;         DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
-Source: {#bindir}\Win32\Release\pbfilter.sys;          DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: {#bindir}\Win32\Release\peerblock.exe;         DestDir: {app}; Flags: ignoreversion; Check: not Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
+Source: {#bindir}\Win32\Release\pbfilter.sys;          DestDir: {app}; Flags: ignoreversion; Check: not Is64BitInstallMode(); OnlyBelowVersion: 0,6.0
 
 ; XP 64bit files
 Source: {#bindir}\x64\Release\peerblock.exe;           DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode();     OnlyBelowVersion: 0,6.0
 Source: {#bindir}\x64\Release\pbfilter.sys;            DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode();     OnlyBelowVersion: 0,6.0
 
 ; Vista/7 32bit files
-Source: {#bindir}\Win32\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
-Source: {#bindir}\Win32\Release_(Vista)\pbfilter.sys;  DestDir: {app}; Flags: ignoreversion; Check: NOT Is64BitInstallMode(); MinVersion: 0,6.0
+Source: {#bindir}\Win32\Release_(Vista)\peerblock.exe; DestDir: {app}; Flags: ignoreversion; Check: not Is64BitInstallMode(); MinVersion: 0,6.0
+Source: {#bindir}\Win32\Release_(Vista)\pbfilter.sys;  DestDir: {app}; Flags: ignoreversion; Check: not Is64BitInstallMode(); MinVersion: 0,6.0
 
 ; Vista/7 64bit files
 Source: {#bindir}\x64\Release_(Vista)\peerblock.exe;   DestDir: {app}; Flags: ignoreversion; Check: Is64BitInstallMode();     MinVersion: 0,6.0
@@ -195,13 +189,13 @@ Name: {group}\Help and Support\Forums;      Filename: http://forums.peerblock.co
 Name: {group}\Help and Support\Homepage;    Filename: http://www.peerblock.com/
 Name: {group}\Help and Support\ReadMe;      Filename: {app}\readme.rtf;    WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/userguide
-Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock;    Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon;     IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+Name: {#quick_launch};                      Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
 
 
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock; ValueType: string; ValueData: {app}\peerblock.exe; Tasks: startup
-Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock;                                                    Tasks: delete_settings remove_startup;  Flags: deletevalue; Check: NOT IsTaskSelected('startup')
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueName: PeerBlock;                                                    Tasks: delete_settings remove_startup;  Flags: deletevalue; Check: not IsTaskSelected('startup')
 
 
 [Run]
@@ -240,18 +234,14 @@ Name: {group}\ReadMe.lnk;                                      Type: files
 Name: {group}\Uninstall.lnk;                                   Type: files
 
 ; While we are at it, delete any shortcut which is not selected
-Name: {userdesktop}\PeerBlock.lnk;                                          Type: files; Check: NOT IsTaskSelected('desktopicon')     AND IsUpgrade()
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type: files; Check: NOT IsTaskSelected('quicklaunchicon') AND IsUpgrade()
+Name: {userdesktop}\PeerBlock.lnk;                             Type: files; Check: not IsTaskSelected('desktopicon')     and IsUpgrade()
+Name: {#quick_launch}.lnk;                                     Type: files; Check: not IsTaskSelected('quicklaunchicon') and IsUpgrade(); OnlyBelowVersion: 0,6.01
 
 
 [Code]
 // Include custom installer code
 #include "setup_custom_code.iss"
 #include "setup_services.iss"
-
-#if defined(sse_required) || defined(sse2_required)
-#include "setup_cpu_detection.iss"
-#endif
 
 
 ///////////////////////////////////////////
@@ -260,38 +250,32 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock.lnk; Type
 const
   installer_mutex_name = 'peerblock_setup_mutex';
 
-
 function InitializeSetup(): Boolean;
 begin
   // Create a mutex for the installer.
   // If it's already running display a message and stop the installation
-  if CheckForMutexes(installer_mutex_name) AND NOT WizardSilent() then begin
+  if CheckForMutexes(installer_mutex_name) and not WizardSilent() then begin
       Log('Custom Code: Installer is already running');
-      SuppressibleMsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK, MB_OK);
+      SuppressibleMsgBox(CustomMessage('msg_SetupIsRunningWarning'), mbError, MB_OK, MB_OK);
       Result := False;
-  end else begin
+  end
+  else begin
     Result := True;
     Log('Custom Code: Creating installer`s mutex');
     CreateMutex(installer_mutex_name);
 
-#if defined(sse_required) || defined(sse2_required)
-    // Acquire CPU information
-    CPUCheck();
-
 #if defined(sse2_required)
-    if Result AND NOT Is_SSE2_Supported() then begin
+    if not Is_SSE2_Supported() then begin
       Log('Custom Code: Found a non SSE2 capable CPU');
-      SuppressibleMsgBox(CustomMessage('msg_simd_sse2'), mbError, MB_OK, MB_OK);
+      SuppressibleMsgBox(CustomMessage('msg_simd_sse2'), mbCriticalError, MB_OK, MB_OK);
       Result := False;
     end;
 #elif defined(sse_required)
-    if Result AND NOT Is_SSE_Supported() then begin
+    if not Is_SSE_Supported() then begin
       Log('Custom Code: Found a non SSE capable CPU');
-      SuppressibleMsgBox(CustomMessage('msg_simd_sse'), mbError, MB_OK, MB_OK);
+      SuppressibleMsgBox(CustomMessage('msg_simd_sse'), mbCriticalError, MB_OK, MB_OK);
       Result := False;
     end;
-#endif
-
 #endif
 
   end;
@@ -301,9 +285,10 @@ end;
 function InitializeUninstall(): Boolean;
 begin
   if CheckForMutexes(installer_mutex_name) then begin
-    SuppressibleMsgBox(ExpandConstant('{cm:msg_SetupIsRunningWarning}'), mbError, MB_OK, MB_OK);
+    SuppressibleMsgBox(CustomMessage('msg_SetupIsRunningWarning'), mbError, MB_OK, MB_OK);
     Result := False;
-  end else begin
+  end
+  else begin
     CreateMutex(installer_mutex_name);
     Result := True;
   end;
@@ -314,7 +299,7 @@ function ShouldSkipPage(PageID: Integer): Boolean;
 begin
   if IsUpgrade() then begin
     // Hide the license page
-    if (PageID = wpLicense) OR (PageID = wpInfoBefore) then begin
+    if (PageID = wpLicense) or (PageID = wpInfoBefore) then begin
       Result := True;
     end
     else begin
@@ -381,7 +366,7 @@ begin
   if CurUninstallStep = usUninstall then begin
     // When uninstalling, ask the user if they want to delete PeerBlock's logs and settings
     if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
-      if SuppressibleMsgBox(ExpandConstant('{cm:msg_DeleteLogsListsSettings}'), mbConfirmation, MB_YESNO OR MB_DEFBUTTON2, IDNO) = IDYES then begin
+      if SuppressibleMsgBox(CustomMessage('msg_DeleteLogsListsSettings'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2, IDNO) = IDYES then begin
         RemoveCustomLists();
         RemoveLists();
         RemoveLogs();

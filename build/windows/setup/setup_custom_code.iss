@@ -36,12 +36,16 @@ const
 //  Custom functions and procedures   /
 ///////////////////////////////////////
 
+function IsProcessorFeaturePresent(Feature: Integer): Boolean;
+external 'IsProcessorFeaturePresent@kernel32.dll stdcall';
+
+
 // Get PeerGuardian's installation path
 function GetPGPath(Default: String): String;
 begin
   PGPath := '';
 
-  if NOT RegQueryStringValue(HKLM, PGUninstallKey, 'Inno Setup: App Path', PGPath) then
+  if not RegQueryStringValue(HKLM, PGUninstallKey, 'Inno Setup: App Path', PGPath) then
     RegQueryStringValue(HKCU, PGUninstallKey, 'Inno Setup: App Path', PGPath);
     Result := PGPath;
 end;
@@ -50,7 +54,7 @@ end;
 // Check if PeerGuardian is installed
 function IsPGInstalled(): Boolean;
 begin
-  if RegKeyExists(HKLM, PGUninstallKey) OR RegKeyExists(HKCU, PGUninstallKey) then begin
+  if RegKeyExists(HKLM, PGUninstallKey) or RegKeyExists(HKCU, PGUninstallKey) then begin
     Log('Custom Code: Found PG2 uninstall registry key');
     Result := True;
   end else
@@ -67,11 +71,25 @@ begin
 end;
 
 
+function Is_SSE_Supported(): Boolean;
+begin
+  // PF_XMMI_INSTRUCTIONS_AVAILABLE
+  Result := IsProcessorFeaturePresent(6);
+end;
+
+
+function Is_SSE2_Supported(): Boolean;
+begin
+  // PF_XMMI64_INSTRUCTIONS_AVAILABLE
+  Result := IsProcessorFeaturePresent(10);
+end;
+
+
 function CustomListsExist(): Boolean;
 var
   FindRec: TFindRec;
 begin
-  if FindFirst(ExpandConstant('{app}\lists\*.p2b'), FindRec) OR FileExists(ExpandConstant('{app}\lists\*.p2p')) then begin
+  if FindFirst(ExpandConstant('{app}\lists\*.p2b'), FindRec) or FileExists(ExpandConstant('{app}\lists\*.p2p')) then begin
     Log('Custom Code: Custom lists exist');
     Result := True;
     FindClose(FindRec);
@@ -97,7 +115,7 @@ function LogsExist(): Boolean;
 var
   FindRec: TFindRec;
 begin
-  if FindFirst(ExpandConstant('{app}\archives\*.log'), FindRec) OR FileExists(ExpandConstant('{app}\peerblock.log')) then begin
+  if FindFirst(ExpandConstant('{app}\archives\*.log'), FindRec) or FileExists(ExpandConstant('{app}\peerblock.log')) then begin
     Log('Custom Code: Logs exist');
     Result := True;
     FindClose(FindRec);
@@ -108,7 +126,7 @@ end;
 
 function MiscFilesExist(): Boolean;
 begin
-  if FileExists(ExpandConstant('{app}\cache.p2b')) OR FileExists(ExpandConstant('{app}\history.db')) then begin
+  if FileExists(ExpandConstant('{app}\cache.p2b')) or FileExists(ExpandConstant('{app}\history.db')) then begin
     Log('Custom Code: Misc files exist');
     Result := True;
   end else

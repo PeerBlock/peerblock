@@ -26,8 +26,9 @@ en.msg_DeleteLogsListsSettings =Do you also want to delete PeerBlock's lists, lo
 en.msg_SetupIsRunningWarning   =PeerBlock Setup is already running!
 en.msg_ServiceManager          =The service manager is not available
 en.msg_ServiceManager2         =Only NT based systems support services
-#if defined(sse_required) || defined(sse2_required)
+#if defined(sse_required)
 en.msg_simd_sse                =This build of PeerBlock requires a CPU with SSE extension support.%n%nYour CPU does not have those capabilities.
+#elif defined(sse2_required)
 en.msg_simd_sse2               =This build of PeerBlock requires a CPU with SSE2 extension support.%n%nYour CPU does not have those capabilities.
 #endif
 en.run_visit_website           =Visit PeerBlock's Website
