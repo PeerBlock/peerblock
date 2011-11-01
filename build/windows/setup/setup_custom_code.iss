@@ -27,7 +27,7 @@
 ///////////////////////////////////////
 
 var
-  PGPath: String;
+  sPGPath: String;
 const
   PGUninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\PeerGuardian_is1';
 
@@ -36,18 +36,20 @@ const
 //  Custom functions and procedures   /
 ///////////////////////////////////////
 
+#if defined(sse_required) || defined(sse2_required)
 function IsProcessorFeaturePresent(Feature: Integer): Boolean;
 external 'IsProcessorFeaturePresent@kernel32.dll stdcall';
+#endif
 
 
 // Get PeerGuardian's installation path
 function GetPGPath(Default: String): String;
 begin
-  PGPath := '';
+  sPGPath := '';
 
-  if not RegQueryStringValue(HKLM, PGUninstallKey, 'Inno Setup: App Path', PGPath) then
-    RegQueryStringValue(HKCU, PGUninstallKey, 'Inno Setup: App Path', PGPath);
-    Result := PGPath;
+  if not RegQueryStringValue(HKLM, PGUninstallKey, 'Inno Setup: App Path', sPGPath) then
+    RegQueryStringValue(HKCU, PGUninstallKey, 'Inno Setup: App Path', sPGPath);
+    Result := sPGPath;
 end;
 
 
@@ -71,18 +73,22 @@ begin
 end;
 
 
+#if defined(sse_required)
 function Is_SSE_Supported(): Boolean;
 begin
   // PF_XMMI_INSTRUCTIONS_AVAILABLE
   Result := IsProcessorFeaturePresent(6);
 end;
 
+#elif defined(sse2_required)
 
 function Is_SSE2_Supported(): Boolean;
 begin
   // PF_XMMI64_INSTRUCTIONS_AVAILABLE
   Result := IsProcessorFeaturePresent(10);
 end;
+
+#endif
 
 
 function CustomListsExist(): Boolean;
