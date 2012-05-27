@@ -324,6 +324,10 @@ static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				}
 			}
 			break;
+		case ID_TRAY_CHECKFORUPDATES:
+			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Check for updates' item");
+			SendMessage(g_hLogDlg, WM_CHECKFORUPDATES, NULL, NULL);
+			break;
 
 		case ID_TRAY_HELP:
 			TRACEI("[mainproc] [Main_OnCommand]    user clicked tray-icon right-click menu 'Help' item");

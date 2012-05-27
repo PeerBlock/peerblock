@@ -724,6 +724,8 @@ BEGIN
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
         MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
         MENUITEM SEPARATOR
+        MENUITEM "Check for &updates"           ID_TRAY_CHECKFORUPDATES
+        MENUITEM SEPARATOR
         MENUITEM "&Help",                       ID_TRAY_HELP
         MENUITEM "&Support",                    ID_TRAY_SUPPORT
         MENUITEM "&About",                      ID_TRAY_ABOUT

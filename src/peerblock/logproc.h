@@ -36,9 +36,12 @@
 #endif
 #endif
 
-#define WM_LOG_HOOK		(WM_APP+1)
-#define WM_LOG_RANGES	(WM_APP+2)
-#define TIMER_UPDATE		1
+#define WM_LOG_HOOK         (WM_APP+1)
+#define WM_LOG_RANGES       (WM_APP+2)
+#define WM_CHECKFORUPDATES  (WM_APP+3)
+#define TIMER_UPDATE        1
+
+extern HWND g_hLogDlg;
 
 INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

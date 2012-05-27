@@ -398,6 +398,7 @@
 #define ID_TRAY_SUPPORT                 40028
 #define ID_TRAY_TEMPALLOWHTTP15         40029
 #define ID_TRAY_TEMPALLOWHTTP60         40030
+#define ID_TRAY_CHECKFORUPDATES         40031
 
 // PeerBlock window messages
 #define WM_PORTSETTINGSCHANGE           (WM_APP+1)

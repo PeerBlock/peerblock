@@ -48,6 +48,7 @@ DWORD g_lastblocktime;	// tracks time we last blocked something, for exit warnin
 mutex g_lastblocklock;	// lock to protect g_lastblocktime accesses
 mutex g_lastupdatelock;	// lock to protect against checking g_config.LastUpdate while we're in the process of updating
 
+HWND g_hLogDlg = NULL;
 
 class LogFilterAction {
 private:
@@ -632,6 +633,28 @@ static void UpdateStatus(HWND hwnd)
 
 
 
+// Updates the lists/PeerBlock.
+// @hwnd - handle of log dialog
+static void CheckForUpdates(HWND hwnd)
+{
+	TRACEI("[LogProc] [CheckForUpdates]    Checking for updates");
+	int ret = 0;
+
+	{
+		mutex::scoped_lock lock(g_lastupdatelock);
+		ret=UpdateLists(hwnd);
+	}
+
+	g_config.Save();
+
+	if(g_filter.get()) {
+		if(ret>0) LoadLists(hwnd);
+		UpdateStatus(hwnd);
+	}
+} // End of CheckForUpdates()
+
+
+
 static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
 	switch(id) {
@@ -657,19 +680,7 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		case IDC_UPDATE:
 		{
 			TRACEI("[LogProc] [Log_OnCommand]    user clicked Update button");
-			int ret = 0;
-
-			{
-				mutex::scoped_lock lock(g_lastupdatelock);
-				ret=UpdateLists(hwnd);
-			}
-
-			g_config.Save();
-
-			if(g_filter.get()) {
-				if(ret>0) LoadLists(hwnd);
-				UpdateStatus(hwnd);
-			}
+			CheckForUpdates(hwnd);
 		} break;
 
 		case IDC_HISTORY:
@@ -699,6 +710,7 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 static void Log_OnDestroy(HWND hwnd)
 {
 	TRACEI("[LogProc] [Log_OnDestroy]  > Entering routine.");
+
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 
 	SaveListColumns(list, g_config.LogColumns);
@@ -710,6 +722,8 @@ static void Log_OnDestroy(HWND hwnd)
 	g_filter->setactionfunc();
 	TRACEI("[LogProc] [Log_OnInitDialog]    setting g_log to empty LogFilterAction");
 	g_log=boost::shared_ptr<LogFilterAction>();
+	
+	g_hLogDlg = NULL;
 
 	TRACEI("[LogProc] [Log_OnDestroy]  < Leaving routine.");
 
@@ -736,6 +750,8 @@ static void InsertColumn(HWND hList, INT iSubItem, INT iWidth, UINT idText) {
 static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
 	TRACEV("[LogProc] [Log_OnInitDialog]  > Entering routine.");
+
+	g_hLogDlg = hwnd;
 
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
@@ -1271,6 +1287,9 @@ INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 			case WM_LOG_RANGES:
 				TRACEV("[LogProc] [Log_DlgProc]    WM_LOG_HOOK or WM_LOG_RANGES");
 				UpdateStatus(hwnd);
+				return 1;
+			case WM_CHECKFORUPDATES:
+				CheckForUpdates(hwnd);
 				return 1;
 			default: return 0;
 		}
