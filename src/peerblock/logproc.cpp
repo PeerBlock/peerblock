@@ -767,7 +767,9 @@ static BOOL Log_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		try {
 			g_con.open((path::base_dir()/_T("history.db")).c_str());
 			g_con.setbusytimeout(5000);
+			g_con.setextendedresultcodes(1);
 			g_con.executenonquery("pragma page_size=4096;");
+			g_con.executenonquery("pragma locking_mode = EXCLUSIVE;");
 
 			{
 				TRACEV("[LogProc] [Log_OnInitDialog]    acquiring sqlite3 lock");

@@ -66,6 +66,13 @@ void sqlite3_connection::setbusytimeout(int ms) {
 		throw database_error(*this);
 }
 
+void sqlite3_connection::setextendedresultcodes(int onoff) {
+	if(!this->db) throw database_error("database is not open");
+
+	if(sqlite3_extended_result_codes(this->db, onoff)!=SQLITE_OK)
+		throw database_error(*this);
+}
+
 void sqlite3_connection::executenonquery(const char *sql) {
 	if(!this->db) throw database_error("database is not open");
 	sqlite3_command(*this, sql).executenonquery();

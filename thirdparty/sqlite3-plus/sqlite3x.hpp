@@ -49,6 +49,7 @@ namespace sqlite3x {
 
 		long long insertid();
 		void setbusytimeout(int ms);
+		void setextendedresultcodes(int onoff);
 
 		void executenonquery(const char *sql);
 		void executenonquery(const wchar_t *sql);
