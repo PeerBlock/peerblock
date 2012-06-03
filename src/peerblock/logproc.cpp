@@ -303,7 +303,7 @@ public:
 
 private:
 	void _Commit(bool force) {
-		mutex::scoped_lock lock(this->mutex);
+		mutex::scoped_lock slock(this->mutex);
 		static unsigned int currentinserted = g_config.HistoryCheckInterval;
 		bool needvacuum = false;
 
