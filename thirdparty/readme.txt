@@ -18,7 +18,7 @@ Notes:    The version PeerBlock is using is slightly modified.  See here:
           (http://code.google.com/p/peerblock/source/detail?r=284)
           or search the libcurl project for "PeerBlock custom code".
 
-Miniunzip version 1.01h
+Miniunzip version 1.1
 License:  zlib License
 Website:  http://www.winimage.com/zLibDll/minizip.html
 Notes:    We currently include only the needed files.
