@@ -37,6 +37,6 @@ Website:  http://sourceforge.net/projects/tinyxml/
 Notes:    The version PeerBlock is using is slightly modified.  See here:
           (http://code.google.com/p/peerblock/source/detail?r=583)
 
-zlib version 1.2.5
+zlib version 1.2.8
 License:  zlib License
 Website:  http://www.zlib.net
