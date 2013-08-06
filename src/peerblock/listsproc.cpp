@@ -198,7 +198,7 @@ static void InsertItem(HWND list, int index, List *plist)
 //
 static void InsertItem(HWND list, int index, List &plist)
 {
-	List *nlist;
+	List *nlist = {0};
 
 	if(StaticList *l=dynamic_cast<StaticList*>(&plist))
 		nlist=new StaticList(*l);

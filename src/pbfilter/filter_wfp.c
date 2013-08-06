@@ -37,7 +37,7 @@
 #include "internal.h"
 
 static ULONG CheckRanges(PBNOTIFICATION *pbn, ULONG ip) {
-	const PBIPRANGE *range;
+	const PBIPRANGE *range = {0};
 	KIRQL irq;
 	ULONG action = 2;
 
