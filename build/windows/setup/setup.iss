@@ -1,4 +1,4 @@
-;  PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+;  PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -34,19 +34,19 @@
 
 #include "..\..\..\src\peerblock\version_parsed.h"
 
-#define app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
+#define app_ver str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "." + str(PB_VER_BUILDNUM)
 
-; Uncomment one of the #define simple_app_version and comment all other
+; Uncomment one of the #define app_ver_short and comment all other
 ; E.g. 1.0+
-#define simple_app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "+"
+#define app_ver_short str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "+"
 ; E.g. 1.0.1
-;#define simple_app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX)
+;#define app_ver_short str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX)
 ; E.g. 1.0.1+
-;#define simple_app_version str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
+;#define app_ver_short str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
 
-#define copyright            "Copyright © 2009-2011, PeerBlock, LLC"
+#define copyright            "Copyright © 2009-2013, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
-#define quick_launch "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
+#define quick_launch         "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
 
 
 #if defined(ICL12build)
@@ -63,8 +63,8 @@
 [Setup]
 AppID={{015C5B35-B678-451C-9AEE-821E8D69621C}
 AppName=PeerBlock
-AppVersion={#app_version}
-AppVerName=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+AppVersion={#app_ver}
+AppVerName=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM})
 AppPublisher=PeerBlock, LLC
 AppCopyright={#copyright}
 AppPublisherURL=http://www.peerblock.com/
@@ -73,22 +73,22 @@ AppUpdatesURL=http://www.peerblock.com/releases
 AppContact=http://www.peerblock.com/
 VersionInfoCompany=PeerBlock, LLC
 VersionInfoCopyright={#copyright}
-VersionInfoDescription=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) Setup
+VersionInfoDescription=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) Setup
 VersionInfoProductName=PeerBlock
-VersionInfoProductVersion={#app_version}
-VersionInfoTextVersion={#app_version}
-VersionInfoVersion={#app_version}
+VersionInfoProductVersion={#app_ver}
+VersionInfoTextVersion={#app_ver}
+VersionInfoVersion={#app_ver}
 DefaultDirName={pf}\PeerBlock
 DefaultGroupName=PeerBlock
 LicenseFile=..\..\..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=.
 #if defined(ICL12build)
-OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}_ICL12
+OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}_ICL12
 #elif defined(VS2010build)
-OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}_VS2010
+OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}_VS2010
 #else
-OutputBaseFilename=PeerBlock-Setup_v{#simple_app_version}_r{#PB_VER_BUILDNUM}
+OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}
 #endif
 Compression=lzma2/max
 SolidCompression=yes
@@ -97,7 +97,7 @@ MinVersion=0,5.1.2600sp3
 #else
 MinVersion=0,5.0
 #endif
-UninstallDisplayName=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+UninstallDisplayName=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
 WizardImageFile=WizardImageFile.bmp
@@ -105,8 +105,6 @@ WizardSmallImageFile=WizardSmallImageFile.bmp
 SetupIconFile=..\..\..\src\peerblock\res\pb.ico
 AllowNoIcons=yes
 ShowTasksTreeLines=yes
-AlwaysShowDirOnReadyPage=yes
-AlwaysShowGroupOnReadyPage=yes
 PrivilegesRequired=admin
 DisableDirPage=auto
 DisableProgramGroupPage=auto
@@ -128,11 +126,11 @@ Name: en; MessagesFile: compiler:Default.isl
 
 [Messages]
 #if defined(ICL12build)
-BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) [ICL12] built on {#installer_build_date}
+BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [ICL12] built on {#installer_build_date}
 #elif defined(VS2010build)
-BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
+BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
 #else
-BeveledLabel=PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
+BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
 #endif
 SetupAppTitle=Setup - PeerBlock
 SetupWindowTitle=Setup - PeerBlock
@@ -141,13 +139,10 @@ SetupWindowTitle=Setup - PeerBlock
 [Tasks]
 Name: desktopicon;               Description: {cm:CreateDesktopIcon};       GroupDescription: {cm:AdditionalIcons}
 Name: quicklaunchicon;           Description: {cm:CreateQuickLaunchIcon};   GroupDescription: {cm:AdditionalIcons};                        Flags: unchecked; OnlyBelowVersion: 0,6.01
-
 Name: startup;                   Description: {cm:tsk_startup_descr};       GroupDescription: {cm:tsk_startup}; Check: not StartupCheck(); Flags: checkedonce unchecked
 Name: remove_startup;            Description: {cm:tsk_remove_startup};      GroupDescription: {cm:tsk_startup}; Check: StartupCheck();     Flags: checkedonce unchecked
-
 Name: uninstall_pg;              Description: {cm:tsk_uninstall_pg};        GroupDescription: {cm:tsk_other};   Check: IsPGInstalled();    Flags: checkedonce unchecked
 Name: use_pg_settings;           Description: {cm:tsk_use_pg_settings};     GroupDescription: {cm:tsk_other};   Check: FileExists(ExpandConstant('{code:GetPGPath}\pg2.conf')) and not IsUpgrade()
-
 Name: delete_lists;              Description: {cm:tsk_delete_lists};        GroupDescription: {cm:tsk_reset};   Check: ListsExist();       Flags: checkablealone checkedonce unchecked
 Name: delete_lists\custom_lists; Description: {cm:tsk_delete_custom_lists}; GroupDescription: {cm:tsk_reset};   Check: CustomListsExist(); Flags: checkedonce unchecked dontinheritcheck
 Name: delete_misc;               Description: {cm:tsk_delete_misc};         GroupDescription: {cm:tsk_reset};   Check: MiscFilesExist();   Flags: checkedonce unchecked
@@ -183,14 +178,14 @@ Source: ..\..\..\doc\readme.rtf;                       DestDir: {app};          
 
 
 [Icons]
-Name: {group}\PeerBlock;                    Filename: {app}\peerblock.exe; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+Name: {group}\PeerBlock;                    Filename: {app}\peerblock.exe; WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM})
 Name: {group}\Uninstall PeerBlock;          Filename: {uninstallexe};      WorkingDir: {app}; IconFilename: {app}\peerblock.exe; IconIndex: 1; Comment: {cm:UninstallProgram,PeerBlock}
 Name: {group}\Help and Support\Forums;      Filename: http://forums.peerblock.com/
 Name: {group}\Help and Support\Homepage;    Filename: http://www.peerblock.com/
 Name: {group}\Help and Support\ReadMe;      Filename: {app}\readme.rtf;    WorkingDir: {app}; Comment: PeerBlock's ReadMe
 Name: {group}\Help and Support\User Manual; Filename: http://www.peerblock.com/userguide
-Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon;     IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
-Name: {#quick_launch};                      Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#simple_app_version} (r{#PB_VER_BUILDNUM})
+Name: {userdesktop}\PeerBlock;              Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: desktopicon;     IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM})
+Name: {#quick_launch};                      Filename: {app}\peerblock.exe; WorkingDir: {app}; Tasks: quicklaunchicon; IconFilename: {app}\peerblock.exe; IconIndex: 0; Comment: PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM})
 
 
 [Registry]
@@ -248,13 +243,13 @@ Name: {#quick_launch}.lnk;                                     Type: files; Chec
 //  Inno Setup functions and procedures  //
 ///////////////////////////////////////////
 const
-  installer_mutex_name = 'peerblock_setup_mutex';
+  installer_mutex = 'peerblock_setup_mutex';
 
 function InitializeSetup(): Boolean;
 begin
   // Create a mutex for the installer.
   // If it's already running display a message and stop the installation
-  if CheckForMutexes(installer_mutex_name) and not WizardSilent() then begin
+  if CheckForMutexes(installer_mutex) and not WizardSilent() then begin
       Log('Custom Code: Installer is already running');
       SuppressibleMsgBox(CustomMessage('msg_SetupIsRunningWarning'), mbError, MB_OK, MB_OK);
       Result := False;
@@ -262,16 +257,16 @@ begin
   else begin
     Result := True;
     Log('Custom Code: Creating installer`s mutex');
-    CreateMutex(installer_mutex_name);
+    CreateMutex(installer_mutex);
 
 #if defined(sse2_required)
-    if not Is_SSE2_Supported() then begin
+    if not IsSSE2Supported() then begin
       Log('Custom Code: Found a non SSE2 capable CPU');
       SuppressibleMsgBox(CustomMessage('msg_simd_sse2'), mbCriticalError, MB_OK, MB_OK);
       Result := False;
     end;
 #elif defined(sse_required)
-    if not Is_SSE_Supported() then begin
+    if not IsSSESupported() then begin
       Log('Custom Code: Found a non SSE capable CPU');
       SuppressibleMsgBox(CustomMessage('msg_simd_sse'), mbCriticalError, MB_OK, MB_OK);
       Result := False;
@@ -284,12 +279,12 @@ end;
 
 function InitializeUninstall(): Boolean;
 begin
-  if CheckForMutexes(installer_mutex_name) then begin
+  if CheckForMutexes(installer_mutex) then begin
     SuppressibleMsgBox(CustomMessage('msg_SetupIsRunningWarning'), mbError, MB_OK, MB_OK);
     Result := False;
   end
   else begin
-    CreateMutex(installer_mutex_name);
+    CreateMutex(installer_mutex);
     Result := True;
   end;
 end;
@@ -298,13 +293,9 @@ end;
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
   if IsUpgrade() then begin
-    // Hide the license page
-    if (PageID = wpLicense) or (PageID = wpInfoBefore) then begin
+    // Hide the license and the InfoBefore page
+    if (PageID = wpLicense) or (PageID = wpInfoBefore) then
       Result := True;
-    end
-    else begin
-      Result := False;
-    end;
   end;
 end;
 
@@ -365,7 +356,7 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usUninstall then begin
     // When uninstalling, ask the user if they want to delete PeerBlock's logs and settings
-    if fileExists(ExpandConstant('{app}\peerblock.conf')) then begin
+    if FileExists(ExpandConstant('{app}\peerblock.conf')) then begin
       if SuppressibleMsgBox(CustomMessage('msg_DeleteLogsListsSettings'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2, IDNO) = IDYES then begin
         RemoveCustomLists();
         RemoveLists();
@@ -382,10 +373,9 @@ begin
     RemoveMiscFiles();
     RemoveDir(ExpandConstant('{app}'));
 
-    if StartupCheck() then begin
-      // Delete the installed PeerBlock's startup value when uninstalling
-      RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock')
-    end;
+    if StartupCheck() then
+      // Delete the installed PeerBlock's startup entry when uninstalling
+      RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock');
 
   end;
 end;
