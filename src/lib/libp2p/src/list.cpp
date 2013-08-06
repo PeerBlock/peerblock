@@ -107,12 +107,12 @@ void list::erase(const compact_list &l) {
 	this->_ranges.remove_if(masserase_pred<std::list<range> >(l, nr));
 
 	//TODO: find a better way.
-	while(true) {
+	for (;;) {
 		std::list<range> nnr;
 
 		nr.remove_if(masserase_pred<std::list<range> >(l, nnr));
 
-		if(nnr.size()==0) break;
+		if(nnr.empty()) break;
 		nr.insert(nr.end(), nnr.begin(), nnr.end());
 	}
 
