@@ -407,7 +407,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case IDC_ADD:
 		{
-			List *l;
+			List *l = {0};
 			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_ADDLIST), hwnd, AddList_DlgProc, (LPARAM)&l)==IDOK)
 			{
 				tstring s;
@@ -608,7 +608,7 @@ static void Lists_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 		case IDC_CREATE:
 		{
-			StaticList *sl;
+			StaticList *sl = {0};
 
 			if(DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_CREATELIST), hwnd, CreateList_DlgProc, (LPARAM)&sl)==IDOK)
 			{
