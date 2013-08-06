@@ -1,5 +1,5 @@
 (*
-;  PeerBlock copyright (C) 2009-2011 PeerBlock, LLC
+;  PeerBlock copyright (C) 2009-2013 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -74,7 +74,7 @@ end;
 
 
 #if defined(sse_required)
-function Is_SSE_Supported(): Boolean;
+function IsSSESupported(): Boolean;
 begin
   // PF_XMMI_INSTRUCTIONS_AVAILABLE
   Result := IsProcessorFeaturePresent(6);
@@ -82,7 +82,7 @@ end;
 
 #elif defined(sse2_required)
 
-function Is_SSE2_Supported(): Boolean;
+function IsSSE2Supported(): Boolean;
 begin
   // PF_XMMI64_INSTRUCTIONS_AVAILABLE
   Result := IsProcessorFeaturePresent(10);
@@ -146,11 +146,10 @@ function OldStartupCheck(): Boolean;
 var
   svalue: String;
 begin
-  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian', svalue) then begin
-    if svalue = (ExpandConstant('{app}\peerblock.exe')) then begin
-      Log('Custom Code: Old Startup entry was found');
-      Result := True;
-    end;
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerGuardian', svalue) and
+  (svalue = (ExpandConstant('{app}\peerblock.exe'))) then begin
+    Log('Custom Code: Old Startup entry was found');
+    Result := True;
   end else
     Result := False;
 end;
@@ -172,11 +171,10 @@ function StartupCheck(): Boolean;
 var
   svalue: String;
 begin
-  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock', svalue) then begin
-    if svalue = (ExpandConstant('{app}\peerblock.exe')) then begin
-      Log('Custom Code: PeerBlock is configured to run on startup');
-      Result := True;
-    end;
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'PeerBlock', svalue) and
+  (svalue = (ExpandConstant('{app}\peerblock.exe'))) then begin
+    Log('Custom Code: PeerBlock is configured to run on startup');
+    Result := True;
   end else
     Result := False;
 end;
@@ -208,8 +206,8 @@ begin
         Result := 4
       else
         Result := 3;
-      end else
-        Result := 2;
+    end else
+      Result := 2;
   end else
     Result := 1;
 end;
@@ -224,8 +222,6 @@ begin
   if Wnd <> 0 then begin
     Log('Custom Code: Trying to kill PG2');
     PostMessage(Wnd, 18, 0, 0); // WM_QUIT
-  end;
-  begin
     Log('Custom Code: Trying to uninstall PG2');
     UninstallPG();
   end;

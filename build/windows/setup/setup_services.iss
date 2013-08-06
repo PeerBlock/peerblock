@@ -1,6 +1,6 @@
 (*
-;  Source: http://tinyurl.com/ybwjpuq
-;  PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+;  Original source: http://goo.gl/PTi56
+;  PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -101,22 +101,16 @@ external 'QueryServiceStatus@advapi32.dll stdcall';
 
 function OpenServiceManager(): HANDLE;
 begin
-  if UsingWinNT() = True then begin
-    Result := OpenSCManager('','ServicesActive',SC_MANAGER_ALL_ACCESS);
-    if Result = 0 then
-      SuppressibleMsgBox(CustomMessage('msg_ServiceManager'), mbError, MB_OK, MB_OK)
-  end
-  else begin
-    SuppressibleMsgBox(CustomMessage('msg_ServiceManager2'), mbError, MB_OK, MB_OK)
-    Result := 0;
-  end;
+  Result := OpenSCManager('','ServicesActive',SC_MANAGER_ALL_ACCESS);
+  if Result = 0 then
+    SuppressibleMsgBox(CustomMessage('msg_ServiceManager'), mbError, MB_OK, MB_OK);
 end;
 
 
 function InstallService(FileName, ServiceName, DisplayName, Description: AnsiString; ServiceType,StartType: cardinal): Boolean;
 var
-  hSCM    : HANDLE;
-  hService: HANDLE;
+  hSCM     : HANDLE;
+  hService : HANDLE;
 begin
   hSCM   := OpenServiceManager();
   Result := False;
@@ -125,19 +119,19 @@ begin
     if hService <> 0 then begin
       Result := True;
       // Win2K & WinXP supports aditional description text for services
-      if Description<> '' then
+      if Description <> '' then
         RegWriteStringValue(HKLM,'System\CurrentControlSet\Services\' + ServiceName,'Description',Description);
-      CloseServiceHandle(hService)
+      CloseServiceHandle(hService);
     end;
-    CloseServiceHandle(hSCM)
+    CloseServiceHandle(hSCM);
   end;
 end;
 
 
 function RemoveService(ServiceName: String): Boolean;
 var
-  hSCM    : HANDLE;
-  hService: HANDLE;
+  hSCM     : HANDLE;
+  hService : HANDLE;
 begin
   hSCM   := OpenServiceManager();
   Result := False;
@@ -145,17 +139,17 @@ begin
     hService := OpenService(hSCM,ServiceName,SERVICE_DELETE);
     if hService <> 0 then begin
       Result := DeleteService(hService);
-      CloseServiceHandle(hService)
+      CloseServiceHandle(hService);
     end;
-    CloseServiceHandle(hSCM)
+    CloseServiceHandle(hSCM);
   end;
 end;
 
 
 function StartService(ServiceName: String): Boolean;
 var
-  hSCM    : HANDLE;
-  hService: HANDLE;
+  hSCM     : HANDLE;
+  hService : HANDLE;
 begin
   hSCM   := OpenServiceManager();
   Result := False;
@@ -163,18 +157,18 @@ begin
     hService := OpenService(hSCM,ServiceName,SERVICE_START);
     if hService <> 0 then begin
       Result := StartNTService(hService,0,0);
-      CloseServiceHandle(hService)
+      CloseServiceHandle(hService);
     end;
-    CloseServiceHandle(hSCM)
+    CloseServiceHandle(hSCM);
   end;
 end;
 
 
 function StopService(ServiceName: String): Boolean;
 var
-  hSCM    : HANDLE;
-  hService: HANDLE;
-  Status  : SERVICE_STATUS;
+  hSCM     : HANDLE;
+  hService : HANDLE;
+  Status   : SERVICE_STATUS;
 begin
   hSCM   := OpenServiceManager();
   Result := False;
@@ -182,18 +176,18 @@ begin
     hService := OpenService(hSCM,ServiceName,SERVICE_STOP);
     if hService <> 0 then begin
       Result := ControlService(hService,SERVICE_CONTROL_STOP,Status);
-      CloseServiceHandle(hService)
+      CloseServiceHandle(hService);
     end;
-    CloseServiceHandle(hSCM)
+    CloseServiceHandle(hSCM);
   end;
 end;
 
 
 function IsServiceRunning(ServiceName: String): Boolean;
 var
-  hSCM    : HANDLE;
-  hService: HANDLE;
-  Status  : SERVICE_STATUS;
+  hSCM     : HANDLE;
+  hService : HANDLE;
+  Status   : SERVICE_STATUS;
 begin
   hSCM   := OpenServiceManager();
   Result := False;
@@ -201,10 +195,10 @@ begin
     hService := OpenService(hSCM,ServiceName,SERVICE_QUERY_STATUS);
     if hService <> 0 then begin
       if QueryServiceStatus(hService,Status) then begin
-        Result := (Status.dwCurrentState = SERVICE_RUNNING)
+        Result := (Status.dwCurrentState = SERVICE_RUNNING);
       end;
-      CloseServiceHandle(hService)
-      end;
-    CloseServiceHandle(hSCM)
+      CloseServiceHandle(hService);
+    end;
+    CloseServiceHandle(hSCM);
   end;
 end;

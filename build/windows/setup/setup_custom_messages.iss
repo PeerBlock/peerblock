@@ -1,4 +1,4 @@
-;  PeerBlock copyright (C) 2009-2011 PeerBlock, LLC
+;  PeerBlock copyright (C) 2009-2013 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -25,7 +25,6 @@
 en.msg_DeleteLogsListsSettings =Do you also want to delete PeerBlock's lists, logs and settings?%n%nIf you plan on reinstalling PeerBlock you might not want to delete them.
 en.msg_SetupIsRunningWarning   =PeerBlock Setup is already running!
 en.msg_ServiceManager          =The service manager is not available.
-en.msg_ServiceManager2         =Only NT based systems support services.
 #if defined(sse_required)
 en.msg_simd_sse                =This build of PeerBlock requires a CPU with SSE extension support.%n%nYour CPU does not have those capabilities.
 #elif defined(sse2_required)
