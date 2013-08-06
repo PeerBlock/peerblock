@@ -410,7 +410,7 @@ public:
 					DWORD fileSize = 0;
 
 					TCHAR chBuf[256];
-					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %d (of 43200) seconds have passed since last update"), elapsedTime);
+					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %I64d (of 43200) seconds have passed since last update"), elapsedTime);
 					TRACEBUFI(chBuf);
 
 					if (fileExists)
