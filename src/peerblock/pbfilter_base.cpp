@@ -151,7 +151,7 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 	DWORD pbrsize = (DWORD)offsetof(PBRANGES, ranges[ranges.size()]);
 
 	PBRANGES *pbr = (PBRANGES*)malloc(pbrsize);
-	if(!pbr) throw std::bad_alloc("unable to allocate memory for IP ranges");
+	if(!pbr) throw std::bad_alloc();
 
 	pbr->block = block ? 1 : 0;
 	pbr->count = (ULONG)ranges.size();

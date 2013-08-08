@@ -120,7 +120,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 			TRACEERR("[driver] [load(3)]", L"allocating memory for QueryServiceConfig", err = GetLastError());
 			CloseServiceHandle(service);
 			CloseServiceHandle(manager);
-			throw std::bad_alloc("unable to allocate memory for QueryServiceConfig");
+			throw std::bad_alloc();
 		}
 
 		ret = QueryServiceConfig(service, qsc, bytes, &bytes);
