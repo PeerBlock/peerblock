@@ -431,8 +431,37 @@ public:
 						HandleData *data=new HandleData(this);
 
 						data->list=&g_config.DynamicLists[i];
-						data->url=TSTRING_UTF8(g_config.DynamicLists[i].Url);
 						data->tempfile=g_config.DynamicLists[i].TempFile();
+
+						// check for I-Blocklist Subscription, append params to URL if so
+						tstring url(g_config.DynamicLists[i].Url);
+						if (!g_config.IblUsername.empty() && !g_config.IblPin.empty())
+						{
+							if (string::npos != url.find(_T("http://list.iblocklist.com/?list="))
+								&& string::npos != url.find(_T("username="))
+								&& string::npos != url.find(_T("id="))
+								&& string::npos != url.find(_T("pin="))
+								)
+							{
+								// old style iblocklist.com lists:  http://list.iblocklist.com/?list=tor
+								url += _T("&username=") + g_config.IblUsername + _T("&pin=") + g_config.IblPin;
+							}
+							else if (string::npos != url.find(_T("http://list.iblocklist.com/lists/"))
+								&& string::npos != url.find(_T("username="))
+								&& string::npos != url.find(_T("id="))
+								&& string::npos != url.find(_T("pin="))
+								)
+							{
+								// new ("friendly") style iblocklist.com lists:  http://list.iblocklist.com/lists/atma/atma
+								url += _T("?username=") + g_config.IblUsername + _T("&pin=") + g_config.IblPin;
+							}
+
+							// DEBUG:
+							TCHAR logmsg[512];
+							_stprintf_s(logmsg, sizeof(logmsg)/2, _T("[UpdateThread] [_Process]    + subscriber url:[%s]"), url.c_str());
+							TRACEBUFI(logmsg);
+						}
+						data->url=TSTRING_UTF8(url);
 
 						if(!path::exists(data->tempfile.without_leaf())) path::create_directory(data->tempfile.without_leaf());
 

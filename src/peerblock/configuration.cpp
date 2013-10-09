@@ -793,6 +793,12 @@ bool Configuration::Load()
 		}
 	}
 
+	TRACEI("[Configuration] [Load]    parsing I-Blocklist Subscription element");
+	if(const TiXmlElement *ibl=root->FirstChildElement("I-Blocklist")) {
+		GetChild(ibl, "Username", this->IblUsername);
+		GetChild(ibl, "PIN", this->IblPin);
+	}
+
 	TRACEI("[Configuration] [Load]  < Leaving routine.");
 	return true;
 
@@ -1050,6 +1056,13 @@ void Configuration::Save(const TCHAR * _filename)
 				lastdownload->InsertEndChild(TiXmlText(s));
 			}
 		}
+	}
+
+	{
+		TiXmlElement *ibl=InsertChild(root, "I-Blocklist");
+
+		InsertChild(ibl, "Username", this->IblUsername);
+		InsertChild(ibl, "PIN", this->IblPin);
 	}
 
 	// First save to a temp-file

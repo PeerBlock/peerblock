@@ -145,35 +145,15 @@ INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 							g_config.NotifyOnBlock=Never;
 						}
 					} break;
-					case IDC_NOTIFYON:
-						if(HIWORD(wParam)==CBN_SELCHANGE) {
-							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
-							const NotifyType nt=(i==0)?OnHttpBlock:OnBlock;
-
-							if(IsDlgButtonChecked(hwnd, IDC_BLINKTRAY)==BST_CHECKED)
-								g_config.BlinkOnBlock=nt;
-
-							if(IsDlgButtonChecked(hwnd, IDC_NOTIFYWINDOW)==BST_CHECKED)
-								g_config.NotifyOnBlock=nt;
-						}
-						break;
-					case IDC_BLINKTRAY:
-						if(IsDlgButtonChecked(hwnd, IDC_BLINKTRAY)==BST_CHECKED) {
-							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
-							g_config.BlinkOnBlock=(i==0)?OnHttpBlock:OnBlock;
-						}
-						else g_config.BlinkOnBlock=Never;
-						break;
-					case IDC_NOTIFYWINDOW:
-						if(IsDlgButtonChecked(hwnd, IDC_NOTIFYWINDOW)==BST_CHECKED) {
-							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
-							g_config.NotifyOnBlock=(i==0)?OnHttpBlock:OnBlock;
-						}
-						else g_config.NotifyOnBlock=Never;
-						break;
 					case IDC_SAVE:
 						TRACEI("[settingsproc] [SettingsFirst_DlgProc]    saving configuration, at user request");
 						g_config.Save();
+						break;
+					case IDC_IBLUSER:
+						g_config.IblUsername = GetDlgItemText(hwnd, IDC_IBLUSER);
+						break;
+					case IDC_IBLPIN:
+						g_config.IblPin = GetDlgItemText(hwnd, IDC_IBLPIN);
 						break;
 				}
 				break;
@@ -245,16 +225,6 @@ INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 					}
 				}
 
-				HWND notifyon=GetDlgItem(hwnd, IDC_NOTIFYON);
-
-				str=LoadString(IDS_HTTPBLOCKS);
-				ComboBox_AddString(notifyon, str.c_str());
-
-				str=LoadString(IDS_ALLBLOCKS);
-				ComboBox_AddString(notifyon, str.c_str());
-
-				ComboBox_SetCurSel(notifyon, 0);
-
 				SetDlgItemInt(hwnd, IDC_LOGSIZE, g_config.LogSize, FALSE);
 				if(g_config.ShowAllowed) CheckDlgButton(hwnd, IDC_SHOWALLOWED, BST_CHECKED);
 				if(g_config.ColorCode) CheckDlgButton(hwnd, IDC_COLORCODE, BST_CHECKED);
@@ -264,23 +234,6 @@ INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 				if(!g_config.ArchivePath.empty())
 					SetDlgItemText(hwnd, IDC_ARCHIVETO, g_config.ArchivePath.directory_str().c_str());
 
-				if(g_config.BlinkOnBlock!=Never || g_config.NotifyOnBlock!=Never) {
-					CheckDlgButton(hwnd, IDC_NOTIFY, BST_CHECKED);
-
-					EnableWindow(notifyon, TRUE);
-					EnableWindow(GetDlgItem(hwnd, IDC_BLINKTRAY), TRUE);
-					EnableWindow(GetDlgItem(hwnd, IDC_NOTIFYWINDOW), TRUE);
-
-					if(g_config.BlinkOnBlock==OnHttpBlock || g_config.NotifyOnBlock==OnHttpBlock)
-						ComboBox_SetCurSel(notifyon, 0);
-					else ComboBox_SetCurSel(notifyon, 1);
-
-					if(g_config.BlinkOnBlock!=Never)
-						CheckDlgButton(hwnd, IDC_BLINKTRAY, BST_CHECKED);
-					if(g_config.NotifyOnBlock!=Never)
-						CheckDlgButton(hwnd, IDC_NOTIFYWINDOW, BST_CHECKED);
-				}
-
 				SetDlgItemInt(hwnd, IDC_MAXHISTORYSIZE, (UINT)(g_config.MaxHistorySize / 1000000), FALSE);
 
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_ATEXT), g_config.AllowedColor.Text);
@@ -289,6 +242,12 @@ INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_BBG), g_config.BlockedColor.Background);
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_HTTPTEXT), g_config.HttpColor.Text);
 				ColorPicker_SetColor(GetDlgItem(hwnd, IDC_HTTPBG), g_config.HttpColor.Background);
+
+				// I-Blocklist Subscription info
+				if(!g_config.IblUsername.empty())
+					SetDlgItemText(hwnd, IDC_IBLUSER, g_config.IblUsername.c_str());
+				if(!g_config.IblPin.empty())
+					SetDlgItemText(hwnd, IDC_IBLPIN, g_config.IblPin.c_str());
 
 				RECT rc;
 				GetClientRect(hwnd, &rc);
@@ -457,6 +416,32 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 					case IDC_UPDATE_AT_STARTUP:
 						g_config.UpdateAtStartup=(IsDlgButtonChecked(hwnd, IDC_UPDATE_AT_STARTUP) == BST_CHECKED);
 						break;
+					case IDC_NOTIFYON:
+						if(HIWORD(wParam)==CBN_SELCHANGE) {
+							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
+							const NotifyType nt=(i==0)?OnHttpBlock:OnBlock;
+
+							if(IsDlgButtonChecked(hwnd, IDC_BLINKTRAY)==BST_CHECKED)
+								g_config.BlinkOnBlock=nt;
+
+							if(IsDlgButtonChecked(hwnd, IDC_NOTIFYWINDOW)==BST_CHECKED)
+								g_config.NotifyOnBlock=nt;
+						}
+						break;
+					case IDC_BLINKTRAY:
+						if(IsDlgButtonChecked(hwnd, IDC_BLINKTRAY)==BST_CHECKED) {
+							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
+							g_config.BlinkOnBlock=(i==0)?OnHttpBlock:OnBlock;
+						}
+						else g_config.BlinkOnBlock=Never;
+						break;
+					case IDC_NOTIFYWINDOW:
+						if(IsDlgButtonChecked(hwnd, IDC_NOTIFYWINDOW)==BST_CHECKED) {
+							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
+							g_config.NotifyOnBlock=(i==0)?OnHttpBlock:OnBlock;
+						}
+						else g_config.NotifyOnBlock=Never;
+						break;
 					case IDC_SAVE:
 						TRACEI("[settingsproc] [SettingsSecond_DlgProc]    saving configuration, at user request");
 						g_config.Save();
@@ -536,6 +521,33 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 						CheckDlgButton(hwnd, IDC_STARTWITHWINDOWS, BST_CHECKED);
 
 					RegCloseKey(key);
+				}
+
+				HWND notifyon=GetDlgItem(hwnd, IDC_NOTIFYON);
+
+				tstring str=LoadString(IDS_HTTPBLOCKS);
+				ComboBox_AddString(notifyon, str.c_str());
+
+				str=LoadString(IDS_ALLBLOCKS);
+				ComboBox_AddString(notifyon, str.c_str());
+
+				ComboBox_SetCurSel(notifyon, 0);
+
+				if(g_config.BlinkOnBlock!=Never || g_config.NotifyOnBlock!=Never) {
+					CheckDlgButton(hwnd, IDC_NOTIFY, BST_CHECKED);
+
+					EnableWindow(notifyon, TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_BLINKTRAY), TRUE);
+					EnableWindow(GetDlgItem(hwnd, IDC_NOTIFYWINDOW), TRUE);
+
+					if(g_config.BlinkOnBlock==OnHttpBlock || g_config.NotifyOnBlock==OnHttpBlock)
+						ComboBox_SetCurSel(notifyon, 0);
+					else ComboBox_SetCurSel(notifyon, 1);
+
+					if(g_config.BlinkOnBlock!=Never)
+						CheckDlgButton(hwnd, IDC_BLINKTRAY, BST_CHECKED);
+					if(g_config.NotifyOnBlock!=Never)
+						CheckDlgButton(hwnd, IDC_NOTIFYWINDOW, BST_CHECKED);
 				}
 
 				RECT rc;

@@ -372,6 +372,8 @@
 #define IDC_BOTHPORT                    1209
 #define IDS_SETTINGS_FIRST              1210
 #define IDS_SETTINGS_SECOND             1211
+#define IDC_IBLUSER                     1212
+#define IDC_IBLPIN                      1213
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002

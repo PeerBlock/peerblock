@@ -200,6 +200,8 @@ struct Configuration {
 	long UpdateProxyType;
 	__int64 MaxHistorySize; // 0 = never cleanup, >0 = size in bytes
 	unsigned int HistoryCheckInterval; // number to blocks before checking whether to archive or not
+	tstring IblUsername;    // I-Blocklist Subscription username
+	tstring IblPin;         // I-Blocklist Subscription PIN
 
 	bool TracelogEnabled;
 	int TracelogLevel;
