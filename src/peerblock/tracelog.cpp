@@ -195,7 +195,7 @@ void TraceLog::LogErrorMessage(tstring _location, tstring _buf, DWORD _err)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR) &lpMsgBuf,
 		0, NULL );
-	swprintf_s(chBuf, sizeof(chBuf)/2, L"%s    - err:[%d], desc:[%s]", _location.c_str(), _err, (LPTSTR)lpMsgBuf);
+	swprintf_s(chBuf, _countof(chBuf), L"%s    - err:[%d], desc:[%s]", _location.c_str(), _err, (LPTSTR)lpMsgBuf);
 	LogMessage(chBuf, TRACELOG_LEVEL_ERROR);
 	LocalFree(lpMsgBuf);
 

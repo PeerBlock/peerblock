@@ -115,7 +115,7 @@ public:
 		TRACEV("[LogFilterAction] [LogFilterAction]  > Entering routine.");
 
 		TCHAR chBuf[256];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [LogFilterAction]    hwnd:[%p] log:[%p] usedb:[%d]"), hwnd, log, usedb);
+		_stprintf_s(chBuf, _countof(chBuf), _T("[LogFilterAction] [LogFilterAction]    hwnd:[%p] log:[%p] usedb:[%d]"), hwnd, log, usedb);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
 		allowed=LoadString(IDS_ALLOWED);
@@ -171,12 +171,12 @@ public:
 			if(g_config.ShowAllowed || action.type == pbfilter::action::blocked || g_numlogged < 10)
 			{
 				TCHAR chBuf[256];
-				_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [operator()]    updating list for window log:[%p]"), log);
+				_stprintf_s(chBuf, _countof(chBuf), _T("[LogFilterAction] [operator()]    updating list for window log:[%p]"), log);
 				g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
 				int count=ListView_GetItemCount(log);
 
-				_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogFilterAction] [operator()]    log:[%p], cnt:[%d], lsz:[%d]"), log, count, g_config.LogSize);
+				_stprintf_s(chBuf, _countof(chBuf), _T("[LogFilterAction] [operator()]    log:[%p], cnt:[%d], lsz:[%d]"), log, count, g_config.LogSize);
 				g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_VERBOSE);
 
 				while(count-- >= (int)g_config.LogSize) ListView_DeleteItem(log, g_config.LogSize-1);
@@ -493,7 +493,7 @@ private:
 						else
 						{
 							TCHAR buf[255];
-							swprintf_s(buf, sizeof(buf), L"_tstat64 failed: %d", GetLastError());
+							swprintf_s(buf, _countof(buf), L"_tstat64 failed: %d", GetLastError());
 							TRACEBUFI(buf);
 						}
 
@@ -1275,7 +1275,7 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM
 INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		TCHAR chBuf[256];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[LogProc] [Log_DlgProc]    processing hwnd:[%p] msg:[%d]"), hwnd, msg);
+		_stprintf_s(chBuf, _countof(chBuf), _T("[LogProc] [Log_DlgProc]    processing hwnd:[%p] msg:[%d]"), hwnd, msg);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_DEBUG);
 
 		switch(msg) {

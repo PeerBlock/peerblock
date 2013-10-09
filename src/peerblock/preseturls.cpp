@@ -39,4 +39,4 @@ LPCTSTR const g_presets[]={
 	_T("http://list.iblocklist.com/lists/bluetack/for-non-lan-computers"),
 };
 
-const size_t g_presetcount=sizeof(g_presets)/sizeof(LPCTSTR);
+const size_t g_presetcount=_countof(g_presets);

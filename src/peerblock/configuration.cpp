@@ -335,7 +335,7 @@ static void InsertAttribute(TiXmlElement *root, PortRange pr) {
 bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view)
 {
 		TCHAR chBuf[256];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Configuration] [LoadFile]    loading file:[%s]"), file);
+		_stprintf_s(chBuf, _countof(chBuf), _T("[Configuration] [LoadFile]    loading file:[%s]"), file);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
 
 		*fp=CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -384,7 +384,7 @@ bool Configuration::LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const v
 			return false;
 		}
 
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Configuration] [LoadFile]    Successfully loaded file:[%s]"), file);
+		_stprintf_s(chBuf, _countof(chBuf), _T("[Configuration] [LoadFile]    Successfully loaded file:[%s]"), file);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
 
 		return true;

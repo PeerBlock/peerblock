@@ -123,7 +123,7 @@ public:
 			if(!PathRelativePathTo(p.buf, from.buf, fromdir?FILE_ATTRIBUTE_DIRECTORY:0, to.buf, 0))
 			{
 				TCHAR chBuf[1024];
-				swprintf_s(chBuf, sizeof(chBuf)/2, L"PathRelativePathTo() from:[%s] to:[%s] failed!!", from.buf, to.buf);
+				swprintf_s(chBuf, _countof(chBuf), L"PathRelativePathTo() from:[%s] to:[%s] failed!!", from.buf, to.buf);
 				TRACEERR("[path] [relative_to]", chBuf, GetLastError());
 				throw path_error("PathRelativePathTo");
 			}
@@ -144,7 +144,7 @@ public:
 		if(exists(p) && !DeleteFile(p.buf))
 		{
 			TCHAR chBuf[1024];
-			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't delete file [%s]!!", p.buf);
+			swprintf_s(chBuf, _countof(chBuf), L"Can't delete file [%s]!!", p.buf);
 			TRACEERR("[path] [remove]", chBuf, GetLastError());
 			throw path_error("DeleteFile");
 		}
@@ -155,7 +155,7 @@ public:
 		if(!MoveFileEx(from.buf, to.buf, replace?MOVEFILE_REPLACE_EXISTING:0))
 		{
 			TCHAR chBuf[1024];
-			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
+			swprintf_s(chBuf, _countof(chBuf), L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
 			TRACEERR("[path] [move]", chBuf, GetLastError());
 			throw path_error("MoveFileEx");
 		}
@@ -164,7 +164,7 @@ public:
 		if(!MoveFile(from.buf, to.buf))
 		{
 			TCHAR chBuf[1024];
-			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
+			swprintf_s(chBuf, _countof(chBuf), L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
 			TRACEERR("[path] [move]", chBuf, GetLastError());
 			throw path_error("MoveFile");
 		}
@@ -177,7 +177,7 @@ public:
 		if(!CopyFile(from.buf, to.buf, true))
 		{
 			TCHAR chBuf[2048];
-			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't copy file from:[%s] to:[%s]!!", from.buf, to.buf);
+			swprintf_s(chBuf, _countof(chBuf), L"Can't copy file from:[%s] to:[%s]!!", from.buf, to.buf);
 			TRACEERR("[path] [copy]", chBuf, GetLastError());
 			throw path_error("CopyFile");
 		}
@@ -187,7 +187,7 @@ public:
 		if(!CreateDirectory(p.directory_str().c_str(), NULL))
 		{
 			TCHAR chBuf[2048];
-			swprintf_s(chBuf, sizeof(chBuf)/2, L"Can't create directory:[%s]!!", p.buf);
+			swprintf_s(chBuf, _countof(chBuf), L"Can't create directory:[%s]!!", p.buf);
 			TRACEERR("[path] [create_directory]", chBuf, GetLastError());
 			throw path_error("CreateDirectory");
 		}

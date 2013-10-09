@@ -215,7 +215,7 @@ private:
 		TRACEV("[UpdateThread] [GetFileSize]  > Entering routine.");
 
 		TCHAR chBuf[512];
-		_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [GetFileSize]    file: [%s]"), file);
+		_stprintf_s(chBuf, _countof(chBuf), _T("[UpdateThread] [GetFileSize]    file: [%s]"), file);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_INFO);
 
 		HANDLE fp=CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -311,11 +311,11 @@ public:
 			{
 				TRACEI("[UpdateThread] [_Process]    updating peerblock");
 				TCHAR buf[128];
-				swprintf_s(buf, sizeof(buf)/2, L"[UpdateThread] [_Process]    update url:[%S]", g_updateurl);
+				swprintf_s(buf, _countof(buf), L"[UpdateThread] [_Process]    update url:[%S]", g_updateurl);
 				TRACEBUFI(buf);
-				swprintf_s(buf, sizeof(buf)/2, L"[UpdateThread] [_Process]    homepage url:[%s]", g_homepage);
+				swprintf_s(buf, _countof(buf), L"[UpdateThread] [_Process]    homepage url:[%s]", g_homepage);
 				TRACEBUFI(buf);
-				swprintf_s(buf, sizeof(buf)/2, L"[UpdateThread] [_Process]    agent string:[%S]", g_agent);
+				swprintf_s(buf, _countof(buf), L"[UpdateThread] [_Process]    agent string:[%S]", g_agent);
 				TRACEBUFI(buf);
 
 				HandleData *data=new HandleData(this);
@@ -410,7 +410,7 @@ public:
 					DWORD fileSize = 0;
 
 					TCHAR chBuf[256];
-					_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + %I64d (of 43200) seconds have passed since last update"), elapsedTime);
+					_stprintf_s(chBuf, _countof(chBuf), _T("[UpdateThread] [_Process]    + %I64d (of 43200) seconds have passed since last update"), elapsedTime);
 					TRACEBUFI(chBuf);
 
 					if (fileExists)
@@ -418,7 +418,7 @@ public:
 						TRACEI("[UpdateThread] [_Process]    + file exists");
 
 						fileSize = GetFileSize(file.c_str());
-						_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[UpdateThread] [_Process]    + fileSize = %d"), fileSize);
+						_stprintf_s(chBuf, _countof(chBuf), _T("[UpdateThread] [_Process]    + fileSize = %d"), fileSize);
 						TRACEBUFI(chBuf);
 					}
 					else
@@ -458,7 +458,7 @@ public:
 
 							// DEBUG:
 							TCHAR logmsg[512];
-							_stprintf_s(logmsg, sizeof(logmsg)/2, _T("[UpdateThread] [_Process]    + subscriber url:[%s]"), url.c_str());
+							_stprintf_s(logmsg, _countof(logmsg), _T("[UpdateThread] [_Process]    + subscriber url:[%s]"), url.c_str());
 							TRACEBUFI(logmsg);
 						}
 						data->url=TSTRING_UTF8(url);
@@ -645,7 +645,7 @@ public:
 									long code;
 									TCHAR chBuf[256];
 									curl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &code);
-									_stprintf_s(chBuf, sizeof(chBuf)/2,
+									_stprintf_s(chBuf, _countof(chBuf),
 										_T("[UpdateThread] [_Process]    response code: [%ld]"), code);
 									g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
 

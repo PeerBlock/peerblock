@@ -805,7 +805,7 @@ static void Main_ProcessDb()
 				SYSTEMTIME st;
 				GetLocalTime(&st);
 				TCHAR chToFilename[270];
-				swprintf_s(chToFilename, sizeof(chToFilename)/2, L"peerblock.%4d-%02d-%02d.log", st.wYear, st.wMonth, st.wDay);
+				swprintf_s(chToFilename, _countof(chToFilename), L"peerblock.%4d-%02d-%02d.log", st.wYear, st.wMonth, st.wDay);
 
 				path pathLogFrom = path::base_dir()/L"peerblock.log";
 				path pathLogTo = p/chToFilename;
@@ -1135,7 +1135,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	//TCHAR chBuf[128];
 	//if (msg != 289)
 	//{
-	//	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("[Main_DlgProc]  Processing Window MSG: [%d]"), msg);
+	//	_stprintf_s(chBuf, _countof(chBuf), _T("[Main_DlgProc]  Processing Window MSG: [%d]"), msg);
 	//	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
 	//}
 

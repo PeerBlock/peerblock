@@ -108,7 +108,7 @@ static bool CheckOS() {
 		% strOsName % osv.dwBuildNumber % osv.wServicePackMajor % osv.wServicePackMinor % strOsBitness.c_str());
 
 	TCHAR chBuf[256];
-	_stprintf_s(chBuf, sizeof(chBuf)/2, _T("Running on OS: %s"), strOsString.c_str());
+	_stprintf_s(chBuf, _countof(chBuf), _T("Running on OS: %s"), strOsString.c_str());
 	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_SUCCESS);
 
 	return true;
@@ -150,7 +150,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	TRACEC("PeerBlock Starting");
 
 	TCHAR buf[64];
-	swprintf_s(buf, sizeof(buf)/2, L"%S", PB_BLDSTR);
+	swprintf_s(buf, _countof(buf), L"%S", PB_BLDSTR);
 	TRACEBUFC(buf);
 
 	g_tlog.ProcessMessages();
