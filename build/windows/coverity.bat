@@ -11,12 +11,12 @@ PUSHD %~dp0
 SET COVDIR=H:\progs\thirdparty\cov-analysis-win64-6.6.1
 SET "PB_DDK_DIR=H:\WinDDK\7600.16385.1"
 
-CALL "%VS100COMNTOOLS%..\..\VC\vcvarsall.bat" x86 || CALL "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat" x86
+CALL "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat" x86
 
 SET MSBUILD_SWITCHES=/nologo /consoleloggerparameters:Verbosity=minimal /maxcpucount^
  /nodeReuse:true /target:Rebuild /property:Configuration="Release_(Vista)";Platform=Win32
 
-"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock_VS2010.sln" %MSBUILD_SWITCHES%
+"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock_VS2012.sln" %MSBUILD_SWITCHES%
 
 :tar
 IF EXIST "PeerBlock.tgz" DEL "PeerBlock.tgz"
