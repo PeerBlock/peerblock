@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2011 PeerBlock, LLC
+	Copyright (C) 2009-2013 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -369,5 +369,132 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		}
 
 	} // end of delete too-large history.db (r454)
+
+
+	//--------------------------------------------------
+	// Remove I-Blocklist Subscription URL params if present, add them to peerblock.conf instead
+
+	if (prevRelease < 649)
+	{
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for I-Blocklist Subscription list URL params (r649)");
+
+		vector<DynamicList> tempList;
+		ListUrls listUrls;
+		listUrls.Init();
+		tstring username;
+		tstring pin;
+
+		// check each list in configured lists
+		for(vector<DynamicList>::size_type i = 0; i < g_config.DynamicLists.size(); ++i)
+		{
+			DynamicList *list = &(g_config.DynamicLists[i]);
+
+			if (string::npos != list->Url.find(_T("http://list.iblocklist.com/?list=")))
+			{
+				// split url up into tokens
+				size_t start(0);
+				size_t end(0);
+				map<tstring, tstring> params;
+
+				start = list->Url.find(_T("?")) + 1;
+				while (string::npos != end && string::npos != start)
+				{
+					end = list->Url.find(_T("&"), start);
+					tstring paramSet = list->Url.substr(start,
+						(end == string::npos) ? string::npos : end - start);
+					start = (end > (string::npos - 1) ) ? string::npos : end + 1;
+
+					size_t eqPos(0);
+					eqPos = paramSet.find(_T("="));
+					if (string::npos != eqPos)
+					{
+						tstring key = paramSet.substr(0, eqPos);
+						tstring val = paramSet.substr(eqPos + 1);
+						params[key] = val;
+					}
+				}
+
+				if (params.find(_T("username")) != params.end())
+				{
+					username = params.at(_T("username"));
+				}
+
+				if (params.find(_T("id")) != params.end())
+				{
+					username = params.at(_T("id"));
+				}
+
+				if (params.find(_T("pin")) != params.end())
+				{
+					pin = params.at(_T("pin"));
+				}
+
+				// sanity-check, make sure we didn't screw up and lost the list-param
+				if (params.find(_T("list")) != params.end())
+				{
+					list->Url = tstring(_T("http://list.iblocklist.com/?list=")) + params.at(_T("list"));
+				}
+			}
+
+			else if (string::npos != list->Url.find(_T("http://list.iblocklist.com/lists/")))
+			{
+				// split url up into tokens
+				size_t urlRootEndPos(0);
+				size_t start(0);
+				size_t end(0);
+				map<tstring, tstring> params;
+
+				urlRootEndPos = list->Url.find(_T("?"));
+				if (string::npos != urlRootEndPos)
+				{
+					// we've got some params here
+					start = urlRootEndPos + 1;
+					while (string::npos != end && string::npos != start)
+					{
+						end = list->Url.find(_T("&"), start);
+						tstring paramSet = list->Url.substr(start,
+							(end == string::npos) ? string::npos : end - start);
+						start = (end > (string::npos - 1) ) ? string::npos : end + 1;
+
+						size_t eqPos(0);
+						eqPos = paramSet.find(_T("="));
+						if (string::npos != eqPos)
+						{
+							tstring key = paramSet.substr(0, eqPos);
+							tstring val = paramSet.substr(eqPos + 1);
+							params[key] = val;
+						}
+					}
+
+					if (params.find(_T("username")) != params.end())
+					{
+						username = params.at(_T("username"));
+					}
+
+					if (params.find(_T("id")) != params.end())
+					{
+						username = params.at(_T("id"));
+					}
+
+					if (params.find(_T("pin")) != params.end())
+					{
+						pin = params.at(_T("pin"));
+					}
+
+					// strip away all params from this URL, since none are applicable any longer
+					list->Url = list->Url.substr(0, urlRootEndPos);
+				}
+			}
+		}
+
+		// if we have a username (id) and pin, save them to config, and remove them from here
+		if (!username.empty() && !pin.empty())
+		{
+			g_config.IblUsername = username;
+			g_config.IblPin = pin;
+			g_config.Save();
+		}
+
+	} // end of i-blocklist subscription list-url param cleanup (r649)
 
 }; // End of PerformPrevRelUpdates()
