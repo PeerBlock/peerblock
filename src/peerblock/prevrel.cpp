@@ -374,9 +374,9 @@ void PerformPrevRelUpdates(HWND _hwnd)
 	//--------------------------------------------------
 	// Remove I-Blocklist Subscription URL params if present, add them to peerblock.conf instead
 
-	if (prevRelease < 649)
+	if (prevRelease < 653)
 	{
-		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for I-Blocklist Subscription list URL params (r649)");
+		TRACEW("[mainproc] [PerformPrevRelUpdates]    Checking for I-Blocklist Subscription list URL params (r653)");
 
 		vector<DynamicList> tempList;
 		ListUrls listUrls;
@@ -495,6 +495,6 @@ void PerformPrevRelUpdates(HWND _hwnd)
 			g_config.Save();
 		}
 
-	} // end of i-blocklist subscription list-url param cleanup (r649)
+	} // end of i-blocklist subscription list-url param cleanup (r653)
 
 }; // End of PerformPrevRelUpdates()
