@@ -438,18 +438,18 @@ public:
 						if (!g_config.IblUsername.empty() && !g_config.IblPin.empty())
 						{
 							if (string::npos != url.find(_T("http://list.iblocklist.com/?list="))
-								&& string::npos != url.find(_T("username="))
-								&& string::npos != url.find(_T("id="))
-								&& string::npos != url.find(_T("pin="))
+								&& string::npos == url.find(_T("username="))
+								&& string::npos == url.find(_T("id="))
+								&& string::npos == url.find(_T("pin="))
 								)
 							{
 								// old style iblocklist.com lists:  http://list.iblocklist.com/?list=tor
 								url += _T("&username=") + g_config.IblUsername + _T("&pin=") + g_config.IblPin;
 							}
 							else if (string::npos != url.find(_T("http://list.iblocklist.com/lists/"))
-								&& string::npos != url.find(_T("username="))
-								&& string::npos != url.find(_T("id="))
-								&& string::npos != url.find(_T("pin="))
+								&& string::npos == url.find(_T("username="))
+								&& string::npos == url.find(_T("id="))
+								&& string::npos == url.find(_T("pin="))
 								)
 							{
 								// new ("friendly") style iblocklist.com lists:  http://list.iblocklist.com/lists/atma/atma
