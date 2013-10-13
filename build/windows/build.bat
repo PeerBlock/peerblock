@@ -90,10 +90,11 @@ SET START_TIME=%DATE%-%TIME%
 REM Compile PeerBlock with MSVC 2008
 CALL "%VS90COMNTOOLS%vsvars32.bat" >NUL
 
-FOR %%A IN ("Win32" "x64"
+FOR %%A IN (
+  "Win32" "x64"
 ) DO (
-CALL :SubMSVC "Release" %%A
-CALL :SubMSVC "Release_(Vista)" %%A
+  CALL :SubMSVC "Release" %%A
+  CALL :SubMSVC "Release_(Vista)" %%A
 )
 
 IF /I "%BUILDTYPE%" == "Clean" GOTO END
@@ -104,12 +105,12 @@ REM Sign driver and program
 IF DEFINED PB_CERT (
   TITLE Signing the driver and the program...
   FOR %%F IN (
-  "bin\Win32\Release" "bin\Win32\Release_(Vista)" "bin\x64\Release" "bin\x64\Release_(Vista)"
+    "bin\Win32\Release" "bin\Win32\Release_(Vista)" "bin\x64\Release" "bin\x64\Release_(Vista)"
   ) DO (
-  PUSHD %%F
-  CALL ..\..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
-  CALL ..\..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
-  POPD
+    PUSHD %%F
+    CALL ..\..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
+    CALL ..\..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
+    POPD
   )
 )
 
@@ -164,10 +165,10 @@ ECHO. & ECHO.
 IF NOT EXIST "..\..\distribution" MD "..\..\distribution"
 
 FOR %%L IN (
-"Release" "Release_(Vista)"
+  "Release" "Release_(Vista)"
 ) DO (
-CALL :SubZipFiles Win32 %%L
-CALL :SubZipFiles x64 %%L
+  CALL :SubZipFiles Win32 %%L
+  CALL :SubZipFiles x64 %%L
 )
 
 GOTO END
@@ -186,8 +187,7 @@ EXIT /B
 
 :SubMSVC
 TITLE Compiling PeerBlock with MSVC 2008 - %~1^|%~2...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBuild.exe" PeerBlock.sln^
- /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2
+"MSBuild.exe" PeerBlock.sln /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2
 IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 EXIT /B
 

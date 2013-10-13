@@ -90,10 +90,11 @@ SET START_TIME=%DATE%-%TIME%
 REM Compile PeerBlock with MSVC 2010
 CALL "%VS100COMNTOOLS%vsvars32.bat" >NUL
 
-FOR %%A IN ("Win32" "x64"
+FOR %%A IN (
+  "Win32" "x64"
 ) DO (
-CALL :SubMSVC "Release" %%A
-CALL :SubMSVC "Release_(Vista)" %%A
+  CALL :SubMSVC "Release" %%A
+  CALL :SubMSVC "Release_(Vista)" %%A
 )
 
 IF /I "%BUILDTYPE%" == "Clean" GOTO END
@@ -104,12 +105,12 @@ REM Sign driver and program
 IF DEFINED PB_CERT (
   TITLE Signing the driver and the program...
   FOR %%F IN (
-  "bin10\Win32\Release" "bin10\Win32\Release_(Vista)" "bin10\x64\Release" "bin10\x64\Release_(Vista)"
+    "bin10\Win32\Release" "bin10\Win32\Release_(Vista)" "bin10\x64\Release" "bin10\x64\Release_(Vista)"
   ) DO (
-  PUSHD %%F
-  CALL ..\..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
-  CALL ..\..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
-  POPD
+    PUSHD %%F
+    CALL ..\..\..\..\..\bin\windows\sign_driver.cmd pbfilter.sys
+    CALL ..\..\..\..\..\bin\windows\sign_driver.cmd peerblock.exe
+    POPD
   )
 )
 
@@ -164,10 +165,10 @@ ECHO. & ECHO.
 IF NOT EXIST "..\..\distribution" MD "..\..\distribution"
 
 FOR %%L IN (
-"Release" "Release_(Vista)"
+  "Release" "Release_(Vista)"
 ) DO (
-CALL :SubZipFiles Win32 %%L
-CALL :SubZipFiles x64 %%L
+  CALL :SubZipFiles Win32 %%L
+  CALL :SubZipFiles x64 %%L
 )
 
 GOTO END
