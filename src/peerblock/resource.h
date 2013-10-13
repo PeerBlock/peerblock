@@ -214,6 +214,13 @@
 #define IDS_PREVREL411TEXT_WEBEX        268
 #define IDS_PREVREL411TEXT_BOGON        269
 #define IDS_VERIFYING                   270
+#define IDS_UPDATELIMITEXCEEDED	        271
+#define IDS_INCORRECTAUTH               272
+#define IDS_SUBSCRIPTIONEXPIRED         273
+#define IDS_SUBSCRIPTIONREQUIRED        274
+#define IDS_NOSUCHURL                   275
+#define IDS_TOOMANYFAILS                276
+
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
 #define IDC_UPDATE                      1003

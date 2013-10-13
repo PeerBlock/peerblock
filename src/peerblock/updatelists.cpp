@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -795,6 +795,108 @@ public:
 										{
 											TRACEV("[UpdateThread] [_Process]    found list; NO UPDATE AVAILABLE");
 											const tstring str=LoadString(IDS_NOUPDATEAVAIL);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==401)
+									{
+										// user entered incorrect username/pin
+										TRACEI("[UpdateThread] [_Process]    INCORRECT AUTH; code:[401]");
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; INCORRECT AUTH");
+											const tstring str=LoadString(IDS_INCORRECTAUTH);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==402)
+									{
+										// this is a subscription-only list, and the user is not a subscriber
+										TRACEI("[UpdateThread] [_Process]    SUBSCRIPTION REQUIRED; code:[402]");
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; SUBSCRIPTION REQUIRED");
+											const tstring str=LoadString(IDS_SUBSCRIPTIONREQUIRED);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==404)
+									{
+										// this list-url doesn't exist
+										TRACEI("[UpdateThread] [_Process]    NO SUCH URL; code:[404]");
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; NO SUCH URL");
+											const tstring str=LoadString(IDS_NOSUCHURL);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==419)
+									{
+										// subscription expired, need to renew
+										TRACEI("[UpdateThread] [_Process]    SUBSCRIPTION EXPIRED; code:[419]");
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; SUBSCRIPTION EXPIRED");
+											const tstring str=LoadString(IDS_SUBSCRIPTIONEXPIRED);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==420)
+									{
+										// user has tried to auth too many times without success
+										TRACEI("[UpdateThread] [_Process]    TOO MANY FAILS; code:[420]");
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; TOO MANY FAILS;");
+											const tstring str=LoadString(IDS_TOOMANYFAILS);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==429)
+									{
+										// user is trying to update too frequently
+										TRACEI("[UpdateThread] [_Process]    UPDATE LIMIT EXCEEDED; code:[429]");
+										if(data->list) data->list->FailedUpdate=true;
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; UPDATE LIMIT EXCEEDED");
+											const tstring str=LoadString(IDS_UPDATELIMITEXCEEDED);
 
 											lvi.iItem=data->index;
 											lvi.iSubItem=2;
