@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2011 PeerBlock, LLC
+	Copyright (C) 2009-2013 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -21,6 +21,8 @@
 
 #include "stdafx.h"
 #include "resource.h"
+
+#include "mainproc.h"
 
 // flag so that populating the list wont trigger any unnecessary notifications
 // which may cause the checkboxes to be in an incorrect state
@@ -60,8 +62,7 @@ static void EditPorts_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify
 	switch (id)
 	{
 		case IDC_HTTPPORT:
-			g_config.PortSet.AllowHttp = (IsDlgButtonChecked(hwnd, IDC_HTTPPORT) == BST_CHECKED);
-			SavePorts(hwnd);
+			SetBlockHttp((IsDlgButtonChecked(hwnd, IDC_HTTPPORT) != BST_CHECKED));
 			break;
 		case IDC_FTPPORT:
 			g_config.PortSet.AllowFtp = (IsDlgButtonChecked(hwnd, IDC_FTPPORT) == BST_CHECKED);
