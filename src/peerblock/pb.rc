@@ -18,10 +18,8 @@
 // English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -368,13 +366,11 @@ BEGIN
     EDITTEXT        IDC_MAXHISTORYSIZE,275,108,30,14,ES_AUTOHSCROLL | WS_DISABLED
     CONTROL         "",IDC_MAXHISTORYSIZESPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | WS_DISABLED,301,108,11,14
     LTEXT           "MB",IDC_STATIC,313,108,17,14,SS_CENTERIMAGE
-
     GROUPBOX        "I-Blocklist Subscription",IDC_STATIC,5,134,333,31
     LTEXT           "Username:",IDC_STATIC,15,148,35,12
     EDITTEXT        IDC_IBLUSER,53,147,160,12,ES_AUTOHSCROLL
     LTEXT           "PIN:",IDC_STATIC,232,148,18,12
     EDITTEXT        IDC_IBLPIN,250,147,80,12,ES_AUTOHSCROLL
-
     LTEXT           "Text:",IDC_STATIC,19,47,18,8
     LTEXT           "Background:",IDC_STATIC,19,58,41,8
     LTEXT           "Text:",IDC_STATIC,113,47,18,8
@@ -420,12 +416,10 @@ BEGIN
     CONTROL         "Always hide tray icon",IDC_HIDETRAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,135,84,12
     CONTROL         "Minimize to tray on close",IDC_HIDEONCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,135,95,12
     CONTROL         "Keep PeerBlock on top",IDC_ONTOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,226,135,105,12
-
     CONTROL         "Notify On",IDC_NOTIFY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,150,45,12
     COMBOBOX        IDC_NOTIFYON,61,150,68,73,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Blink tray icon",IDC_BLINKTRAY,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,153,150,60,12
     CONTROL         "Display notification window",IDC_NOTIFYWINDOW,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,226,150,102,12
-
     PUSHBUTTON      "&Save",IDC_SAVE,5,186,50,14
 END
 
@@ -469,7 +463,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_MAIN, DIALOG
     BEGIN
@@ -716,7 +710,7 @@ IDI_HTTPDISABLED        ICON                    "res\\pb_httpdisabled.ico"
 // Menu
 //
 
-IDR_TRAYMENU MENU 
+IDR_TRAYMENU MENU
 BEGIN
     POPUP "&Tray"
     BEGIN
@@ -732,7 +726,7 @@ BEGIN
         MENUITEM "Always on &Top",              ID_TRAY_ALWAYSONTOP
         MENUITEM "Hide tray &menu",             ID_TRAY_HIDETRAYICON
         MENUITEM SEPARATOR
-        MENUITEM "Check for &updates"           ID_TRAY_CHECKFORUPDATES
+        MENUITEM "Check for &updates",          ID_TRAY_CHECKFORUPDATES
         MENUITEM SEPARATOR
         MENUITEM "&Help",                       ID_TRAY_HELP
         MENUITEM "&Support",                    ID_TRAY_SUPPORT
@@ -742,7 +736,7 @@ BEGIN
     END
 END
 
-IDR_LISTSCONTEXT MENU 
+IDR_LISTSCONTEXT MENU
 BEGIN
     POPUP "Context"
     BEGIN
@@ -752,7 +746,7 @@ BEGIN
     END
 END
 
-IDR_LISTCONTEXT MENU 
+IDR_LISTCONTEXT MENU
 BEGIN
     POPUP "Context"
     BEGIN
@@ -762,7 +756,7 @@ BEGIN
     END
 END
 
-IDR_HISTORYMENU MENU 
+IDR_HISTORYMENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -794,7 +788,7 @@ IDR_LICENSE             TEXT                    "res\\about.txt"
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_EXCEPTION           "Exception Occurred"
     IDS_LOG                 "Protection"
@@ -810,7 +804,7 @@ BEGIN
     IDS_PORTSETTINGS        "Port Settings"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TYPE                "Type"
     IDS_DESCRIPTION         "Description"
@@ -832,7 +826,7 @@ BEGIN
     IDS_PGALREADYRUNNINGTEXT "PeerGuardian2 is currently running on your system.  Running both PG2 and PeerBlock at the same time is not supported, and is really just a bad idea in general.  Please close PeerGuardian2 and run PeerBlock again."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_LISTSNOTUPTODATE    "Lists haven't been updated in %1% days"
     IDS_ALLOWXFOR15MIN      "Allow %1% for 15 minutes"
@@ -851,7 +845,7 @@ BEGIN
     IDS_ERROR               "Error: %1%"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_UPDATEAVAILABLE     "Update available, see http://www.peerblock.com"
     IDS_ALLOWXFORONEHOUR    "Allow %1% for one hour"
@@ -871,7 +865,7 @@ BEGIN
     IDS_FILENOTFOUNDTEXT    "Unable to open the list at ""%1%"""
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_BLOCKED             "Blocked"
     IDS_ALLOWED             "Allowed"
@@ -891,7 +885,7 @@ BEGIN
     IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ACTION              "Action"
     IDS_PROTOCOL            "Protocol"
@@ -904,7 +898,7 @@ BEGIN
     IDS_ALLOWHTTP           "Allow HTTP"
     IDS_STARTUP_LAST        "Lastly, we recommend that you read the PeerBlock manual to get acquainted with the subtleties and tweaks available.  Always remember: the best way to protect your privacy on P2P is to not use it at all!  While PeerBlock will provide a lot of protection, the lists are not 100% foolproof and should not be treated as such."
     IDS_STARTUP_LISTS       "The selection of lists depends on your personal preference.  If you're only using P2P software, the P2P list should be sufficient.  We recommend that you block HTTP and manually allow sites of interest.  You will be able to change these settings later in the List Manager."
-    IDS_STARTUP_OPTIMIZATION 
+    IDS_STARTUP_OPTIMIZATION
                             "If you can live with some ranges collapsing, aggressive mode will lower memory and CPU usage.  It may, however, cause incorrect range names to be reported in the log.  We recommend normal optimization until you get familiar with how it works.  You will be able to change these settings later, in the Settings tab."
     IDS_STARTUP_UPDATES     "We recommend that you check both PeerBlock and lists for updates at least every other day to ensure you have the latest protection.  Lists will only be downloaded if changes are detected, so it won't use up much bandwidth.  You will be able to change these settings later in the Settings tab."
     IDS_HTTPBLOCKS          "HTTP Blocks"
@@ -912,7 +906,7 @@ BEGIN
     IDS_GENCACHE            "Generating List Cache..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CONNECTING          "Connecting..."
     IDS_NOUPDATENEEDED      "No update needed"
@@ -927,11 +921,11 @@ BEGIN
     IDS_ERRORCONTACTINGWHY  "Error Contacting URL: %1%"
     IDS_UNEXPCONTACTINGWHY  "Unexpected Response Contacting URL: %1%"
     IDS_UPDATELIMITEXCEEDED "Update limit exceeded"
-	IDS_INCORRECTAUTH       "Incorrect username/pin"
-	IDS_SUBSCRIPTIONEXPIRED "Subscription expired"
-	IDS_SUBSCRIPTIONREQUIRED "Subscription required"
-	IDS_NOSUCHURL           "Invalid list specified"
-	IDS_TOOMANYFAILS        "Too many incorrect sign-ins"
+    IDS_INCORRECTAUTH       "Incorrect username/pin"
+    IDS_SUBSCRIPTIONEXPIRED "Subscription expired"
+    IDS_SUBSCRIPTIONREQUIRED "Subscription required"
+    IDS_NOSUCHURL           "Invalid list specified"
+    IDS_TOOMANYFAILS        "Too many incorrect sign-ins"
     IDS_DNLISTFAILEDVERIFY  "List verification failed: 0 elements"
     IDS_CLOSEX              "&Close - %1%"
     IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerBlock to bring it back."
@@ -941,7 +935,7 @@ BEGIN
     IDS_BLOCKXFORONEHOUR    "Block %1% for one hour"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_BLOCKXPERM          "Block %1% permanently"
     IDS_PERMBLOCKS          "Permanent Blocks"
@@ -961,7 +955,7 @@ BEGIN
     IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HISTORYERR          "History Error"
     IDS_HISTORYOPEN         "Unable to open history database!\r\nHistory and logging are *DISABLED*"
@@ -985,7 +979,7 @@ BEGIN
     IDS_LOGNONE             "Log None"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%"
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
@@ -995,7 +989,7 @@ BEGIN
 END
 
 // List sanity-checking messages
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_LISTSAN_TITLE       "List URL Problem Detected"
     IDS_LISTSAN_UNFRIENDLY  "PeerBlock uses ""friendly name"" URLs to make it easier to identify lists in the List Manager, but the list URL you provided is an ""unfriendly"" iBlocklist URL.\r\n\r\nAllow PeerBlock to change this URL to a friendly-named one?"
@@ -1008,7 +1002,7 @@ BEGIN
     IDS_LISTSAN_DIFFDUPE    "The list ""%1%"" has already been added, under a different URL.  To prevent problems while updating lists, multiple URLs for the same list is not recommended.\r\n\r\nAllow PeerBlock to ignore this new URL?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_PREVREL             "Updating PeerBlock"
     IDS_PREVREL268TEXT      "PeerBlock now makes use of new ""friendly"" names for iBlocklist list URLs, and all displayed lists now use iblocklist.com URLs instead of bluetack.co.uk ones as iblocklist.com servers are generally faster and more reliable than Bluetack's.  The PeerBlock team strongly recommends that you update your current list URLs to follow this convention.\r\n\r\nWould you like PeerBlock to optimize your lists and remove any duplicates?"
@@ -1019,7 +1013,7 @@ BEGIN
     IDS_PREVREL411TEXT_BOGON "The CompleteWhois Bogon list has been abandoned by its list-author, and has not been updated since March 2009.  PeerBlock is updating your config to use the most frequently updated Bogon list, CIDR Bogon."
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
