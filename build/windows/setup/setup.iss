@@ -27,8 +27,8 @@
 ;#define VS2012build
 
 
-#if VER < 0x05040200
-  #error Update your Inno Setup version
+#if VER < EncodeVer(5,5,4)
+  #error Update your Inno Setup version (5.5.4 or newer)
 #endif
 
 
