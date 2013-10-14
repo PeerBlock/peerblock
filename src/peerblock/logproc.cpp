@@ -1275,7 +1275,7 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM
 INT_PTR CALLBACK Log_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	try {
 		TCHAR chBuf[256];
-		_stprintf_s(chBuf, _countof(chBuf), _T("[LogProc] [Log_DlgProc]    processing hwnd:[%p] msg:[%d]"), hwnd, msg);
+		_stprintf_s(chBuf, _countof(chBuf), _T("[LogProc] [Log_DlgProc]    processing hwnd:[%p] msg:[%u]"), hwnd, msg);
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_DEBUG);
 
 		switch(msg) {

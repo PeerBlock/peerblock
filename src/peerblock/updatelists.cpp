@@ -418,7 +418,7 @@ public:
 						TRACEI("[UpdateThread] [_Process]    + file exists");
 
 						fileSize = GetFileSize(file.c_str());
-						_stprintf_s(chBuf, _countof(chBuf), _T("[UpdateThread] [_Process]    + fileSize = %d"), fileSize);
+						_stprintf_s(chBuf, _countof(chBuf), _T("[UpdateThread] [_Process]    + fileSize = %lu"), fileSize);
 						TRACEBUFI(chBuf);
 					}
 					else

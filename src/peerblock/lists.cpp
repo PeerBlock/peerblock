@@ -323,9 +323,9 @@ public:
 		int len=2;
 
 		TCHAR chBuf[128];
-		_stprintf_s(chBuf, _countof(chBuf), _T("[GenCacheFuncs] [Init]    num static lists: [%d]"), g_config.StaticLists.size());
+		_stprintf_s(chBuf, _countof(chBuf), _T("[GenCacheFuncs] [Init]    num static lists: [%Iu]"), g_config.StaticLists.size());
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
-		_stprintf_s(chBuf, _countof(chBuf), _T("[GenCacheFuncs] [Init]    num dynamic lists: [%d]"), g_config.DynamicLists.size());
+		_stprintf_s(chBuf, _countof(chBuf), _T("[GenCacheFuncs] [Init]    num dynamic lists: [%Iu]"), g_config.DynamicLists.size());
 		g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
 
 		if(g_config.StaticLists.size()>0) {
