@@ -70,10 +70,10 @@ unsigned int compact_list::ip_count() const {
 }
 
 const compact_list::range_type *compact_list::operator()(const range &r) const {
-	int high=_rangecount, low=-1, probe;
+	int high=_rangecount, low=-1;
 
 	while(high-low > 1) {
-		probe=(high+low)/2;
+		int probe=(high+low)/2;
 		if(_ranges[probe].first>r.end.ipl)
 			high=probe;
 		else low=probe;
@@ -84,10 +84,10 @@ const compact_list::range_type *compact_list::operator()(const range &r) const {
 }
 
 const compact_list::range_type *compact_list::operator()(const range_type &r) const {
-	int high=_rangecount, low=-1, probe;
+	int high=_rangecount, low=-1;
 
 	while(high-low > 1) {
-		probe=(high+low)/2;
+		int probe=(high+low)/2;
 		if(_ranges[probe].first>r.second)
 			high=probe;
 		else low=probe;
@@ -98,10 +98,10 @@ const compact_list::range_type *compact_list::operator()(const range_type &r) co
 }
 
 const compact_list::range_type *compact_list::operator()(unsigned int ip) const {
-	int high=_rangecount, low=-1, probe;
+	int high=_rangecount, low=-1;
 
 	while(high-low > 1) {
-		probe=(high+low)/2;
+		int probe=(high+low)/2;
 		if(_ranges[probe].first>ip)
 			high=probe;
 		else low=probe;
