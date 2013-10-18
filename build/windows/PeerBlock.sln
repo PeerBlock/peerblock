@@ -1,37 +1,24 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "peerblock", "..\..\src\peerblock\pb.vcproj", "{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{287FEB14-72BD-4CD0-99D9-7D7D2D307EDE} = {287FEB14-72BD-4CD0-99D9-7D7D2D307EDE}
-		{CCE1D62B-CF3B-4705-A24E-75BE18963C99} = {CCE1D62B-CF3B-4705-A24E-75BE18963C99}
-		{ACEF1C3B-0490-47CE-BD75-F90A19F71C97} = {ACEF1C3B-0490-47CE-BD75-F90A19F71C97}
-		{9592E668-4D58-4B32-8D5F-79CFB912CC41} = {9592E668-4D58-4B32-8D5F-79CFB912CC41}
-		{8ADB2B86-8213-41EE-9438-D3F8A7A37C33} = {8ADB2B86-8213-41EE-9438-D3F8A7A37C33}
-		{E0597D8E-B4DC-4B46-A4BA-D9C11473FA1B} = {E0597D8E-B4DC-4B46-A4BA-D9C11473FA1B}
-		{ED1837D6-2439-45A1-8554-449647FF770B} = {ED1837D6-2439-45A1-8554-449647FF770B}
-		{679324FC-D0B7-4C3E-97A7-F84059D4B7C9} = {679324FC-D0B7-4C3E-97A7-F84059D4B7C9}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "peerblock", "..\..\src\peerblock\pb.vcxproj", "{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libp2p", "..\..\src\lib\libp2p\libp2p.vcproj", "{679324FC-D0B7-4C3E-97A7-F84059D4B7C9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libp2p", "..\..\src\lib\libp2p\libp2p.vcxproj", "{679324FC-D0B7-4C3E-97A7-F84059D4B7C9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "..\..\thirdparty\libcurl\libcurl.vcproj", "{8ADB2B86-8213-41EE-9438-D3F8A7A37C33}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "..\..\thirdparty\libcurl\libcurl.vcxproj", "{8ADB2B86-8213-41EE-9438-D3F8A7A37C33}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib7z", "..\..\thirdparty\lib7z\lib7z.vcproj", "{ACEF1C3B-0490-47CE-BD75-F90A19F71C97}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib7z", "..\..\thirdparty\lib7z\lib7z.vcxproj", "{ACEF1C3B-0490-47CE-BD75-F90A19F71C97}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "miniunzip", "..\..\thirdparty\miniunzip\miniunzip.vcproj", "{CCE1D62B-CF3B-4705-A24E-75BE18963C99}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "miniunzip", "..\..\thirdparty\miniunzip\miniunzip.vcxproj", "{CCE1D62B-CF3B-4705-A24E-75BE18963C99}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "..\..\thirdparty\sqlite3\sqlite3.vcproj", "{ED1837D6-2439-45A1-8554-449647FF770B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "..\..\thirdparty\sqlite3\sqlite3.vcxproj", "{ED1837D6-2439-45A1-8554-449647FF770B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3-plus", "..\..\thirdparty\sqlite3-plus\sqlite3-plus.vcproj", "{9592E668-4D58-4B32-8D5F-79CFB912CC41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3-plus", "..\..\thirdparty\sqlite3-plus\sqlite3-plus.vcxproj", "{9592E668-4D58-4B32-8D5F-79CFB912CC41}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinyxml", "..\..\thirdparty\tinyxml\tinyxml.vcproj", "{287FEB14-72BD-4CD0-99D9-7D7D2D307EDE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinyxml", "..\..\thirdparty\tinyxml\tinyxml.vcxproj", "{287FEB14-72BD-4CD0-99D9-7D7D2D307EDE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\thirdparty\zlib\zlib.vcproj", "{E0597D8E-B4DC-4B46-A4BA-D9C11473FA1B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\thirdparty\zlib\zlib.vcxproj", "{E0597D8E-B4DC-4B46-A4BA-D9C11473FA1B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbfilter", "..\..\src\pbfilter\pbfilter.vcproj", "{141BF107-16D2-4AF8-85F2-FA655A327F35}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbcore", "..\..\src\pbcore\pbcore.vcproj", "{E0E5D766-7194-4660-B7BD-E606A82B38AC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbfilter", "..\..\src\pbfilter\pbfilter.vcxproj", "{141BF107-16D2-4AF8-85F2-FA655A327F35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -205,18 +192,6 @@ Global
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|Win32.Build.0 = Release|Win32
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|x64.ActiveCfg = Release|x64
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|x64.Build.0 = Release|x64
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug_(Vista)|Win32.ActiveCfg = Debug|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug_(Vista)|Win32.Build.0 = Debug|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug_(Vista)|x64.ActiveCfg = Debug|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug|Win32.Build.0 = Debug|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Debug|x64.ActiveCfg = Debug|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release_(Vista)|Win32.ActiveCfg = Release|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release_(Vista)|Win32.Build.0 = Release|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release_(Vista)|x64.ActiveCfg = Release|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release|Win32.ActiveCfg = Release|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release|Win32.Build.0 = Release|Win32
-		{E0E5D766-7194-4660-B7BD-E606A82B38AC}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,7 +16,7 @@ CALL "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat" x86
 SET MSBUILD_SWITCHES=/nologo /consoleloggerparameters:Verbosity=minimal /maxcpucount^
  /nodeReuse:true /target:Rebuild /property:Configuration="Release_(Vista)";Platform=Win32
 
-"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock_VS2012.sln" %MSBUILD_SWITCHES%
+"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock.sln" %MSBUILD_SWITCHES%
 
 :tar
 IF EXIST "PeerBlock.tgz" DEL "PeerBlock.tgz"

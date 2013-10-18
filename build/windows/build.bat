@@ -2,7 +2,7 @@
 SETLOCAL ENABLEEXTENSIONS
 CD /D %~dp0
 
-REM  PeerBlock copyright (C) 2009-2011 PeerBlock, LLC
+REM  PeerBlock copyright (C) 2009-2013 PeerBlock, LLC
 
 REM  This software is provided 'as-is', without any express or implied
 REM  warranty.  In no event will the authors be held liable for any damages
@@ -24,11 +24,11 @@ REM  $Id$
 
 REM You can set here the Inno Setup path if for example you have Inno Setup Unicode
 REM installed and you want to use the ANSI Inno Setup which is in another location
-REM SET "InnoSetupPath="
+rem SET "InnoSetupPath=H:\progs\thirdparty\isetup"
 
 REM You can set here the path to the Windows DDK if you don't feel like adding a new
 REM environment variable or if you are lazy like I am ;)
-REM SET "PB_DDK_DIR=C:\WinDDK\7600.16385.1"
+rem SET "PB_DDK_DIR=H:\WinDDK\7600.16385.1"
 
 REM If you define BUILD_ONLY_PB=True then only the main program will be compiled
 REM without the installer and the ZIP packages
@@ -53,10 +53,10 @@ IF NOT DEFINED PB_DDK_DIR (
   GOTO ErrorDetected
 )
 
-IF NOT DEFINED VS90COMNTOOLS (
+IF NOT DEFINED VS110COMNTOOLS (
   TITLE Compiling PeerBlock [ERROR]
   COLOR 0C
-  ECHO Visual Studio 2008 NOT FOUND!
+  ECHO Visual Studio 2012 NOT FOUND!
   GOTO ErrorDetected
 )
 
@@ -87,8 +87,8 @@ IF "%1" == "" (
 :START
 SET START_TIME=%DATE%-%TIME%
 
-REM Compile PeerBlock with MSVC 2008
-CALL "%VS90COMNTOOLS%vsvars32.bat" >NUL
+REM Compile PeerBlock with MSVC 2012
+CALL "%VS110COMNTOOLS%vsvars32.bat" >NUL
 
 FOR %%A IN (
   "Win32" "x64"
@@ -143,7 +143,7 @@ ECHO Compiling installer...
 ECHO.
 
 "%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\..\..\bin\windows\sign_driver.cmd" $f "^
- /Q /O"..\..\..\distribution" "setup.iss"
+ /Q /O"..\..\..\distribution" "setup.iss" 
 
 IF %ERRORLEVEL% NEQ 0 (
   GOTO ErrorDetected
@@ -186,8 +186,9 @@ EXIT /B
 
 
 :SubMSVC
-TITLE Compiling PeerBlock with MSVC 2008 - %~1^|%~2...
-"MSBuild.exe" PeerBlock.sln /t:%BUILDTYPE% /p:Configuration=%1 /p:Platform=%2
+TITLE Compiling PeerBlock with MSVC 2012 - %~1^|%~2...
+"MSBuild.exe" PeerBlock.sln /t:%BUILDTYPE% /p:Configuration=%1^
+ /p:Platform=%2 /maxcpucount /consoleloggerparameters:DisableMPLogging;Summary;Verbosity=minimal
 IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 EXIT /B
 
@@ -197,8 +198,8 @@ TITLE Creating ZIP files - %~2 %1...
 IF NOT EXIST "temp_zip" MD "temp_zip"
 COPY /Y /V "bin\%1\%~2\peerblock.exe" "temp_zip\"
 COPY /Y /V "bin\%1\%~2\pbfilter.sys"  "temp_zip\"
-COPY /Y /V "..\..\license.txt"        "temp_zip\"
-COPY /Y /V "..\..\doc\readme.rtf"     "temp_zip\"
+COPY /Y /V "..\..\license.txt"          "temp_zip\"
+COPY /Y /V "..\..\doc\readme.rtf"       "temp_zip\"
 
 PUSHD "temp_zip"
 START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^

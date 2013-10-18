@@ -22,9 +22,8 @@
 ; *Inno Setup: http://www.jrsoftware.org/isdl.php
 
 
-; Define "VS2010build" or "VS2012build" based on which build you compiled or use the appropriate batch file
+; Define "VS2010build" based on which build you compiled or use the appropriate batch file
 ;#define VS2010build
-;#define VS2012build
 
 
 #if VER < EncodeVer(5,5,4)
@@ -47,14 +46,11 @@
 #define copyright            "Copyright © 2009-2013, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 #define quick_launch         "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
+#define sse_required
 
 
 #if defined(VS2010build)
   #define bindir        = "..\bin10"
-  #define sse_required
-#elif defined(VS2012build)
-  #define bindir        = "..\bin12"
-  #define sse_required
 #else
   #define bindir        = "..\bin"
 #endif
@@ -83,20 +79,14 @@ DefaultGroupName=PeerBlock
 LicenseFile=..\..\..\license.txt
 InfoBeforeFile=readme_before.rtf
 OutputDir=.
-#if defined(VS2012build)
-OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}_VS2012
-#elif defined(VS2010build)
+#if defined(VS2010build)
 OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}_VS2010
 #else
 OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}
 #endif
 Compression=lzma2/max
 SolidCompression=yes
-#if defined(VS2012build) || defined(VS2010build)
 MinVersion=0,5.1.2600sp3
-#else
-MinVersion=0,5.0
-#endif
 UninstallDisplayName=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM})
 UninstallDisplayIcon={app}\peerblock.exe
 AppReadmeFile={app}\readme.rtf
@@ -125,9 +115,7 @@ Name: en; MessagesFile: compiler:Default.isl
 
 
 [Messages]
-#if defined(VS2012build)
-BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2012] built on {#installer_build_date}
-#elif defined(VS2010build)
+#if defined(VS2010build)
 BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
 #else
 BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
