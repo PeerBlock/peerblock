@@ -205,7 +205,8 @@ static void InsertItem(HWND list, int index, List &plist)
 	else if(DynamicList *l=dynamic_cast<DynamicList*>(&plist))
 		nlist=new DynamicList(*l);
 
-	InsertItem(list, index, nlist);
+	if (nlist)
+		InsertItem(list, index, nlist);
 
 } // End of InsertItem()
 
