@@ -101,13 +101,8 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 						unsigned short srcport=(unsigned short)reader.getint(3);
 						unsigned short destport=(unsigned short)reader.getint(5);
 
-#ifdef _UNICODE
 						r.time=reader.getstring16(0);
 						r.name=reader.getstring16(1);
-#else
-						r.time=UTF8_MBS(reader.getstring(0));
-						r.name=UTF8_MBS(reader.getstring(1));
-#endif
 
 						r.source=FormatIp((unsigned int)reader.getint(2), srcport);
 						r.dest=FormatIp((unsigned int)reader.getint(4), destport);
@@ -170,13 +165,8 @@ static LRESULT CALLBACK Tabs_WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 						unsigned short srcport=(unsigned short)reader.getint(3);
 						unsigned short destport=(unsigned short)reader.getint(5);
 
-#ifdef _UNICODE
 						r.time=reader.getstring16(0);
 						r.name=reader.getstring16(1);
-#else
-						r.time=UTF8_MBS(reader.getstring(0));
-						r.name=UTF8_MBS(reader.getstring(1));
-#endif
 
 						r.source=FormatIp((unsigned int)reader.getint(2), srcport);
 						r.dest=FormatIp((unsigned int)reader.getint(4), destport);
@@ -387,10 +377,6 @@ static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_list=CreateWindow(WC_LISTVIEW, NULL, WS_CHILD|WS_VISIBLE|LVS_REPORT|LVS_NOSORTHEADER|LVS_OWNERDATA,
 		0, 0, 0, 0, tabs, (HMENU)IDC_LIST, GetModuleHandle(NULL), NULL);
 	ListView_SetExtendedListViewStyle(g_list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
-
-#ifndef _UNICODE
-	ListView_SetUnicodeFormat(g_list, FALSE);
-#endif
 
 	InsertColumn(g_list, 0, g_config.HistoryColumns[0], IDS_TIME);
 	InsertColumn(g_list, 1, g_config.HistoryColumns[1], IDS_RANGE);
@@ -833,11 +819,7 @@ static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 
 									EmptyClipboard();
 
-									#ifdef _UNICODE
-										SetClipboardData(CF_UNICODETEXT, buf);
-									#else
-										SetClipboardData(CF_TEXT, buf);
-									#endif
+									SetClipboardData(CF_UNICODETEXT, buf);
 								}
 
 								CloseClipboard();

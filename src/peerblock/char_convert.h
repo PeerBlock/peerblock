@@ -33,8 +33,6 @@ public:
 std::wstring mbstowcs(const std::string &str);
 std::string wcstombs(const std::wstring &str);
 
-#ifdef _UNICODE
-
 #define TSTRING_UTF8(wide) wchar_utf8(wide)
 #define UTF8_TSTRING(narrow) utf8_wchar(narrow)
 
@@ -43,19 +41,6 @@ std::string wcstombs(const std::wstring &str);
 
 #define TSTRING_MBS(wide) wcstombs(wide)
 #define MBS_TSTRING(narrow) mbstowcs(narrow)
-
-#else
-
-#define TSTRING_UTF8(narrow) MBS_UTF8(narrow)
-#define UTF8_TSTRING(narrow) UTF8_MBS(narrow)
-
-#define TSTRING_WCHAR(narrow) utf8_wchar(narrow)
-#define WCHAR_TSTRING(wide) wchar_utf8(wide)
-
-#define TSTRING_MBS(narrow) (narrow)
-#define MBS_TSTRING(narrow) (narrow)
-
-#endif
 
 #define MBS_UTF8(narrow) wchar_utf8(mbstowcs(narrow))
 #define UTF8_MBS(narrow) wcstombs(utf8_wchar(narrow))

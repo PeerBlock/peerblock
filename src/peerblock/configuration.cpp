@@ -98,7 +98,6 @@ static bool GetChild(const TiXmlElement *root, const string &node, string &value
 	return true;
 }
 
-#ifdef _UNICODE
 static bool GetChild(const TiXmlElement *root, const string &node, wstring &value) {
 	const TiXmlElement *e=root->FirstChildElement(node);
 	if(!e) return false;
@@ -115,7 +114,6 @@ static bool GetChild(const TiXmlElement *root, const string &node, wstring &valu
 	value=UTF8_TSTRING(v);
 	return true;
 }
-#endif
 
 static bool GetChild(const TiXmlElement *root, const string &node, bool &value) {
 	string v;
@@ -229,11 +227,9 @@ static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, const stri
 	return e;
 }
 
-#ifdef _UNICODE
 static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, const wstring &value) {
 	return InsertChild(root, node, TSTRING_UTF8(value));
 }
-#endif
 
 static TiXmlElement *InsertChild(TiXmlNode *root, const string &node, const char *value) {
 	return InsertChild(root, node, string(value));

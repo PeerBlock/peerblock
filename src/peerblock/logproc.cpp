@@ -1034,11 +1034,7 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 
 									EmptyClipboard();
 
-									#ifdef _UNICODE
-										SetClipboardData(CF_UNICODETEXT, buf);
-									#else
-										SetClipboardData(CF_TEXT, buf);
-									#endif
+									SetClipboardData(CF_UNICODETEXT, buf);
 								}
 
 								CloseClipboard();
