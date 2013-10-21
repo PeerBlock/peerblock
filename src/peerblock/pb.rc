@@ -879,7 +879,7 @@ BEGIN
     IDS_NEEDADMIN           "Administrator privileges required"
     IDS_INVALIDURL          "Invalid URL"
     IDS_INVALIDURLTEXT      "The given URL is not valid.  Did you forget a http:// ?"
-    IDS_UNCAUGHTTEXT        "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_UNCAUGHTTEXT        "An uncaught exception occurred:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%\r\n\r\nPlease visit http://www.peerblock.com/error for more information and to see what can be done to fix this problem."
     IDS_UNCAUGHT            "Uncaught exception"
     IDS_PBUPDATE            "Update Available"
     IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
@@ -949,10 +949,10 @@ BEGIN
     IDS_RESTOREBACKUP       "Restore Backup"
     IDS_RESTORING           "Restoring Backup..."
     IDS_BACKINGUP           "Backing up..."
-    IDS_EXCEPTIONTEXT       "An exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%"
+    IDS_EXCEPTIONTEXT       "An exception occurred:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: %4%\r\nMessage: %5%\r\n\r\nPlease visit http://www.peerblock.com/error for more information and to see what can be done to fix this problem."
     IDS_SEARCH              "Search"
     IDS_CALENDAR            "Calendar"
-    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%"
+    IDS_CAUGHTUNKNOWNTEXT   "An uncaught exception occurred:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\n\r\nPlease visit http://www.peerblock.com/error for more information and to see what can be done to fix this problem."
 END
 
 STRINGTABLE
@@ -981,9 +981,9 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occurred!\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%"
+    IDS_UNCAUGHTWIN32TEXT   "An uncaught exception occurred:\r\n\r\nBuild Number: %1%\r\nFile: %2%\r\nLine: %3%\r\nType: class win32_error\r\nFunction: %4%\r\nError Code: %5%\r\nMessage: %6%\r\nPlease visit http://www.peerblock.com/error for more information and to see what can be done to fix this problem."
     IDS_DRIVERERRWIN32TEXT  "PeerBlock is unable to load the packet filtering driver.\r\nThis is likely the result of some strange bug.  Please report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nclass win32_error\r\n%1%\r\n%2%\r\n%3%"
-    IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nPlease report this error, including all information that follows, to the PeerBlock team at http://forums.peerblock.com.  Thank you for helping us improve PeerBlock!\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%"
+    IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%\r\nPlease visit http://www.peerblock.com/error for more information and to see what can be done to fix this problem."
     IDS_EXITWHILEBLOCKING   "Are you sure you want to exit PeerBlock?"
     IDS_EXITWHILEBLOCKINGTEXT "PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting PeerBlock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
 END
