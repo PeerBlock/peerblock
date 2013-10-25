@@ -220,7 +220,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 
 		// Set main window caption to version-string from versioninfo.h
 		TCHAR * chBuf;
-		chBuf = (TCHAR *)malloc(256 * sizeof(chBuf));
+		chBuf = (TCHAR *)malloc(256 * sizeof(*chBuf));
 		swprintf_s(chBuf, 256, L"%S", PB_BLDSTR);
 		SetWindowText(hwnd, chBuf);
 		free(chBuf);
