@@ -33,4 +33,4 @@ Jesse Hall (Jessay) - Web Design
 LANsquared - Hosting
 
 PeerGuardian 2 Credits:
-PeerBlock is based upon the earlier PeerGuardian 2 work.  Many thanks to Cory Nelson and his Phoenix Labs crew (http://www.phoenixlabs.org) for creating  PG2, and for making it open-source so that after they abandoned it we could pick it up and resurrect it!
+PeerBlock is based upon the earlier PeerGuardian 2 work.  Many thanks to Cory Nelson and his Phoenix Labs crew (http://www.phoenixlabs.org) for creating PG2, and for making it open-source so that after they abandoned it we could pick it up and resurrect it!
