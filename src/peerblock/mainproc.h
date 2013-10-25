@@ -25,12 +25,10 @@
 #include <boost/shared_ptr.hpp>
 #include <windows.h>
 
-#ifdef _WIN32_WINNT
 #if _WIN32_WINNT >= 0x0600
 #include "pbfilter_wfp.h"
 #else
 #include "pbfilter_nt.h"
-#endif
 #endif
 
 #define WM_MAIN_VISIBLE (WM_APP+1)

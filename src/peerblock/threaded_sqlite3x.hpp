@@ -25,13 +25,7 @@
 #include <sqlite3x.hpp>
 #include "threadx.hpp"
 
-class threaded_sqlite3_connection : public sqlite3x::sqlite3_connection, public
-#ifdef _WIN32_WINNT
-	mutex
-#else
-	spinlock
-#endif
-{};
+class threaded_sqlite3_connection : public sqlite3x::sqlite3_connection, public mutex {};
 
 class sqlite3_lock_base : boost::noncopyable {
 private:

@@ -27,14 +27,8 @@
 
 using namespace std;
 
-#if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0501
 static const LPCTSTR g_pgmutex_name=_T("Global\\PeerGuardian2");
 static const LPCTSTR g_pbmutex_name=_T("Global\\PeerBlock");
-#else
-static const LPCTSTR g_pgmutex_name=_T("PeerGuardian2");
-static const LPCTSTR g_pbmutex_name=_T("PeerBlock");
-#define SM_SERVERR2             89
-#endif
 
 #include "TraceLog.h"
 TraceLog g_tlog;
@@ -89,8 +83,6 @@ static bool CheckOS() {
 		strOsName = _T("Windows Server 2003");
 	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 1 )
 		strOsName = _T("Windows XP");
-	else if ( osv.dwMajorVersion == 5 && osv.dwMinorVersion == 0 )
-		strOsName = _T("Windows 2000");
 	else
 		strOsName = boost::str(tformat(_T("UNKNOWN OS %1%.%2%")) % osv.dwMajorVersion % osv.dwMinorVersion );
 
@@ -164,7 +156,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		return -1;
 	}
 
-#ifdef _WIN32_WINNT
 	// PeerBlock requires Admin Mode in order to load the pbfilter.sys driver
 	if(!IsUserAnAdmin())
 	{
@@ -173,7 +164,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		return -1;
 	}
 	TRACES("User running as Admin");
-#endif
 
 	// If PeerGuardian2 is already running, warn the user and then exit.
 	HANDLE pgmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pgmutex_name);

@@ -67,10 +67,8 @@ public:
 		}
 
 		SendMessage(progress, PBM_SETPOS, 1000, 0);
-
-#ifdef _WIN32_WINNT
 		AnimateWindow(hwnd, 200, AW_BLEND|AW_HIDE);
-#endif
+
 		TRACEI("[LoadingThread] [operator()]  < Leaving routine.");
 		EndDialog(hwnd, ret);
 	}

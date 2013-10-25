@@ -86,9 +86,9 @@ public:
 
 		EnterCriticalSection(&cs);
 	}
-#ifdef _WIN32_WINNT
+
 	bool tryenter() { return TryEnterCriticalSection(&cs)!=0; }
-#endif
+
 	void leave()
 	{
 		//TCHAR chBuf[256];
@@ -115,11 +115,9 @@ private:
 			locked=true;
 		}
 
-#ifdef _WIN32_WINNT
 		bool tryenter() {
 			return (locked=m.tryenter());
 		}
-#endif
 
 		void leave() {
 			m.leave();
@@ -140,14 +138,12 @@ public:
 		}
 	};
 
-#ifdef _WIN32_WINNT
 	class scoped_try_lock : public lock {
 	public:
 		scoped_try_lock(mutex &m, bool locked=true) : lock(m) {
 			if(locked) this->tryenter();
 		}
 	};
-#endif
 };
 
 class spinlock {

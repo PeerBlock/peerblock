@@ -93,20 +93,14 @@ static BOOL Splash_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	SendDlgItemMessage(hwnd, IDC_PICTURE, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bitmap);
 
-#ifdef _WIN32_WINNT
 	SetTimer(hwnd, DESTROY_TIMER, 1000, NULL);
-#else
-	SetTimer(hwnd, DESTROY_TIMER, 1500, NULL);
-#endif
 
 	return FALSE;
 }
 
 static void Splash_OnTimer(HWND hwnd, UINT id) {
 	if(id==DESTROY_TIMER) {
-#ifdef _WIN32_WINNT
 		AnimateWindow(hwnd, 500, AW_HIDE|AW_BLEND);
-#endif
 		EndDialog(hwnd, 0);
 	}
 }

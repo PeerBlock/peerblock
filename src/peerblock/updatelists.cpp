@@ -29,15 +29,15 @@ using namespace std;
 #include "tracelog.h"
 extern TraceLog g_tlog;
 
-#ifdef _WIN32_WINNT
 #ifdef _WIN64
-// nt x64 build
+// x64 build
 #define BUILDTYPE 4
 #else
-// nt build
+// Win32 build
 #define BUILDTYPE 3
 #endif
-#else
+
+/* old BUILDTYPES, not used
 #ifdef _WIN64
 // 9x x64 build
 #define BUILDTYPE 2
@@ -45,7 +45,7 @@ extern TraceLog g_tlog;
 // 9x build
 #define BUILDTYPE 1
 #endif
-#endif
+*/
 
 #define BUILDSTR STRINGIFY(BUILDTYPE) STRINGIFY(BUILDDATE) STRINGIFY(PB_VER_BUILDNUM)
 

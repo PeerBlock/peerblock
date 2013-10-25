@@ -26,15 +26,8 @@
 #include "tstring.h"
 
 inline tstring LoadString(UINT id) {
-#ifdef _WIN32_WINNT
 	TCHAR *str = NULL;
 	int len = ::LoadString(GetModuleHandle(NULL), id, (TCHAR*)&str, 0);
 
 	return tstring(str ? str : _T(""), len);
-#else
-	TCHAR buf[1024] = {0};
-	int len = ::LoadString(GetModuleHandle(NULL), id, buf, 1024);
-
-	return tstring(buf, len);
-#endif
 }

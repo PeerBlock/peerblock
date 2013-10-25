@@ -151,7 +151,6 @@ public:
 	}
 
 	static void move(const path &from, const path &to, bool replace=false) {
-#ifdef _WIN32_WINNT
 		if(!MoveFileEx(from.buf, to.buf, replace?MOVEFILE_REPLACE_EXISTING:0))
 		{
 			TCHAR chBuf[1024];
@@ -159,16 +158,6 @@ public:
 			TRACEERR("[path] [move]", chBuf, GetLastError());
 			throw path_error("MoveFileEx");
 		}
-#else
-		if(replace && exists(to)) remove(to);
-		if(!MoveFile(from.buf, to.buf))
-		{
-			TCHAR chBuf[1024];
-			swprintf_s(chBuf, _countof(chBuf), L"Can't move file from:[%s] to:[%s]!!", from.buf, to.buf);
-			TRACEERR("[path] [move]", chBuf, GetLastError());
-			throw path_error("MoveFile");
-		}
-#endif
 	}
 
 	static void copy(const path &from, const path &to, bool replace=false)

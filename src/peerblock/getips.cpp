@@ -52,9 +52,6 @@ void GetLocalIps(set<unsigned int> &ips, unsigned int types) {
 
 		if(GetAdaptersInfo(info, &buflen)==ERROR_SUCCESS) {
 			for(IP_ADAPTER_INFO *iter=info; iter!=NULL; iter=iter->Next) {
-#if !defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0501
-				if(types&LOCALIP_ADAPTER) PushIps(ips, &iter->IpAddressList);
-#endif
 				if(types&LOCALIP_GATEWAY) PushIps(ips, &iter->GatewayList);
 				if(iter->DhcpEnabled && types&LOCALIP_DHCP) PushIps(ips, &iter->DhcpServer);
 			}
@@ -62,26 +59,6 @@ void GetLocalIps(set<unsigned int> &ips, unsigned int types) {
 		free(info);
 	}
 
-#if defined(_WIN32_WINNT)
-#if _WIN32_WINNT == 0x0500
-	buflen=0;
-	if(types&LOCALIP_DNS && GetInterfaceInfo(NULL, &buflen)==ERROR_INSUFFICIENT_BUFFER) {
-		IP_INTERFACE_INFO *info=(IP_INTERFACE_INFO*)malloc(buflen);
-
-		if(GetInterfaceInfo(info, &buflen)==NO_ERROR) {
-			for(long i=0; i<info->NumAdapters; i++) {
-				DWORD dnsbuflen=0;
-				if(DnsQueryConfig(DnsConfigDnsServerList, FALSE, info->Adapter[i].Name, NULL, NULL, &dnsbuflen)==NO_ERROR) {
-					unsigned int *dnsips=(unsigned int*)malloc(dnsbuflen);
-					if(DnsQueryConfig(DnsConfigDnsServerList, FALSE, info->Adapter[i].Name, NULL, dnsips, &dnsbuflen)==NO_ERROR)
-						for(DWORD j=0; j<dnsips[0]; j++) ips.insert(ntohl(dnsips[j+1]));
-					free(dnsips);
-				}
-			}
-		}
-		free(info);
-	}
-#elif _WIN32_WINNT >= 0x0501
 	if(types&LOCALIP_ADAPTER || types&LOCALIP_DNS) {
 		buflen=0;
 		DWORD flags=GAA_FLAG_SKIP_ANYCAST|GAA_FLAG_SKIP_FRIENDLY_NAME|GAA_FLAG_SKIP_MULTICAST;
@@ -114,6 +91,4 @@ void GetLocalIps(set<unsigned int> &ips, unsigned int types) {
 			free(addresses);
 		}
 	}
-#endif
-#endif
 }

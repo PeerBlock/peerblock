@@ -644,10 +644,8 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	SetTimer(hwnd, TIMER_BLINKTRAY, 500, NULL);
 	SetTimer(hwnd, TIMER_PROCESSDB, 600000, NULL);
 
-	#ifdef _WIN32_WINNT
 	if(g_config.WindowHidden)
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
-	#endif
 
 	if (g_config.UpdateAtStartup && g_config.LastUpdate < g_config.LastStarted )
 	{
@@ -1118,11 +1116,9 @@ static void Main_OnVisible(HWND hwnd, BOOL visible)
 		g_config.WindowHidden=true;
 		TRACEV("[Main_OnVisible]    set g_config.WindowHidden to [TRUE]");
 
-	#ifdef _WIN32_WINNT
 		TRACEI("[Main_OnVisible]    about to SetProcessWorkingSetSize");
 		SetProcessWorkingSetSize(GetCurrentProcess(), (size_t)-1, (size_t)-1);
 		TRACEV("[Main_OnVisible]    finished with SetProcessWorkingSetSize");
-	#endif
 	}
 	TRACEI("[Main_OnVisible]  < Leaving routine.");
 

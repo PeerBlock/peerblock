@@ -28,12 +28,10 @@
 #include <windows.h>
 #include "threaded_sqlite3x.hpp"
 
-#ifdef _WIN32_WINNT
 #if _WIN32_WINNT >= 0x0600
 #include "pbfilter_wfp.h"
 #else
 #include "pbfilter_nt.h"
-#endif
 #endif
 
 #define WM_LOG_HOOK         (WM_APP+1)

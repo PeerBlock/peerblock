@@ -3,8 +3,8 @@ Welcome to PeerBlock!
 
 Platform Support
 ----------------
-PeerBlock currently supports Windows 2000, XP, 2003, Vista, 2008, and 7 in
-32-bit and 64-bit.
+PeerBlock currently supports Windows XP, 2003, Vista, 2008, 7, 8 and 8.1
+in 32-bit and 64-bit.
 
 
 Source Code

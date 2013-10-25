@@ -81,12 +81,7 @@
 #include <windowsx.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#ifdef _WIN32_WINNT
-#if _WIN32_WINNT == 0x0500
-#include <windns.h>
-#endif
 #include <winioctl.h>
-#endif
 #include <iphlpapi.h>
 #include <olectl.h>
 #include <ole2.h>
@@ -109,7 +104,6 @@ extern "C" {
 #include "tstring.h"
 #include "char_convert.h"
 
-#ifdef _WIN32_WINNT
 #include <filter.h>
 #include "win32_error.h"
 #include "driver.h"
@@ -117,7 +111,6 @@ extern "C" {
 #include "pbfilter_wfp.h"
 #else
 #include "pbfilter_nt.h"
-#endif
 #endif
 
 #include "loadstring.h"
