@@ -83,11 +83,12 @@ static void EditList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 
 				StaticList *l;
 
-				if(l=dynamic_cast<StaticList*>(*list))
+				if(l=dynamic_cast<StaticList*>(*list)) {
 					if(l->File!=file) {
 						l->File=file;
 						g_ret|=LISTS_NEEDRELOAD;
 					}
+				}
 				else {
 					delete *list;
 					*list=l=new StaticList;
