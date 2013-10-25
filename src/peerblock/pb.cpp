@@ -64,7 +64,9 @@ static bool CheckOS() {
 
 	tstring strOsName;
 
-	if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 2 && osv.wProductType == VER_NT_WORKSTATION )
+	if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 3 && osv.wProductType == VER_NT_WORKSTATION )
+		strOsName = _T("Windows 8.1");
+	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 2 && osv.wProductType == VER_NT_WORKSTATION )
 		strOsName = _T("Windows 8");
 	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 2 && osv.wProductType != VER_NT_WORKSTATION )
 		strOsName = _T("Windows 8 Server");
