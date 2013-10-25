@@ -90,7 +90,7 @@ void pbfilter_base::setblock(bool block)
 	if(block != m_block)
 	{
 		if (block)
-			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [true]")
+			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [true]");
 		else
 			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [false]");
 

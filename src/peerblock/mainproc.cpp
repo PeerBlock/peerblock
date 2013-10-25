@@ -840,7 +840,7 @@ static void Main_ProcessDb()
 				path::remove(pathLog);
 				g_tlog.StartLogging();
 				if (g_config.CleanupType==ArchiveDelete)
-					TRACES("[mainproc] [Main_ProcessDb]    Archived & deleted history.db and peerblock.log files")
+					TRACES("[mainproc] [Main_ProcessDb]    Archived & deleted history.db and peerblock.log files");
 				else
 					TRACES("[mainproc] [Main_ProcessDb]    Deleted history.db and peerblock.log files");
 			}
