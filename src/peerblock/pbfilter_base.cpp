@@ -89,17 +89,19 @@ void pbfilter_base::setblock(bool block)
 
 	if(block != m_block)
 	{
-		if (block)
+		if (block) {
 			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [true]");
-		else
+		}
+		else {
 			TRACEI("[pbfilter_base] [setblock]    resetting m_block to: [false]");
+		}
 
 		m_block = block;
 		int data = block ? 1 : 0;
 
-		TRACEI("[pbfilter_base] [setblock]    sending block request to driver...")
+		TRACEI("[pbfilter_base] [setblock]    sending block request to driver...");
 		DWORD ret = m_filter.write(IOCTL_PEERBLOCK_HOOK, &data, sizeof(data));
-		TRACEI("[pbfilter_base] [setblock]    ...block request sent")
+		TRACEI("[pbfilter_base] [setblock]    ...block request sent");
 		if(ret != ERROR_SUCCESS)
 		{
 			TRACEERR("[pbfilter_base] [setblock]", L"sending block request to driver", ret);
@@ -108,7 +110,7 @@ void pbfilter_base::setblock(bool block)
 	}
 	else
 	{
-		TRACEI("[pbfilter_base] [setblock]    block already set to that requested, ignoring request")
+		TRACEI("[pbfilter_base] [setblock]    block already set to that requested, ignoring request");
 	}
 
 	TRACEI("[pbfilter_base] [setblock]    mutex leaving scope; releasing lock");
