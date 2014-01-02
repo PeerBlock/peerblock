@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -554,6 +554,11 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 				GetClientRect(hwnd, &rc);
 				SendMessage(hwnd, WM_SIZE, 0, MAKELONG(rc.right-rc.left, rc.bottom-rc.top));
 			} break;
+
+            case WM_REFRESH_AUTOUPDATE: {
+                SetDlgItemInt(hwnd, IDC_AUTOUPDATETIME, g_config.UpdateInterval, FALSE);
+            } break;
+
 			HANDLE_MSG(hwnd, WM_SIZE, SettingsProc_OnSize);
 		}
 		return 0;

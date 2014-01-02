@@ -456,6 +456,21 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,195,280,50,14
 END
 
+IDD_LISTUPDATEERRORWIN DIALOGEX 0, 0, 250, 150
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_CAPTION
+CAPTION "List Update Error Detected"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "TBD: Error text goes here",IDC_STATIC,5,5,240,100
+    LTEXT           "TBD: List of errors goes here",IDC_ATEXT,5,115,240,8
+    CONTROL         "Update lists only once per week",IDC_UPDATEPB7DAYS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,88,240,12
+    CONTROL         "Do not display this error in the future",IDC_IGNOREERR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,100,240,12
+    PUSHBUTTON      "More &Info",IDC_MOREINFO,5,130,50,14
+    PUSHBUTTON      "&Subscribe",IDC_IBLSUBSCRIBE,60,130,50,14
+    PUSHBUTTON      "&Renew",IDC_IBLRENEW,60,130,50,14
+    PUSHBUTTON      "&OK",IDOK,193,130,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -632,6 +647,14 @@ BEGIN
         VERTGUIDE, 12
         VERTGUIDE, 113
         VERTGUIDE, 226
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_LISTUPDATEERRORWIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 338
         TOPMARGIN, 5
         BOTTOMMARGIN, 176
     END
@@ -883,6 +906,9 @@ BEGIN
     IDS_UNCAUGHT            "Uncaught exception"
     IDS_PBUPDATE            "Update Available"
     IDS_PBUPDATETEXT        "There is an update available for PeerBlock.\r\nWould you like to go there now?"
+    IDS_LISTUPDATEERRORS    "Error detected during list-update"
+    IDS_LISTUPDATEERRORSTEXT
+                            "We discovered one or more errors while updating lists: %1%."
 END
 
 STRINGTABLE
@@ -926,6 +952,7 @@ BEGIN
     IDS_SUBSCRIPTIONREQUIRED "Subscription required"
     IDS_NOSUCHURL           "Invalid list specified"
     IDS_TOOMANYFAILS        "Too many incorrect sign-ins"
+    IDS_UPGRADEREQUIRED     "New PeerBlock version required"
     IDS_DNLISTFAILEDVERIFY  "List verification failed: 0 elements"
     IDS_CLOSEX              "&Close - %1%"
     IDS_HIDINGTEXT          "PeerBlock has hidden your tray menu.  You will have to re-launch PeerBlock to bring it back."
@@ -986,6 +1013,33 @@ BEGIN
     IDS_UNSIGNEDDRIVERTEXT  "PeerBlock is unable to load the packet filtering driver, due to Windows driver-signing checking.\r\n\r\nException details:\r\n%1%\r\n%2%\r\n%3%\r\nPlease visit http://www.peerblock.com/error for more information and to see what can be done to fix this problem."
     IDS_EXITWHILEBLOCKING   "Are you sure you want to exit PeerBlock?"
     IDS_EXITWHILEBLOCKINGTEXT "PeerBlock has blocked one or more connection attempts in the past %1% seconds.  Exiting PeerBlock would have allowed those connections.\r\n\r\nExit PeerBlock anyway?"
+END
+
+// List-update errors
+STRINGTABLE
+BEGIN
+    IDS_LISTERR_429LONG     "The iblocklist.com servers used to host PeerBlock's lists are limiting list updates for \
+free users to once per week.  You are currently exceeding that limit, and will not be able to download additional list \
+updates until the week expires.  Click the 'More Info' button below to learn more about this.\r\n\r\nIf you have an I-Blocklist \
+Subscription, enter your username and PIN in PeerBlock's \
+'Settings 1' tab to get unlimited list-updates.\r\n\r\nWant an I-Blocklist Subscription?  Click the 'Subscribe' button below!"
+    IDS_LISTERR_426LONG     "The version of PeerBlock you are using is no longer supported.  Please install a current version."
+    IDS_LISTERR_401LONG     "Your I-Blocklist username and/or PIN are not correct.\r\n\r\nPlease verify this information \
+in the PeerBlock's 'Settings 1' tab against the email you received from I-Blocklist.  If you have continued problems \
+please check your account settings at www.iblocklist.com."
+    IDS_LISTERR_419LONG     "Your I-Blocklist Subscription has expired.\r\n\r\nPlease click the 'Renew' button below to go to the \
+iblocklist.com site so you can renew your subscription.\r\n\r\nIf you no longer wish to be an I-Blocklist Subscriber, you should \
+clear out your I-Blocklist Subscription information from PeerBlock's 'Settings 1' tab."
+    IDS_LISTERR_402LONG     "One or more of your lists requires an I-Blocklist Subscription.\r\n\r\nPlease click the \
+'Subscribe' button below to go to the iblocklist.com site, from which you can purchase a subscription.\r\n\r\nIf you do not \
+wish to subscribe to I-Blocklist, you should remove the offending lists from PeerBlock's 'List Manager'."
+    IDS_LISTERR_404LONG     "One or more of your list URLs cannot be found.\r\n\r\nThe list URL may have changed, or \
+may no longer exist.  Please verify the list URL in PeerBlock's 'List Manager'."
+    IDS_LISTERR_420LONG     "Your machine has had too many incorrect login attempts recently.  Please try again later.\r\n\r\n\
+You should also verify your I-Blocklist Subscription username and PIN in PeerBlock's 'Settings 1' tab against the email you \
+received from I-Blocklist.  If you have continued problems, please check your account settings at www.iblocklist.com/login."
+    IDS_LISTERR_UNKNOWNLONG "Something very strange occurred!\r\n\r\nIt's unclear exactly what is happening, but \
+PeerBlock is currently unable to download one or more of your list URLs."
 END
 
 // List sanity-checking messages

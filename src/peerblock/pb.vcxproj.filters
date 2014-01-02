@@ -126,6 +126,9 @@
     <ClCompile Include="zipfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="listupdateerrorwin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aboutproc.h">
@@ -267,6 +270,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zipfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="listupdateerrorwin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
