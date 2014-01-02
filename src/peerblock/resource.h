@@ -220,6 +220,18 @@
 #define IDS_SUBSCRIPTIONREQUIRED        274
 #define IDS_NOSUCHURL                   275
 #define IDS_TOOMANYFAILS                276
+#define IDS_LISTUPDATEERRORS            277
+#define IDS_LISTUPDATEERRORSTEXT        278
+#define IDD_LISTUPDATEERRORWIN          279
+#define IDS_LISTERR_429LONG             280
+#define IDS_LISTERR_426LONG             281
+#define IDS_UPGRADEREQUIRED             282
+#define IDS_LISTERR_401LONG             283
+#define IDS_LISTERR_419LONG             284
+#define IDS_LISTERR_402LONG             285
+#define IDS_LISTERR_404LONG             286
+#define IDS_LISTERR_420LONG             287
+#define IDS_LISTERR_UNKNOWNLONG         288
 
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002
@@ -381,6 +393,11 @@
 #define IDS_SETTINGS_SECOND             1211
 #define IDC_IBLUSER                     1212
 #define IDC_IBLPIN                      1213
+#define IDC_MOREINFO                    1214
+#define IDC_IBLSUBSCRIBE                1215
+#define IDC_UPDATEPB7DAYS               1216
+#define IDC_IGNOREERR                   1217
+#define IDC_IBLRENEW                    1218
 
 #define ID_TRAY_PEERBLOCK               40001
 #define ID_TRAY_ENABLED                 40002
@@ -411,6 +428,7 @@
 
 // PeerBlock window messages
 #define WM_PORTSETTINGSCHANGE           (WM_APP+1)
+#define WM_REFRESH_AUTOUPDATE           (WM_APP+2)
 
 // Next default values for new objects
 // 

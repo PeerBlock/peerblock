@@ -24,6 +24,8 @@
 #include "resource.h"
 #include "versioninfo.h"
 
+#include "listupdateerrorwin.h"
+
 using namespace std;
 
 #include "tracelog.h"
@@ -271,6 +273,8 @@ public:
 		unsigned short total=0;
 		bool updatepb=false;
 		bool updatelists=false;
+
+		set<int> errors;
 
 		if(g_config.UpdatePeerBlock) total+=1;
 		if(g_config.UpdateLists)
@@ -807,6 +811,7 @@ public:
 										// user entered incorrect username/pin
 										TRACEI("[UpdateThread] [_Process]    INCORRECT AUTH; code:[401]");
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -824,6 +829,7 @@ public:
 										// this is a subscription-only list, and the user is not a subscriber
 										TRACEI("[UpdateThread] [_Process]    SUBSCRIPTION REQUIRED; code:[402]");
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -841,6 +847,7 @@ public:
 										// this list-url doesn't exist
 										TRACEI("[UpdateThread] [_Process]    NO SUCH URL; code:[404]");
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -858,6 +865,7 @@ public:
 										// subscription expired, need to renew
 										TRACEI("[UpdateThread] [_Process]    SUBSCRIPTION EXPIRED; code:[419]");
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -875,11 +883,30 @@ public:
 										// user has tried to auth too many times without success
 										TRACEI("[UpdateThread] [_Process]    TOO MANY FAILS; code:[420]");
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
-											TRACEV("[UpdateThread] [_Process]    found list; TOO MANY FAILS;");
+											TRACEV("[UpdateThread] [_Process]    found list; TOO MANY FAILS");
 											const tstring str=LoadString(IDS_TOOMANYFAILS);
+
+											lvi.iItem=data->index;
+											lvi.iSubItem=2;
+											lvi.pszText=(LPTSTR)str.c_str();
+											ListView_SetItem(list, &lvi);
+										}
+									}
+									else if(code==426)
+									{
+										// this is a no-longer-supported version of PeerBlock
+										TRACEI("[UpdateThread] [_Process]    UPGRADE REQUIRED; code:[426]");
+										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
+
+										if(list)
+										{
+											TRACEV("[UpdateThread] [_Process]    found list; UPGRADE REQUIRED");
+											const tstring str=LoadString(IDS_UPGRADEREQUIRED);
 
 											lvi.iItem=data->index;
 											lvi.iSubItem=2;
@@ -892,6 +919,7 @@ public:
 										// user is trying to update too frequently
 										TRACEI("[UpdateThread] [_Process]    UPDATE LIMIT EXCEEDED; code:[429]");
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -910,6 +938,7 @@ public:
 											_T("[UpdateThread] [_Process]    code >= 300; code:[%1%]")) % code );
 										TRACEBUFE(strBuf);
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -930,6 +959,7 @@ public:
 											_T("[UpdateThread] [_Process]    code > 200, code < 300; code:[%1%]")) % code );
 										TRACEBUFE(strBuf);
 										if(data->list) data->list->FailedUpdate=true;
+										errors.insert(code);
 
 										if(list)
 										{
@@ -1105,6 +1135,12 @@ public:
 					SendMessage(hwnd, WM_CLOSE, 0, 0);
 				}
 			}
+		}
+
+		// if any errors were detected, pop up the error window
+		if (!errors.empty()) 
+		{
+            ListUpdateErrorWin(hwnd, errors);
 		}
 
 		TRACEV("[UpdateThread] [_Process]  < Leaving routine.");

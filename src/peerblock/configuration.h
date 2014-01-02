@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -202,6 +202,7 @@ struct Configuration {
 	unsigned int HistoryCheckInterval; // number to blocks before checking whether to archive or not
 	tstring IblUsername;    // I-Blocklist Subscription username
 	tstring IblPin;         // I-Blocklist Subscription PIN
+    bool IgnoreListUpdateLimit;     // true to ignore 429 errors during list-update checking
 
 	bool TracelogEnabled;
 	int TracelogLevel;

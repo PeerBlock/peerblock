@@ -304,6 +304,7 @@
     <ClCompile Include="listproc.cpp" />
     <ClCompile Include="lists.cpp" />
     <ClCompile Include="listsproc.cpp" />
+    <ClCompile Include="listupdateerrorwin.cpp" />
     <ClCompile Include="listurls.cpp" />
     <ClCompile Include="loadingproc.cpp" />
     <ClCompile Include="logproc.cpp" />
@@ -363,6 +364,7 @@
     <ClInclude Include="listproc.h" />
     <ClInclude Include="lists.h" />
     <ClInclude Include="listsproc.h" />
+    <ClInclude Include="listupdateerrorwin.h" />
     <ClInclude Include="listurls.h" />
     <ClInclude Include="loadingproc.h" />
     <ClInclude Include="loadstring.h" />

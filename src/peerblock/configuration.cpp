@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -32,7 +32,7 @@ extern TraceLog g_tlog;
 Configuration g_config;
 
 Configuration::Configuration() :
-	Block(true), AllowLocal(true), UpdatePeerBlock(true),
+	Block(true), AllowLocal(true), UpdatePeerBlock(true), IgnoreListUpdateLimit(false),
 	UpdateLists(true), UpdateAtStartup(true), ShowSplash(false), WindowHidden(false), UpdateInterval(2),
 	LogSize(12), LastUpdate(0), LastArchived(0), LastStarted(0), CleanupInterval(7), LogAllowed(true),
 	LogBlocked(true), ShowAllowed(false), CacheCrc(0), UpdateCountdown(10), RecentBlockWarntime(60),
@@ -645,6 +645,7 @@ bool Configuration::Load()
 		GetChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
 		GetChild(updates, "UpdateInterval", this->UpdateInterval);
 		GetChild(updates, "UpdateCountdown", this->UpdateCountdown);
+		GetChild(updates, "IgnoreListUpdateLimit", this->IgnoreListUpdateLimit);
 
 		GetChild(updates, "UpdateProxy", this->UpdateProxy);
 		if(const TiXmlElement *proxy=updates->FirstChildElement("UpdateProxy")) {
@@ -965,6 +966,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(updates, "UpdateAtStartup", this->UpdateAtStartup);
 		InsertChild(updates, "UpdateInterval", this->UpdateInterval);
 		InsertChild(updates, "UpdateCountdown", this->UpdateCountdown);
+		InsertChild(updates, "IgnoreListUpdateLimit", this->IgnoreListUpdateLimit);
 
 		{
 			TiXmlElement *proxy=InsertChild(updates, "UpdateProxy", this->UpdateProxy);
