@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -111,10 +111,11 @@ private:
 	//
 	//  preconnect_func()
 	//
-	//    - Called by list::save()
+	//    - Called by ???
 	//
 	/// <summary>
-	///   Writes our list out to binary "p2b" file.
+	///   Auto-allows the specified IP address, so that we don't accidentally block ourselves from
+    ///   being allowed to check for updates.
 	/// </summary>
 	//
 	static void preconnect_func(void *clientp, sockaddr *addr, int addrlen) {
@@ -441,7 +442,8 @@ public:
 						tstring url(g_config.DynamicLists[i].Url);
 						if (!g_config.IblUsername.empty() && !g_config.IblPin.empty())
 						{
-							if (string::npos != url.find(_T("http://list.iblocklist.com/?list="))
+							if ((string::npos != url.find(_T("http://list.iblocklist.com/?list="))
+                                || string::npos != url.find(_T("https://list.iblocklist.com/?list="))) 
 								&& string::npos == url.find(_T("username="))
 								&& string::npos == url.find(_T("id="))
 								&& string::npos == url.find(_T("pin="))
@@ -450,7 +452,8 @@ public:
 								// old style iblocklist.com lists:  http://list.iblocklist.com/?list=tor
 								url += _T("&username=") + g_config.IblUsername + _T("&pin=") + g_config.IblPin;
 							}
-							else if (string::npos != url.find(_T("http://list.iblocklist.com/lists/"))
+							else if ((string::npos != url.find(_T("http://list.iblocklist.com/lists/"))
+                                || string::npos != url.find(_T("https://list.iblocklist.com/lists/")))
 								&& string::npos == url.find(_T("username="))
 								&& string::npos == url.find(_T("id="))
 								&& string::npos == url.find(_T("pin="))
@@ -459,12 +462,30 @@ public:
 								// new ("friendly") style iblocklist.com lists:  http://list.iblocklist.com/lists/atma/atma
 								url += _T("?username=") + g_config.IblUsername + _T("&pin=") + g_config.IblPin;
 							}
-
-							// DEBUG:
-							TCHAR logmsg[512];
-							_stprintf_s(logmsg, _countof(logmsg), _T("[UpdateThread] [_Process]    + subscriber url:[%s]"), url.c_str());
-							TRACEBUFI(logmsg);
 						}
+
+                        if (string::npos != url.find(_T("list.iblocklist.com")))
+                        {
+                            if(g_config.EnsureUniqueId())
+                            {
+                                g_config.Save();
+                            }
+                            if (string::npos != url.find(_T("?")))
+                            {
+                                url += _T("&uid=") + g_config.UniqueId;
+                            } else {
+                                url += _T("?uid=") + g_config.UniqueId;
+                            }
+                            tstring uniqueId = g_config.UniqueId;
+                            if (!fileExists || fileSize == 0)
+                            {
+                                time_t t = time(0); // now
+                                struct tm* now = gmtime(&t);
+                                url += boost::str(tformat(_T("&empty=%04d%02d%02d")) % (now->tm_year + 1900) % (now->tm_mon + 1) % now->tm_mday);
+                            }
+                        }
+
+                        // update this list's URL, in case we modified it
 						data->url=TSTRING_UTF8(url);
 
 						if(!path::exists(data->tempfile.without_leaf())) path::create_directory(data->tempfile.without_leaf());

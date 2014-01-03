@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "versioninfo.h"
+#include "rpc.h"
 
 using namespace std;
 
@@ -423,6 +424,7 @@ bool Configuration::Load()
 	files.push_back(pg2);
 
 	bool loaded = false;
+    bool isDirty = false;
 
 	for(vector<path>::iterator itr = files.begin(); itr != files.end() && !loaded; ++itr)
 	{
@@ -683,6 +685,12 @@ bool Configuration::Load()
 				// keep going
 			}
 		}
+
+        GetChild(updates, "UniqueId", UniqueId);
+        if (EnsureUniqueId()) {
+            // we generated a new unique ID for this, so make sure we save it later on
+            isDirty = true;
+        }
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config messages element");
@@ -799,6 +807,11 @@ bool Configuration::Load()
 		GetChild(ibl, "Username", this->IblUsername);
 		GetChild(ibl, "PIN", this->IblPin);
 	}
+
+    if (isDirty) {
+    	TRACEI("[Configuration] [Load]    config loaded dirty, saving");
+        Save();
+    }
 
 	TRACEI("[Configuration] [Load]  < Leaving routine.");
 	return true;
@@ -967,6 +980,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(updates, "UpdateInterval", this->UpdateInterval);
 		InsertChild(updates, "UpdateCountdown", this->UpdateCountdown);
 		InsertChild(updates, "IgnoreListUpdateLimit", this->IgnoreListUpdateLimit);
+		InsertChild(updates, "UniqueId", this->UniqueId);
 
 		{
 			TiXmlElement *proxy=InsertChild(updates, "UpdateProxy", this->UpdateProxy);
@@ -1087,3 +1101,38 @@ void Configuration::Save(const TCHAR * _filename)
 	TRACEI("[Configuration] [Save]  < Leaving routine.");
 
 } // End of Save()
+
+
+
+//================================================================================================
+//
+//  EnsureUniqueId()
+//
+//    - Called by Configuration::Load(), and when updating lists
+//
+/// <summary>
+///   Generates an anonymous unique id identifying this specific machine.  A server can key off of this to help
+///   prevent a user from getting screwed out of his free weekly update, just because someone else behind his
+///   same public-facing IP already updated this week.  
+/// </summary>
+/// <returns>
+///   True if we generated a new ID, false if not.
+/// </returns>
+//
+bool Configuration::EnsureUniqueId()
+{
+    if (!UniqueId.empty()) {
+        return false;
+    } else {
+        // generate an anonymous id for this machine
+        UUID uuid;
+        TCHAR* buf;
+        UuidCreate(&uuid);
+        UuidToString(&uuid, (RPC_WSTR*)&buf);
+        tstring strBuf = boost::str(tformat(_T("[Configuration] [EnsureUniqueId]    - created new anonymous id: [%1%]")) % buf );
+        TRACEBUFI(strBuf);
+        UniqueId = buf;
+        return true;
+    }
+
+} // End of EnsureUniqueId()

@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -203,6 +203,7 @@ struct Configuration {
 	tstring IblUsername;    // I-Blocklist Subscription username
 	tstring IblPin;         // I-Blocklist Subscription PIN
     bool IgnoreListUpdateLimit;     // true to ignore 429 errors during list-update checking
+    tstring UniqueId;       // anonymous ID for this machine, so that other computers behind the same public-facing IP don't screw this user out of his weekly list-updates
 
 	bool TracelogEnabled;
 	int TracelogLevel;
@@ -220,6 +221,7 @@ struct Configuration {
 	bool Load();
 	void Save(const TCHAR *filename = _T("peerblock.conf"));
 	bool LoadFile(const TCHAR *file, HANDLE *fp, HANDLE *map, const void **view);
+    bool EnsureUniqueId();
 };
 
 template<size_t len>
