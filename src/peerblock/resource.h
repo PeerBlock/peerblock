@@ -232,6 +232,7 @@
 #define IDS_LISTERR_404LONG             286
 #define IDS_LISTERR_420LONG             287
 #define IDS_LISTERR_UNKNOWNLONG         288
+#define IDS_PREVREL681TEXT              289
 
 #define IDC_TABS                        1001
 #define IDC_LIST                        1002

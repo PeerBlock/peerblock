@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2013 PeerBlock, LLC
+	Copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -495,5 +495,16 @@ void PerformPrevRelUpdates(HWND _hwnd)
 		}
 
 	} // end of i-blocklist subscription list-url param cleanup (r653)
+
+
+	//--------------------------------------------------
+	// Inform user about I-Blocklist's list-update limit
+
+	if (prevRelease < 681)
+	{
+		TRACEI("[mainproc] [PerformPrevRelUpdates]    displaying info about I-Blocklist list-update limits (r681)");
+        MessageBox(_hwnd, IDS_PREVREL681TEXT, IDS_PREVREL, MB_ICONINFORMATION|MB_OK);
+
+	} // end of i-blocklist list-update limit info (r681)
 
 }; // End of PerformPrevRelUpdates()
