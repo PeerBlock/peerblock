@@ -1071,6 +1071,12 @@ BEGIN
     IDS_PREVREL341TEXT_BOTH "PeerBlock is updating your History settings to 'Remove every 7 days', with a max size of 100 MB.\r\n\r\nThis should prevent your history file from taking up huge amounts of disk space and prevent certain errors from occurring, but will also limit the amount of blocked/allowed connections PeerBlock will save in your history.  If you would like to change these options they are available on the Settings tab."
     IDS_PREVREL411TEXT_WEBEX "The Bluetack ""Webexploit-Forumspam"" list has been split into two separate lists by the list authors (Bluetack), and is no longer being updated.  PeerBlock is updating your config to use these two new lists instead of the old merged one."
     IDS_PREVREL411TEXT_BOGON "The CompleteWhois Bogon list has been abandoned by its list-author, and has not been updated since March 2009.  PeerBlock is updating your config to use the most frequently updated Bogon list, CIDR Bogon."
+    IDS_PREVREL681TEXT      "Due to the insane amount of list-update bandwidth our users consume each month (over 10 \
+TERAbytes of data!), iblocklist.com - our primary list provider - has been forced to limit free users to only \
+downloading updated lists once per week.\r\n\r\nAnother notice will appear if your PeerBlock installation is being \
+update-limited.  If you have an I-Blocklist Subscription, PeerBlock will be able to update its lists without limit.\r\n\r\n\
+In addition to helping with the costs of bandwidth, I-Blocklist will be sharing all money raised with PeerBlock.  This \
+will help fund continued development of PeerBlock itself, additional lists, and other projects for the community."
 END
 
 #endif    // English (U.S.) resources
