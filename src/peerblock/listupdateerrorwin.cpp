@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2013 PeerBlock, LLC
+	Copyright (C) 2013-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -205,12 +205,13 @@ static void ListUpdateErrorWin_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT c
                     g_config.IgnoreListUpdateLimit = true;
                     g_config.Save();
                 }
-                if (IsDlgButtonChecked(hwnd, IDC_UPDATEPB7DAYS)==BST_CHECKED) {
-                    // update config to only check for updates once per 7 days
-                    g_config.UpdateInterval = 7;
-                    g_config.Save();
-                	SendMessage(g_tabs[2].Tab, WM_REFRESH_AUTOUPDATE, 0, 0);
-                }
+                // removing this for now - don't want to delete it just yet, in case we change our minds
+                //if (IsDlgButtonChecked(hwnd, IDC_UPDATEPB7DAYS)==BST_CHECKED) {
+                //    // update config to only check for updates once per 7 days
+                //    g_config.UpdateInterval = 7;
+                //    g_config.Save();
+                //	SendMessage(g_tabs[2].Tab, WM_REFRESH_AUTOUPDATE, 0, 0);
+                //}
             }
 			EndDialog(hwnd, IDOK);
 		} break;
@@ -319,7 +320,7 @@ static BOOL ListUpdateErrorWin_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lP
         }
 
         // show all necessary controls
-        ShowControl(IDC_UPDATEPB7DAYS);
+        //ShowControl(IDC_UPDATEPB7DAYS);   // removing for now, want to leave it in just in case
         ShowControl(IDC_IGNOREERR);
         ShowControl(IDC_MOREINFO);
         ShowControl(IDC_IBLSUBSCRIBE);
