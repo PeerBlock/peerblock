@@ -463,8 +463,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "TBD: Error text goes here",IDC_STATIC,5,5,240,100
     LTEXT           "TBD: List of errors goes here",IDC_ATEXT,5,115,240,8
-    CONTROL         "Update lists only once per week",IDC_UPDATEPB7DAYS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,88,240,12
-    CONTROL         "Do not display this error in the future",IDC_IGNOREERR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,100,240,12
+    CONTROL         "Do not display this error in the future",IDC_IGNOREERR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,88,240,12
+    CONTROL         "Update lists only once per week",IDC_UPDATEPB7DAYS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,100,240,12
     PUSHBUTTON      "More &Info",IDC_MOREINFO,5,130,50,14
     PUSHBUTTON      "&Subscribe",IDC_IBLSUBSCRIBE,60,130,50,14
     PUSHBUTTON      "&Renew",IDC_IBLRENEW,60,130,50,14
