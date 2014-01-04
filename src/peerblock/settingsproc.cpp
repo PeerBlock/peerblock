@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -121,30 +121,6 @@ INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 					case IDC_MAXHISTORYSIZE:
 						g_config.MaxHistorySize=((unsigned short)GetDlgItemInt(hwnd, IDC_MAXHISTORYSIZE, NULL, FALSE)) * 1000000;
 						break;
-					case IDC_NOTIFY: {
-						BOOL e=(IsDlgButtonChecked(hwnd, IDC_NOTIFY)==BST_CHECKED);
-
-						EnableWindow(GetDlgItem(hwnd, IDC_NOTIFYON), e);
-						EnableWindow(GetDlgItem(hwnd, IDC_BLINKTRAY), e);
-						EnableWindow(GetDlgItem(hwnd, IDC_NOTIFYWINDOW), e);
-
-						if(e) {
-							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
-							const NotifyType t=(i==0)?OnHttpBlock:OnBlock;
-
-							if(IsDlgButtonChecked(hwnd, IDC_BLINKTRAY)==BST_CHECKED)
-								g_config.BlinkOnBlock=t;
-							else g_config.BlinkOnBlock=Never;
-
-							if(IsDlgButtonChecked(hwnd, IDC_NOTIFYWINDOW)==BST_CHECKED)
-								g_config.NotifyOnBlock=t;
-							else g_config.NotifyOnBlock=Never;
-						}
-						else {
-							g_config.BlinkOnBlock=Never;
-							g_config.NotifyOnBlock=Never;
-						}
-					} break;
 					case IDC_SAVE:
 						TRACEI("[settingsproc] [SettingsFirst_DlgProc]    saving configuration, at user request");
 						g_config.Save();
@@ -416,6 +392,30 @@ INT_PTR CALLBACK SettingsSecond_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 					case IDC_UPDATE_AT_STARTUP:
 						g_config.UpdateAtStartup=(IsDlgButtonChecked(hwnd, IDC_UPDATE_AT_STARTUP) == BST_CHECKED);
 						break;
+					case IDC_NOTIFY: {
+						BOOL e=(IsDlgButtonChecked(hwnd, IDC_NOTIFY)==BST_CHECKED);
+
+						EnableWindow(GetDlgItem(hwnd, IDC_NOTIFYON), e);
+						EnableWindow(GetDlgItem(hwnd, IDC_BLINKTRAY), e);
+						EnableWindow(GetDlgItem(hwnd, IDC_NOTIFYWINDOW), e);
+
+						if(e) {
+							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
+							const NotifyType t=(i==0)?OnHttpBlock:OnBlock;
+
+							if(IsDlgButtonChecked(hwnd, IDC_BLINKTRAY)==BST_CHECKED)
+								g_config.BlinkOnBlock=t;
+							else g_config.BlinkOnBlock=Never;
+
+							if(IsDlgButtonChecked(hwnd, IDC_NOTIFYWINDOW)==BST_CHECKED)
+								g_config.NotifyOnBlock=t;
+							else g_config.NotifyOnBlock=Never;
+						}
+						else {
+							g_config.BlinkOnBlock=Never;
+							g_config.NotifyOnBlock=Never;
+						}
+					} break;
 					case IDC_NOTIFYON:
 						if(HIWORD(wParam)==CBN_SELCHANGE) {
 							const int i=ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_NOTIFYON));
