@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -648,7 +648,7 @@ static void CheckForUpdates(HWND hwnd)
 	g_config.Save();
 
 	if(g_filter.get()) {
-		if(ret>0) LoadLists(hwnd);
+		LoadLists(hwnd);
 		UpdateStatus(hwnd);
 	}
 } // End of CheckForUpdates()
@@ -674,7 +674,7 @@ static void Log_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 				SendMessage(hwnd, WM_TIMER, TIMER_UPDATE, 0);
 				g_config.Save();
 			}
-			if(g_filter.get() && ret&LISTS_NEEDRELOAD) LoadLists(hwnd);
+			if(g_filter.get()) LoadLists(hwnd);
 		} break;
 
 		case IDC_UPDATE:
