@@ -49,7 +49,7 @@ IF NOT DEFINED PB_DDK_DIR (
   ECHO Windows DDK path NOT FOUND!
   ECHO Install the Windows DDK and set an environment variable named "PB_DDK_DIR"
   ECHO pointing to the Windows DDK installation path.
-  ECHO Example: C:\WinDDK\6001.18002
+  ECHO Example: C:\WinDDK\7600.16385.1
   GOTO ErrorDetected
 )
 
