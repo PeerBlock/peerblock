@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2013 PeerBlock, LLC
+	Copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -153,16 +153,23 @@ static void EditPorts_OnSize(HWND hwnd, UINT state, int cx, int cy)
 	HWND ports=GetDlgItem(hwnd, IDC_PORTS);
 	HWND defgroup=GetDlgItem(hwnd, IDC_DEFGROUP);
 
-	RECT rc;
-	GetWindowRect(add, &rc);
+	RECT addRect;
+	GetWindowRect(add, &addRect);
+    int buttonWidth = addRect.right - addRect.left;
+    int buttonHeight = addRect.bottom - addRect.top;
+    int padding = 7;
+
+    RECT groupRect;
+    GetWindowRect(defgroup, &groupRect);
+    int groupHeight = groupRect.bottom - groupRect.top; 
 
 	HDWP dwp=BeginDeferWindowPos(8);
 
-	DeferWindowPos(dwp, defgroup, NULL, 7, 5, cx-14, 120, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
-	DeferWindowPos(dwp, ports, NULL, 7, 133, cx-14, cy-21-140-(rc.bottom-rc.top), SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
-	DeferWindowPos(dwp, add, NULL, cx-((rc.right-rc.left+7)*3), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
-	DeferWindowPos(dwp, edit, NULL, cx-((rc.right-rc.left+7)*2), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
-	DeferWindowPos(dwp, remove, NULL, cx-(rc.right-rc.left+7), cy-7-(rc.bottom-rc.top), 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
+	DeferWindowPos(dwp, defgroup, NULL, padding, 5, cx-14, groupHeight, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
+	DeferWindowPos(dwp, ports, NULL, padding, groupHeight+(padding*2), cx-14, cy-groupHeight-(padding*4)-buttonHeight, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER);
+	DeferWindowPos(dwp, add, NULL, cx-((buttonWidth+padding)*3), cy-padding-buttonHeight, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
+	DeferWindowPos(dwp, edit, NULL, cx-((buttonWidth+padding)*2), cy-padding-buttonHeight, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
+	DeferWindowPos(dwp, remove, NULL, cx-(buttonWidth+padding), cy-padding-buttonHeight, 0, 0, SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOSIZE);
 
 	EndDeferWindowPos(dwp);
 }
