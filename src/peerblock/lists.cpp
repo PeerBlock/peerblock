@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "resource.h"
+
+#include <mutex>
 using namespace std;
 
 #include "tracelog.h"
@@ -536,13 +538,25 @@ void LoadLists(HWND parent) {
 	TRACEI("[LoadLists]  > Entering routine.");
 
 	p2p::list block;
+    static std::mutex cacheLock;
 
 	TRACEI("[LoadLists]    generating cache");
-	if(!GenCache(parent, block))
-	{
-		TRACEI("[LoadLists]    loading lists");
-		LoadList(_T("cache.p2b"), block);
-	}
+    {
+        std::lock_guard<std::mutex> lock(cacheLock);
+	    if(!GenCache(parent, block))
+	    {
+		    TRACEI("[LoadLists]    loading lists");
+            try {
+    		    LoadList(_T("cache.p2b"), block);
+            } catch (p2p::p2p_error ex) {
+        	    tstring str=boost::str(tformat(_T("[LoadLists]    error detected while parsing list-cache, will blow away cache.p2b and try again; ex:%1%")) 
+                    % ex.what());
+                TRACEBUFW(str.c_str());
+                path::remove(path::base_dir()/_T("cache.p2b"));
+    		    LoadList(_T("cache.p2b"), block);
+            }
+	    }
+    }
 
 	TRACEI("[LoadLists]    performing random setup");
 	if(block.size()>0) {
