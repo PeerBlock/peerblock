@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "p2p/exception.hpp"
 
 #include <mutex>
 using namespace std;
