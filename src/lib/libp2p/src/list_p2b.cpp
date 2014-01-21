@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -42,7 +42,14 @@ void list::_load_p2b(istream &stream) {
 		!stream.read(buf, sizeof(buf)) ||
 		memcmp(buf, "\xFF\xFF\xFF\xFFP2B", 7) ||
 		!stream.read((char*)&version, sizeof(version))
-	) throw p2p_error("invalid p2b stream");
+	) {
+        std::stringstream ss;
+        ss << "invalid p2b stream (no version) while parsing stream for loading";
+        if (!_loadpath.empty()) {
+            ss << " file:[" + _loadpath + "]";
+        }
+        throw p2p_error(ss.str().c_str());
+    }
 
 	if(version==1 || version==2) {
 		unsigned int start, end;
@@ -52,7 +59,14 @@ void list::_load_p2b(istream &stream) {
 			if(
 				!stream.read((char*)&start, sizeof(start)) ||
 				!stream.read((char*)&end, sizeof(end))
-			) throw p2p_error("invalid p2b stream");
+			) {
+                std::stringstream ss;
+                ss << "invalid p2b stream (name expected) while parsing stream for loading";
+                if (!_loadpath.empty()) {
+                    ss << " file:[" + _loadpath + "]";
+                }
+                throw p2p_error(ss.str().c_str());
+            }
 
 			range r;
 
@@ -75,20 +89,42 @@ void list::_load_p2b(istream &stream) {
 	}
 	else if(version==3) {
 		unsigned int namecount;
-		if(!stream.read((char*)&namecount, sizeof(namecount))) throw p2p_error("invalid p2b stream: name count expected");
+		if(!stream.read((char*)&namecount, sizeof(namecount))) {
+            std::stringstream ss;
+            ss << "invalid p2b stream (name count expected) while parsing V3 stream for loading";
+            if (!_loadpath.empty()) {
+                ss << " file:[" + _loadpath + "]";
+            }
+            throw p2p_error(ss.str().c_str());
+        }
 		namecount=ntohl(namecount);
 
 		boost::scoped_array<wstring> names(new wstring[namecount]);
 
 		for(unsigned int i=0; i<namecount; i++) {
 			string name;
-			if(!getline(stream, name, '\0')) throw p2p_error("invalid p2b stream: name expected");
+			if(!getline(stream, name, '\0')) {
+                std::stringstream ss;
+                ss << "invalid p2b stream (name expected for name "<< i << " of " << namecount << 
+                    ") while parsing V3 stream for loading";
+                if (!_loadpath.empty()) {
+                    ss << " file:[" + _loadpath + "]";
+                }
+                throw p2p_error(ss.str().c_str());
+            }
 
 			utf8_wchar(name, names[i]);
 		}
 
 		unsigned int rangecount;
-		if(!stream.read((char*)&rangecount, sizeof(rangecount))) throw p2p_error("invalid p2b stream: range count expected");
+		if(!stream.read((char*)&rangecount, sizeof(rangecount))) {
+            std::stringstream ss;
+            ss << "invalid p2b stream (range count expected) while parsing V3 stream for loading";
+            if (!_loadpath.empty()) {
+                ss << " file:[" + _loadpath + "]";
+            }
+            throw p2p_error(ss.str().c_str());
+        }
 		rangecount=ntohl(rangecount);
 
 		unsigned int name, start, end;
@@ -98,7 +134,15 @@ void list::_load_p2b(istream &stream) {
 				!stream.read((char*)&name, sizeof(name)) ||
 				!stream.read((char*)&start, sizeof(start)) ||
 				!stream.read((char*)&end, sizeof(end))
-			) throw p2p_error("invalid p2b stream: range expected");
+			) {
+                std::stringstream ss;
+                ss << "invalid p2b stream (range expected for range "<< i << " of " << rangecount << 
+                    ") while parsing V3 stream for loading";
+                if (!_loadpath.empty()) {
+                    ss << " file:[" + _loadpath + "]";
+                }
+                throw p2p_error(ss.str().c_str());
+            }
 
 			name=ntohl(name);
 			start=ntohl(start);
@@ -110,7 +154,14 @@ void list::_load_p2b(istream &stream) {
 			this->insert(r);
 		}
 	}
-	else throw p2p_error("unknown p2b version");
+	else {
+        std::stringstream ss;
+        ss << "invalid p2b stream (unknown p2b version:[" << version << "]) while parsing V3 stream for loading";
+        if (!_loadpath.empty()) {
+            ss << " file:[" + _loadpath + "]";
+        }
+        throw p2p_error(ss.str().c_str());
+    }
 
 } // End of _load_p2b()
 

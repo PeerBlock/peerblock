@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -182,13 +182,25 @@ void list::load(istream_type &stream, file_type type) {
 		this->_load_p2b(stream);
 		break;
 	default:
-		throw invalid_argument("invalid type");
+        {
+            std::stringstream ss;
+            ss << "invalid type:[" << type << "] found while opening stream to load from";
+            if (!_loadpath.empty()) {
+                ss << " file:[" + _loadpath + "]";
+            }
+            throw invalid_argument(ss.str());
+        }
 	}
 }
 
 void list::load(const path_type &file, file_type type) {
+    _loadpath = file;
 	ifstream fs(file.c_str(), ifstream::binary);
-	if(!fs.is_open()) throw runtime_error("unable to open file");
+	if(!fs.is_open()) {
+        std::stringstream ss;
+        ss << "unable to open file:[" << file << "] of type:[" << type << "] to load from";
+        throw runtime_error(ss.str());
+    }
 
 	this->load(fs, type);
 }
@@ -217,8 +229,15 @@ void list::save(ostream_type &stream, file_type type) const {
 		this->_save_p2b(stream);
 		break;
 	default:
+        {
 //			TRACEE("[list] [save]    ERROR: invalid type of file.");
-		throw invalid_argument("invalid type");
+            std::stringstream ss;
+            ss << "invalid type:[" << type << "] found while opening stream to save into";
+            if (!_savepath.empty()) {
+                ss << " file:[" + _savepath + "]";
+            }
+            throw invalid_argument(ss.str());
+        }
 	}
 //	TRACEI("[list] [save]  < Leaving routine.");
 
@@ -226,9 +245,14 @@ void list::save(ostream_type &stream, file_type type) const {
 
 
 
-void list::save(const path_type &file, file_type type) const {
+void list::save(const path_type &file, file_type type) {
+    _savepath = file;
 	ofstream fs(file.c_str(), ofstream::binary);
-	if(!fs.is_open()) throw p2p_error("unable to open file");
+	if(!fs.is_open()) {
+        std::stringstream ss;
+        ss << "unable to open file:[" << file << "] of type:[" << type << "] to save into";
+        throw p2p_error(ss.str().c_str());
+    }
 
 	this->save(fs, type);
 }

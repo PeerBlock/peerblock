@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
+	PeerBlock modifications copyright (C) 2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -26,6 +27,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <utility>
 #include <iostream>

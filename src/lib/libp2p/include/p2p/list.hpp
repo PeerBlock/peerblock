@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2010 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2010-2014 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -54,6 +54,8 @@ public:
 
 private:
 	list_type _ranges;
+    path_type _loadpath;
+    path_type _savepath;
 
 	void _load_p2p(istream_type &stream);
 	void _save_p2p(ostream_type &stream) const;
@@ -93,10 +95,10 @@ public:
 	void load(istream_type &stream, file_type type=file_auto);
 	void load(const path_type &file, file_type type=file_auto);
 	void save(ostream_type &stream, file_type type) const;
-	void save(const path_type &file, file_type type) const;
+	void save(const path_type &file, file_type type);
 
-	list() {}
-	list(const path_type &file, file_type type=file_auto) {
+	list() : _loadpath(""), _savepath("") {}
+	list(const path_type &file, file_type type=file_auto) : _loadpath(file) {
 		this->load(file, type);
 	}
 	list(istream_type &stream, file_type type=file_auto) {
