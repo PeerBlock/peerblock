@@ -59,6 +59,6 @@
 #include <p2p/compact_list.hpp>
 #include <p2p/exception.hpp>
 
-#include "utf8.h"
+#include "p2p/utf8.h"
 
 #endif

@@ -23,7 +23,7 @@
 
 #include <string>
 #include <stdexcept>
-#include "utf8.h"
+#include "p2p/utf8.h"
 
 class mbs_error : public std::runtime_error {
 public:
