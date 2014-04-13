@@ -121,7 +121,7 @@ Name: en; MessagesFile: compiler:Default.isl
 #if defined(VS2010build)
 BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
 #elif defined(VS2013build)
-BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
+BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2013] built on {#installer_build_date}
 #else
 BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}
 #endif
