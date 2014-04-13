@@ -1,4 +1,4 @@
-;  PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
+;  PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -24,6 +24,7 @@
 
 ; Define "VS2010build" based on which build you compiled or use the appropriate batch file
 ;#define VS2010build
+;#define VS2013build
 
 
 #if VER < EncodeVer(5,5,4)
@@ -43,7 +44,7 @@
 ; E.g. 1.0.1+
 ;#define app_ver_short str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
 
-#define copyright            "Copyright © 2009-2013, PeerBlock, LLC"
+#define copyright            "Copyright © 2009-2014, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 #define quick_launch         "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
 #define sse_required
@@ -51,6 +52,8 @@
 
 #if defined(VS2010build)
   #define bindir        = "..\bin10"
+#elif defined(VS2013build)
+  #define bindir        = "..\bin13"
 #else
   #define bindir        = "..\bin"
 #endif
@@ -116,6 +119,8 @@ Name: en; MessagesFile: compiler:Default.isl
 
 [Messages]
 #if defined(VS2010build)
+BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
+#elif defined(VS2013build)
 BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) [MSVC2010] built on {#installer_build_date}
 #else
 BeveledLabel=PeerBlock {#app_ver_short} (r{#PB_VER_BUILDNUM}) built on {#installer_build_date}

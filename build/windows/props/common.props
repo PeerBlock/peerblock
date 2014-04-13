@@ -4,8 +4,10 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <IntDir Condition="'$(PlatformToolsetVersion)'=='110'">$(SolutionDir)bin\obj\$(Configuration)_$(PlatformName)\$(ProjectName)\</IntDir>
     <IntDir Condition="'$(PlatformToolsetVersion)'=='100'">$(SolutionDir)bin10\obj\$(Configuration)_$(PlatformName)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(PlatformToolsetVersion)'=='120'">$(SolutionDir)bin13\obj\$(Configuration)_$(PlatformName)\$(ProjectName)\</IntDir>
     <OutDir Condition="'$(PlatformToolsetVersion)'=='110'">$(SolutionDir)bin\lib\$(Configuration)_$(PlatformName)\</OutDir>
     <OutDir Condition="'$(PlatformToolsetVersion)'=='100'">$(SolutionDir)bin10\lib\$(Configuration)_$(PlatformName)\</OutDir>
+    <OutDir Condition="'$(PlatformToolsetVersion)'=='120'">$(SolutionDir)bin13\lib\$(Configuration)_$(PlatformName)\</OutDir>
     <LinkIncremental Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Debug_(Vista)'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='Release_(Vista)'">false</LinkIncremental>
   </PropertyGroup>
@@ -13,6 +15,8 @@
     <ClCompile>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Lib>
@@ -22,7 +26,7 @@
     <Link>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImageHasSafeExceptionHandlers Condition="'$(PlatformToolsetVersion)'=='110' And '$(Platform)'=='Win32'">false</ImageHasSafeExceptionHandlers>
+      <ImageHasSafeExceptionHandlers Condition="('$(PlatformToolsetVersion)'=='110' or '$(PlatformToolsetVersion)'=='120') And '$(Platform)'=='Win32'">false</ImageHasSafeExceptionHandlers>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <TargetMachine Condition="'$(Platform)'=='Win32'">MachineX86</TargetMachine>
@@ -39,6 +43,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Async</ExceptionHandling>
       <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <ResourceCompile>
