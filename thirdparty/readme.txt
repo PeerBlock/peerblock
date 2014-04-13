@@ -23,7 +23,7 @@ License:  zlib License
 Website:  http://www.winimage.com/zLibDll/minizip.html
 Notes:    We currently include only the needed files.
 
-SQLite version 3.7.17
+SQLite version 3.8.4.3
 License:  Public Domain
 Website:  http://www.sqlite.org
 
