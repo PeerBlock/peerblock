@@ -50,6 +50,7 @@
 #include <algorithm>
 #include <functional>
 #include <stdexcept>
+#pragma warning(push, 3)
 #include <boost/crc.hpp>
 #include <boost/bind.hpp>
 #include <boost/cstdint.hpp>
@@ -63,9 +64,8 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#pragma warning(disable:4244 4267)
 #include <boost/format.hpp>
-#pragma warning(default:4244 4267)
+#pragma warning(pop)
 #include <p2p/list.hpp>
 #include <p2p/range.hpp>
 
