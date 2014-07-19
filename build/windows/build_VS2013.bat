@@ -143,7 +143,7 @@ ECHO Compiling installer...
 ECHO.
 
 "%InnoSetupPath%\iscc.exe" /SStandard="cmd /c "..\..\..\bin\windows\sign_driver.cmd" $f "^
- /Q /O"..\..\..\distribution" "setup.iss" 
+ /Q /O"..\..\..\distribution" "setup.iss" /DVS2013build
 
 IF %ERRORLEVEL% NEQ 0 (
   GOTO ErrorDetected
