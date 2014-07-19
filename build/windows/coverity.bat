@@ -8,7 +8,7 @@ SETLOCAL
 
 PUSHD %~dp0
 
-IF NOT DEFINED COVDIR SET "COVDIR=H:\progs\thirdparty\cov-analysis-win64-7.0.2"
+IF NOT DEFINED COVDIR SET "COVDIR=H:\progs\thirdparty\cov-analysis-win64-7.5.0"
 IF DEFINED COVDIR IF NOT EXIST "%COVDIR%" (
   ECHO.
   ECHO ERROR: Coverity not found in "%COVDIR%"
@@ -17,7 +17,7 @@ IF DEFINED COVDIR IF NOT EXIST "%COVDIR%" (
 SET "PB_DDK_DIR=H:\WinDDK\7600.16385.1"
 
 
-CALL "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat" x86
+CALL "%VS120COMNTOOLS%vsvars32.bat"
 IF %ERRORLEVEL% NEQ 0 (
   ECHO vcvarsall.bat call failed.
   GOTO End
@@ -33,9 +33,10 @@ IF EXIST "Peerblock.tgz"  DEL "Peerblock.tgz"
 
 :Main
 SET MSBUILD_SWITCHES=/nologo /consoleloggerparameters:Verbosity=minimal /maxcpucount^
- /nodeReuse:true /target:Rebuild /property:Configuration="Release_(Vista)";Platform=Win32
+ /nodeReuse:true /target:Rebuild /property:Configuration="Release_(Vista)";Platform=%1
 
-"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock.sln" %MSBUILD_SWITCHES%
+"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock.sln" %MSBUILD_SWITCHES%Win32
+"%COVDIR%\bin\cov-build.exe" --dir cov-int MSBuild "PeerBlock.sln" %MSBUILD_SWITCHES%x64
 
 
 :tar
