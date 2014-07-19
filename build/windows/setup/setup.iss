@@ -84,6 +84,8 @@ InfoBeforeFile=readme_before.rtf
 OutputDir=.
 #if defined(VS2010build)
 OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}_VS2010
+#elif defined(VS2013build)
+OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}_VS2013
 #else
 OutputBaseFilename=PeerBlock-Setup_v{#app_ver_short}_r{#PB_VER_BUILDNUM}
 #endif

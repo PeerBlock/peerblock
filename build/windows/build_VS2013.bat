@@ -203,12 +203,12 @@ COPY /Y /V "..\..\doc\readme.rtf"       "temp_zip\"
 
 PUSHD "temp_zip"
 START "" /B /WAIT "..\..\..\bin\windows\7za.exe" a -tzip -mx=9^
- "PeerBlock_r%buildnum%__%1_%~2.zip" "peerblock.exe" "pbfilter.sys"^
+ "PeerBlock_r%buildnum%__%1_%~2_VS2013.zip" "peerblock.exe" "pbfilter.sys"^
  "license.txt" "readme.rtf" >NUL
 IF %ERRORLEVEL% NEQ 0 GOTO ErrorDetected
 
-ECHO PeerBlock_r%buildnum%__%1_%~2.zip created successfully!
-MOVE /Y "PeerBlock_r%buildnum%__%1_%~2.zip" "..\..\..\distribution" >NUL
+ECHO PeerBlock_r%buildnum%__%1_%~2_VS2013.zip created successfully!
+MOVE /Y "PeerBlock_r%buildnum%__%1_%~2_VS2013.zip" "..\..\..\distribution" >NUL
 ECHO.
 POPD
 IF EXIST "temp_zip" RD /S /Q "temp_zip"
