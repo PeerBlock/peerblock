@@ -59,9 +59,10 @@ BOOL PreventSetUnhandledExceptionFilter()
 	if(pOrgEntry == NULL) return FALSE;
 
 	DWORD dwOldProtect = 0;
-	SIZE_T jmpSize = 5;
 #ifdef _M_X64
-	jmpSize = 13;
+	SIZE_T jmpSize = 13;
+#else
+	SIZE_T jmpSize = 5;
 #endif
 	BOOL bProt = VirtualProtect(pOrgEntry, jmpSize, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 	BYTE newJump[20];
