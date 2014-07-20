@@ -345,9 +345,7 @@ static BOOL History_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);
 
-#pragma warning(disable:4244)
 	g_tabproc=(WNDPROC)(LONG_PTR)SetWindowLongPtr(tabs, GWLP_WNDPROC, (LONG_PTR)Tabs_WndProc);
-#pragma warning(default:4244)
 
 	TCITEM tci={0};
 	tci.mask=TCIF_TEXT;

@@ -495,9 +495,7 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	g_hListDlg = hwnd;
 
-#pragma warning(disable:4244)
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-#pragma warning(default:4244)
 
 	HWND list=GetDlgItem(hwnd, IDC_LIST);
 	ListView_SetExtendedListViewStyle(list, LVS_EX_FULLROWSELECT|LVS_EX_LABELTIP);
@@ -535,9 +533,7 @@ static BOOL List_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 		ListView_SetItemCount(list, g_rows.size());
 	}
 
-#pragma warning(disable:4244 4312)
 	g_oldlvproc=(WNDPROC)SetWindowLongPtr(list, GWLP_WNDPROC, (LONG_PTR)ListView_SubProc);
-#pragma warning(default:4244 4312)
 
 	if( g_config.ListEditorWindowPos.left!=0 || g_config.ListEditorWindowPos.top!=0 ||
 		g_config.ListEditorWindowPos.right!=0 || g_config.ListEditorWindowPos.bottom!=0	)

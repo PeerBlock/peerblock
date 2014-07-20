@@ -145,9 +145,7 @@ static BOOL EditList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 
 	List **list=(List**)lParam;
 
-#pragma warning(disable:4244)
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)list);
-#pragma warning(default:4244)
 
 	HWND url=GetDlgItem(hwnd, IDC_URL);
 

@@ -53,9 +53,7 @@ static BOOL PortProfile_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 
 	PortProfile *profile = (PortProfile*) lParam;
 
-#pragma warning(disable:4244)
-	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR) profile);
-#pragma warning(default:4244)
+	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)profile);
 
 	HWND hname = GetDlgItem(hwnd, IDC_PORTNAME);
 	Edit_SetText(hname, profile->Name.c_str());

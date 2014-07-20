@@ -21,11 +21,7 @@
 
 */
 
-#pragma warning(push)
-#pragma warning(disable:4103)
 #include <wdm.h>
-#pragma warning(pop)
-
 #include <ntddk.h>
 #include <stdlib.h>
 #include "internal.h"

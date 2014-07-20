@@ -76,9 +76,7 @@ static void CreateList_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotif
 static BOOL CreateList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 	g_hCreateListDlg = hwnd;
 
-#pragma warning(disable:4244) //not my fault!
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-#pragma warning(default:4244)
 
 	CheckDlgButton(hwnd, IDC_BLOCK, BST_CHECKED);
 

@@ -21,11 +21,7 @@
 
 */
 
-#pragma warning(push)
-#pragma warning(disable:4103)
 #include <wdm.h>
-#pragma warning(pop)
-
 #include "internal.h"
 
 typedef struct __pb_notifynode {
@@ -196,11 +192,7 @@ NTSTATUS Notification_Recieve(NOTIFICATION_QUEUE *queue, PIRP irp)
 
 		IoAcquireCancelSpinLock(&crirq);
 
-#pragma warning(push)
-#pragma warning(disable:4311 4312)
-		//IoSetCancelRoutine generates warnings in 32-bit due to silly macroisms.
 		IoSetCancelRoutine(irp, Notification_OnCancel);
-#pragma warning(pop)
 
 		IoReleaseCancelSpinLock(crirq);
 

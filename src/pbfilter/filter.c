@@ -22,13 +22,8 @@
 */
 
 #include <stddef.h>
-
-#pragma warning(push)
-#pragma warning(disable:4103)
 #include <ntddk.h>
 #include <wdm.h>
-#pragma warning(pop)
-
 #include <ntstrsafe.h>
 #include <ntddndis.h>
 #include <pfhook.h>
@@ -363,7 +358,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 	if(!NT_SUCCESS(status))
 	{
-		DbgPrint("pbfilter:  * ERROR: couldn't create device, status:[0x%lX] . . . unloading\n", status);
+		DbgPrint("pbfilter:  * ERROR: couldn't create device, status:[0x%lX]    ... unloading\n", status);
 		drv_unload(driver);
 	}
 

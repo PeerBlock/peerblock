@@ -329,9 +329,7 @@ static BOOL AddList_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_pListUrls = new ListUrls();
 	g_pListUrls->Init();
 
-#pragma warning(disable:4244) //not my fault!
 	SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-#pragma warning(default:4244)
 
 	HWND url=GetDlgItem(hwnd, IDC_URL);
 
