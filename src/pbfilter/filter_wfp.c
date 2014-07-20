@@ -566,7 +566,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registrypath)
 
 		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    created driver\n");
 		RtlInitUnicodeString(&devicelink, DOS_DEVICE_NAME);
-		status=IoCreateSymbolicLink(&devicelink, &devicename);
+		IoCreateSymbolicLink(&devicelink, &devicename);
 
 		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:    setting up functions\n");
 		driver->MajorFunction[IRP_MJ_CREATE] =

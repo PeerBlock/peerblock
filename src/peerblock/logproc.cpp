@@ -97,16 +97,6 @@ private:
 		return buf;
 	}
 
-	static tstring current_datetime() {
-		TRACEV("[LogFilterAction] [current_datetime]  > Entering routine.");
-		time_t t=time(NULL);
-		TCHAR buf[21];
-
-		_tcsftime(buf, 21, _T("%m/%d/%Y %H:%M:%S"), localtime(&t));
-
-		return buf;
-	}
-
 	std::queue<Action> dbqueue;
 
 public:
@@ -638,11 +628,9 @@ static void UpdateStatus(HWND hwnd)
 static void CheckForUpdates(HWND hwnd)
 {
 	TRACEI("[LogProc] [CheckForUpdates]    Checking for updates");
-	int ret = 0;
-
 	{
 		mutex::scoped_lock lock(g_lastupdatelock);
-		ret=UpdateLists(hwnd);
+		UpdateLists(hwnd);
 	}
 
 	g_config.Save();
@@ -1049,7 +1037,6 @@ static INT_PTR Log_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh)
 			} // End If which checks if a menu item was selected
 
 			// Optimize refreshing of list (only do it once at the end)
-			UINT menuItemSelected = ID_LIST_COPYIP;
 			if(ret != 0 && ret != ID_LIST_COPYIP)
 				LoadLists(hwnd);
 		}
@@ -1217,7 +1204,7 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia, LVITEM
 				end=_tcschr(text, _T(':'));
 				if(end) *end=_T('\0');
 
-				allowip=ParseIp(text);
+				ParseIp(text);
 			}
 		}
 		else

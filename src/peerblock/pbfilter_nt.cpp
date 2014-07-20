@@ -40,8 +40,6 @@ pbfilter::pbfilter()
 	TRACEI("[pbfilter_nt] [pbfilter]    starting IpFilterDriver");
 	m_ipfltdrv.start(false);
 
-	wstring p = L"\\??\\" + (path::base_dir() / PBFILTER_PATH).file_str();
-
 	m_filter.removable = true; // so it can be removed if there's a path mismatch.
 	TRACEI("[pbfilter_nt] [pbfilter]    loading pbfilter.sys");
 	m_filter.load(PBFILTER_NAME);

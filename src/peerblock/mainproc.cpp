@@ -941,7 +941,6 @@ static void Main_OnTray(HWND hwnd, UINT id, UINT eventMsg)
 			rect.right -= 1;	// correct edge, since .right is the first pixel _outside_ our window
 			rect.bottom -= 1;	// correct edge, since .bottom is the first pixel _outside_ our window
 			LONG windowWidth = rect.right - rect.left;
-			LONG windowHeight = rect.bottom - rect.top;
 
 			// Also need to correctly handle part of our window being off-screen
 			int desktopWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);

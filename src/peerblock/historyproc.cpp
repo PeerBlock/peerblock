@@ -560,7 +560,6 @@ static void History_PerformSearch(HWND hwnd) {
 
 	if((info.iMask&HFM_DEST)) {
 		if(first) {
-			first=false;
 			ss << " where";
 		}
 		else ss << " and";
@@ -928,7 +927,7 @@ UINT CreateListViewPopUpMenu(HWND hwnd, NMHDR *nmh, NMITEMACTIVATE *nmia)
 				end=_tcschr(text, _T(':'));
 				if(end) *end=_T('\0');
 
-				allowip=ParseIp(text);
+				ParseIp(text);
 			}
 		}
 		else
