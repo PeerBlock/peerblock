@@ -155,15 +155,13 @@ public:
 	wstring Url;
 	LISTFLAGS Flags;
 
-	ListData(wstring _url, LISTFLAG _flag)
+	ListData(wstring _url, LISTFLAG _flag) : Url(_url)
 	{
-		Url = _url;
 		Flags.set(_flag);
 	};
 
-	ListData(wstring _url)
+	ListData(wstring _url) : Url(_url)
 	{
-		Url = _url;
 		Flags.reset();
 	};
 
