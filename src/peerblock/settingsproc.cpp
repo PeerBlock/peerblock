@@ -251,8 +251,8 @@ INT_PTR CALLBACK SettingsFirst_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 						g_config.HttpColor.Background=sc->color;
 						break;
 				}
-			} break;
-			HANDLE_MSG(hwnd, WM_SIZE, SettingsProc_OnSize);
+			}
+			break;
 		}
 		return 0;
 	}
