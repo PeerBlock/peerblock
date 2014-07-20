@@ -549,7 +549,7 @@ void LoadLists(HWND parent) {
 		    TRACEI("[LoadLists]    loading lists");
             try {
     		    LoadList(_T("cache.p2b"), block);
-            } catch (p2p::p2p_error ex) {
+            } catch (p2p::p2p_error &ex) {
         	    tstring str=boost::str(tformat(_T("[LoadLists]    error detected while parsing list-cache, will blow away cache.p2b and try again; ex:%1%")) 
                     % ex.what());
                 TRACEBUFW(str.c_str());
