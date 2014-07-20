@@ -135,7 +135,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		if(msg) SendNotifyMessage(HWND_BROADCAST, msg, 0, TRUE);
 		return 0;
 	}
-	else pbmutex=CreateMutex(NULL, FALSE, g_pbmutex_name);
+	else CreateMutex(NULL, FALSE, g_pbmutex_name);
 
 
 	path pathLog = path::base_dir()/L"peerblock.log";	// TODO: This should be a config-string!
@@ -173,7 +173,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		MessageBox(NULL, IDS_PGALREADYRUNNINGTEXT, IDS_PGALREADYRUNNING, MB_ICONWARNING|MB_OK);
 		return 0;
 	}
-	else pgmutex=CreateMutex(NULL, FALSE, g_pgmutex_name);
+	else CreateMutex(NULL, FALSE, g_pgmutex_name);
 
 	TRACES("Created program mutex");
 

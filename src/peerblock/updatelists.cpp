@@ -476,7 +476,7 @@ public:
                             } else {
                                 url += _T("?uid=") + g_config.UniqueId;
                             }
-                            tstring uniqueId = g_config.UniqueId;
+
                             if (!fileExists || fileSize == 0)
                             {
                                 time_t t = time(0); // now

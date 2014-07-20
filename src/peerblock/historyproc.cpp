@@ -832,7 +832,6 @@ static INT_PTR History_OnNotify(HWND hwnd, int idCtrl, NMHDR *nmh) {
 			} // End If which checks if a menu item was selected
 
 			// Optimize refreshing of list (only do it once at the end)
-			UINT menuItemSelected = ID_LIST_COPYIP;
 			if(ret != 0 && ret != ID_LIST_COPYIP)
 				LoadLists(hwnd);
 		}

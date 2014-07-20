@@ -1050,7 +1050,6 @@ static void Lists_OnSize(HWND hwnd, UINT state, int cx, int cy)
     RECT morelistsRect;
     GetWindowRect(morelists, &morelistsRect);
     int morelistsHeight = morelistsRect.bottom - morelistsRect.top;
-    int morelistsWidth = morelistsRect.right - morelistsRect.left;
 
 	HDWP dwp=BeginDeferWindowPos(8);
 
