@@ -92,7 +92,14 @@ private:
 		bool finished;
 		double progress;
 
-		HandleData(UpdateThread *ut) : ut(ut),fp(NULL),list(NULL),finished(false),progress(0.0) {
+		HandleData(UpdateThread *ut)
+			: ut(ut)
+			, fp(NULL)
+			, list(NULL)
+			, finished(false)
+			, progress(0.0)
+			, index(0)
+		{
 			errbuf[0]='\0';
 		}
 	};
@@ -238,12 +245,27 @@ public:
 	bool aborted;
 
 	UpdateThread()
+		: hwnd(NULL)
+		, list(NULL)
+		, progress(NULL)
+		, autoupdate(false)
+		, changes(0)
+		, aborted(false)
+		, progressmod(0.0)
+		, maxprogress(0.0)
 	{
 		TRACEI("[UpdateThread] [UpdateThread]    created thread (base constructor)");
 	}
 
 	UpdateThread(HWND hwnd, HWND list, HWND progress, bool autoupdate)
-		: hwnd(hwnd), list(list), progress(progress), autoupdate(autoupdate),changes(0),aborted(false),progressmod(0.0)
+		: hwnd(hwnd)
+		, list(list)
+		, progress(progress)
+		, autoupdate(autoupdate)
+		, changes(0)
+		, aborted(false)
+		, progressmod(0.0)
+		, maxprogress(0.0)
 	{
 		TRACEI("[UpdateThread] [UpdateThread]    created thread class");
 	}

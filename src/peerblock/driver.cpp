@@ -29,7 +29,12 @@
 extern TraceLog g_tlog;
 
 
-driver::driver() : m_dev(INVALID_HANDLE_VALUE),m_loaded(false),m_started(false),removable(false)
+driver::driver()
+	: m_dev(INVALID_HANDLE_VALUE)
+	, m_loaded(false)
+	, m_started(false)
+	, removable(false)
+	, m_stoppable(false)
 {
 }
 

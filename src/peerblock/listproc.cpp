@@ -52,10 +52,18 @@ public:
 	tstring name, start, end;
 	unsigned int lstart, lend;
 
-	ListRow() {}
+	ListRow()
+		: lstart(0)
+		, lend(0)
+	{}
 
 	ListRow(const p2p::range &r)
-		: name(WCHAR_TSTRING(r.name)),start(format_ip(r.start.ipl)),end(format_ip(r.end.ipl)),lstart(r.start.ipl),lend(r.end.ipl) {}
+		: name(WCHAR_TSTRING(r.name))
+		, start(format_ip(r.start.ipl))
+		, end(format_ip(r.end.ipl))
+		, lstart(r.start.ipl)
+		, lend(r.end.ipl)
+	{}
 };
 
 

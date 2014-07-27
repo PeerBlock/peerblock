@@ -31,7 +31,17 @@ extern TraceLog g_tlog;
 static const wchar_t* PBFILTER_NAME = L"pbfilter";
 static const wchar_t* PBFILTER_PATH = L"pbfilter.sys";
 
-pbfilter_base::pbfilter_base() : m_block(false),m_blockhttp(true),m_blockcount(0),m_allowcount(0) {}
+pbfilter_base::pbfilter_base()
+	: m_block(false)
+	, m_blockhttp(true)
+	, m_blockcount(0)
+	, m_allowcount(0)
+	, m_thread(NULL)
+	, m_exitevt(NULL)
+	, m_blocklabelsid(0)
+	, m_allowlabelsid(0)
+	, m_runthread(false)
+{}
 
 
 

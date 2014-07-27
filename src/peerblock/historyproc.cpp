@@ -48,7 +48,12 @@ struct HistoryRow {
 	LPCTSTR protocol, action;
 	enum { allowed, blocked, http } type;
 
-	HistoryRow() : full(false) {}
+	HistoryRow()
+		: full(false)
+		, protocol(_T(""))
+		, action(_T(""))
+		, id(0)
+	{}
 };
 
 static HWND g_list, g_calendar, g_search;

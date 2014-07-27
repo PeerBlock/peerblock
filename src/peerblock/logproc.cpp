@@ -100,7 +100,10 @@ private:
 	std::queue<Action> dbqueue;
 
 public:
-	LogFilterAction(HWND hwnd, HWND l, bool db=true) : hwnd(hwnd),log(l),usedb(db)
+	LogFilterAction(HWND hwnd, HWND l, bool db=true)
+		: hwnd(hwnd)
+		, log(l)
+		, usedb(db)
 	{
 		TRACEV("[LogFilterAction] [LogFilterAction]  > Entering routine.");
 
