@@ -297,7 +297,7 @@ void pbfilter_base::thread_func()
 		// waiting for overlapped-event (0), or exit-event (1)
 		TRACEV("[pbfilter_base] [thread_func]    waiting for notification from driver");
 		ret = WaitForMultipleObjects(2, evts, FALSE, INFINITE);
-		if(ret < WAIT_OBJECT_0 || ret > (WAIT_OBJECT_0 + 1)) {
+		if(ret > (WAIT_OBJECT_0 + 1)) {
 			std::wcout << L"error: WaitForMultipleObjects failed." << std::endl;
 		}
 
