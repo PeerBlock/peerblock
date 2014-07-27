@@ -219,7 +219,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 					break;
 
 				default:
-					swprintf_s(buf, _countof(buf), L"[driver] [load(3)]  * ERROR: Unknown service state: [%d]", status.dwCurrentState);
+					swprintf_s(buf, _countof(buf), L"[driver] [load(3)]  * ERROR: Unknown service state: [%u]", status.dwCurrentState);
 					TRACEBUFE(buf);
 					break;
 			}
@@ -297,7 +297,7 @@ void driver::load(const std::wstring &name, const std::wstring &file, const std:
 		{
 			TRACEI("[driver] [load(3)]    driver-service not running");
 			TCHAR buf[128];
-			swprintf_s(buf, _countof(buf), L"[driver] [load(3)]    - service state: [%d]", status.dwCurrentState);
+			swprintf_s(buf, _countof(buf), L"[driver] [load(3)]    - service state: [%u]", status.dwCurrentState);
 			TRACEBUFW(buf);
 		}
 	}

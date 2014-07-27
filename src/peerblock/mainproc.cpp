@@ -1132,7 +1132,7 @@ INT_PTR CALLBACK Main_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	//TCHAR chBuf[128];
 	//if (msg != 289)
 	//{
-	//	_stprintf_s(chBuf, _countof(chBuf), _T("[Main_DlgProc]  Processing Window MSG: [%d]"), msg);
+	//	_stprintf_s(chBuf, _countof(chBuf), _T("[Main_DlgProc]  Processing Window MSG: [%u]"), msg);
 	//	g_tlog.LogMessage(chBuf, TRACELOG_LEVEL_CRITICAL);
 	//}
 

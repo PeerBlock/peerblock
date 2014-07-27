@@ -483,7 +483,7 @@ private:
 						else
 						{
 							TCHAR buf[255];
-							swprintf_s(buf, _countof(buf), L"_tstat64 failed: %d", GetLastError());
+							swprintf_s(buf, _countof(buf), L"_tstat64 failed: %u", GetLastError());
 							TRACEBUFI(buf);
 						}
 
