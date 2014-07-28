@@ -396,7 +396,6 @@
     <ClInclude Include="tracelog.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="updatelists.h" />
-    <ClInclude Include="utf8.h" />
     <ClInclude Include="versioninfo.h" />
     <ClInclude Include="wfp.hpp" />
     <ClInclude Include="win32_error.h" />

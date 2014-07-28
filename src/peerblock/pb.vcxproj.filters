@@ -257,9 +257,6 @@
     <ClInclude Include="updatelists.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utf8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="versioninfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>

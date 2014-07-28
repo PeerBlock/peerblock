@@ -103,8 +103,8 @@
     <ClInclude Include="include\p2p\ip.hpp" />
     <ClInclude Include="include\p2p\list.hpp" />
     <ClInclude Include="include\p2p\range.hpp" />
+    <ClInclude Include="include\p2p\utf8.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\utf8.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

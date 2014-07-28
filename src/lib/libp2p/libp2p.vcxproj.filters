@@ -46,7 +46,7 @@
     <ClInclude Include="src\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utf8.h">
+    <ClInclude Include="include\p2p\utf8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
