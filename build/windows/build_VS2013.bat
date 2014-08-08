@@ -20,7 +20,7 @@ REM  2. Altered source versions must be plainly marked as such, and must not be
 REM     misrepresented as being the original software.
 REM  3. This notice may not be removed or altered from any source distribution.
 
-REM  $Id: build.bat 664 2013-10-18 05:55:03Z XhmikosR $
+REM  $Id$
 
 REM You can set here the Inno Setup path if for example you have Inno Setup Unicode
 REM installed and you want to use the ANSI Inno Setup which is in another location
