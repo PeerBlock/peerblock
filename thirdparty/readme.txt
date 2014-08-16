@@ -14,7 +14,7 @@ Website:  http://tim.klingt.org/git?p=boost_lockfree.git
 libcurl version 7.22.0
 License:  MIT/X derivate license
 Website:  http://curl.haxx.se/libcurl
-Notes:    The version PeerBlock is using is slightly modified.  See here:
+Notes:    The version PeerBlock is using is slightly modified. See here:
           (http://code.google.com/p/peerblock/source/detail?r=284)
           or search the libcurl project for "PeerBlock custom code".
 
@@ -23,7 +23,7 @@ License:  zlib License
 Website:  http://www.winimage.com/zLibDll/minizip.html
 Notes:    We currently include only the needed files.
 
-SQLite version 3.8.5
+SQLite version 3.8.6
 License:  Public Domain
 Website:  http://www.sqlite.org
 
@@ -34,7 +34,7 @@ Website:  http://int64.org/projects/sqlite-c-wrapper
 TinyXML version 2.6.2
 License:  zlib License
 Website:  http://sourceforge.net/projects/tinyxml/
-Notes:    The version PeerBlock is using is slightly modified.  See here:
+Notes:    The version we are using is slightly modified. See here:
           (http://code.google.com/p/peerblock/source/detail?r=583)
 
 zlib version 1.2.8
