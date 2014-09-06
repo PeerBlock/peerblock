@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Express 2012 for Windows Desktop
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "peerblock", "..\..\src\peerblock\pb.vcxproj", "{841A21AD-7FB8-402A-86FD-8766AC32D28C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libp2p", "..\..\src\lib\libp2p\libp2p.vcxproj", "{679324FC-D0B7-4C3E-97A7-F84059D4B7C9}"
@@ -19,6 +19,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\thirdparty\zlib\zlib.vcxproj", "{E0597D8E-B4DC-4B46-A4BA-D9C11473FA1B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbfilter", "..\..\src\pbfilter\pbfilter.vcxproj", "{141BF107-16D2-4AF8-85F2-FA655A327F35}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbcore", "..\..\src\pbcore\pbcore.vcxproj", "{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -192,6 +194,22 @@ Global
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|Win32.Build.0 = Release|Win32
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|x64.ActiveCfg = Release|x64
 		{141BF107-16D2-4AF8-85F2-FA655A327F35}.Release|x64.Build.0 = Release|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug_(Vista)|Win32.ActiveCfg = Debug|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug_(Vista)|Win32.Build.0 = Debug|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug_(Vista)|x64.ActiveCfg = Debug|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug_(Vista)|x64.Build.0 = Debug|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug|Win32.Build.0 = Debug|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug|x64.ActiveCfg = Debug|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Debug|x64.Build.0 = Debug|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release_(Vista)|Win32.ActiveCfg = Release|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release_(Vista)|Win32.Build.0 = Release|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release_(Vista)|x64.ActiveCfg = Release|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release_(Vista)|x64.Build.0 = Release|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release|Win32.ActiveCfg = Release|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release|Win32.Build.0 = Release|Win32
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release|x64.ActiveCfg = Release|x64
+		{CC5D0C1C-25B9-45AC-97E9-0FC4A464EA1F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
