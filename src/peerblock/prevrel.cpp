@@ -391,8 +391,8 @@ void PerformPrevRelUpdates(HWND _hwnd)
 			if (string::npos != list->Url.find(_T("http://list.iblocklist.com/?list=")))
 			{
 				// split url up into tokens
-				size_t start(0);
-				size_t end(0);
+				size_t start = 0;
+				size_t end = 0;
 				map<tstring, tstring> params;
 
 				start = list->Url.find(_T("?")) + 1;
@@ -403,7 +403,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 						(end == string::npos) ? string::npos : end - start);
 					start = (end > (string::npos - 1) ) ? string::npos : end + 1;
 
-					size_t eqPos(0);
+					size_t eqPos = 0;
 					eqPos = paramSet.find(_T("="));
 					if (string::npos != eqPos)
 					{
@@ -438,9 +438,9 @@ void PerformPrevRelUpdates(HWND _hwnd)
 			else if (string::npos != list->Url.find(_T("http://list.iblocklist.com/lists/")))
 			{
 				// split url up into tokens
-				size_t urlRootEndPos(0);
-				size_t start(0);
-				size_t end(0);
+				size_t urlRootEndPos = 0;
+				size_t start = 0;
+				size_t end = 0;
 				map<tstring, tstring> params;
 
 				urlRootEndPos = list->Url.find(_T("?"));
@@ -455,7 +455,7 @@ void PerformPrevRelUpdates(HWND _hwnd)
 							(end == string::npos) ? string::npos : end - start);
 						start = (end > (string::npos - 1) ) ? string::npos : end + 1;
 
-						size_t eqPos(0);
+						size_t eqPos = 0;
 						eqPos = paramSet.find(_T("="));
 						if (string::npos != eqPos)
 						{
