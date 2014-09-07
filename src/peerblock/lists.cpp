@@ -87,9 +87,6 @@ static pair<boost::shared_array<char>,size_t> UngzipFile(const path &file) {
 	return make_pair(ret, buf.size());
 }
 
-#define kBufferSize 4096
-static Byte g_Buffer[kBufferSize];
-
 bool LoadList(path file, p2p::list &list)
 {
 	TRACEV("[LoadList]  > Entering routine.");
