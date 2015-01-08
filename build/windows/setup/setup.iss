@@ -1,4 +1,4 @@
-;  PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
+;  PeerBlock modifications copyright (C) 2009-2015 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
@@ -27,8 +27,8 @@
 ;#define VS2013build
 
 
-#if VER < EncodeVer(5,5,4)
-  #error Update your Inno Setup version (5.5.4 or newer)
+#if VER < EncodeVer(5,5,5)
+  #error Update your Inno Setup version (5.5.5 or newer)
 #endif
 
 
@@ -44,7 +44,7 @@
 ; E.g. 1.0.1+
 ;#define app_ver_short str(PB_VER_MAJOR) + "." + str(PB_VER_MINOR) + "." + str(PB_VER_BUGFIX) + "+"
 
-#define copyright            "Copyright © 2009-2014, PeerBlock, LLC"
+#define copyright            "Copyright © 2009-2015, PeerBlock, LLC"
 #define installer_build_date GetDateTimeString('mmm, d yyyy', '', '')
 #define quick_launch         "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PeerBlock"
 #define sse_required

@@ -1,6 +1,6 @@
 (*
 ;  Original source: http://goo.gl/PTi56
-;  PeerBlock modifications copyright (C) 2009-2013 PeerBlock, LLC
+;  PeerBlock modifications copyright (C) 2009-2014 PeerBlock, LLC
 ;
 ;  This software is provided 'as-is', without any express or implied
 ;  warranty.  In no event will the authors be held liable for any damages
