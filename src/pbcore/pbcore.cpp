@@ -31,7 +31,6 @@
 
 using namespace PeerBlock;
 
-PBCore::PBCore() 
+PBCore::PBCore()
 {
 };
-
