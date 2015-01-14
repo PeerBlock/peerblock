@@ -1,6 +1,6 @@
 /*
 	Original code copyright (C) 2004-2005 Cory Nelson
-	PeerBlock modifications copyright (C) 2009-2011 PeerBlock, LLC
+	PeerBlock modifications copyright (C) 2009-2011, 2015 PeerBlock, LLC
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any damages
@@ -128,14 +128,18 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	hPeerBlockInstance = hInstance;
 
 	// If PeerBlock is already running, bring it to the forefront and exit this new instance.
-	HANDLE pbmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
-	if(pbmutex)
+	HANDLE pbmutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pbmutex_name);
+	if (pbmutex)
 	{
-		UINT msg=RegisterWindowMessage(_T("PeerBlockSetVisible"));
-		if(msg) SendNotifyMessage(HWND_BROADCAST, msg, 0, TRUE);
+		UINT msg = RegisterWindowMessage(_T("PeerBlockSetVisible"));
+		if (msg) {
+            SendNotifyMessage(HWND_BROADCAST, msg, 0, TRUE);
+        }
+		CloseHandle(pbmutex);
 		return 0;
 	}
-	else CreateMutex(NULL, FALSE, g_pbmutex_name);
+	else
+        CreateMutex(NULL, FALSE, g_pbmutex_name);
 
 
 	path pathLog = path::base_dir()/L"peerblock.log";	// TODO: This should be a config-string!
@@ -166,14 +170,16 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 	TRACES("User running as Admin");
 
 	// If PeerGuardian2 is already running, warn the user and then exit.
-	HANDLE pgmutex=OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pgmutex_name);
-	if(pgmutex)
+	HANDLE pgmutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, g_pgmutex_name);
+	if (pgmutex)
 	{
 		TRACEW("PeerGuardian already running!  Warning user and exiting.");
 		MessageBox(NULL, IDS_PGALREADYRUNNINGTEXT, IDS_PGALREADYRUNNING, MB_ICONWARNING|MB_OK);
+		CloseHandle(pgmutex);
 		return 0;
 	}
-	else CreateMutex(NULL, FALSE, g_pgmutex_name);
+	else
+        CreateMutex(NULL, FALSE, g_pgmutex_name);
 
 	TRACES("Created program mutex");
 
